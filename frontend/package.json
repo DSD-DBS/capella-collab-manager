@@ -59,7 +59,7 @@
     "@compodoc/compodoc": "^1.1.25",
     "@playwright/test": "^1.45.3",
     "@storybook/addon-docs": "^8.2.5",
-    "@storybook/addon-essentials": "^8.2.5",
+    "@storybook/addon-essentials": "^8.2.6",
     "@storybook/addon-interactions": "^8.2.5",
     "@storybook/addon-links": "^8.2.5",
     "@storybook/angular": "^8.2.5",
