@@ -25,8 +25,8 @@ all existing repositories with their status.
 
 ## Remove a TeamForCapella Repository
 
-<!-- prettier-ignore -->
 !!! danger
+
     Deleted TeamForCapella repositories can not be restored.
     If you don't have backups, the models in the repository are not recoverable!
 

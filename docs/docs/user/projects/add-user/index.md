@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<!-- prettier-ignore -->
 !!! warning
+
     You need to have the Administrator or Project Lead role for a
     project to perform the following steps.
 
@@ -28,28 +28,26 @@
 
 ## Modify Role or Permissions of User
 
-<!-- prettier-ignore-start -->
-
-1. Select your project in the project overview.
-1. On the right side you should now see user management options:
+1.  Select your project in the project overview.
+1.  On the right side you should now see user management options:
     ![User management](./manage-users.png)
-1. Select the user you want do modify: <br>
+1.  Select the user you want do modify: <br>
     ![User modification](./modify-user.png)
 
-   You can select from the following options:
+    You can select from the following options:
 
-   - Remove a user from the project
-   - Set role of the user to [project lead](../../projects/roles.md) or
-     [user](../../projects/roles.md)
-   - Set permission of the user to [read/write](../../sessions/types/index.md) or
-     [read-only](../../sessions/types/index.md)
-
-    !!! info
-        You can not modify your own user or any administrator!
+    - Remove a user from the project
+    - Set role of the user to [project lead](../../projects/roles.md) or
+      [user](../../projects/roles.md)
+    - Set permission of the user to [read/write](../../sessions/types/index.md)
+      or [read-only](../../sessions/types/index.md)
 
     !!! info
-        Open sessions are not terminated automatically on permission change.
-        The TeamForCapella access is only revoked
-        when the user's last session is terminated.
 
-<!-- prettier-ignore-end -->
+         You can not modify your own user or any administrator!
+
+    !!! info
+
+         Open sessions are not terminated automatically on permission change.
+         The TeamForCapella access is only revoked
+         when the user's last session is terminated.

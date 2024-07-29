@@ -5,8 +5,8 @@
 
 # Export a Capella Model from your Persistent Workspace to a TeamForCapella Server
 
-<!-- prettier-ignore -->
 !!! warning
+
     To export a Capella model to a TeamForCapella server, you need
     at least the `Read/Write`-permission for the project.
 

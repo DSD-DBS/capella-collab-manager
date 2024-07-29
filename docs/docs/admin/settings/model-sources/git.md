@@ -21,19 +21,31 @@ Gitlab, are not available.
 1. You can see all existing instances (if any). To add a new integration,
    please use the form below "Add new integration". You have to enter the
    following information:
-   <!-- prettier-ignore -->
-    1. **Git Type**
-        - **General**: Works with every [Git server](https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server) that supports the Git protocol. Features like the diagram cache are not available.
-        - **Gitlab**: Only works with [Gitlab](https://about.gitlab.com/) instances (self-hosted / SaaS). With Gitlab, the diagram cache integration can be used.
-        - **Github**: Works with the public [Github](https://github.com/) instance. With Github, the diagram cache integration can be used.
-    1. **Name**: Any name to identify the instance
-    1. **Instance base URL**: The base URL of the instance, e.g., `https://gitlab.com`. For more information, see [Matching between models and instances](#matching-between-models-and-instances)
-    1. **API URL**:
-        - **Gitlab**: The API URL to the [Gitlab REST API](https://docs.gitlab.com/ee/api/rest/). In most of the cases: `{base_url}/api/v4`, e.g., `https://gitlab.com/api/v4`.
-        - **Github**: The API URL to the [Github REST API](https://docs.github.com/en/rest?apiVersion=2022-11-28). The url is `https://api.github.com`.
 
-<!-- prettier-ignore -->
+   1. **Git Type**
+      - **General**: Works with every
+        [Git server](https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server)
+        that supports the Git protocol. Features like the diagram cache are not
+        available.
+      - **Gitlab**: Only works with [Gitlab](https://about.gitlab.com/)
+        instances (self-hosted / SaaS). With Gitlab, the diagram cache
+        integration can be used.
+      - **Github**: Works with the public [Github](https://github.com/)
+        instance. With Github, the diagram cache integration can be used.
+   1. **Name**: Any name to identify the instance
+   1. **Instance base URL**: The base URL of the instance, e.g.,
+      `https://gitlab.com`. For more information, see
+      [Matching between models and instances](#matching-between-models-and-instances)
+   1. **API URL**:
+      - **Gitlab**: The API URL to the
+        [Gitlab REST API](https://docs.gitlab.com/ee/api/rest/). In most of the
+        cases: `{base_url}/api/v4`, e.g., `https://gitlab.com/api/v4`.
+      - **Github**: The API URL to the
+        [Github REST API](https://docs.github.com/en/rest?apiVersion=2022-11-28).
+        The url is `https://api.github.com`.
+
 !!! warning
+
     New repositories have to match at least one instance. Otherwise,
     they can not be added as model source to models.
 

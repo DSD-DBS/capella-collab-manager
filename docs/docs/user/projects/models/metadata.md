@@ -5,8 +5,8 @@
 
 # Update Model Metadata (Version and Nature)
 
-<!-- prettier-ignore -->
 !!! warning
+
     Make sure to read the documentation about updating a [TeamForCapella model](../../../admin/teamforcapella/migration.md)
     or about updating a [Capella model](../../tools/capella/migration/index.md) first!
 

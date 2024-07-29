@@ -28,8 +28,8 @@ clicking "Next" the "Branch Selection" opens. Here you can pick a branch on
 which you want to work. After clicking "Next" another time, the view "Local
 Destination" opens. This shows where your work is going to be stored locally.
 
-<!-- prettier-ignore -->
 !!! info
+
     Tick the box: "Import all existing Eclipse projects after clone
     finishes" importing the cloned repository into your eclipse workspace
 
@@ -91,8 +91,8 @@ Change #2
 Thus you and your collegues know what happened in the commit. Then commit the
 changes (2).
 
-<!-- prettier-ignore -->
 !!! info
+
     The commit is now made locally. In order to publish it and share it with other you have to push it to the *Remote*!
 
 ![Step 7: Search for View](screenshots/staged-changes.png)
@@ -112,8 +112,8 @@ your collegues can see them.
 
 ## Diff and Merge Models
 
-<!-- prettier-ignore -->
 !!! warning
+
     If you have to merge due to a merge conflict do not commit unless all conflicts highlighted are solved.
 
 If the merge tool is not opening on its own due to a merge conflict you can
@@ -133,8 +133,8 @@ choose the **correct** order of which model is the source and which one is the
 target. In that case we are taking the changes in the source to apply them to
 the target, and are going to change the target model.
 
-<!-- prettier-ignore -->
 !!! warning
+
     Make sure to select the correct direction of merging in order to modify the
     correct model.
 
@@ -183,8 +183,8 @@ models is. Then you can right click on the change in the synthesis view and
 click "Apply change(s)" (2) and you can click "Ok" then. Afterwards make sure
 to Ctrl+S or File > Save to save the change made.
 
-<!-- prettier-ignore -->
 !!! warning
+
     If any of your changes depend on common objects independent of layers make sure
     to also apply those changes in order to create a working modification of the
     model.
@@ -267,13 +267,12 @@ project on Gitlab or Github. Then open a Merge request (Gitlab) or Pull request
 You will now see whether the Merge request/ Pull request can be merged
 automatically or not:
 
-<!-- prettier-ignore -->
-1. It can be merged automatically: Go for it and merge it. To continue working
-   on the model, we recommend using a new clean session of Capella.
-1. It can’t be merged automatically: You have now two options:
-    1. Redo your work. We recommend using a new session for that.
-    1. Open a service request or contact the operations team in order to try to
-      get your changes merged manually.
+1.  It can be merged automatically: Go for it and merge it. To continue working
+    on the model, we recommend using a new clean session of Capella.
+1.  It can’t be merged automatically: You have now two options:
+    1.  Redo your work. We recommend using a new session for that.
+    1.  Open a service request or contact the operations team in order to try
+        to get your changes merged manually.
 
 In order to publish your changes and to share them with your team click:
 "Commit and Push" (1). If you have not configured that before you are now asked

@@ -5,8 +5,8 @@
 
 # `pure::variants` Integration
 
-<!-- prettier-ignore -->
 !!! info
+
     The `pure::variants` integration can be used to:
 
     - Use pure::variants in a browser
@@ -15,8 +15,8 @@
 
 ## Setup of `pure::variants` Integration
 
-<!-- prettier-ignore -->
 !!! warning
+
     The setup can only be performed by administrators. If a user wants to get access, please refer to [Get access to the `pure::variants` license as user](#get-access-to-the-purevariants-license-as-user)
 
 ### Set License Server URL and Upload `license.lic`

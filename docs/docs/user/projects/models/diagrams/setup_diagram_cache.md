@@ -23,23 +23,24 @@
 
     - One pipeline in the linked Git repository should not contain more than 20 jobs.
 
-1. To set up the diagram cache, your administrator needs to add the Git API URL
-   of your Gitlab or Github instance to the collab manager. More information
-   [here](../../../../admin/settings/model-sources/git.md).
-1. Link a Git repository to the model, for which you'd like to see the diagram
-   cache.
-   <!-- prettier-ignore -->
+1.  To set up the diagram cache, your administrator needs to add the Git API
+    URL of your Gitlab or Github instance to the collab manager. More
+    information [here](../../../../admin/settings/model-sources/git.md).
+1.  Link a Git repository to the model, for which you'd like to see the diagram
+    cache.
+
     !!! info
+
          The diagram cache integration uses the credentials, which are assigned when
          creating the Git model integration. Limit the scopes of the used token, only
          scope `read_api` (Gitlab) and `read-only` for the "actions" scope of the repository permissions (Github, Personal Access Token) is required.
 
-1. Follow the CI template instructions
+1.  Follow the CI template instructions
 
-   - [Gitlab](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/gitlab/diagram-cache/)
-   - [Github](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/github/diagram-cache/)
+    - [Gitlab](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/gitlab/diagram-cache/)
+    - [Github](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/github/diagram-cache/)
 
-   to add the diagram cache pipeline to the linked repository.
+    to add the diagram cache pipeline to the linked repository.
 
-1. You're ready to go. Validate if the setup works:
-   [View the diagrams](./view_diagram_cache.md)
+1.  You're ready to go. Validate if the setup works:
+    [View the diagrams](./view_diagram_cache.md)

@@ -86,8 +86,7 @@
 
 ## Some General Words
 
-<!-- prettier-ignore-start -->
-
+<!-- prettier-ignore -->
 - **Git-only** - the modeling team uses a git repository to work on the model.
   The team may use git branches to work on features or capabilities in parallel
   and a main branch is used for integration and release-tagging. This way of
@@ -111,5 +110,3 @@
         For this co-working method to be enabled you need a valid
         TeamForCapella license and TeamForCapella server installed and
         integrated with Collab-Manager.
-
-<!-- prettier-ignore-end -->
