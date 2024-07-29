@@ -74,6 +74,9 @@ nav:
   - Administrator Documentation:
       - Introduction: admin/index.md
       - Installation: admin/installation.md
+      - Authentication:
+          - Introduction: admin/authentication/index.md
+          - Keycloak: admin/authentication/keycloak/index.md
       - Uninstallation: admin/uninstallation.md
       - Getting started: admin/getting_started/index.md
       - Monitoring:
