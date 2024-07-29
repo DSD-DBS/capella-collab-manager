@@ -259,7 +259,7 @@ class AuthenticationConfig(BaseConfig):
     mapping: ClaimMappingConfig = ClaimMappingConfig()
     scopes: list[str] = pydantic.Field(
         default=["openid", "profile", "offline_access"],
-        description="List of scopes that application neeeds to access the required attributes.",
+        description="List of scopes that the application needs to access the required attributes.",
     )
     client: AuthOauthClientConfig = AuthOauthClientConfig()
     redirect_uri: str = pydantic.Field(

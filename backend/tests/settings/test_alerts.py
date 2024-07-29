@@ -14,7 +14,9 @@ from capellacollab.users import models as users_models
 
 
 def test_get_alerts(client: TestClient, db: orm.Session, executor_name: str):
-    users_crud.create_user(db, executor_name, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
     notices_crud.create_notice(
         db,
         notices_models.CreateNoticeRequest(
@@ -38,7 +40,9 @@ def test_get_alerts(client: TestClient, db: orm.Session, executor_name: str):
 def test_create_alert2(
     client: TestClient, db: orm.Session, executor_name: str
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.post(
         "/api/v1/notices",
@@ -57,7 +61,9 @@ def test_create_alert2(
 
 
 def test_delete_alert(client: TestClient, db: orm.Session, executor_name: str):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
     alert = notices_crud.create_notice(
         db,
         notices_models.CreateNoticeRequest(

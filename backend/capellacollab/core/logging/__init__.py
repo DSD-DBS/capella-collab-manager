@@ -80,11 +80,9 @@ class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
         call_next: base.RequestResponseEndpoint,
     ):
         try:
-            oidc_provider_config = (
-                await auth_injectables.get_oidc_provider_config()
-            )
+            oidc_config = await auth_injectables.get_oidc_config()
             username = await auth_injectables.get_username(
-                request, oidc_provider_config
+                request, oidc_config
             )
         except fastapi.HTTPException:
             username = "anonymous"

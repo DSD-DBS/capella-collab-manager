@@ -18,28 +18,24 @@ log = logging.getLogger(__name__)
 auth_config = config.authentication
 
 
-class JWTConfigBorg:
-    _shared_state: dict[str, str] = {}
+class JWTConfig:
+    _jwks_client = None
 
-    def __init__(
-        self, provider_config: oidc_provider.AbstractOIDCProviderConfig
-    ):
-        self.__dict__ = self._shared_state
-        self.provider_config = provider_config
+    def __init__(self, oidc_config: oidc_provider.AbstractOIDCProviderConfig):
+        self.oidc_config = oidc_config
 
-        if not hasattr(self, "jwks_client"):
-            self.jwks_client = jwt.PyJWKClient(
-                uri=self.provider_config.get_jwks_uri()
+        if JWTConfig._jwks_client is None:
+            JWTConfig._jwks_client = jwt.PyJWKClient(
+                uri=self.oidc_config.get_jwks_uri()
             )
+        self.jwks_client = JWTConfig._jwks_client
 
 
 class JWTAPIKeyCookie(security.APIKeyCookie):
-    def __init__(
-        self, provider_config: oidc_provider.AbstractOIDCProviderConfig
-    ):
+    def __init__(self, oidc_config: oidc_provider.AbstractOIDCProviderConfig):
         super().__init__(name="id_token", auto_error=True)
-        self.provider_config = provider_config
-        self.jwt_config = JWTConfigBorg(provider_config)
+        self.oidc_config = oidc_config
+        self.jwt_config = JWTConfig(oidc_config)
 
     async def __call__(self, request: fastapi.Request) -> str:
         token: str | None = await super().__call__(request)
@@ -59,14 +55,10 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
             return jwt.decode(
                 jwt=token,
                 key=signing_key.key,
-                algorithms=self.provider_config.get_supported_signing_algorithms(),
-                audience=self.provider_config.get_client_id(),
-                issuer=self.provider_config.get_issuer(),
-                options={
-                    "verify_exp": True,
-                    "verify_iat": True,
-                    "verify_nbf": True,
-                },
+                algorithms=self.oidc_config.get_supported_signing_algorithms(),
+                audience=self.oidc_config.get_client_id(),
+                issuer=self.oidc_config.get_issuer(),
+                options={"require": ["exp", "iat"]},
             )
         except jwt_exceptions.ExpiredSignatureError:
             raise exceptions.TokenSignatureExpired()

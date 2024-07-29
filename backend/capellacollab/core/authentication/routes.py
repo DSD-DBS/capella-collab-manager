@@ -46,8 +46,8 @@ async def api_get_token(
     provider: oidc_provider.AbstractOIDCProvider = fastapi.Depends(
         injectables.get_oidc_provider
     ),
-    provider_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
-        injectables.get_oidc_provider_config
+    oidc_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
+        injectables.get_oidc_config
     ),
 ):
     tokens = provider.exchange_code_for_tokens(
@@ -55,7 +55,7 @@ async def api_get_token(
     )
 
     validated_id_token = validate_id_token(
-        tokens["id_token"], provider_config, None
+        tokens["id_token"], oidc_config, None
     )
     user = create_or_update_user(db, validated_id_token)
 
@@ -72,8 +72,8 @@ async def api_refresh_token(
     provider: oidc_provider.AbstractOIDCProvider = fastapi.Depends(
         injectables.get_oidc_provider
     ),
-    provider_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
-        injectables.get_oidc_provider_config
+    oidc_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
+        injectables.get_oidc_config
     ),
 ):
     if refresh_token is None or refresh_token == "":
@@ -82,7 +82,7 @@ async def api_refresh_token(
     tokens = provider.refresh_token(refresh_token)
 
     validated_id_token = validate_id_token(
-        tokens["id_token"], provider_config, None
+        tokens["id_token"], oidc_config, None
     )
     user = create_or_update_user(db, validated_id_token)
 
@@ -102,11 +102,11 @@ async def validate_token(
     request: fastapi.Request,
     scope: users_models.Role | None = None,
     db: orm.Session = fastapi.Depends(database.get_db),
-    provider_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
-        injectables.get_oidc_provider_config
+    oidc_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
+        injectables.get_oidc_config
     ),
 ):
-    username = await api_key_cookie.JWTAPIKeyCookie(provider_config)(request)
+    username = await api_key_cookie.JWTAPIKeyCookie(oidc_config)(request)
     if scope and scope.ADMIN:
         auth_injectables.RoleVerification(
             required_role=users_models.Role.ADMIN
@@ -116,17 +116,17 @@ async def validate_token(
 
 def validate_id_token(
     id_token: str,
-    provider_config: oidc_provider.AbstractOIDCProviderConfig,
+    oidc_config: oidc_provider.AbstractOIDCProviderConfig,
     nonce: str | None,
 ) -> dict[str, str]:
     validated_id_token = api_key_cookie.JWTAPIKeyCookie(
-        provider_config
+        oidc_config
     ).validate_token(id_token)
 
     if nonce and not hmac.compare_digest(validated_id_token["nonce"], nonce):
         raise exceptions.NonceMismatchError()
 
-    if provider_config.get_client_id() not in validated_id_token["aud"]:
+    if oidc_config.get_client_id() not in validated_id_token["aud"]:
         raise exceptions.UnauthenticatedError()
 
     return validated_id_token

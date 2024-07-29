@@ -39,7 +39,9 @@ def fixture_unique_username() -> str:
 def fixture_basic_user(
     db: orm.Session, executor_name: str
 ) -> users_models.DatabaseUser:
-    return users_crud.create_user(db, executor_name, users_models.Role.USER)
+    return users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
 
 
 @pytest.fixture(name="user")
@@ -60,7 +62,9 @@ def fixture_user(
 def fixture_admin(
     db: orm.Session, executor_name: str
 ) -> t.Generator[users_models.DatabaseUser, None, None]:
-    admin = users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    admin = users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     def get_mock_own_user():
         return admin
@@ -74,7 +78,9 @@ def fixture_admin(
 
 @pytest.fixture(name="test_user")
 def fixture_test_user(db: orm.Session) -> users_models.DatabaseUser:
-    return users_crud.create_user(db, "testuser", users_models.Role.USER)
+    return users_crud.create_user(
+        db, "testuser", "testuser", None, users_models.Role.USER
+    )
 
 
 @pytest.fixture(name="user_workspace")

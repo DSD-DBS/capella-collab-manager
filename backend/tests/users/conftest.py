@@ -13,7 +13,9 @@ from capellacollab.users import models as users_models
 
 @pytest.fixture(name="unauthenticated_user")
 def fixture_unauthenticated_user(db):
-    user = users_crud.create_user(db, str(uuid1()), users_models.Role.USER)
+    user = users_crud.create_user(
+        db, str(uuid1()), str(uuid1()), None, users_models.Role.USER
+    )
 
     def get_mock_own_user():
         return user

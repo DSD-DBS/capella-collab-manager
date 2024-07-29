@@ -49,7 +49,9 @@ def test_rename_toolmodel_successful(
     executor_name: str,
     db: orm.Session,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.patch(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
@@ -70,7 +72,9 @@ def test_rename_toolmodel_where_name_already_exists(
     executor_name: str,
     db: orm.Session,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     with mock.patch(
         "capellacollab.projects.toolmodels.crud.get_model_by_slugs",
@@ -97,7 +101,9 @@ def test_update_toolmodel_order_successful(
     executor_name: str,
     db: orm.Session,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.patch(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",

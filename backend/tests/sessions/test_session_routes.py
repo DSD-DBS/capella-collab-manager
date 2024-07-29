@@ -267,7 +267,7 @@ def test_own_sessions(
     tool_version: tools_models.DatabaseVersion,
 ):
     another_user = users_crud.create_user(
-        db, "other-user", users_models.Role.USER
+        db, "other-user", "other-user", None, users_models.Role.USER
     )
 
     session_of_other_user = sessions_models.DatabaseSession(

@@ -89,7 +89,9 @@ def test_create_t4c_instance_already_existing_name(
 def test_get_t4c_instances(
     client: testclient.TestClient, db: orm.Session, executor_name: str
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.get(
         "/api/v1/settings/modelsources/t4c",
@@ -109,7 +111,9 @@ def test_get_t4c_instance(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.get(
         f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
@@ -127,7 +131,9 @@ def test_patch_t4c_instance(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.patch(
         f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
@@ -156,7 +162,9 @@ def test_patch_archived_t4c_instance_error(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     t4c_crud.update_t4c_instance(
         db, t4c_instance, t4c_models.PatchT4CInstance(is_archived=True)
@@ -178,7 +186,9 @@ def test_unarchive_t4c_instance(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     t4c_crud.update_t4c_instance(
         db, t4c_instance, t4c_models.PatchT4CInstance(is_archived=True)
@@ -253,7 +263,9 @@ def test_injectables_raise_when_archived_instance(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     t4c_crud.update_t4c_instance(
         db, t4c_instance, t4c_models.PatchT4CInstance(is_archived=True)
@@ -271,7 +283,9 @@ def test_update_t4c_instance_password_empty_string(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     expected_password = t4c_instance.password
 
@@ -297,7 +311,9 @@ def test_get_t4c_license_usage(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
     response = client.get(
         f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/licenses",
     )
@@ -314,7 +330,9 @@ def test_get_t4c_license_usage_no_status(
     executor_name: str,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
     responses.get(
         "http://localhost:8086/status/json",
         status=status.HTTP_200_OK,

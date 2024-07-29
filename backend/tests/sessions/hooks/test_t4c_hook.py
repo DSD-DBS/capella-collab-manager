@@ -235,7 +235,11 @@ def test_t4c_connection_hook_shared_session(
     session: sessions_models.DatabaseSession,
 ):
     user2 = users_crud.create_user(
-        db, "shared_with_user", users_models.Role.USER
+        db,
+        "shared_with_user",
+        "shared_with_user",
+        None,
+        users_models.Role.USER,
     )
     session.owner = user2
     result = t4c.T4CIntegration().session_connection_hook(

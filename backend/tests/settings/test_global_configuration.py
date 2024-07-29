@@ -111,7 +111,9 @@ def test_update_general_configuration_additional_properties_fails(
 def test_metadata_is_updated(
     client: testclient.TestClient, db: orm.Session, executor_name: str
 ):
-    admin = users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    admin = users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     def get_mock_own_user():
         return admin

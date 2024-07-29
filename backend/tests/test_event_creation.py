@@ -37,7 +37,7 @@ def test_create_admin_user_by_system(db):
 
 def test_create_user_created_event(client, db, executor_name, unique_username):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
 
     response = client.post(
@@ -61,7 +61,7 @@ def test_create_user_created_event(client, db, executor_name, unique_username):
 
 def test_user_deleted_cleanup(client, db, executor_name, unique_username):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
 
     response = client.post(
@@ -106,9 +106,11 @@ def test_create_assign_user_role_event(
     expected_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, initial_role)
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, initial_role
+    )
 
     response = client.patch(
         f"/api/v1/users/{user.id}",
@@ -152,9 +154,11 @@ def test_create_user_added_to_project_event(
     expected_permission_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
@@ -191,9 +195,11 @@ def test_create_user_removed_from_project_event(
     client, db, executor_name, unique_username, project
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     projects_users_crud.add_user_to_project(
         db,
@@ -228,9 +234,11 @@ def test_create_manager_added_to_project_event(
     client, db, executor_name, unique_username, project
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
@@ -287,9 +295,11 @@ def test_create_user_permission_change_event(
     expected_permission_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     projects_users_crud.add_user_to_project(
         db,
@@ -347,9 +357,11 @@ def test_create_user_role_change_event(
     expected_role_event_type,
 ):
     executor = users_crud.create_user(
-        db, executor_name, users_models.Role.ADMIN
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     projects_users_crud.add_user_to_project(
         db,

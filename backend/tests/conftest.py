@@ -18,6 +18,7 @@ from sqlalchemy import engine, orm
 from testcontainers import postgres
 
 from capellacollab.__main__ import app
+from capellacollab.core.authentication import oidc_provider
 from capellacollab.core.database import migration
 
 os.environ["DEVELOPMENT_MODE"] = "1"
@@ -93,8 +94,8 @@ def fixture_db(
 @pytest.fixture()
 def client(monkeypatch: pytest.MonkeyPatch) -> testclient.TestClient:
     monkeypatch.setattr(
-        "capellacollab.core.authentication.api_key_cookie.JWTConfigBorg",
-        core_conftest.MockJWTConfigBorg,
+        "capellacollab.core.authentication.api_key_cookie.JWTConfig",
+        core_conftest.MockJWTConfig,
     )
 
     return testclient.TestClient(app, cookies={"id_token": "any"})
@@ -103,3 +104,15 @@ def client(monkeypatch: pytest.MonkeyPatch) -> testclient.TestClient:
 @pytest.fixture(name="logger")
 def fixture_logger() -> logging.LoggerAdapter:
     return logging.LoggerAdapter(logging.getLogger())
+
+
+@pytest.fixture(name="mock_oidc_config")
+def fixture_mock_oidc_config():
+    return core_conftest.MockOIDCProviderConfig()
+
+
+@pytest.fixture(name="mock_oidc_provider")
+def fixture_mock_oidc_provider(
+    mock_oidc_config: oidc_provider.AbstractOIDCProviderConfig,
+):
+    return core_conftest.MockOIDCProvider(mock_oidc_config)
