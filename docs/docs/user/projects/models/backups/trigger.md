@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<!-- prettier-ignore -->
 !!! warning
+
     To perform the following steps, you need at least one existing configured backup.
 
 You can trigger backups at any time.

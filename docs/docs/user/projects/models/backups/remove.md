@@ -5,8 +5,8 @@
 
 # Remove a (Nightly) Backup
 
-<!-- prettier-ignore -->
 !!! warning
+
     Only administrators and project leads can remove pipelines.
 
 1. Select the project in the `Projects` overview.

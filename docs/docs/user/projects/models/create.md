@@ -52,46 +52,45 @@ reachable from inside your environment.
 
 You have to enter the following information:
 
-<!-- prettier-ignore-start -->
-
-1. **Instance**: If your environment restricts the usage of Git instances, you
-   have to select your instance here. Otherwise, you can continue with the next
-   step.
-1. **URL**: Please enter the URL of your Git repository here. All URLs accepted
-   by the [`git clone`](https://git-scm.com/docs/git-clone) are also accepted
-   in the UI.
+1.  **Instance**: If your environment restricts the usage of Git instances, you
+    have to select your instance here. Otherwise, you can continue with the
+    next step.
+1.  **URL**: Please enter the URL of your Git repository here. All URLs
+    accepted by the [`git clone`](https://git-scm.com/docs/git-clone) are also
+    accepted in the UI.
 
     !!! info
-        If your environment restricts the usage of instances, make sure to match
-        the given prefix. You can also enter `Relative URLs`. In this case,
-        you can see the resulting URL after the `info`-icon.
 
-1. **Username** and **password/token**: Please enter your username and token
-   here, which is needed to access the repository. Please note that we don't
-   have support for SSH authentication yet.
+         If your environment restricts the usage of instances, make sure to match
+         the given prefix. You can also enter `Relative URLs`. In this case,
+         you can see the resulting URL after the `info`-icon.
 
-   - For public repositories: You don't need to enter credentials. However,
-     backups will need credentials to be able to push to the repository.
-   - For private repositories: You need to enter credentials for read-only
-     sessions and backups.
+1.  **Username** and **password/token**: Please enter your username and token
+    here, which is needed to access the repository. Please note that we don't
+    have support for SSH authentication yet.
+
+    - For public repositories: You don't need to enter credentials. However,
+      backups will need credentials to be able to push to the repository.
+    - For private repositories: You need to enter credentials for read-only
+      sessions and backups.
 
     !!! danger
-        The credentials are stored in the database, and even if not accessible
-        from outside, they are stored in plain text, so the password
-        of the user should not be used. Rather use a token.
+
+         The credentials are stored in the database, and even if not accessible
+         from outside, they are stored in plain text, so the password
+         of the user should not be used. Rather use a token.
 
     !!! warning
-        The credentials should be scoped and should only work for the required
-        repository. When changing the repository URL and the credentials are not
-        changed, other project leads can gain access to different repositories
-        with your token.
 
-<!-- prettier-ignore-end -->
+         The credentials should be scoped and should only work for the required
+         repository. When changing the repository URL and the credentials are not
+         changed, other project leads can gain access to different repositories
+         with your token.
 
 ### Step 3.2 Link Existing T4C Repository
 
-<!-- prettier-ignore -->
 !!! warning
+
     This step can only be executed by administrators
 
 The TeamForCapella instance has to exist before we can continue. Please select

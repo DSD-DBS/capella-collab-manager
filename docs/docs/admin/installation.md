@@ -125,15 +125,17 @@ overview reasons, they are separated:
     - Pipeline jobs for nightly TeamForCapella to Git synchronisation
     - Session containers (Capella, Papyrus, Juypter, pure::variants)
 
-<!-- prettier-ignore -->
-1. Create the two required namespaces:
+---
+
+1.  Create the two required namespaces:
 
     ```zsh
     kubectl create namespace collab-manager # If you use another name, please update the following commands and use your namespace name.
     kubectl create namespace collab-sessions # If you use another name, please update the `values.yaml` accordingly.
     ```
 
-2. Set the `collab-manager` as default namespace in the default context (optional):
+1.  Set the `collab-manager` as default namespace in the default context
+    (optional):
 
     ```zsh
     kubectl config set-context --current --namespace=collab-manager
@@ -238,32 +240,31 @@ If a value is false, check the backend logs for more information.
 
 ## Step 10: Add TeamForCapella Support
 
-<!-- prettier-ignore -->
 !!! info "TeamForCapella server required"
+
     The setup of the TeamForCapella server and license server itself will
     not be part of this tutorial. To process, you'll need to have a running and
     reachable TeamForCapella server.
 
-<!-- prettier-ignore -->
 !!! info "Container registry required"
+
     For the TeamForCapella support, you'll need to build own Docker images. In order to use this in the cluster, an external or internal container registry is required.
 
-<!-- prettier-ignore -->
-1. Install [GNU make](https://www.gnu.org/software/make/manual/make.html) >=
-   3.82
-1. Navigate to the root of the capella-collab-manager repository.
-1. Clone the capella-dockerimages repository:
-   ```zsh
-   git clone https://github.com/DSD-DBS/capella-dockerimages
-   ```
-1. Prepare the `capella/base` and `t4c/client/base` images according to the
-   Capella Docker images documentation (Only the preparation section is
-   needed):
+1.  Install [GNU make](https://www.gnu.org/software/make/manual/make.html) >=
+    3.82
+1.  Navigate to the root of the capella-collab-manager repository.
+1.  Clone the capella-dockerimages repository:
+    ```zsh
+    git clone https://github.com/DSD-DBS/capella-dockerimages
+    ```
+1.  Prepare the `capella/base` and `t4c/client/base` images according to the
+    Capella Docker images documentation (Only the preparation section is
+    needed):
 
     - [`capella/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/base/#preparation)
     - [`t4c/client/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation)
 
-1. Set the following environment variables:
+1.  Set the following environment variables:
 
     ```zsh
     export PUSH_IMAGES=1 # Auto-push images to the container registry after build
@@ -273,12 +274,12 @@ If a value is false, check the backend logs for more information.
     export CAPELLA_DROPINS="" # Command separated list of dropins
     ```
 
-1. Then, build the `t4c/client/remote` images (the one that we'll use in the
-   Collaboration Manager):
+1.  Then, build the `t4c/client/remote` images (the one that we'll use in the
+    Collaboration Manager):
 
     ```zsh
     make t4c/client/remote
     ```
 
-1. In the Collaboration Manager UI, change the docker image of the tool to
-   `<registry>/t4c/client/remote:<capella-version>-latest`
+1.  In the Collaboration Manager UI, change the docker image of the tool to
+    `<registry>/t4c/client/remote:<capella-version>-latest`
