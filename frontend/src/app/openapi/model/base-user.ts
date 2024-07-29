@@ -15,6 +15,7 @@ import { Role } from './role';
 export interface BaseUser { 
     id: number;
     name: string;
+    idp_identifier: string;
     role: Role;
 }
 export namespace BaseUser {

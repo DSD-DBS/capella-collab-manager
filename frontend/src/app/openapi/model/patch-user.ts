@@ -9,9 +9,17 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { Role } from './role';
 
 
-export interface RefreshTokenRequest { 
-    refresh_token: string;
+export interface PatchUser { 
+    name?: string | null;
+    idp_identifier?: string | null;
+    email?: string | null;
+    role?: Role | null;
+    reason?: string | null;
 }
+export namespace PatchUser {
+}
+
 

@@ -5,7 +5,6 @@ api/events.service.ts
 api/health.service.ts
 api/metadata.service.ts
 api/notices.service.ts
-api/oauth.service.ts
 api/projects-events.service.ts
 api/projects-models-backups.service.ts
 api/projects-models-diagrams.service.ts
@@ -83,7 +82,7 @@ model/patch-project-user.ts
 model/patch-project.ts
 model/patch-t4-c-instance.ts
 model/patch-tool-model.ts
-model/patch-user-role-request.ts
+model/patch-user.ts
 model/path-validation.ts
 model/payload-response-model-list-t4-c-repository.ts
 model/payload-response-model-session-connection-information.ts
@@ -114,7 +113,6 @@ model/pure-variants-licenses-input.ts
 model/pure-variants-licenses-output.ts
 model/rdp-ports-input.ts
 model/rdp-ports-output.ts
-model/refresh-token-request.ts
 model/resources-input.ts
 model/resources-output.ts
 model/response-model.ts

@@ -15,6 +15,7 @@ import { Role } from './role';
 export interface User { 
     id: number;
     name: string;
+    idp_identifier: string;
     role: Role;
     created: string | null;
     last_login: string | null;

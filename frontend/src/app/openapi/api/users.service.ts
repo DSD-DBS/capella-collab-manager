@@ -23,7 +23,7 @@ import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
 import { HistoryEvent } from '../model/history-event';
 // @ts-ignore
-import { PatchUserRoleRequest } from '../model/patch-user-role-request';
+import { PatchUser } from '../model/patch-user';
 // @ts-ignore
 import { PostToken } from '../model/post-token';
 // @ts-ignore
@@ -135,12 +135,6 @@ export class UsersService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -220,12 +214,6 @@ export class UsersService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -309,12 +297,6 @@ export class UsersService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -384,12 +366,6 @@ export class UsersService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -467,12 +443,6 @@ export class UsersService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -538,12 +508,6 @@ export class UsersService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -617,12 +581,6 @@ export class UsersService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -688,12 +646,6 @@ export class UsersService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -767,12 +719,6 @@ export class UsersService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -842,12 +788,6 @@ export class UsersService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -921,12 +861,6 @@ export class UsersService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -992,12 +926,6 @@ export class UsersService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -1071,12 +999,6 @@ export class UsersService {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
         }
 
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
-        }
-
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
@@ -1126,21 +1048,21 @@ export class UsersService {
     }
 
     /**
-     * Update Role Of User
+     * Update User
      * @param userId 
-     * @param patchUserRoleRequest 
+     * @param patchUser 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateRoleOfUser(userId: number, patchUserRoleRequest: PatchUserRoleRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<User>;
-    public updateRoleOfUser(userId: number, patchUserRoleRequest: PatchUserRoleRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<User>>;
-    public updateRoleOfUser(userId: number, patchUserRoleRequest: PatchUserRoleRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<User>>;
-    public updateRoleOfUser(userId: number, patchUserRoleRequest: PatchUserRoleRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateUser(userId: number, patchUser: PatchUser, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<User>;
+    public updateUser(userId: number, patchUser: PatchUser, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<User>>;
+    public updateUser(userId: number, patchUser: PatchUser, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<User>>;
+    public updateUser(userId: number, patchUser: PatchUser, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (userId === null || userId === undefined) {
-            throw new Error('Required parameter userId was null or undefined when calling updateRoleOfUser.');
+            throw new Error('Required parameter userId was null or undefined when calling updateUser.');
         }
-        if (patchUserRoleRequest === null || patchUserRoleRequest === undefined) {
-            throw new Error('Required parameter patchUserRoleRequest was null or undefined when calling updateRoleOfUser.');
+        if (patchUser === null || patchUser === undefined) {
+            throw new Error('Required parameter patchUser was null or undefined when calling updateUser.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -1150,12 +1072,6 @@ export class UsersService {
         localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
         if (localVarCredential) {
             localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        // authentication (JWTBearer) required
-        localVarCredential = this.configuration.lookupCredential('JWTBearer');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
         }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
@@ -1201,11 +1117,11 @@ export class UsersService {
             }
         }
 
-        let localVarPath = `/api/v1/users/${this.configuration.encodeParam({name: "userId", value: userId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/roles`;
+        let localVarPath = `/api/v1/users/${this.configuration.encodeParam({name: "userId", value: userId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<User>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchUserRoleRequest,
+                body: patchUser,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
