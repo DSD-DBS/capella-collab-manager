@@ -9,14 +9,12 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { Role } from './role';
 
 
-export interface PatchUserRoleRequest { 
-    role: Role;
-    reason: string;
+export interface AuthorizationResponse { 
+    auth_url: string;
+    state: string;
+    nonce: string;
+    code_verifier: string;
 }
-export namespace PatchUserRoleRequest {
-}
-
 

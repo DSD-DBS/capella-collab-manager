@@ -9,3 +9,10 @@ class TokenRequest(core_pydantic.BaseModel):
     code: str
     nonce: str
     code_verifier: str
+
+
+class AuthorizationResponse(core_pydantic.BaseModel):
+    auth_url: str
+    state: str
+    nonce: str
+    code_verifier: str

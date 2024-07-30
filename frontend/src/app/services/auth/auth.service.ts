@@ -3,48 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { AuthenticationService } from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
-  SESSION_STORAGE_NONCE_KEY = 'nonce';
-  SESSION_STORAGE_CODE_VERIFIER_KEY = 'coderVerifier';
-  LOGGED_IN_KEY = 'loggedIn';
+export class AuthenticationWrapperService {
+  SESSION_STORAGE_NONCE_KEY = 'CCM_NONCE';
+  SESSION_STORAGE_CODE_VERIFIER_KEY = 'CCM_CODE_VERIFIER';
+  LOGGED_IN_KEY = 'CCM_LOGGED_IN';
 
-  constructor(private http: HttpClient) {}
-
-  getRedirectURL(): Observable<GetRedirectURLResponse> {
-    return this.http.get<GetRedirectURLResponse>(
-      environment.backend_url + '/authentication',
-    );
-  }
-
-  getIdentityToken(
-    code: string,
-    nonce: string,
-    code_verifier: string,
-  ): Observable<void> {
-    return this.http.post<void>(
-      environment.backend_url + '/authentication/tokens',
-      {
-        code,
-        nonce,
-        code_verifier,
-      },
-    );
-  }
-
-  performTokenRefresh(): Observable<void> {
-    return this.http.put<void>(
-      environment.backend_url + '/authentication/tokens',
-      {},
-    );
-  }
+  constructor(private authenticationService: AuthenticationService) {}
 
   isLoggedIn(): boolean {
     const loggedIn = localStorage.getItem(this.LOGGED_IN_KEY);
@@ -52,7 +22,7 @@ export class AuthService {
   }
 
   login(redirectTo: string) {
-    this.getRedirectURL().subscribe((res) => {
+    this.authenticationService.getAuthorizationUrl().subscribe((res) => {
       sessionStorage.setItem(res.state, redirectTo);
       sessionStorage.setItem(this.SESSION_STORAGE_NONCE_KEY, res.nonce);
       sessionStorage.setItem(
@@ -66,15 +36,6 @@ export class AuthService {
   logOut() {
     localStorage.setItem('GUAC_AUTH', '');
     localStorage.setItem(this.LOGGED_IN_KEY, 'false');
-    return this.http
-      .delete(environment.backend_url + '/authentication/tokens')
-      .subscribe();
+    this.authenticationService.logout().subscribe();
   }
-}
-
-export interface GetRedirectURLResponse {
-  auth_url: string;
-  state: string;
-  nonce: string;
-  code_verifier: string;
 }

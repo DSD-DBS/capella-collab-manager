@@ -14,13 +14,15 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { AuthenticationService } from 'src/app/openapi';
+import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private router: Router,
-    private authService: AuthService,
+    private authService: AuthenticationWrapperService,
+    private authenticationService: AuthenticationService,
   ) {}
 
   intercept(
@@ -43,7 +45,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if (err.status === 401) {
       localStorage.setItem(this.authService.LOGGED_IN_KEY, 'false');
       if (err.error.detail.err_code == 'TOKEN_SIGNATURE_EXPIRED') {
-        return this.authService.performTokenRefresh().pipe(
+        return this.authenticationService.refreshIdentityToken().pipe(
           switchMap(() => {
             return next.handle(request);
           }),

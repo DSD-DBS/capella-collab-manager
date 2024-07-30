@@ -6,7 +6,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { UsersService, User } from 'src/app/openapi';
-import { AuthService } from '../auth/auth.service';
+import { AuthenticationWrapperService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class UserWrapperService {
   }
 
   constructor(
-    private authService: AuthService,
+    private authService: AuthenticationWrapperService,
     private usersService: UsersService,
   ) {
     this.updateOwnUser();

@@ -3,6 +3,8 @@
 
 export NG_FORCE_TTY=false
 
+.ONESHELL:
+
 dev:
 	ng serve --host 0.0.0.0 --open
 
@@ -20,11 +22,11 @@ storybook:
 
 openapi:
 	python postprocess_openapi_schema.py
-	mkdir -p /tmp/openapi
+	OPENAPI_DIR=$$(mktemp -d)
 	docker run --rm \
   		-v /tmp/openapi.json:/tmp/openapi.json \
 		-v $$(pwd)/openapi_templates:/tmp/openapi_templates \
-		-v /tmp/openapi:/tmp/output \
+		-v $$OPENAPI_DIR:/tmp/output \
 		-u $$(id -u $${USER}):$$(id -g $${USER}) \
 		openapitools/openapi-generator-cli:v7.7.0 generate \
 			-i /tmp/openapi.json \
@@ -33,6 +35,7 @@ openapi:
 			--additional-properties=fileNaming=kebab-case,legacyDiscriminatorBehavior=false \
 			-g typescript-angular \
 			-o /tmp/output
-	cp ../LICENSES/.license_header_cc0.txt /tmp/openapi/.openapi-generator/FILES.license
-	cp ../LICENSES/.license_header_cc0.txt /tmp/openapi/.openapi-generator/VERSION.license
-	rsync -avh --delete /tmp/openapi/ $$(pwd)/src/app/openapi
+	cp ../LICENSES/.license_header_cc0.txt $$OPENAPI_DIR/.openapi-generator/FILES.license
+	cp ../LICENSES/.license_header_cc0.txt $$OPENAPI_DIR/.openapi-generator/VERSION.license
+	rsync -avh --delete $$OPENAPI_DIR/ $$(pwd)/src/app/openapi
+	rm -rf $$OPENAPI_DIR

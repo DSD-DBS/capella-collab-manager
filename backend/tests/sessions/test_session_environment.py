@@ -145,7 +145,9 @@ def test_environment_behaviour(
             connection_method_id="test",
             provisioning=[],
         ),
-        users_models.DatabaseUser(name="test", role=users_models.Role.USER),
+        users_models.DatabaseUser(
+            name="test", idp_identifier="test", role=users_models.Role.USER
+        ),
         None,
         operator,
         logger,

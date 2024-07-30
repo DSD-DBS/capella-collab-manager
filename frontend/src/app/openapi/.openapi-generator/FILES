@@ -1,8 +1,10 @@
 api.module.ts
 api/api.ts
-api/default.service.ts
+api/authentication.service.ts
+api/configuration.service.ts
 api/events.service.ts
 api/health.service.ts
+api/integrations-pure-variants.service.ts
 api/metadata.service.ts
 api/notices.service.ts
 api/projects-events.service.ts
@@ -25,6 +27,7 @@ api/users.service.ts
 configuration.ts
 encoder.ts
 index.ts
+model/authorization-response.ts
 model/backup-pipeline-run.ts
 model/backup.ts
 model/base-user.ts

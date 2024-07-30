@@ -9,7 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatList, MatListItem } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { UserWrapperService } from 'src/app/services/user/user.service';
 })
 export class NavBarMenuComponent {
   constructor(
-    public authService: AuthService,
+    public authService: AuthenticationWrapperService,
     public navBarService: NavBarService,
     public userService: UserWrapperService,
   ) {}

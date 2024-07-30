@@ -33,7 +33,7 @@ spec:
           {{ if .Values.docker.images.mockOauth2Server }}
           image: {{ .Values.docker.images.mockOauth2Server }}
           {{ else }}
-          image: {{ .Values.docker.registry.github }}/navikt/mock-oauth2-server:0.5.8
+          image: {{ .Values.docker.registry.github }}/navikt/mock-oauth2-server:2.1.8
           {{ end }}
           ports:
             - name: http

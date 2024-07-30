@@ -13,50 +13,34 @@ from capellacollab.events import crud as events_crud
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
-from . import api_key_cookie, exceptions, injectables, models, oidc_provider
+from . import api_key_cookie, exceptions, models, oidc
 
-router = fastapi.APIRouter()
+router = fastapi.APIRouter(tags=["Authentication"])
 
 
-@router.get("", name="Get the authorization URL for the OAuth Server")
-async def get_redirect_url(
+@router.get("")
+async def get_authorization_url(
     response: fastapi.Response,
-    provider: oidc_provider.AbstractOIDCProvider = fastapi.Depends(
-        injectables.get_oidc_provider
-    ),
-) -> dict[str, str]:
-    auth_url, state, nonce, code_verifier = (
-        provider.get_authorization_url_with_parameters()
+) -> models.AuthorizationResponse:
+    authorization_response = (
+        oidc.OIDCProvider().get_authorization_url_with_parameters()
     )
     delete_token_cookies(response)
 
-    return {
-        "auth_url": auth_url,
-        "state": state,
-        "nonce": nonce,
-        "code_verifier": code_verifier,
-    }
+    return authorization_response
 
 
-@router.post("/tokens", name="Create the identity token")
-async def api_get_token(
+@router.post("/tokens")
+async def get_identity_token(
     token_request: models.TokenRequest,
     response: fastapi.Response,
     db: orm.Session = fastapi.Depends(database.get_db),
-    provider: oidc_provider.AbstractOIDCProvider = fastapi.Depends(
-        injectables.get_oidc_provider
-    ),
-    oidc_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
-        injectables.get_oidc_config
-    ),
 ):
-    tokens = provider.exchange_code_for_tokens(
+    tokens = oidc.OIDCProvider().exchange_code_for_tokens(
         token_request.code, token_request.code_verifier
     )
 
-    validated_id_token = validate_id_token(
-        tokens["id_token"], oidc_config, None
-    )
+    validated_id_token = validate_id_token(tokens["id_token"], None)
     user = create_or_update_user(db, validated_id_token)
 
     update_token_cookies(
@@ -64,26 +48,18 @@ async def api_get_token(
     )
 
 
-@router.put("/tokens", name="Refresh the identity token")
-async def api_refresh_token(
+@router.put("/tokens")
+async def refresh_identity_token(
     response: fastapi.Response,
     refresh_token: t.Annotated[str | None, fastapi.Cookie()] = None,
     db: orm.Session = fastapi.Depends(database.get_db),
-    provider: oidc_provider.AbstractOIDCProvider = fastapi.Depends(
-        injectables.get_oidc_provider
-    ),
-    oidc_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
-        injectables.get_oidc_config
-    ),
-):
+) -> None:
     if refresh_token is None or refresh_token == "":
         raise exceptions.RefreshTokenCookieMissingError()
 
-    tokens = provider.refresh_token(refresh_token)
+    tokens = oidc.OIDCProvider().refresh_token(refresh_token)
 
-    validated_id_token = validate_id_token(
-        tokens["id_token"], oidc_config, None
-    )
+    validated_id_token = validate_id_token(tokens["id_token"], None)
     user = create_or_update_user(db, validated_id_token)
 
     update_token_cookies(
@@ -91,22 +67,19 @@ async def api_refresh_token(
     )
 
 
-@router.delete("/tokens", name="Remove the token (log out)")
+@router.delete("/tokens")
 async def logout(response: fastapi.Response):
     delete_token_cookies(response)
     return None
 
 
-@router.get("/tokens", name="Validate the token")
-async def validate_token(
+@router.get("/tokens")
+async def validate_jwt_token(
     request: fastapi.Request,
     scope: users_models.Role | None = None,
     db: orm.Session = fastapi.Depends(database.get_db),
-    oidc_config: oidc_provider.AbstractOIDCProviderConfig = fastapi.Depends(
-        injectables.get_oidc_config
-    ),
 ):
-    username = await api_key_cookie.JWTAPIKeyCookie(oidc_config)(request)
+    username = await api_key_cookie.JWTAPIKeyCookie()(request)
     if scope and scope.ADMIN:
         auth_injectables.RoleVerification(
             required_role=users_models.Role.ADMIN
@@ -116,12 +89,12 @@ async def validate_token(
 
 def validate_id_token(
     id_token: str,
-    oidc_config: oidc_provider.AbstractOIDCProviderConfig,
     nonce: str | None,
 ) -> dict[str, str]:
-    validated_id_token = api_key_cookie.JWTAPIKeyCookie(
-        oidc_config
-    ).validate_token(id_token)
+    validated_id_token = api_key_cookie.JWTAPIKeyCookie().validate_token(
+        id_token
+    )
+    oidc_config = oidc.get_cached_oidc_config()
 
     if nonce and not hmac.compare_digest(validated_id_token["nonce"], nonce):
         raise exceptions.NonceMismatchError()
@@ -145,6 +118,16 @@ def create_or_update_user(
     if not user:
         user = users_crud.create_user(db, username, idp_identifier, email)
         events_crud.create_user_creation_event(db, user)
+
+    if user.email != email:
+        user = users_crud.update_user(
+            db, user, users_models.PatchUser(email=email)
+        )
+
+    if user.name != username:
+        user = users_crud.update_user(
+            db, user, users_models.PatchUser(name=username)
+        )
 
     users_crud.update_last_login(db, user)
 

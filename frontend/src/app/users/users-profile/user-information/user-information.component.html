@@ -2,7 +2,6 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-
 @if (user && userService.user?.role === "administrator") {
   <div class="collab-card overflow-x-auto">
     <h2 class="text-xl font-medium">User information</h2>
@@ -16,6 +15,9 @@
       </div>
     }
     <div>Identity provider identifier: {{ user.idp_identifier }}</div>
+    @if (user.email) {
+      <div>Email: {{ user.email }}</div>
+    }
     @if (userEvents) {
       <div>
         <table mat-table [dataSource]="historyEventDataSource">

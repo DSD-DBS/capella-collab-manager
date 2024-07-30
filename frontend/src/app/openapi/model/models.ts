@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+export * from './authorization-response';
 export * from './backup';
 export * from './backup-pipeline-run';
 export * from './base-user';

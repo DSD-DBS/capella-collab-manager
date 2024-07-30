@@ -46,7 +46,8 @@ def test_create_tool(client: testclient.TestClient):
 
 @pytest.mark.usefixtures("admin")
 def test_update_tool(
-    client: testclient.TestClient, tool: tools_models.DatabaseTool
+    client: testclient.TestClient,
+    tool: tools_models.DatabaseTool,
 ):
     """Test updating a tool"""
     response = client.put(
@@ -85,7 +86,8 @@ def test_update_tool(
 
 @pytest.mark.usefixtures("admin")
 def test_delete_tool(
-    client: testclient.TestClient, tool: tools_models.DatabaseTool
+    client: testclient.TestClient,
+    tool: tools_models.DatabaseTool,
 ):
     """Test deleting a tool"""
     response = client.delete(

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import abc
+import functools
 import logging
 import typing as t
 
@@ -10,46 +10,12 @@ from oauthlib import common, oauth2
 
 from capellacollab.config import config
 
-from . import exceptions
+from . import exceptions, models
 
 logger = logging.getLogger(__name__)
 
 
-class AbstractOIDCProviderConfig(abc.ABC):
-    @abc.abstractmethod
-    def get_authorization_endpoint(self) -> str:
-        pass
-
-    @abc.abstractmethod
-    def get_token_endpoint(self) -> str:
-        pass
-
-    @abc.abstractmethod
-    def get_jwks_uri(self) -> str:
-        pass
-
-    @abc.abstractmethod
-    def get_supported_signing_algorithms(self) -> list[str]:
-        pass
-
-    @abc.abstractmethod
-    def get_issuer(self) -> str:
-        pass
-
-    @abc.abstractmethod
-    def get_scopes(self) -> list[str]:
-        pass
-
-    @abc.abstractmethod
-    def get_client_id(self) -> str:
-        pass
-
-    @abc.abstractmethod
-    def get_client_secret(self) -> str:
-        pass
-
-
-class WellKnownOIDCProviderConfig(AbstractOIDCProviderConfig):
+class OIDCProviderConfig:
     def __init__(self):
         self.well_known_uri = config.authentication.endpoints.well_known
         self.well_known = self._fetch_well_known_configuration()
@@ -92,32 +58,16 @@ class WellKnownOIDCProviderConfig(AbstractOIDCProviderConfig):
         return config.authentication.client.id
 
 
-class AbstractOIDCProvider(abc.ABC):
-    def __init__(self, oidc_config: AbstractOIDCProviderConfig):
-        self.oidc_config = oidc_config
-
-    @abc.abstractmethod
-    def get_authorization_url_with_parameters(
-        self,
-    ) -> t.Tuple[str, str, str, str]:
-        pass
-
-    @abc.abstractmethod
-    def exchange_code_for_tokens(
-        self, authorization_code: str, code_verifier: str
-    ) -> dict[str, t.Any]:
-        pass
-
-    @abc.abstractmethod
-    def refresh_token(self, _refresh_token: str) -> dict[str, t.Any]:
-        pass
+@functools.lru_cache
+def get_cached_oidc_config() -> OIDCProviderConfig:
+    return OIDCProviderConfig()
 
 
-class OIDCProvider(AbstractOIDCProvider):
+class OIDCProvider:
     CODE_CHALLENGE_METHOD = "S256"
 
-    def __init__(self, oidc_config: AbstractOIDCProviderConfig):
-        super().__init__(oidc_config)
+    def __init__(self):
+        self.oidc_config = get_cached_oidc_config()
         self.web_client: oauth2.WebApplicationClient = (
             oauth2.WebApplicationClient(
                 client_id=self.oidc_config.get_client_id()
@@ -126,10 +76,10 @@ class OIDCProvider(AbstractOIDCProvider):
 
     def get_authorization_url_with_parameters(
         self,
-    ) -> t.Tuple[str, str, str, str]:
+    ) -> models.AuthorizationResponse:
         state = common.generate_token()
-
         nonce = common.generate_nonce()
+
         code_verifier = self.web_client.create_code_verifier(length=43)
         code_challenge = self.web_client.create_code_challenge(
             code_verifier, OIDCProvider.CODE_CHALLENGE_METHOD
@@ -145,7 +95,12 @@ class OIDCProvider(AbstractOIDCProvider):
             code_challenge_method=OIDCProvider.CODE_CHALLENGE_METHOD,
         )
 
-        return (auth_url, state, nonce, code_verifier)
+        return models.AuthorizationResponse(
+            auth_url=auth_url,
+            state=state,
+            nonce=nonce,
+            code_verifier=code_verifier,
+        )
 
     def exchange_code_for_tokens(
         self, authorization_code: str, code_verifier: str

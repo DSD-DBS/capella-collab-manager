@@ -177,6 +177,7 @@ def test_create_session_without_provisioning(
     assert kubernetes.sessions
 
 
+@pytest.mark.usefixtures("executor_name")
 def test_validate_session_token_with_invalid_session(
     client: testclient.TestClient,
 ):

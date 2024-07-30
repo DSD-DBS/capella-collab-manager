@@ -19,10 +19,11 @@ router = fastapi.APIRouter(
                 required_role=users_models.Role.ADMIN
             )
         )
-    ]
+    ],
+    tags=["Configuration"],
 )
 
-schema_router = fastapi.APIRouter(dependencies=[])
+schema_router = fastapi.APIRouter(dependencies=[], tags=["Configuration"])
 
 
 @router.get(

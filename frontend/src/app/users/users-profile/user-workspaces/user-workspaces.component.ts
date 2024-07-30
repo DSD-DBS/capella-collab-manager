@@ -44,7 +44,12 @@ export class UserWorkspacesComponent {
 
   reloadWorkspaces() {
     this.workspaces = undefined;
-    if (this._user === undefined) return;
+    if (
+      this._user === undefined ||
+      this.userService.user === undefined ||
+      this.userService.user.role !== 'administrator'
+    )
+      return;
 
     this.usersService.getWorkspacesForUser(this._user.id).subscribe({
       next: (workspaces) => {

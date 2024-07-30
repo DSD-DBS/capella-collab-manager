@@ -3,10 +3,12 @@
 
 import pytest
 import sqlalchemy as sa
+from fastapi import testclient
 from sqlalchemy import orm
 
 from capellacollab import config
 from capellacollab.events import models as events_models
+from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
@@ -16,9 +18,8 @@ reason: str = "TestReason"
 
 
 def test_create_admin_user_by_system(db):
-    user: users_models.DatabaseUser = users_crud.get_user_by_name(
-        db, config.config.initial.admin
-    )
+    user = users_crud.get_user_by_name(db, config.config.initial.admin)
+    assert user is not None
 
     events: list[events_models.DatabaseUserHistoryEvent] = (
         get_events_by_user_id(db, user.id)
@@ -41,8 +42,13 @@ def test_create_user_created_event(client, db, executor_name, unique_username):
     )
 
     response = client.post(
-        "/api/v1/users/",
-        json={"name": unique_username, "role": "user", "reason": reason},
+        "/api/v1/users",
+        json={
+            "name": unique_username,
+            "role": "user",
+            "reason": reason,
+            "idp_identifier": "test",
+        },
     )
 
     events = get_events_by_username(db, unique_username)
@@ -59,14 +65,24 @@ def test_create_user_created_event(client, db, executor_name, unique_username):
     assert event.user_id == int(response.json()["id"])
 
 
-def test_user_deleted_cleanup(client, db, executor_name, unique_username):
+def test_user_deleted_cleanup(
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
 
     response = client.post(
-        "/api/v1/users/",
-        json={"name": unique_username, "role": "user", "reason": reason},
+        "/api/v1/users",
+        json={
+            "name": unique_username,
+            "idp_identifier": "test",
+            "role": "user",
+            "reason": reason,
+        },
     )
 
     assert response.status_code == 200
@@ -97,13 +113,13 @@ def test_user_deleted_cleanup(client, db, executor_name, unique_username):
     ],
 )
 def test_create_assign_user_role_event(
-    client,
-    db,
-    executor_name,
-    unique_username,
-    initial_role,
-    target_role,
-    expected_event_type,
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+    initial_role: users_models.Role,
+    target_role: users_models.Role,
+    expected_event_type: events_models.EventType,
 ):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
@@ -145,13 +161,13 @@ def test_create_assign_user_role_event(
     ],
 )
 def test_create_user_added_to_project_event(
-    client,
-    db,
-    executor_name,
-    unique_username,
-    project,
-    permission,
-    expected_permission_event_type,
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
+    permission: projects_users_models.ProjectUserPermission,
+    expected_permission_event_type: events_models.EventType,
 ):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
@@ -192,7 +208,11 @@ def test_create_user_added_to_project_event(
 
 
 def test_create_user_removed_from_project_event(
-    client, db, executor_name, unique_username, project
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
 ):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
@@ -231,7 +251,11 @@ def test_create_user_removed_from_project_event(
 
 
 def test_create_manager_added_to_project_event(
-    client, db, executor_name, unique_username, project
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
 ):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
@@ -285,14 +309,14 @@ def test_create_manager_added_to_project_event(
     ],
 )
 def test_create_user_permission_change_event(
-    client,
-    db,
-    executor_name,
-    unique_username,
-    project,
-    initial_permission,
-    target_permission,
-    expected_permission_event_type,
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
+    initial_permission: projects_users_models.ProjectUserPermission,
+    target_permission: projects_users_models.ProjectUserPermission,
+    expected_permission_event_type: events_models.EventType,
 ):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
@@ -347,14 +371,14 @@ def test_create_user_permission_change_event(
     ],
 )
 def test_create_user_role_change_event(
-    client,
-    db,
-    executor_name,
-    unique_username,
-    project,
-    initial_role,
-    target_role,
-    expected_role_event_type,
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+    project: projects_models.DatabaseProject,
+    initial_role: projects_users_models.ProjectUserRole,
+    target_role: projects_users_models.ProjectUserRole,
+    expected_role_event_type: events_models.EventType,
 ):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN

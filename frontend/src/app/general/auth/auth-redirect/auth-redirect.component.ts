@@ -6,7 +6,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { AuthenticationService } from 'src/app/openapi';
+import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -18,7 +19,8 @@ export class AuthRedirectComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private toastService: ToastService,
-    private authService: AuthService,
+    private authService: AuthenticationWrapperService,
+    private authenticationService: AuthenticationService,
     private userService: UserWrapperService,
     private router: Router,
   ) {}
@@ -66,8 +68,12 @@ export class AuthRedirectComponent implements OnInit {
           this.authService.SESSION_STORAGE_CODE_VERIFIER_KEY,
         );
 
-        this.authService
-          .getIdentityToken(params.code, nonce, codeVerifier)
+        this.authenticationService
+          .getIdentityToken({
+            code: params.code,
+            nonce,
+            code_verifier: codeVerifier,
+          })
           .subscribe({
             next: () => {
               localStorage.setItem(this.authService.LOGGED_IN_KEY, 'true');

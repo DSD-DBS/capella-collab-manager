@@ -87,7 +87,9 @@ def test_create_t4c_instance_already_existing_name(
 
 @pytest.mark.usefixtures("t4c_instance")
 def test_get_t4c_instances(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
     users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN

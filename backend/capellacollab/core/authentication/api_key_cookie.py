@@ -11,7 +11,7 @@ from jwt import exceptions as jwt_exceptions
 
 from capellacollab.config import config
 
-from . import exceptions, oidc_provider
+from . import exceptions, oidc
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ auth_config = config.authentication
 class JWTConfig:
     _jwks_client = None
 
-    def __init__(self, oidc_config: oidc_provider.AbstractOIDCProviderConfig):
+    def __init__(self, oidc_config: oidc.OIDCProviderConfig):
         self.oidc_config = oidc_config
 
         if JWTConfig._jwks_client is None:
@@ -32,10 +32,10 @@ class JWTConfig:
 
 
 class JWTAPIKeyCookie(security.APIKeyCookie):
-    def __init__(self, oidc_config: oidc_provider.AbstractOIDCProviderConfig):
+    def __init__(self):
         super().__init__(name="id_token", auto_error=True)
-        self.oidc_config = oidc_config
-        self.jwt_config = JWTConfig(oidc_config)
+        self.oidc_config = oidc.get_cached_oidc_config()
+        self.jwt_config = JWTConfig(self.oidc_config)
 
     async def __call__(self, request: fastapi.Request) -> str:
         token: str | None = await super().__call__(request)
@@ -62,6 +62,16 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
             )
         except jwt_exceptions.ExpiredSignatureError:
             raise exceptions.TokenSignatureExpired()
+        except jwt_exceptions.InvalidIssuerError:
+            log.exception(
+                "Expected issuer '%s'. Got '%s'",
+                self.oidc_config.get_issuer(),
+                jwt.decode(
+                    jwt=token,
+                    options={"verify_signature": False},
+                )["iss"],
+            )
+            raise exceptions.JWTValidationFailed()
         except jwt_exceptions.PyJWTError:
             log.exception("JWT validation failed", exc_info=True)
             raise exceptions.JWTValidationFailed()

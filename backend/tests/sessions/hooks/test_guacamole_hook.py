@@ -27,7 +27,7 @@ def fixture_session() -> sessions_models.DatabaseSession:
         created_at=datetime.datetime.now(),
         type=sessions_models.SessionType.READONLY,
         owner=users_models.DatabaseUser(
-            name="test", role=users_models.Role.USER
+            name="test", idp_identifier="test", role=users_models.Role.USER
         ),
         tool=tool_version.tool,
         version=tool_version,
@@ -141,7 +141,7 @@ def test_guacamole_configuration_hook(
             "host": "test",
         },
         user=users_models.DatabaseUser(
-            name="test", role=users_models.Role.USER
+            name="test", idp_identifier="test", role=users_models.Role.USER
         ),
         connection_method=tools_models.GuacamoleConnectionMethod(),
     )
@@ -180,7 +180,7 @@ def test_fail_if_guacamole_unreachable(
                 "host": "test",
             },
             user=users_models.DatabaseUser(
-                name="test", role=users_models.Role.USER
+                name="test", idp_identifier="test", role=users_models.Role.USER
             ),
             connection_method=tools_models.GuacamoleConnectionMethod(),
         )
@@ -208,7 +208,7 @@ def test_guacamole_hook_not_executed_for_http_method(
         },
         db_session=session,
         user=users_models.DatabaseUser(
-            name="test", role=users_models.Role.USER
+            name="test", idp_identifier="test", role=users_models.Role.USER
         ),
         connection_method=tools_models.HTTPConnectionMethod(),
     )
@@ -236,7 +236,7 @@ def test_skip_guacamole_user_deletion_on_404(
             "host": "test",
         },
         user=users_models.DatabaseUser(
-            name="test", role=users_models.Role.USER
+            name="test", idp_identifier="test", role=users_models.Role.USER
         ),
         connection_method=tools_models.GuacamoleConnectionMethod(),
     )

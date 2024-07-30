@@ -21,6 +21,7 @@ router = fastapi.APIRouter(
             )
         )
     ],
+    tags=["Integrations - PureVariants"],
 )
 
 

@@ -9,12 +9,16 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-export * from './default.service';
-import { DefaultService } from './default.service';
+export * from './authentication.service';
+import { AuthenticationService } from './authentication.service';
+export * from './configuration.service';
+import { ConfigurationService } from './configuration.service';
 export * from './events.service';
 import { EventsService } from './events.service';
 export * from './health.service';
 import { HealthService } from './health.service';
+export * from './integrations-pure-variants.service';
+import { IntegrationsPureVariantsService } from './integrations-pure-variants.service';
 export * from './metadata.service';
 import { MetadataService } from './metadata.service';
 export * from './notices.service';
@@ -53,4 +57,4 @@ export * from './users-token.service';
 import { UsersTokenService } from './users-token.service';
 export * from './users-workspaces.service';
 import { UsersWorkspacesService } from './users-workspaces.service';
-export const APIS = [DefaultService, EventsService, HealthService, MetadataService, NoticesService, ProjectsService, ProjectsEventsService, ProjectsModelsService, ProjectsModelsBackupsService, ProjectsModelsDiagramsService, ProjectsModelsGitService, ProjectsModelsModelComplexityBadgeService, ProjectsModelsRestrictionsService, ProjectsModelsT4CService, SessionsService, SettingsModelsourcesGitService, SettingsModelsourcesT4CService, ToolsService, UsersService, UsersSessionsService, UsersTokenService, UsersWorkspacesService];
+export const APIS = [AuthenticationService, ConfigurationService, EventsService, HealthService, IntegrationsPureVariantsService, MetadataService, NoticesService, ProjectsService, ProjectsEventsService, ProjectsModelsService, ProjectsModelsBackupsService, ProjectsModelsDiagramsService, ProjectsModelsGitService, ProjectsModelsModelComplexityBadgeService, ProjectsModelsRestrictionsService, ProjectsModelsT4CService, SessionsService, SettingsModelsourcesGitService, SettingsModelsourcesT4CService, ToolsService, UsersService, UsersSessionsService, UsersTokenService, UsersWorkspacesService];

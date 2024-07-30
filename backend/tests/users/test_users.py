@@ -18,7 +18,9 @@ from capellacollab.users.workspaces import models as user_workspace_models
 
 
 def test_get_user_by_id_admin(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
     users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN

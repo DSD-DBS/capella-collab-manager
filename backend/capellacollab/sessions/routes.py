@@ -380,7 +380,8 @@ def get_session_connection_information(
             key=c_key,
             value=c_value,
             path=f"/session/{session.id}",
-            expires=datetime.datetime.now() + datetime.timedelta(hours=24),
+            expires=datetime.datetime.now(datetime.UTC)
+            + datetime.timedelta(hours=24),
         )
 
     return core_models.PayloadResponseModel(

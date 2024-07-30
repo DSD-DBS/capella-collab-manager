@@ -29,6 +29,7 @@ class BaseUser(core_pydantic.BaseModel):
     id: int
     name: str
     idp_identifier: str
+    email: str | None = None
     role: Role
 
 
