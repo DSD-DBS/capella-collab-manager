@@ -41,11 +41,10 @@ default:
   tags:
     - docker
 
-.decrypt: &decrypt
+.sops: &sops
   - apt-get install -y jq
   - gpg --import ${PRIVATE_GPG_PATH}
-  - sops -d ${TARGET}/secret.docker.json > plain.docker.json
-  - DOCKER_REGISTRY=$(cat plain.docker.json | jq -r ".registry_unencrypted")
+  - DOCKER_REGISTRY=$(sops -d ${TARGET}/secret.docker.json | jq -r ".registry")
 
 .github: &github
   - git clone https://github.com/DSD-DBS/capella-collab-manager.git
@@ -55,10 +54,10 @@ default:
 .docker: &docker
   - docker info
   - >
-    cat ../plain.docker.json | \
+    sops -d ../${TARGET}/secret.docker.json | \
       jq -r ".password" | \
       docker login \
-        -u $(cat ../plain.docker.json | jq -r ".username_unencrypted") \
+        -u $(sops -d ../${TARGET}/secret.docker.json | jq -r ".username") \
         --password-stdin \
         ${DOCKER_REGISTRY}
   - docker pull $BASE_IMAGE
@@ -72,7 +71,7 @@ default:
   - docker push ${IMAGE}:${DOCKER_TAG}
 
 .prepare: &prepare
-  - *decrypt
+  - *sops
   # prettier-ignore
   - DOCKER_TAG=$(echo ${REVISION} | sed 's/[^a-zA-Z0-9.]/-/g')-$CI_COMMIT_REF_SLUG
   - *github
