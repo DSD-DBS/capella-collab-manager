@@ -24,38 +24,57 @@ sure to enable the "Expand variable reference" flag.
   the Grafana Helm chart. It is useful if your deployment environment has
   limited access, so you can specify a URL that is accessible for you.
 
-In addition you can adjust the following variables when running a pipeline:
+## SOPS configuration
 
-- `TARGET`: The target for which you want to build the images (More information
-  why this is important [below](#docker-and-kubernetes-sops-files))
-- `REVISION`: The revision of the capella collab manager repository you want to
-  use
+We make use of [SOPS](https://github.com/getsops/sops) files to store secrets
+used in the deployment template.
 
-### Docker and Kubernetes SOPS Files
+Create a file `.sops.yaml` at the root level of the repository with the
+following structure:
 
-For the `k8s-deploy.yml` you need to have some secret sops files in place.
-First of all, you need a `secret.docker.json` file as described
-[here](#docker-sops-file). In addition, you need to have a `secret.k8s.json` in
-each target directory created by a json file having the following structure:
+```yaml
+creation_rules:
+  - path_regex: .*
+    encrypted_regex: ^(password|secret|adminPassword|uri|token)
+    key_groups:
+      - pgp:
+          - <GPG fingerprint>
+```
+
+Ensure that the GPG fingerprint of the Gitlab runner is present in the
+`.sops.yaml` such that it can decrypt the file.
+
+---
+
+Create a file to store the Kubernetes configuration:
+
+```zsh
+sops edit ./$TARGET/secret.k8s.json
+```
+
+The file has to contain the following content:
 
 ```json
 {
-  "server_unencrypted": "<k8s server>",
-  "namespace_unencrypted": "<namespace>",
-  "release_unencrypted": "<release>",
-  "username_unencrypted": "<username>",
+  "server": "<k8s server>",
+  "namespace": "<namespace>",
+  "release": "<release>",
+  "username": "<username>",
   "token": "<unencrypted token>"
 }
 ```
 
-In addition, you need to have a `general.values.yaml` containing all the
-`values.yaml` values that do not have to be encrypted and a
-`secret.values.yaml` only containing the values that should be encrypted
-(Please do not use YAML anchors in the `secret.values.yaml` file and do not use
-the `_unencrypted` suffix in the variable names).
+---
 
-Please delete the plain text files containing secrets directly after encrypting
-them.
+Another configuration file is the encrypted `values.yaml`. In this file you can
+overwrite values from the
+[default `values.yaml`](https://github.com/DSD-DBS/capella-collab-manager/blob/main/helm/values.yaml).
+
+Create the file with:
+
+```zsh
+sops edit ./$TARGET/values.yaml
+```
 
 ## Gitlab Repository Tree
 
@@ -64,15 +83,12 @@ The tree inside of your Gitlab repository should look like:
 ```zsh
 ├── .gitlab-ci.yml
 ├── .sops.yaml
-├── favicon.ico
 ├── target1
-│   ├── general.values.yaml
-│   ├── secret.values.yaml
+│   ├── values.yaml
 │   ├── secret.docker.json
 │   └── secret.k8s.json
 ├── target2
-│   ├── general.values.yaml
-│   ├── secret.values.yaml
+│   ├── values.yaml
 │   ├── secret.docker.json
 │   └── secret.k8s.json
 └── ...

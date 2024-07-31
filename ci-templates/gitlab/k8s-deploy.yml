@@ -12,33 +12,12 @@ variables:
     value: 'main'
     description: 'Revision of the Github repository (capella-collab-manager)'
 
-.decrypt: &decrypt
+.sops: &sops
   - apt-get install -y jq
   - gpg --import ${PRIVATE_GPG_PATH}
-  - sops -d ${TARGET}/secret.values.yaml > plain.values.yaml
-  - sops -d ${TARGET}/secret.k8s.json > plain.k8s.json
-  # Remove _unencrypted suffix from plain.k8s.json
-  - |
-    python3 <<EOF
-    import json
-    import pathlib
-    import typing as t
-
-    def strip_suffix(data: t.Any):
-        if isinstance(data, dict):
-            return {key.replace('_unencrypted', ''): strip_suffix(value) for key, value in data.items()}
-        elif isinstance(data, list):
-            return [strip_suffix(element) for element in data]
-        else:
-            return data
-
-    path = pathlib.Path("plain.k8s.json")
-    data = json.loads(path.read_text())
-    path.write_text(json.dumps(strip_suffix(data), indent=4))
-    EOF
 
 .prepare: &prepare
-  - *decrypt
+  - *sops
   - git clone https://github.com/DSD-DBS/capella-collab-manager
   - cd capella-collab-manager
   - git checkout ${REVISION}
@@ -49,22 +28,22 @@ variables:
     ./helm/Chart.yaml
 
 .kubernetes: &kubernetes
-  - NAMESPACE=$(cat ../plain.k8s.json | jq -r ".namespace")
+  - NAMESPACE=$(sops -d ../${TARGET}/secret.k8s.json | jq -r ".namespace")
   # prettier-ignore
-  - kubectl config set-cluster cluster --server=$(cat ../plain.k8s.json | jq -r ".server")
+  - kubectl config set-cluster cluster --server=$(sops -d ../${TARGET}/secret.k8s.json | jq -r ".server")
   - >
     kubectl config set-context context \
       --namespace=${NAMESPACE} \
-      --user=$(cat ../plain.k8s.json | jq -r ".username") \
+      --user=$(sops -d ../${TARGET}/secret.k8s.json | jq -r ".username") \
       --cluster=cluster
   - >
     kubectl config set-credentials \
-      $(cat ../plain.k8s.json | jq -r ".username") \
-      --token=$(cat ../plain.k8s.json | jq -r ".token")
+      $(sops -d ../${TARGET}/secret.k8s.json | jq -r ".username") \
+      --token=$(sops -d ../${TARGET}/secret.k8s.json | jq -r ".token")
   - kubectl config use-context context
 
 .helm-deploy: &helm-deploy
-  - RELEASE=$(cat ../plain.k8s.json | jq -r ".release")
+  - RELEASE=$(sops -d ../${TARGET}/secret.k8s.json | jq -r ".release")
   - cp -r ../config/* helm/config
   # prettier-ignore
   - DOCKER_TAG=$(echo $REVISION | sed 's/[^a-zA-Z0-9.]/-/g')-$CI_COMMIT_REF_SLUG
@@ -76,12 +55,13 @@ variables:
       --version="$(git describe --tags)" \
       -d "$HELM_PACKAGE_DIR" \
       helm
-  - >
+  - |
+    sops -d ../${TARGET}/values.yaml | \
     helm upgrade ${RELEASE} \
       --namespace ${NAMESPACE} \
       --set docker.tag=${DOCKER_TAG} \
-      -f ../${TARGET}/general.values.yaml \
-      -f ../plain.values.yaml "$HELM_PACKAGE_DIR"/collab-manager-*.tgz
+      -f - \
+      "$HELM_PACKAGE_DIR"/collab-manager-*.tgz
 
   - kubectl rollout restart deployment ${RELEASE}-backend
   - kubectl rollout restart deployment ${RELEASE}-frontend
