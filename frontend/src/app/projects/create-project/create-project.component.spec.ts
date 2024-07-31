@@ -36,7 +36,6 @@ import {
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 import { HttpClientModule } from '@angular/common/http';
-import { CookieModule } from 'ngx-cookie';
 import { PatchProject, Project, Visibility } from 'src/app/openapi';
 
 const mockProjects: Project[] = [
@@ -152,7 +151,6 @@ describe('CreateProjectComponent', () => {
         BrowserAnimationsModule,
         CreateProjectComponent,
         HttpClientModule,
-        CookieModule.withOptions(),
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();

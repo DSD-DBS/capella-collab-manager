@@ -3,13 +3,11 @@
 
 import datetime
 
-import fastapi
 import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
 from capellacollab.__main__ import app
-from capellacollab.core.authentication import jwt_bearer
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import models as sessions_models
 from capellacollab.tools import models as tools_models
@@ -30,7 +28,11 @@ def fixture_enable_tool_session_sharing(
 @pytest.fixture(name="shared_with_user")
 def fixture_shared_with_user(db: orm.Session) -> users_models.DatabaseUser:
     user2 = users_crud.create_user(
-        db, "shared_with_user", users_models.Role.USER
+        db,
+        "shared_with_user",
+        "shared_with_user",
+        None,
+        users_models.Role.USER,
     )
     return user2
 
@@ -88,7 +90,9 @@ def test_session_is_already_shared(
     client: testclient.TestClient,
     db: orm.Session,
 ):
-    user2 = users_crud.create_user(db, "user2", users_models.Role.USER)
+    user2 = users_crud.create_user(
+        db, "user2", "user2", None, users_models.Role.USER
+    )
     response = client.post(
         f"/api/v1/sessions/{session.id}/shares",
         json={
@@ -132,7 +136,9 @@ def test_share_session_not_owned(
     shared_session: sessions_models.DatabaseSession,
     client: testclient.TestClient,
 ):
-    user3 = users_crud.create_user(db, "user3", users_models.Role.USER)
+    user3 = users_crud.create_user(
+        db, "user3", "user3", None, users_models.Role.USER
+    )
 
     response = client.post(
         f"/api/v1/sessions/{shared_session.id}/shares",
@@ -163,7 +169,9 @@ def test_share_session(
     client: testclient.TestClient,
     db: orm.Session,
 ):
-    user2 = users_crud.create_user(db, "user2", users_models.Role.USER)
+    user2 = users_crud.create_user(
+        db, "user2", "user2", None, users_models.Role.USER
+    )
     response = client.post(
         f"/api/v1/sessions/{session.id}/shares",
         json={
@@ -226,7 +234,9 @@ def test_tool_doesnt_support_sharing(
     db: orm.Session,
     client: testclient.TestClient,
 ):
-    user2 = users_crud.create_user(db, "user2", users_models.Role.USER)
+    user2 = users_crud.create_user(
+        db, "user2", "user2", None, users_models.Role.USER
+    )
     response = client.post(
         f"/api/v1/sessions/{session.id}/shares",
         json={

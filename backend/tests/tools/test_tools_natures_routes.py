@@ -9,7 +9,8 @@ from capellacollab.tools import models as tools_models
 
 @pytest.mark.usefixtures("admin")
 def test_create_tool_nature(
-    client: testclient.TestClient, tool: tools_models.DatabaseTool
+    client: testclient.TestClient,
+    tool: tools_models.DatabaseTool,
 ):
     """Test creating a tool nature"""
 

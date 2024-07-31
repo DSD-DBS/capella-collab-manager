@@ -42,37 +42,20 @@ extensions:
     password: "{{ .Values.guacamole.password }}"
 
 authentication:
-  provider: "{{ .Values.backend.authentication.provider }}"
-  jwt:
-    usernameClaim: "{{ .Values.backend.authentication.jwt.usernameClaim }}"
-
-  {{ if eq .Values.backend.authentication.provider "oauth" }}
-  oauth:
-    endpoints:
-      tokenIssuance: "{{ .Values.backend.authentication.oauth.endpoints.tokenIssuance }}"
-      authorization: "{{ .Values.backend.authentication.oauth.endpoints.authorization }}"
-      wellKnown: "{{ .Values.backend.authentication.oauth.endpoints.wellKnown }}"
-
-    audience: "{{ .Values.backend.authentication.oauth.audience }}"
-
-    scopes:
-      {{- toYaml .Values.backend.authentication.oauth.scopes | nindent 6}}
-
-    client:
-      id: "{{ .Values.backend.authentication.oauth.client.id }}"
-      secret: "{{ .Values.backend.authentication.oauth.client.secret }}"
-
-    redirectURI: "{{ .Values.backend.authentication.oauth.redirectURI }}"
-  {{ end }}
-
-  {{ if eq .Values.backend.authentication.provider "azure" }}
-  azure:
-    authorizationEndpoint: "{{ .Values.backend.authentication.azure.authorizationEndpoint }}"
-
-    client:
-      id: "{{ .Values.backend.authentication.azure.client.id }}"
-      secret: "{{ .Values.backend.authentication.azure.client.secret }}"
-  {{ end }}
+  endpoints:
+    authorization: "{{ .Values.backend.authentication.endpoints.authorization }}"
+    wellKnown: "{{ .Values.backend.authentication.endpoints.wellKnown }}"
+  audience: "{{ .Values.backend.authentication.audience }}"
+  mapping:
+    identifier: "{{ .Values.backend.authentication.claimMapping.idpIdentifier }}"
+    username: "{{ .Values.backend.authentication.claimMapping.username }}"
+    email: "{{ .Values.backend.authentication.claimMapping.email }}"
+  scopes:
+  {{ .Values.backend.authentication.scopes | toYaml | nindent 4 }}
+  client:
+    id: "{{ .Values.backend.authentication.client.id }}"
+    secret: "{{ .Values.backend.authentication.client.secret }}"
+  redirectURI: "{{ .Values.backend.authentication.redirectURI }}"
 
 prometheus:
   url: "http://{{ .Release.Name }}-prometheus-server:9118/prometheus/"

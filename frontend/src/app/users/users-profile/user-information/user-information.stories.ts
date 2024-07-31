@@ -20,11 +20,17 @@ const meta: Meta<UserInformationComponent> = {
         {
           provide: UserWrapperService,
           useFactory: () =>
-            new MockUserService({ ...mockUser, role: 'administrator' }),
+            new MockUserService({
+              ...mockUser,
+              role: 'administrator',
+            }),
         },
       ],
     }),
   ],
+  args: {
+    _user: { ...mockUser, id: 0 },
+  },
 };
 
 export default meta;

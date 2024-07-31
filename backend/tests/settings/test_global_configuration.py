@@ -14,7 +14,9 @@ from capellacollab.users import models as users_models
 
 
 @pytest.mark.usefixtures("admin")
-def test_get_default_configuration(client: testclient.TestClient):
+def test_get_default_configuration(
+    client: testclient.TestClient,
+):
     """Test that the default configuration is returned if no configuration is set."""
 
     response = client.get("/api/v1/settings/configurations/global")
@@ -47,6 +49,7 @@ def test_get_general_configuration(
     )
 
 
+@pytest.mark.usefixtures("executor_name")
 def test_get_configuration_schema(client: testclient.TestClient):
     response = client.get("/api/v1/settings/configurations/global/schema")
 
@@ -55,7 +58,9 @@ def test_get_configuration_schema(client: testclient.TestClient):
 
 
 @pytest.mark.usefixtures("admin")
-def test_update_general_configuration(client: testclient.TestClient):
+def test_update_general_configuration(
+    client: testclient.TestClient,
+):
     common_metadata = {
         "privacy_policy_url": "https://example.com/privacy-policy",
         "imprint_url": "https://example.com/imprint",
@@ -109,9 +114,13 @@ def test_update_general_configuration_additional_properties_fails(
 
 
 def test_metadata_is_updated(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    admin = users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    admin = users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     def get_mock_own_user():
         return admin

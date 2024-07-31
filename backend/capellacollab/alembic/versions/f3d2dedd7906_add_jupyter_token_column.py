@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-"""Commit message
+"""Add column for Jupyter token
 
 Revision ID: f3d2dedd7906
 Revises: 4df9c82766e2

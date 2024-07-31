@@ -142,45 +142,34 @@ database:
 
 backend:
   authentication:
-    provider: oauth # oauth | azure
-    jwt:
-      usernameClaim: sub # azure: preferred_username
-
-    oauth:
-      # Only required when using provider oauth
-      endpoints:
-        wellKnown: http://dev-oauth-mock:8080/default/.well-known/openid-configuration
-        # Override endpoint that issues JWT Tokens
-        tokenIssuance: ''
-        # Override endpoint that authorizes the User
-        # In the local development setup, use the following values:
-        # - HTTP: http://localhost:8080/default/authorize
-        # - HTTPS: https://localhost/default/authorize
-        authorization: https://localhost/default/authorize
-
-      audience: default
-
-      scopes:
-        - openid
-
-      client:
-        # OAUTH2 Client ID
-        id: tbd
-        # OAUTH2 Client Secret
-        secret: tbd
-
+    endpoints:
+      wellKnown: http://dev-oauth-mock:8080/default/.well-known/openid-configuration
+      # Override endpoint that authorizes the User
       # In the local development setup, use the following values:
-      # - HTTP: http://localhost:8080/oauth2/callback
-      # - HTTPS: https://localhost/oauth2/callback
-      redirectURI: https://localhost/oauth2/callback
+      # - HTTP: http://localhost:8080/default/authorize
+      # - HTTPS: https://localhost/default/authorize
+      authorization: null
 
-    azure:
-      # Only required when using provider oauth
-      authorizationEndpoint: tbd
+    audience: default
 
-      client:
-        id: tbd
-        secret: tbd
+    claimMapping:
+      idpIdentifier: sub
+      username: preferred_username
+      email: email
+
+    scopes:
+      - openid
+      - profile
+      - offline_access
+
+    client:
+      id: tbd
+      secret: tbd
+
+    # In the local development setup, use the following values:
+    # - HTTP: http://localhost:8080/oauth2/callback
+    # - HTTPS: https://localhost/oauth2/callback
+    redirectURI: https://localhost/oauth2/callback
 
   # Namespace in which the Session Deployments / Pods should be spawned.
   # IMPORTANT: The namespace has to exist already

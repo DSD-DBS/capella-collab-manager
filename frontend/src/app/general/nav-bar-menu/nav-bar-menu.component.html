@@ -4,32 +4,35 @@
  -->
 
 <mat-list>
-  <div *ngFor="let item of navBarService.navBarItems">
-    <ng-container *ngIf="userService.validateUserRole(item.requiredRole)">
-      <ng-container *ngIf="item.href; else router">
-        <a
-          class="items-center"
-          mat-list-item
-          (click)="navBarService.toggle()"
-          [attr.href]="item.href"
-          [attr.target]="item.target"
-        >
-          {{ item.name }}
-          <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
-        </a>
-      </ng-container>
-      <ng-template #router>
-        <a
-          mat-list-item
-          (click)="navBarService.toggle()"
-          [routerLink]="item.routerLink"
-        >
-          {{ item.name }}
-        </a>
-      </ng-template>
-    </ng-container>
-    <mat-divider></mat-divider>
-  </div>
+  @for (item of navBarService.navBarItems; track $index) {
+    <div>
+      @if (userService.validateUserRole(item.requiredRole)) {
+        @if (item.href) {
+          <a
+            class="items-center"
+            mat-list-item
+            (click)="navBarService.toggle()"
+            [attr.href]="item.href"
+            [attr.target]="item.target"
+          >
+            {{ item.name }}
+            @if (item.icon) {
+              <mat-icon>{{ item.icon }}</mat-icon>
+            }
+          </a>
+        } @else {
+          <a
+            mat-list-item
+            (click)="navBarService.toggle()"
+            [routerLink]="item.routerLink"
+          >
+            {{ item.name }}
+          </a>
+        }
+      }
+      <mat-divider></mat-divider>
+    </div>
+  }
   <mat-divider></mat-divider>
   <a
     mat-list-item
@@ -39,33 +42,31 @@
     Profile
   </a>
   <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
-    routerLink="settings"
-    >Settings</a
-  >
-  <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    *ngIf="userService.user?.role === 'administrator'"
-    routerLink="events"
-    >Events</a
-  >
-  <mat-divider></mat-divider>
+
+  @if (userService.user?.role === "administrator") {
+    <a mat-list-item (click)="navBarService.toggle()" routerLink="settings">
+      Settings
+    </a>
+    <mat-divider></mat-divider>
+    <a mat-list-item (click)="navBarService.toggle()" routerLink="events">
+      Events
+    </a>
+    <mat-divider></mat-divider>
+  }
+
   <a mat-list-item (click)="navBarService.toggle()" routerLink="tokens">
     Tokens
   </a>
   <mat-divider></mat-divider>
-  <a
-    mat-list-item
-    (click)="navBarService.toggle()"
-    routerLink="logout/redirect"
-    [queryParams]="{ reason: 'logout' }"
-    *ngIf="authService.isLoggedIn()"
-  >
-    Log out <mat-icon class="ml-2.5">logout</mat-icon>
-  </a>
+
+  @if (authService.isLoggedIn()) {
+    <a
+      mat-list-item
+      (click)="navBarService.toggle()"
+      routerLink="logout/redirect"
+      [queryParams]="{ reason: 'logout' }"
+    >
+      Log out <mat-icon class="ml-2.5">logout</mat-icon>
+    </a>
+  }
 </mat-list>

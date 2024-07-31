@@ -28,11 +28,12 @@ class Role(enum.Enum):
 class BaseUser(core_pydantic.BaseModel):
     id: int
     name: str
+    idp_identifier: str
+    email: str | None = None
     role: Role
 
 
 class User(BaseUser):
-    id: int
     created: datetime.datetime | None = None
     last_login: datetime.datetime | None = None
 
@@ -44,13 +45,18 @@ class User(BaseUser):
     )
 
 
-class PatchUserRoleRequest(core_pydantic.BaseModel):
-    role: Role
-    reason: str
+class PatchUser(core_pydantic.BaseModel):
+    name: str | None = None
+    idp_identifier: str | None = None
+    email: str | None = None
+    role: Role | None = None
+    reason: str | None = None
 
 
 class PostUser(core_pydantic.BaseModel):
     name: str
+    idp_identifier: str
+    email: str | None = None
     role: Role
     reason: str
 
@@ -62,8 +68,17 @@ class DatabaseUser(database.Base):
         init=False, primary_key=True, index=True
     )
 
+    idp_identifier: orm.Mapped[str] = orm.mapped_column(
+        unique=True, index=True
+    )
     name: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
+
     role: orm.Mapped[Role]
+
+    email: orm.Mapped[str | None] = orm.mapped_column(
+        default=None, unique=True, index=True
+    )
+
     created: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
         default=datetime.datetime.now(datetime.UTC)
     )

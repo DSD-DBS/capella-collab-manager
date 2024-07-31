@@ -20,12 +20,16 @@ def fixture_verify(request: pytest.FixtureRequest) -> bool:
 
 @pytest.fixture(name="user2")
 def fixture_user2(db: orm.Session) -> users_models.DatabaseUser:
-    return users_crud.create_user(db, "user2", users_models.Role.USER)
+    return users_crud.create_user(
+        db, "user2", "user2", None, users_models.Role.USER
+    )
 
 
 @pytest.fixture(name="admin2")
 def fixture_admin2(db: orm.Session) -> users_models.DatabaseUser:
-    return users_crud.create_user(db, "admin2", users_models.Role.ADMIN)
+    return users_crud.create_user(
+        db, "admin2", "admin2", None, users_models.Role.ADMIN
+    )
 
 
 def test_role_verification_user_not_found(db: orm.Session, verify: bool):
@@ -106,7 +110,11 @@ def fixture_project_user_lead(
     db: orm.Session, project: projects_models.DatabaseProject
 ) -> projects_users_models.ProjectUserAssociation:
     user = users_crud.create_user(
-        db, "project_user_lead", users_models.Role.USER
+        db,
+        "project_user_lead",
+        "project_user_lead",
+        None,
+        users_models.Role.USER,
     )
     return projects_users_crud.add_user_to_project(
         db,
@@ -122,7 +130,11 @@ def fixture_project_user_write(
     db: orm.Session, project: projects_models.DatabaseProject
 ) -> projects_users_models.ProjectUserAssociation:
     user = users_crud.create_user(
-        db, "project_user_write", users_models.Role.USER
+        db,
+        "project_user_write",
+        "project_user_write",
+        None,
+        users_models.Role.USER,
     )
     return projects_users_crud.add_user_to_project(
         db,
@@ -138,7 +150,11 @@ def fixture_project_user_read(
     db: orm.Session, project: projects_models.DatabaseProject
 ) -> projects_users_models.ProjectUserAssociation:
     user = users_crud.create_user(
-        db, "project_user_read", users_models.Role.USER
+        db,
+        "project_user_read",
+        "project_user_read",
+        None,
+        users_models.Role.USER,
     )
     return projects_users_crud.add_user_to_project(
         db,

@@ -5,9 +5,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie';
 import { Observable, tap } from 'rxjs';
-import { LocalStorageService } from 'src/app/general/auth/local-storage/local-storage.service';
 import {
   Session,
   Project,
@@ -54,8 +52,6 @@ export interface PathNode {
 export class SessionService {
   constructor(
     private http: HttpClient,
-    private localStorageService: LocalStorageService,
-    private cookieService: CookieService,
     private sessionHistoryService: SessionHistoryService,
     private sessionsService: SessionsService,
   ) {}
@@ -98,31 +94,9 @@ export class SessionService {
     return this.http.delete<null>(`${this.BACKEND_URL_PREFIX}/${id}`);
   }
 
-  setConnectionInformation(
-    session: Session,
-    connectionInformation: SessionConnectionInformation,
-  ): void {
-    this.setLocalStorage(connectionInformation);
-    this.setCookies(session, connectionInformation);
-  }
-
-  setLocalStorage(connectionInformation: SessionConnectionInformation): void {
-    const localStorage = connectionInformation.local_storage;
-    for (const key in localStorage) {
-      this.localStorageService.setValue(key, localStorage[key]);
-    }
-  }
-
-  setCookies(
-    session: Session,
-    connectionInformation: SessionConnectionInformation,
-  ): void {
-    const cookies = connectionInformation.cookies;
-    for (const key in cookies) {
-      this.cookieService.put(key, cookies[key], {
-        path: `/session/${session.id}`,
-        sameSite: 'strict',
-      });
+  setConnectionInformation(connectionInfo: SessionConnectionInformation): void {
+    for (const key in connectionInfo.local_storage) {
+      localStorage.setItem(key, connectionInfo.local_storage[key]);
     }
   }
 

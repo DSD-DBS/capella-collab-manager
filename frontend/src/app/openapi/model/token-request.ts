@@ -13,6 +13,7 @@
 
 export interface TokenRequest { 
     code: string;
-    state: string;
+    nonce: string;
+    code_verifier: string;
 }
 

@@ -225,19 +225,12 @@ class AuthOauthClientConfig(BaseConfig):
     id: str = pydantic.Field(
         default="default", description="The authentication provider client ID."
     )
-    secret: str | None = pydantic.Field(
-        default=None, description="The authentication provider client secret."
+    secret: str = pydantic.Field(
+        default="", description="The authentication provider client secret."
     )
 
 
 class AuthOauthEndpointsConfig(BaseConfig):
-    token_issuance: str | None = pydantic.Field(
-        default=None,
-        description=(
-            "The URL of the token issuance endpoint. "
-            "If not set, the URL is read from the well-known endpoint."
-        ),
-    )
     authorization: str | None = pydantic.Field(
         default=None,
         description=(
@@ -245,7 +238,7 @@ class AuthOauthEndpointsConfig(BaseConfig):
             "If not set, the URL is read from the well-known endpoint."
         ),
     )
-    well_known: str | None = pydantic.Field(
+    well_known: str = pydantic.Field(
         default="http://localhost:8083/default/.well-known/openid-configuration",
         description="The URL of the OpenID Connect discovery document.",
         examples=[
@@ -254,12 +247,19 @@ class AuthOauthEndpointsConfig(BaseConfig):
     )
 
 
-class AuthOauthConfig(BaseConfig):
+class ClaimMappingConfig(BaseConfig):
+    identifier: str = pydantic.Field(default="sub")
+    username: str = pydantic.Field(default="sub")
+    email: str | None = pydantic.Field(default="email")
+
+
+class AuthenticationConfig(BaseConfig):
     endpoints: AuthOauthEndpointsConfig = AuthOauthEndpointsConfig()
     audience: str = pydantic.Field(default="default")
-    scopes: list[str] | None = pydantic.Field(
-        default=["openid"],
-        description="List of scopes that application neeeds to access the required attributes.",
+    mapping: ClaimMappingConfig = ClaimMappingConfig()
+    scopes: list[str] = pydantic.Field(
+        default=["openid", "profile", "offline_access"],
+        description="List of scopes that the application needs to access the required attributes.",
     )
     client: AuthOauthClientConfig = AuthOauthClientConfig()
     redirect_uri: str = pydantic.Field(
@@ -268,44 +268,6 @@ class AuthOauthConfig(BaseConfig):
         examples=["http://localhost:4200/oauth2/callback"],
         alias="redirectURI",
     )
-
-
-class JWTConfig(BaseConfig):
-    username_claim: str = pydantic.Field(
-        default="sub",
-        description="Specifies the key in the JWT payload where the username is stored.",
-        examples=["sub", "aud", "preferred_username"],
-    )
-
-
-class AzureClientConfig(BaseConfig):
-    id: str
-    secret: str | None = None
-
-
-class AzureConfig(BaseConfig):
-    authorization_endpoint: str
-    client: AzureClientConfig
-
-
-class GeneralAuthenticationConfig(BaseConfig):
-    jwt: JWTConfig = JWTConfig()
-
-
-class OAuthAuthenticationConfig(GeneralAuthenticationConfig):
-    provider: t.Literal["oauth"] = pydantic.Field(
-        default="oauth",
-        description="Indicates the use of OAuth for authentication, not to be changed.",
-    )
-    oauth: AuthOauthConfig = AuthOauthConfig()
-
-
-class AzureAuthenticationConfig(GeneralAuthenticationConfig):
-    provider: t.Literal["azure"] = pydantic.Field(
-        default="azure",
-        description="Indicates the use of Azure AD for authentication, not to be changed.",
-    )
-    azure: AzureConfig
 
 
 class PipelineConfig(BaseConfig):
@@ -374,9 +336,7 @@ class AppConfig(BaseConfig):
     k8s: K8sConfig = K8sConfig(context="k3d-collab-cluster")
     general: GeneralConfig = GeneralConfig()
     extensions: ExtensionsConfig = ExtensionsConfig()
-    authentication: OAuthAuthenticationConfig | AzureAuthenticationConfig = (
-        OAuthAuthenticationConfig()
-    )
+    authentication: AuthenticationConfig = AuthenticationConfig()
     prometheus: PrometheusConfig = PrometheusConfig()
     database: DatabaseConfig = DatabaseConfig()
     initial: InitialConfig = InitialConfig()

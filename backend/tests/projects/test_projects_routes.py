@@ -18,16 +18,14 @@ from capellacollab.__main__ import app
 from capellacollab.projects import injectables as projects_injectables
 
 
-def test_get_projects_not_authenticated(client: testclient.TestClient):
-    response = client.get("/api/v1/projects")
-    assert response.status_code == 403
-    assert response.json() == {"detail": "Not authenticated"}
-
-
 def test_get_internal_default_project_as_user(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
 
     response = client.get("/api/v1/projects/default")
 
@@ -44,9 +42,13 @@ def test_get_internal_default_project_as_user(
 
 
 def test_get_projects_as_user_only_shows_default_internal_project(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
 
     response = client.get("/api/v1/projects")
 
@@ -61,7 +63,8 @@ def test_get_projects_as_user_only_shows_default_internal_project(
 
 @pytest.mark.usefixtures("project_manager")
 def test_get_projects_as_user_with_project(
-    client: testclient.TestClient, project: projects_models.DatabaseProject
+    client: testclient.TestClient,
+    project: projects_models.DatabaseProject,
 ):
     response = client.get("/api/v1/projects")
 
@@ -75,12 +78,16 @@ def test_get_projects_as_user_with_project(
 
 
 def test_get_projects_as_admin(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
     project = projects_crud.create_project(
         db, "test project", visibility=projects_models.Visibility.PRIVATE
     )
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.get("/api/v1/projects")
 
@@ -94,12 +101,16 @@ def test_get_projects_as_admin(
 
 
 def test_get_internal_projects_as_user(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
     project = projects_crud.create_project(
         db, "test project", visibility=projects_models.Visibility.INTERNAL
     )
-    users_crud.create_user(db, executor_name, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
 
     response = client.get("/api/v1/projects")
 
@@ -113,9 +124,13 @@ def test_get_internal_projects_as_user(
 
 
 def test_get_internal_projects_as_user_without_duplicates(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    user = users_crud.create_user(db, executor_name, users_models.Role.USER)
+    user = users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
     project = projects_crud.create_project(
         db, "test project", visibility=projects_models.Visibility.INTERNAL
     )
@@ -145,9 +160,13 @@ def test_get_internal_projects_as_user_without_duplicates(
 
 
 def test_create_private_project_as_admin(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.post(
         "/api/v1/projects/",
@@ -166,9 +185,13 @@ def test_create_private_project_as_admin(
 
 
 def test_create_internal_project_as_admin(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.post(
         "/api/v1/projects/",
@@ -188,9 +211,13 @@ def test_create_internal_project_as_admin(
 
 
 def test_update_project_as_admin(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
     project = projects_crud.create_project(db, "new project")
 
     assert project.slug == "new-project"
@@ -254,7 +281,9 @@ def test_delete_pipeline_called_when_archiving_project(
     mock_model = mock.Mock(name="DatabaseModel")
     mock_pipeline = mock.Mock(name="DatabaseBackup")
 
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
     mock_project.models = [mock_model]
 
     with (
@@ -283,30 +312,40 @@ def test_delete_pipeline_called_when_archiving_project(
 
 
 @pytest.mark.usefixtures("project_user")
-def test_get_project_per_role_user(client: testclient.TestClient):
+def test_get_project_per_role_user(
+    client: testclient.TestClient,
+):
     response = client.get("/api/v1/projects/?minimum_role=user")
     assert response.status_code == 200
     assert len(response.json()) > 0
 
 
 @pytest.mark.usefixtures("project_user")
-def test_get_project_per_role_manager_as_user(client: testclient.TestClient):
+def test_get_project_per_role_manager_as_user(
+    client: testclient.TestClient,
+):
     response = client.get("/api/v1/projects/?minimum_role=manager")
     assert response.status_code == 200
     assert len(response.json()) == 0
 
 
 @pytest.mark.usefixtures("project_manager")
-def test_get_project_per_role_manager(client: testclient.TestClient):
+def test_get_project_per_role_manager(
+    client: testclient.TestClient,
+):
     response = client.get("/api/v1/projects/?minimum_role=manager")
     assert response.status_code == 200
     assert len(response.json()) > 0
 
 
 def test_get_project_per_role_admin(
-    client: testclient.TestClient, executor_name: str, db: orm.Session
+    client: testclient.TestClient,
+    executor_name: str,
+    db: orm.Session,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     response = client.get("/api/v1/projects/?minimum_role=administrator")
     assert response.status_code == 200

@@ -13,7 +13,7 @@ from fastapi.security import utils as security_utils
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import basic_auth, jwt_bearer
+from capellacollab.core.authentication import api_key_cookie, basic_auth
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import exceptions as projects_exceptions
 from capellacollab.projects import models as projects_models
@@ -59,38 +59,25 @@ class OpenAPIPersonalAccessToken(OpenAPIFakeBase):
     __hash__ = OpenAPIFakeBase.__hash__
 
 
-@dataclasses.dataclass()
-class OpenAPIBearerToken(OpenAPIFakeBase):
-    """Displays the JWT Bearer token as authentication method in the OpenAPI docs"""
-
-    model = openapi_models.HTTPBase(
-        scheme="bearer",
-    )
-    scheme_name = "JWTBearer"
-
-    __hash__ = OpenAPIFakeBase.__hash__
-
-
 async def get_username(
     request: fastapi.Request,
     _unused1=fastapi.Depends(OpenAPIPersonalAccessToken()),
-    _unused2=fastapi.Depends(OpenAPIBearerToken()),
 ) -> str:
+    if request.cookies.get("id_token"):
+        username = await api_key_cookie.JWTAPIKeyCookie()(request)
+        return username
+
     authorization = request.headers.get("Authorization")
     scheme, _ = security_utils.get_authorization_scheme_param(authorization)
-    username = None
 
     match scheme.lower():
         case "basic":
             username = await basic_auth.HTTPBasicAuth()(request)
-        case "bearer":
-            username = await jwt_bearer.JWTBearer()(request)
         case "":
             raise exceptions.UnauthenticatedError()
         case _:
             raise exceptions.UnknownScheme(scheme)
 
-    assert username
     return username
 
 

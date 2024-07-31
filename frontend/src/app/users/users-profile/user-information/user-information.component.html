@@ -2,18 +2,21 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-
-@if (userService.user?.role === "administrator") {
+@if (user && userService.user?.role === "administrator") {
   <div class="collab-card overflow-x-auto">
     <h2 class="text-xl font-medium">User information</h2>
     <div class="my-1">
       <mat-divider></mat-divider>
     </div>
-    @if (user?.last_login) {
+    @if (user.last_login) {
       <div>
         Last login:
-        {{ user?.last_login | date: "EE, dd MMM y HH:mm:ss" }}
+        {{ user.last_login | date: "EE, dd MMM y HH:mm:ss" }}
       </div>
+    }
+    <div>Identity provider identifier: {{ user.idp_identifier }}</div>
+    @if (user.email) {
+      <div>Email: {{ user.email }}</div>
     }
     @if (userEvents) {
       <div>
@@ -36,7 +39,6 @@
               {{ event.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
             </td>
           </ng-container>
-
           <ng-container matColumnDef="projectName">
             <th mat-header-cell *matHeaderCellDef>Project Slug</th>
             <td mat-cell *matCellDef="let event">

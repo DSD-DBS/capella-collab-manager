@@ -75,7 +75,9 @@ class AttachTraceIdMiddleware(base.BaseHTTPMiddleware):
 
 class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
-        self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
+        self,
+        request: fastapi.Request,
+        call_next: base.RequestResponseEndpoint,
     ):
         try:
             username = await auth_injectables.get_username(request)

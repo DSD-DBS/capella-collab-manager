@@ -5,11 +5,12 @@ import pytest
 from fastapi import testclient
 from kubernetes import client as k8s_client
 
+from capellacollab import __main__
 from capellacollab.sessions import metrics
 
 
-def test_metrics_endpoint(client: testclient.TestClient):
-    response = client.get("/metrics")
+def test_metrics_endpoint(client_unauthenticated: testclient.TestClient):
+    response = client_unauthenticated.get("/metrics")
 
     assert response.status_code == 200
     assert "# HELP " in response.text

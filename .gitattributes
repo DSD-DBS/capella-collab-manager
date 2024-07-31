@@ -6,3 +6,4 @@
 *.{sh,py} text eol=lf
 .git_archival.txt  export-subst
 *.mp4 filter=lfs diff=lfs merge=lfs -text
+frontend/src/app/openapi/** linguist-generated=true

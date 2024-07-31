@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -56,7 +55,6 @@ import {
     RouterLink,
     MatIconButton,
     MatTooltip,
-    NgIf,
     ReactiveFormsModule,
     MatError,
     MatButton,
@@ -70,7 +68,11 @@ export class UserSettingsComponent implements OnInit {
   createUserFormGroup = new FormGroup({
     username: new FormControl('', [
       Validators.required,
-      this.userAlreadyExistsValidator(),
+      this.userNameAlreadyExistsValidator(),
+    ]),
+    idpIdentifier: new FormControl('', [
+      Validators.required,
+      this.userIdPIdentifierAlreadyExistsValidator(),
     ]),
   });
 
@@ -87,10 +89,14 @@ export class UserSettingsComponent implements OnInit {
   }
 
   get username(): FormControl {
-    return this.createUserFormGroup.get('username') as FormControl;
+    return this.createUserFormGroup.controls.username;
   }
 
-  userAlreadyExistsValidator(): ValidatorFn {
+  get idpIdentifier(): FormControl {
+    return this.createUserFormGroup.controls.idpIdentifier;
+  }
+
+  userNameAlreadyExistsValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (this.users.find((user) => user.name == control.value)) {
         return { userAlreadyExists: true };
@@ -99,12 +105,22 @@ export class UserSettingsComponent implements OnInit {
     };
   }
 
+  userIdPIdentifierAlreadyExistsValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (this.users.find((user) => user.idp_identifier == control.value)) {
+        return { userAlreadyExists: true };
+      }
+      return null;
+    };
+  }
+
   createUser() {
-    if (!this.createUserFormGroup.valid) {
+    const username = this.createUserFormGroup.value.username;
+    const idpIdentifier = this.createUserFormGroup.value.idpIdentifier;
+
+    if (this.createUserFormGroup.invalid || !username || !idpIdentifier) {
       return;
     }
-
-    const username = this.createUserFormGroup.value.username!;
 
     const dialogRef = this.dialog.open(InputDialogComponent, {
       data: {
@@ -116,7 +132,12 @@ export class UserSettingsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
       if (result.success && result.text) {
         this.usersService
-          .createUser({ name: username, role: Role.User, reason: result.text })
+          .createUser({
+            name: username,
+            idp_identifier: idpIdentifier,
+            role: Role.User,
+            reason: result.text,
+          })
           .subscribe({
             next: () => {
               this.toastService.showSuccess(
@@ -141,7 +162,7 @@ export class UserSettingsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
       if (result.success && result.text) {
         this.usersService
-          .updateRoleOfUser(user.id, {
+          .updateUser(user.id, {
             role: Role.Administrator,
             reason: result.text,
           })
@@ -169,7 +190,7 @@ export class UserSettingsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
       if (result.success && result.text) {
         this.usersService
-          .updateRoleOfUser(user.id, { role: Role.User, reason: result.text })
+          .updateUser(user.id, { role: Role.User, reason: result.text })
           .subscribe({
             next: () => {
               this.toastService.showSuccess(

@@ -18,10 +18,14 @@ from capellacollab.users.workspaces import models as user_workspace_models
 
 
 def test_get_user_by_id_admin(
-    client: testclient.TestClient, db: orm.Session, executor_name: str
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
-    user = users_crud.create_user(db, "test_user")
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
+    user = users_crud.create_user(db, "test_user", "test_user")
     response = client.get(f"/api/v1/users/{user.id}")
 
     assert response.status_code == 200
@@ -32,7 +36,7 @@ def test_get_user_by_id_admin(
 def test_get_user_by_id_non_admin(
     client: testclient.TestClient, db: orm.Session
 ):
-    user = users_crud.create_user(db, "test_user")
+    user = users_crud.create_user(db, "test_user", "test_user")
     response = client.get(f"/api/v1/users/{user.id}")
 
     assert response.status_code == 403
@@ -44,7 +48,7 @@ def test_get_user_by_id_common_project(
     db: orm.Session,
     project: projects_models.DatabaseProject,
 ):
-    user2 = users_crud.create_user(db, "user2")
+    user2 = users_crud.create_user(db, "user2", "user2")
     projects_users_crud.add_user_to_project(
         db,
         project,
@@ -62,7 +66,7 @@ def test_get_user_by_id_common_project(
 def test_get_no_common_projects(
     client: testclient.TestClient, db: orm.Session
 ):
-    user2 = users_crud.create_user(db, "user2")
+    user2 = users_crud.create_user(db, "user2", "user2")
     response = client.get(f"/api/v1/users/{user2.id}/common-projects")
     assert response.status_code == 200
     assert len(response.json()) == 0
@@ -74,7 +78,7 @@ def test_get_common_projects(
     db: orm.Session,
     project: projects_models.DatabaseProject,
 ):
-    user2 = users_crud.create_user(db, "user2")
+    user2 = users_crud.create_user(db, "user2", "user2")
     projects_users_crud.add_user_to_project(
         db,
         project,

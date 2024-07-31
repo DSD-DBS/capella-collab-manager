@@ -8,9 +8,8 @@ import fastapi
 import pytest
 from sqlalchemy import orm
 
-import capellacollab.users.models as users_models
 from capellacollab.__main__ import app
-from capellacollab.core.authentication.jwt_bearer import JWTBearer
+from capellacollab.core.authentication.api_key_cookie import JWTAPIKeyCookie
 from capellacollab.users import crud as users_crud
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
@@ -22,11 +21,11 @@ from capellacollab.users.workspaces import models as users_workspaces_models
 def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid.uuid1())
 
-    # pylint: disable=unused-argument
-    async def bearer_passthrough(self, request: fastapi.Request):
+    async def cookie_passthrough(self, request: fastapi.Request):
         return name
 
-    monkeypatch.setattr(JWTBearer, "__call__", bearer_passthrough)
+    monkeypatch.setattr(JWTAPIKeyCookie, "__init__", lambda self: None)
+    monkeypatch.setattr(JWTAPIKeyCookie, "__call__", cookie_passthrough)
 
     return name
 
@@ -40,7 +39,9 @@ def fixture_unique_username() -> str:
 def fixture_basic_user(
     db: orm.Session, executor_name: str
 ) -> users_models.DatabaseUser:
-    return users_crud.create_user(db, executor_name, users_models.Role.USER)
+    return users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
 
 
 @pytest.fixture(name="user")
@@ -61,7 +62,9 @@ def fixture_user(
 def fixture_admin(
     db: orm.Session, executor_name: str
 ) -> t.Generator[users_models.DatabaseUser, None, None]:
-    admin = users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    admin = users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
 
     def get_mock_own_user():
         return admin
@@ -75,7 +78,9 @@ def fixture_admin(
 
 @pytest.fixture(name="test_user")
 def fixture_test_user(db: orm.Session) -> users_models.DatabaseUser:
-    return users_crud.create_user(db, "testuser", users_models.Role.USER)
+    return users_crud.create_user(
+        db, "testuser", "testuser", None, users_models.Role.USER
+    )
 
 
 @pytest.fixture(name="user_workspace")

@@ -14,6 +14,8 @@ import { Role } from './role';
 
 export interface PostUser { 
     name: string;
+    idp_identifier: string;
+    email?: string | null;
     role: Role;
     reason: string;
 }

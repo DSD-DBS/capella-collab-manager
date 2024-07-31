@@ -14,7 +14,9 @@ def test_validate_tokens_routes(
     client: testclient.TestClient,
     executor_name: str,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
     response = client.get("/api/v1/authentication/tokens")
 
     assert response.status_code == 200

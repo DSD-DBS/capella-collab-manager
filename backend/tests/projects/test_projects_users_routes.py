@@ -20,8 +20,12 @@ def test_assign_read_write_permission_when_adding_manager(
     unique_username: str,
     project: projects_models.DatabaseProject,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
@@ -53,8 +57,12 @@ def test_assign_read_write_permission_when_changing_project_role_to_manager(
     unique_username: str,
     project: projects_models.DatabaseProject,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     projects_users_crud.add_user_to_project(
         db,
@@ -92,8 +100,12 @@ def test_http_exception_when_updating_permission_of_manager(
     unique_username: str,
     project: projects_models.DatabaseProject,
 ):
-    users_crud.create_user(db, executor_name, users_models.Role.ADMIN)
-    user = users_crud.create_user(db, unique_username, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
+    user = users_crud.create_user(
+        db, unique_username, unique_username, None, users_models.Role.USER
+    )
 
     projects_users_crud.add_user_to_project(
         db,
@@ -131,7 +143,9 @@ def test_current_user_rights_for_internal_project(
             visibility=projects_models.Visibility.INTERNAL
         ),
     )
-    users_crud.create_user(db, executor_name, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
 
     response = client.get(
         f"/api/v1/projects/{project.slug}/users/current",
@@ -155,7 +169,9 @@ def test_no_user_rights_on_internal_permissions(
             visibility=projects_models.Visibility.PRIVATE
         ),
     )
-    users_crud.create_user(db, executor_name, users_models.Role.USER)
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
 
     response = client.get(
         f"/api/v1/projects/{project.slug}/users/current",

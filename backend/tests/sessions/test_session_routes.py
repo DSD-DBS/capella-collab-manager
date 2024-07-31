@@ -177,6 +177,7 @@ def test_create_session_without_provisioning(
     assert kubernetes.sessions
 
 
+@pytest.mark.usefixtures("executor_name")
 def test_validate_session_token_with_invalid_session(
     client: testclient.TestClient,
 ):
@@ -267,7 +268,7 @@ def test_own_sessions(
     tool_version: tools_models.DatabaseVersion,
 ):
     another_user = users_crud.create_user(
-        db, "other-user", users_models.Role.USER
+        db, "other-user", "other-user", None, users_models.Role.USER
     )
 
     session_of_other_user = sessions_models.DatabaseSession(

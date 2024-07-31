@@ -9,7 +9,7 @@ import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -22,7 +22,7 @@ export class AuthComponent implements OnInit {
   @Input()
   set autoLogin(value: boolean) {
     if (value) {
-      this.authService.webSSO();
+      this.authService.login('/');
     }
   }
 
@@ -30,7 +30,7 @@ export class AuthComponent implements OnInit {
 
   constructor(
     public metadataService: MetadataService,
-    private authService: AuthService,
+    public authService: AuthenticationWrapperService,
     private pageLayoutService: PageLayoutService,
     private route: ActivatedRoute,
   ) {
@@ -41,9 +41,5 @@ export class AuthComponent implements OnInit {
     this.route.queryParamMap.subscribe((res) => {
       this.params = res;
     });
-  }
-
-  webSSO() {
-    this.authService.webSSO();
   }
 }

@@ -88,6 +88,7 @@ def initialize_admin_user(db: orm.Session):
     admin_user = users_crud.create_user(
         db=db,
         username=config.initial.admin,
+        idp_identifier=config.initial.admin,
         role=users_models.Role.ADMIN,
     )
     events_crud.create_user_creation_event(db, admin_user)

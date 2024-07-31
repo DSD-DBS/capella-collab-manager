@@ -54,10 +54,7 @@ export class ConnectionDialogComponent {
       );
       return;
     }
-    this.sessionService.setConnectionInformation(
-      this.session,
-      this.connectionInfo!,
-    );
+    this.sessionService.setConnectionInformation(this.connectionInfo);
     if (this.connectionInfo.redirect_url) {
       window.open(this.connectionInfo.redirect_url);
     } else {

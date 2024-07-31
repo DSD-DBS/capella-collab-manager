@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+export * from './authorization-response';
 export * from './backup';
 export * from './backup-pipeline-run';
 export * from './base-user';
@@ -65,7 +66,7 @@ export * from './patch-project';
 export * from './patch-project-user';
 export * from './patch-t4-c-instance';
 export * from './patch-tool-model';
-export * from './patch-user-role-request';
+export * from './patch-user';
 export * from './path-validation';
 export * from './payload-response-model-list-t4-c-repository';
 export * from './payload-response-model-session-connection-information';
@@ -96,7 +97,6 @@ export * from './pure-variants-licenses-input';
 export * from './pure-variants-licenses-output';
 export * from './rdp-ports-input';
 export * from './rdp-ports-output';
-export * from './refresh-token-request';
 export * from './resources-input';
 export * from './resources-output';
 export * from './response-model';

@@ -337,6 +337,7 @@ def share_session(
     ),
 )
 def get_session_connection_information(
+    response: fastapi.Response,
     db: orm.Session = fastapi.Depends(database.get_db),
     session: models.DatabaseSession = fastapi.Depends(
         injectables.get_existing_session_including_shared
@@ -373,10 +374,19 @@ def get_session_connection_information(
             t4c_token = hook_result["t4c_token"]
         warnings += hook_result.get("warnings", [])
 
+    for c_key, c_value in cookies.items():
+        responses.set_secure_cookie(
+            response=response,
+            key=c_key,
+            value=c_value,
+            path=f"/session/{session.id}",
+            expires=datetime.datetime.now(datetime.UTC)
+            + datetime.timedelta(hours=24),
+        )
+
     return core_models.PayloadResponseModel(
         payload=models.SessionConnectionInformation(
             local_storage=local_storage,
-            cookies=cookies,
             redirect_url=redirect_url,
             t4c_token=t4c_token,
         ),

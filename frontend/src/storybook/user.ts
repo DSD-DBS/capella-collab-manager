@@ -13,6 +13,8 @@ import {
 export const mockUser: Readonly<User> = {
   id: 1,
   name: 'fakeUser',
+  idp_identifier: 'identifier',
+  email: 'test@example.com',
   role: 'user',
   created: '2024-04-29T14:00:00Z',
   last_login: '2024-04-29T14:59:00Z',

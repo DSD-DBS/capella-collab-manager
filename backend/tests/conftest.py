@@ -89,9 +89,14 @@ def fixture_db(
         yield session
 
 
-@pytest.fixture()
-def client() -> testclient.TestClient:
-    return testclient.TestClient(app, headers={"Authorization": "bearer"})
+@pytest.fixture(name="client")
+def fixture_client() -> testclient.TestClient:
+    return testclient.TestClient(app, cookies={"id_token": "any"})
+
+
+@pytest.fixture(name="client_unauthenticated")
+def fixture_client_unauthenticated() -> testclient.TestClient:
+    return testclient.TestClient(app)
 
 
 @pytest.fixture(name="logger")

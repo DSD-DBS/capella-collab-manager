@@ -199,7 +199,6 @@ router.include_router(
 router.include_router(
     toolmodels_routes.router,
     prefix="/{project_slug}/models",
-    tags=["Projects - Models"],
 )
 router.include_router(
     projects_events_routes.router,
