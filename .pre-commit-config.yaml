@@ -156,13 +156,13 @@ repos:
       - id: eslint
         additional_dependencies:
           - 'eslint@^8.57.0'
-          - '@angular-eslint/eslint-plugin@18.1.0'
-          - '@angular-eslint/eslint-plugin-template@18.1.0'
-          - '@angular-eslint/template-parser@18.1.0'
+          - '@angular-eslint/eslint-plugin@18.2.0'
+          - '@angular-eslint/eslint-plugin-template@18.2.0'
+          - '@angular-eslint/template-parser@18.2.0'
           - 'eslint-config-prettier@^9.1.0'
           - 'eslint-plugin-import@^2.29.1'
-          - '@typescript-eslint/eslint-plugin@^7.13.0'
-          - '@typescript-eslint/parser@^7.13.0'
+          - '@typescript-eslint/eslint-plugin@^7.17.0'
+          - '@typescript-eslint/parser@^7.17.0'
           - 'eslint-plugin-unused-imports@^3.2.0'
           - 'eslint-plugin-deprecation@^3.0.0'
           - 'eslint-plugin-tailwindcss@^3.17.4'
