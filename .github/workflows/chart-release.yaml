@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: CC0-1.0
 
-name: 'Publish charts to repo'
+name: 'Publish helm charts'
 on:
   release:
     types: [published]
@@ -17,9 +17,12 @@ jobs:
         run: |
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
             sudo chmod +x /usr/bin/yq
-      - run: |
+      - name: Replace docker.tag in values.yaml
+        run: |
           yq -i '.docker.tag = "${{ github.event.release.tag_name }}"' helm/values.yaml
-      - run: |
+      - name: Package helm chart
+        id: helm
+        run: |
           HELM_PACKAGE_DIR=$(mktemp -d)
           helm dependency update ./helm
           helm package \
@@ -27,6 +30,35 @@ jobs:
               --version="${{ github.event.release.tag_name }}" \
               -d $HELM_PACKAGE_DIR \
               helm
-          gh release upload ${{ github.event.release.tag_name }} $HELM_PACKAGE_DIR/collab-manager-*.tgz
+          echo "package_dir=$HELM_PACKAGE_DIR" >> $GITHUB_OUTPUT
+      - name: Upload attachment to GH release
+        run: |
+          gh release upload ${{ github.event.release.tag_name }} ${{ steps.helm.outputs.package_dir }}/collab-manager-*.tgz
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check out CCM Helm Charts repository
+        uses: actions/checkout@v4
+        with:
+          repository: DSD-DBS/ccm-helm-charts
+          path: ccm_helm_charts
+          token: ${{ secrets.CCM_HELM_CHARTS_TOKEN }}
+      - uses: azure/setup-helm@v4.2.0
+      - name: Update Helm Chart Repository
+        run: |
+          # Workaround for https://github.com/helm/helm/issues/7363
+          mkdir -p ccm_helm_charts_tmp/charts
+          cd ccm_helm_charts_tmp
+          cp ${{ steps.helm.outputs.package_dir }}/collab-manager-${{ github.event.release.tag_name }}.tgz charts/
+          helm repo index --merge ../ccm_helm_charts/index.yaml .
+
+          cd ../ccm_helm_charts
+          mkdir -p charts
+          cp ${{ steps.helm.outputs.package_dir }}/collab-manager-${{ github.event.release.tag_name }}.tgz charts/
+          cp ../LICENSES/.license_header_apache.txt charts/collab-manager-${{ github.event.release.tag_name }}.tgz.license
+          mv ../ccm_helm_charts_tmp/index.yaml .
+          echo -e "$(sed 's/^/# /' ../LICENSES/.license_header_apache.txt)\n\n$(cat index.yaml)" > index.yaml
+          git add .
+          git config user.email 'set@deutschebahn.com'
+          git config user.name 'DSD-DBS Chart releaser'
+          git commit -m "Add collab-manager-${{ github.event.release.tag_name }}.tgz"
+          git push
