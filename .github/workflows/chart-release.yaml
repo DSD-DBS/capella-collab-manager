@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: CC0-1.0
+
+name: 'Publish charts to repo'
+on:
+  release:
+    types: [published]
+
+jobs:
+  attach-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && \
+            sudo chmod +x /usr/bin/yq
+      - run: |
+          yq -i '.docker.tag = "${{ github.event.release.tag_name }}"' helm/values.yaml
+      - run: |
+          HELM_PACKAGE_DIR=$(mktemp -d)
+          helm dependency update ./helm
+          helm package \
+              --app-version="${{ github.event.release.tag_name }}" \
+              --version="${{ github.event.release.tag_name }}" \
+              -d $HELM_PACKAGE_DIR \
+              helm
+          gh release upload ${{ github.event.release.tag_name }} $HELM_PACKAGE_DIR/collab-manager-*.tgz
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
