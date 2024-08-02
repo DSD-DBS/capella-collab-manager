@@ -189,6 +189,12 @@ export class CreateReadonlySessionComponent implements OnInit {
         .flat()
         .filter((v) => v.tool.id === tool.id),
     );
+    const recommendedVersion = this.relevantToolVersions?.find(
+      (t) => t.config.is_recommended,
+    );
+    if (recommendedVersion) {
+      this.toolSelectionForm.controls.version.patchValue(recommendedVersion);
+    }
   }
 
   removeVersionDuplicates(
