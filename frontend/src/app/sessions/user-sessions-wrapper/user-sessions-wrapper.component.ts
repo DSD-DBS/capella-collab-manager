@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { tap, timer } from 'rxjs';
+import { switchMap, timer } from 'rxjs';
 import { UserSessionService } from '../service/user-session.service';
 
 @UntilDestroy()
@@ -22,7 +22,7 @@ export class UserSessionsWrapperComponent implements OnInit {
     timer(0, 2000)
       .pipe(
         untilDestroyed(this),
-        tap(() => this.userSessionService.loadSessions()),
+        switchMap(() => this.userSessionService.loadSessionsObservable()),
       )
       .subscribe();
   }
