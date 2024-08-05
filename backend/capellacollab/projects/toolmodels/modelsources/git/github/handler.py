@@ -4,7 +4,6 @@
 import base64
 import datetime
 import io
-import json
 import typing as t
 import zipfile
 from urllib import parse
@@ -18,63 +17,37 @@ from ..handler import handler
 
 
 class GithubHandler(handler.GitHandler):
-    async def get_project_id_by_git_url(self) -> str:
+    @classmethod
+    async def get_project_id_by_git_url(cls, path: str, *_) -> str:
         # Project ID has the format '{owner}/{repo_name}'
-        return parse.urlparse(self.git_model.path).path[1:]
+        return parse.urlparse(path).path[1:]
 
-    async def get_last_job_run_id_for_git_model(
-        self, job_name: str, project_id: str | None = None
-    ) -> tuple[str, str]:
-        if not project_id:
-            project_id = await self.get_project_id_by_git_url()
-        jobs = self.get_last_pipeline_runs(project_id)
+    async def get_last_job_run_id(self, job_name: str) -> tuple[str, str]:
+        jobs = self.get_last_pipeline_runs()
         latest_job = self.__get_latest_successful_job(jobs, job_name)
         return (latest_job["id"], latest_job["created_at"])
 
-    def get_artifact_from_job_as_json(
-        self,
-        project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
-    ) -> dict:
-        return json.loads(
-            self.get_artifact_from_job(
-                project_id,
-                job_id,
-                trusted_path_to_artifact,
-            )
-        )
-
     def get_artifact_from_job_as_content(
-        self,
-        project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
+        self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
         return self.get_artifact_from_job(
-            project_id,
-            job_id,
-            trusted_path_to_artifact,
+            job_id, trusted_path_to_artifact
         ).encode()
 
     def __get_file_from_repository(
         self,
-        project_id: str,
         trusted_file_path: str,
         revision: str,
         headers: dict[str, str] | None = None,
     ) -> requests.Response:
         return requests.get(
-            f"{self.git_instance.api_url}/repos/{project_id}/contents/{parse.quote(trusted_file_path)}?ref={parse.quote(revision, safe='')}",
+            f"{self.api_url}/repos/{self.project_id}/contents/{parse.quote(trusted_file_path)}?ref={parse.quote(revision, safe='')}",
             timeout=config.requests.timeout,
             headers=headers,
         )
 
-    async def get_file_from_repository(
-        self,
-        project_id: str,
-        trusted_file_path: str,
-        revision: str | None = None,
+    def get_file_from_repository(
+        self, trusted_file_path: str, revision: str | None = None
     ) -> bytes:
         """
         If a repository is public but the permissions are not set correctly, you might be able to download the file without authentication
@@ -83,15 +56,14 @@ class GithubHandler(handler.GitHandler):
         For that purpose first we try to reach it without authentication and only if that fails try to get the file authenticated.
         """
         response = self.__get_file_from_repository(
-            project_id, trusted_file_path, revision or self.git_model.revision
+            trusted_file_path, revision or self.revision
         )
 
-        if not response.ok and self.git_model.password:
+        if not response.ok and self.password:
             response = self.__get_file_from_repository(
-                project_id,
                 trusted_file_path,
-                revision=revision or self.git_model.revision,
-                headers=self.__get_headers(self.git_model.password),
+                revision=revision or self.revision,
+                headers=self.__get_headers(self.password),
             )
 
         if response.status_code == 404:
@@ -102,15 +74,12 @@ class GithubHandler(handler.GitHandler):
 
         return base64.b64decode(response.json()["content"])
 
-    def get_last_pipeline_runs(
-        self,
-        project_id: str,
-    ) -> t.Any:
+    def get_last_pipeline_runs(self) -> t.Any:
         headers = None
-        if self.git_model.password:
-            headers = self.__get_headers(self.git_model.password)
+        if self.password:
+            headers = self.__get_headers(self.password)
         response = requests.get(
-            f"{self.git_instance.api_url}/repos/{project_id}/actions/runs?branch={parse.quote(self.git_model.revision, safe='')}&per_page=20",
+            f"{self.api_url}/repos/{self.project_id}/actions/runs?branch={parse.quote(self.revision, safe='')}&per_page=20",
             headers=headers,
             timeout=config.requests.timeout,
         )
@@ -118,16 +87,13 @@ class GithubHandler(handler.GitHandler):
         return response.json()["workflow_runs"]
 
     def get_artifact_from_job(
-        self,
-        project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
+        self, job_id: str, trusted_path_to_artifact: str
     ) -> str:
-        artifact = self.__get_latest_artifact_metadata(project_id, job_id)
+        artifact = self.__get_latest_artifact_metadata(job_id)
         artifact_id = artifact["id"]
         artifact_response = requests.get(
-            f"{self.git_instance.api_url}/repos/{project_id}/actions/artifacts/{artifact_id}/zip",
-            headers=self.__get_headers(self.git_model.password),
+            f"{self.api_url}/repos/{self.project_id}/actions/artifacts/{artifact_id}/zip",
+            headers=self.__get_headers(self.password),
             timeout=config.requests.timeout,
         )
         artifact_response.raise_for_status()
@@ -137,14 +103,12 @@ class GithubHandler(handler.GitHandler):
         )
 
     def get_last_updated_for_file_path(
-        self, project_id: str, file_path: str, revision: str | None
+        self, file_path: str, revision: str | None
     ) -> datetime.datetime | None:
         response = requests.get(
-            f"{self.git_instance.api_url}/repos/{project_id}/commits?path={file_path}&sha={revision or self.git_model.revision}",
+            f"{self.api_url}/repos/{self.project_id}/commits?path={file_path}&sha={revision or self.revision}",
             headers=(
-                self.__get_headers(self.git_model.password)
-                if self.git_model.password
-                else None
+                self.__get_headers(self.password) if self.password else None
             ),
             timeout=config.requests.timeout,
         )
@@ -169,7 +133,7 @@ class GithubHandler(handler.GitHandler):
         matched_jobs = [job for job in jobs if job["name"] == job_name]
         if not matched_jobs:
             raise git_exceptions.GitPipelineJobNotFoundError(
-                job_name=job_name, revision=self.git_model.revision
+                job_name=job_name, revision=self.revision
             )
         matched_jobs.sort(key=lambda job: job["created_at"], reverse=True)
         if matched_jobs[0]["conclusion"] == "success":
@@ -184,10 +148,10 @@ class GithubHandler(handler.GitHandler):
             job_name, matched_jobs[0]["conclusion"]
         )
 
-    def __get_latest_artifact_metadata(self, project_id: str, job_id: str):
+    def __get_latest_artifact_metadata(self, job_id: str):
         response = requests.get(
-            f"{self.git_instance.api_url}/repos/{project_id}/actions/runs/{job_id}/artifacts",
-            headers=self.__get_headers(self.git_model.password),
+            f"{self.api_url}/repos/{self.project_id}/actions/runs/{job_id}/artifacts",
+            headers=self.__get_headers(self.password),
             timeout=config.requests.timeout,
         )
         response.raise_for_status()
