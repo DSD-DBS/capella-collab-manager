@@ -150,8 +150,6 @@ backend:
       # - HTTPS: https://localhost/default/authorize
       authorization: null
 
-    audience: default
-
     claimMapping:
       idpIdentifier: sub
       username: preferred_username

@@ -45,7 +45,6 @@ authentication:
   endpoints:
     authorization: "{{ .Values.backend.authentication.endpoints.authorization }}"
     wellKnown: "{{ .Values.backend.authentication.endpoints.wellKnown }}"
-  audience: "{{ .Values.backend.authentication.audience }}"
   mapping:
     identifier: "{{ .Values.backend.authentication.claimMapping.idpIdentifier }}"
     username: "{{ .Values.backend.authentication.claimMapping.username }}"
