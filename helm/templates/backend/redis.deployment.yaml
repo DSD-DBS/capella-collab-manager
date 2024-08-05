@@ -1,0 +1,63 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend-redis
+  labels:
+    id: {{ .Release.Name }}-deployment-backend-redis
+spec:
+  replicas: {{ .Values.replicaCount.backendRedis | default 1 }}
+  selector:
+    matchLabels:
+      id: {{ .Release.Name }}-deployment-backend-redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        id: {{ .Release.Name }}-deployment-backend-redis
+    spec:
+      automountServiceAccountToken: false
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-redis
+            items:
+              - key: redis-config
+                path: redis.conf
+      containers:
+        - name: {{ .Release.Name }}-backend-redis
+          {{ if .Values.docker.images.redis }}
+          image: {{ .Values.docker.images.redis }}
+          {{ else }}
+          image: {{ .Values.docker.registry.external }}/redis:7.4
+          {{ end }}
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          resources:
+            {{ if .Values.development }}
+            limits:
+              cpu: "0.25"
+              memory: 250Mi
+            requests:
+              cpu: "0.06"
+              memory: 20Mi
+            {{ else }}
+            requests:
+              cpu: "250m"
+              memory: "500Mi"
+            limits:
+              cpu: "1"
+              memory: "3Gi"
+            {{ end }}
+          volumeMounts:
+            - mountPath: /redis-master-data
+              name: data
+            - mountPath: /redis-master
+              name: config

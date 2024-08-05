@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import uuid
-
 import pytest
 from sqlalchemy import orm
 
@@ -38,10 +36,7 @@ def fixture_jupyter_model(
     jupyter_tool: tools_models.DatabaseTool,
 ) -> toolmodels_models.DatabaseToolModel:
     jupyter_model = toolmodels_models.PostToolModel(
-        name="Jupyter test",
-        description="",
-        tool_id=jupyter_tool.id,
-        configuration={"workspace": str(uuid.uuid4())},
+        name="Jupyter test", description="", tool_id=jupyter_tool.id
     )
     return toolmodels_crud.create_model(
         db,

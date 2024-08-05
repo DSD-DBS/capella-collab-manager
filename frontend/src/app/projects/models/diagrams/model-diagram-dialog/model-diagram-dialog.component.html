@@ -17,16 +17,26 @@
     [model]="data.model"
   ></app-model-diagram-code-block>
 
-  <mat-form-field class="mb-[-1.25em] mt-2 w-full pb-1" appearance="outline">
-    <mat-label>Search</mat-label>
-    <input
-      [(ngModel)]="search"
-      autocomplete="off"
-      matInput
-      placeholder="Diagram name or uuid"
-    />
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
+  <div class="flex items-center gap-4">
+    <mat-form-field class="mb-[-1.25em] mt-2 w-full pb-1" appearance="outline">
+      <mat-label>Search</mat-label>
+      <input
+        [(ngModel)]="search"
+        autocomplete="off"
+        matInput
+        placeholder="Diagram name or uuid"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    <button
+      mat-flat-button
+      type="button"
+      color="primary"
+      (click)="clearCache()"
+    >
+      Clear Cache
+    </button>
+  </div>
 
   @if (this.diagramMetadata?.diagrams?.length === 0) {
     Your model doesn't seem to contain diagrams.

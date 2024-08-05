@@ -66,6 +66,9 @@ database:
   url: "{{ .Values.database.backend.external.uri }}"
   {{ end }}
 
+redis:
+  url: "redis://default:{{ .Values.redis.password }}@{{ .Release.Name }}-backend-redis:6379/0"
+
 pipelines:
   timeout: {{ .Values.pipelines.timeout }}
 

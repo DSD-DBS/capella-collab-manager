@@ -54,10 +54,10 @@ async def check_pipeline_health(
         return models.ModelArtifactStatus.UNCONFIGURED
 
     try:
-        git_handler = factory.GitHandlerFactory.create_git_handler(
+        git_handler = await factory.GitHandlerFactory.create_git_handler(
             db, primary_git_model
         )
-        await git_handler.get_last_job_run_id_for_git_model(job_name)
+        await git_handler.get_last_successful_job_run(job_name)
     except exceptions.GitPipelineJobNotFoundError:
         return models.ModelArtifactStatus.UNCONFIGURED
     except handler_exceptions.GitInstanceUnsupportedError:

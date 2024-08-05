@@ -27,3 +27,26 @@ class NoMatchingGitInstanceError(core_exceptions.BaseError):
             ),
             err_code="NO_MATCHING_GIT_INSTANCE",
         )
+
+
+class GitInstanceAPIEndpointNotFoundError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            title="Git instance API endpoint not found",
+            reason=(
+                "The used Git instance has no API endpoint defined. "
+                "Please contact your administrator."
+            ),
+            err_code="GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
+        )
+
+
+class GitRepositoryIdNotFoundError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Git model repository id not found",
+            reason="The used Git model has no repository id. Please contact your administrator",
+            err_code="GIT_MODEL_REPOSITORY_ID_NOT_SET",
+        )

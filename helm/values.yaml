@@ -9,6 +9,7 @@
 replicaCount:
   backend: 1
   backendPostgres: 1
+  backendRedis: 1
   docs: 1
   frontend: 1
   grafana: 1
@@ -54,6 +55,7 @@ docker:
 
     promtail: null
     postgres: null
+    redis: null
     grafana: null
     nginxUnprivileged: null
     mockOauth2Server: null
@@ -140,6 +142,9 @@ database:
 
       # Provide URI to the datebase in the format: postgresql://user:password@url:port/db_name
       uri: postgresql://user:password@url:port/db_name
+
+redis:
+  password: secret
 
 backend:
   authentication:

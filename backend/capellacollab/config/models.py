@@ -288,6 +288,10 @@ class DatabaseConfig(BaseConfig):
     )
 
 
+class RedisConfig(BaseConfig):
+    url: str = pydantic.Field(default="redis://localhost:6379/0")
+
+
 class InitialConfig(BaseConfig):
     admin: str = pydantic.Field(
         default="admin",
@@ -367,6 +371,7 @@ class AppConfig(BaseConfig):
     authentication: AuthenticationConfig = AuthenticationConfig()
     prometheus: PrometheusConfig = PrometheusConfig()
     database: DatabaseConfig = DatabaseConfig()
+    redis: RedisConfig = RedisConfig()
     initial: InitialConfig = InitialConfig()
     logging: LoggingConfig = LoggingConfig()
     requests: RequestsConfig = RequestsConfig()

@@ -30,11 +30,13 @@ import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { saveAs } from 'file-saver';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { switchMap } from 'rxjs';
 import {
   DiagramCacheMetadata,
   DiagramMetadata,
   Project,
   ProjectsModelsDiagramsService,
+  ProjectsModelsGitService,
   ToolModel,
 } from 'src/app/openapi';
 import {
@@ -89,6 +91,7 @@ export class ModelDiagramDialogComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
+    private projcetsModelsGitService: ProjectsModelsGitService,
     private projectsModelsDiagramsService: ProjectsModelsDiagramsService,
     @Inject(MAT_DIALOG_DATA)
     public data: { model: ToolModel; project: Project },
@@ -97,6 +100,30 @@ export class ModelDiagramDialogComponent implements OnInit {
   ngOnInit(): void {
     this.projectsModelsDiagramsService
       .getDiagramMetadata(this.data.project.slug, this.data.model.slug)
+      .subscribe({
+        next: (diagramMetadata) => {
+          this.diagramMetadata = diagramMetadata;
+          this.observeVisibleDiagrams();
+        },
+        error: () => {
+          this.dialogRef.close();
+        },
+      });
+  }
+
+  clearCache() {
+    this.diagramMetadata = undefined;
+    this.diagrams = {};
+    this.projcetsModelsGitService
+      .emptyCache(this.data.project.slug, this.data.model.slug)
+      .pipe(
+        switchMap(() =>
+          this.projectsModelsDiagramsService.getDiagramMetadata(
+            this.data.project.slug,
+            this.data.model.slug,
+          ),
+        ),
+      )
       .subscribe({
         next: (diagramMetadata) => {
           this.diagramMetadata = diagramMetadata;
@@ -137,8 +164,14 @@ export class ModelDiagramDialogComponent implements OnInit {
   lazyLoadDiagram(uuid: string) {
     if (!this.diagrams[uuid]) {
       this.diagrams[uuid] = { loading: true, content: undefined };
+
       this.projectsModelsDiagramsService
-        .getDiagram(uuid, this.data.project.slug, this.data.model.slug)
+        .getDiagram(
+          uuid,
+          this.data.project.slug,
+          this.data.model.slug,
+          this.diagramMetadata?.job_id || undefined,
+        )
         .subscribe({
           next: (response: Blob) => {
             const reader = new FileReader();

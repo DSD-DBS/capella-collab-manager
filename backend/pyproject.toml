@@ -44,6 +44,8 @@ dependencies = [
   "argon2-cffi",
   "typer",
   "lxml",
+  "redis",
+  "redis[hiredis]",
 ]
 
 [project.urls]
@@ -66,6 +68,7 @@ dev = [
   "pytest-cov",
   "aioresponses",
   "types-lxml",
+  "types-redis",
 ]
 
 [tool.black]

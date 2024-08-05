@@ -9,6 +9,9 @@ VENV = .venv
 
 HOST ?= 127.0.0.1
 
+REDIS_PORT = 6379
+REDIS_INSIGHT_PORT = 8001
+
 DATABASE_LOAD_FILE ?= ../local/load.sql
 DATABASE_SAVE_DIR ?= ../local
 
@@ -30,6 +33,14 @@ database:
 		-e POSTGRES_USER=$(DB_USER) \
 		-e POSTGRES_DB=$(DB_NAME) \
 		postgres
+
+redis:
+	docker start redis || \
+	docker run -d \
+		--name redis \
+		-p $(REDIS_PORT):6379 \
+		-p $(REDIS_INSIGHT_PORT):8001 \
+		redis/redis-stack:latest
 
 app:
 	if [ -d "$(VENV)/bin" ]; then

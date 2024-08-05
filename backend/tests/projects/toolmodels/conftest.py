@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
-import json
+import datetime
 import typing as t
 
 import pytest
@@ -17,10 +16,38 @@ import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_rep
 from capellacollab.core import credentials
 
 
-@pytest.fixture(
-    name="git_type",
-    params=[git_models.GitType.GITLAB],
-)
+@pytest.fixture(name="mock_git_redis_cache")
+def fixture_mock_git_redis_cache(monkeypatch: pytest.MonkeyPatch):
+    class MockGitRedisCache:
+        def __init__(self, *args, **kwargs) -> None:
+            super().__init__()
+
+        def get_file_data(
+            self, *args, **kwargs
+        ) -> tuple[datetime.datetime, bytes] | None:
+            pass
+
+        def get_artifact_data(
+            self, *args, **kwargs
+        ) -> tuple[datetime.datetime, bytes] | None:
+            pass
+
+        def put_file_data(self, *args, **kwargs) -> None:
+            pass
+
+        def put_artifact_data(self, *args, **kwargs) -> None:
+            pass
+
+        def clear(self) -> None:
+            pass
+
+    monkeypatch.setattr(
+        "capellacollab.projects.toolmodels.modelsources.git.handler.cache.GitRedisCache",
+        MockGitRedisCache,
+    )
+
+
+@pytest.fixture(name="git_type", params=[git_models.GitType.GITLAB])
 def fixture_git_type(request: pytest.FixtureRequest) -> git_models.GitType:
     return request.param
 
@@ -43,7 +70,7 @@ def fixture_git_instance_api_url(
 def fixture_git_instance(
     db: orm.Session, git_type: git_models.GitType, git_instance_api_url: str
 ) -> git_models.DatabaseGitInstance:
-    git_instance = git_models.DatabaseGitInstance(
+    git_instance = git_models.PostGitInstance(
         name="test",
         url="https://example.com/test/project",
         api_url=git_instance_api_url,
@@ -145,28 +172,6 @@ def fixture_mock_git_rest_api_for_artifacts(
 @pytest.fixture(name="git_query_params")
 def fixture_git_query_params(request: pytest.FixtureRequest) -> list[dict]:
     return request.param
-
-
-def github_commit_api_callback(request):
-    response_body = [
-        {
-            "sha": "43bf21488c5cc309af0ec635a8698b8509379527",
-            "commit": {
-                "author": {
-                    "name": "test-name",
-                    "email": "test-email",
-                    "date": "2050-06-26T13:46:21Z",
-                },
-                "committer": {
-                    "name": "test-name",
-                    "email": "test-email",
-                    "date": "2050-07-03T09:50:57Z",
-                },
-                "message": "test: Test commit message",
-            },
-        }
-    ]
-    return (200, {}, json.dumps(response_body))
 
 
 @pytest.fixture(name="mock_git_get_commit_information_api")

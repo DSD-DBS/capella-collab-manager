@@ -65,6 +65,7 @@ repos:
           - capellambse
           - typer
           - types-lxml
+          - types-redis
   - repo: local
     hooks:
       - id: pylint

@@ -168,6 +168,7 @@ def fixture_mock_gitlab_diagram_cache_svg(git_type: git_models.GitType):
     "mock_git_rest_api_for_artifacts",
     "mock_git_diagram_cache_index_api",
     "mock_git_get_commit_information_api",
+    "mock_git_redis_cache",
 )
 def test_get_diagram_metadata_from_repository(
     project: project_models.DatabaseProject,
@@ -178,7 +179,7 @@ def test_get_diagram_metadata_from_repository(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert len(response.json()) == 3
 
 
 @responses.activate
@@ -215,6 +216,7 @@ def test_get_diagram_metadata_from_repository(
     "mock_git_rest_api_for_artifacts",
     "mock_git_diagram_cache_index_api",
     "mock_git_get_commit_information_api",
+    "mock_git_redis_cache",
 )
 def test_get_diagram_metadata_from_artifacts(
     project: project_models.DatabaseProject,
@@ -225,7 +227,7 @@ def test_get_diagram_metadata_from_artifacts(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert len(response.json()) == 3
 
 
 @responses.activate
@@ -370,9 +372,12 @@ def test_get_diagrams_failed_diagram_cache_job_found(
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams",
     )
-
+    reason = response.json()["detail"]["reason"]
     assert response.status_code == 400
-    assert response.json()["detail"]["err_code"] == "FAILED_JOB_FOUND"
+    assert (
+        response.json()["detail"]["err_code"] == "UNSUCCESSFUL_JOB_STATE_ERROR"
+    )
+    assert "failure" in reason or "failed" in reason
 
 
 @responses.activate
@@ -418,6 +423,7 @@ def test_get_diagrams_failed_diagram_cache_job_found(
     "mock_git_diagram_cache_index_api",
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
+    "mock_git_redis_cache",
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_artifacts(
@@ -476,6 +482,7 @@ def test_get_single_diagram_from_artifacts(
     "mock_git_diagram_cache_index_api",
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
+    "mock_git_redis_cache",
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_artifacts_with_file_ending(
@@ -589,6 +596,7 @@ def test_get_single_diagram_from_artifacts_with_wrong_file_ending(
     "mock_git_diagram_cache_index_api",
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
+    "mock_git_redis_cache",
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_repository(

@@ -3,12 +3,14 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import pathlib
 from urllib import parse
 
 import fastapi
 import requests
+from aiohttp import web
 
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
 from capellacollab.core import logging as log
@@ -40,25 +42,43 @@ async def get_diagram_metadata(
     ),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
+    job_id = None
     try:
-        (
-            last_updated,
-            diagram_metadata_entries,
-        ) = await handler.get_file_from_repository_or_artifacts_as_json(
-            "diagram_cache/index.json",
-            "update_capella_diagram_cache",
-            "diagram-cache/" + handler.git_model.revision,
+        last_updated, diagram_metadata_entries = await handler.get_file(
+            trusted_file_path="diagram_cache/index.json",
+            revision=f"diagram-cache/{handler.revision}",
         )
-    except requests.exceptions.HTTPError:
-        logger.info("Failed fetching diagram metadata", exc_info=True)
-        raise exceptions.DiagramCacheNotConfiguredProperlyError()
+    except Exception:
+        logger.info(
+            "Failed fetching diagram metadata file for %s on revision %s.",
+            handler.path,
+            f"diagram-cache/{handler.revision}",
+            exc_info=True,
+        )
+        try:
+            job_id, last_updated, diagram_metadata_entries = (
+                await handler.get_artifact(
+                    trusted_file_path="diagram_cache/index.json",
+                    job_name="update_capella_diagram_cache",
+                )
+            )
+        except (web.HTTPError, requests.HTTPError):
+            logger.info(
+                "Failed fetching diagram metadata artifact for %s on revision %s",
+                handler.path,
+                handler.revision,
+                exc_info=True,
+            )
+            raise exceptions.DiagramCacheNotConfiguredProperlyError()
 
+    diagram_metadata_entries = json.loads(diagram_metadata_entries)
     return models.DiagramCacheMetadata(
         diagrams=[
             models.DiagramMetadata.model_validate(diagram_metadata)
             for diagram_metadata in diagram_metadata_entries
         ],
         last_updated=last_updated,
+        job_id=job_id,
     )
 
 
@@ -69,6 +89,7 @@ async def get_diagram_metadata(
 )
 async def get_diagram(
     diagram_uuid_or_filename: str,
+    job_id: str | int | None = None,
     handler: git_handler.GitHandler = fastapi.Depends(
         git_injectables.get_git_handler
     ),
@@ -79,16 +100,37 @@ async def get_diagram(
         raise exceptions.FileExtensionNotSupportedError(fileextension)
 
     diagram_uuid = pathlib.PurePosixPath(diagram_uuid_or_filename).stem
-    try:
-        _, diagram = await handler.get_file_from_repository_or_artifacts(
-            f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg",
-            "update_capella_diagram_cache",
-            "diagram-cache/" + handler.git_model.revision,
-        )
-    except requests.exceptions.HTTPError:
-        logger.info("Failed fetching diagram", exc_info=True)
-        raise exceptions.DiagramCacheNotConfiguredProperlyError()
+    file_path = f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg"
 
-    return responses.SVGResponse(
-        content=diagram,
-    )
+    if not job_id:
+        try:
+            file = await handler.get_file(
+                trusted_file_path=file_path,
+                revision=f"diagram-cache/{handler.revision}",
+            )
+            return responses.SVGResponse(content=file[1])
+        except Exception:
+            logger.info(
+                "Failed fetching diagram file %s for %s on revision %s.",
+                diagram_uuid,
+                handler.path,
+                f"diagram-cache/{handler.revision}",
+                exc_info=True,
+            )
+
+    try:
+        artifact = await handler.get_artifact(
+            trusted_file_path=file_path,
+            job_name="update_capella_diagram_cache",
+            job_id=job_id,
+        )
+        return responses.SVGResponse(content=artifact[2])
+    except (web.HTTPError, requests.HTTPError):
+        logger.info(
+            "Failed fetching diagram artifact %s for %s on revision %s.",
+            diagram_uuid,
+            handler.path,
+            f"diagram-cache/{handler.revision}",
+            exc_info=True,
+        )
+        raise exceptions.DiagramCacheNotConfiguredProperlyError()

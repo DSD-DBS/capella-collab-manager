@@ -1,9 +1,11 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import functools
 import typing as t
 
 import pydantic
+import redis
 import sqlalchemy as sa
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
@@ -33,6 +35,11 @@ from . import models  # isort:skip # pylint: disable=unused-import
 def get_db() -> t.Iterator[orm.Session]:
     with SessionLocal() as session:
         yield session
+
+
+@functools.lru_cache
+def get_redis() -> redis.Redis:
+    return redis.Redis.from_url(config.redis.url, decode_responses=True)
 
 
 def patch_database_with_pydantic_object(
