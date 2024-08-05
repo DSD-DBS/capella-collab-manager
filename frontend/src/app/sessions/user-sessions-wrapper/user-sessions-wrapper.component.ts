@@ -5,7 +5,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { tap, timer } from 'rxjs';
+import { delay, expand, of } from 'rxjs';
 import { UserSessionService } from '../service/user-session.service';
 
 @UntilDestroy()
@@ -19,10 +19,13 @@ export class UserSessionsWrapperComponent implements OnInit {
   constructor(private userSessionService: UserSessionService) {}
 
   ngOnInit(): void {
-    timer(0, 2000)
+    of(undefined)
       .pipe(
-        untilDestroyed(this),
-        tap(() => this.userSessionService.loadSessions()),
+        expand(() =>
+          this.userSessionService
+            .loadSessionsObservable()
+            .pipe(delay(2000), untilDestroyed(this)),
+        ),
       )
       .subscribe();
   }

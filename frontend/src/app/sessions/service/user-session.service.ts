@@ -4,7 +4,16 @@
  */
 
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, filter, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  map,
+  filter,
+  switchMap,
+  tap,
+  Observable,
+  catchError,
+  of,
+} from 'rxjs';
 import { Session, UsersService } from 'src/app/openapi';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import {
@@ -34,14 +43,18 @@ export class UserSessionService {
   );
 
   loadSessions(): void {
-    this.userWrapperService.user$
-      .pipe(
-        filter(Boolean),
-        switchMap((user) => this.usersService.getSessionsForUser(user.id)),
-      )
-      .subscribe({
-        next: (sessions) => this._sessions.next(sessions),
-        error: () => this._sessions.next(undefined),
-      });
+    this.loadSessionsObservable().subscribe();
+  }
+
+  loadSessionsObservable(): Observable<Session[] | undefined> {
+    return this.userWrapperService.user$.pipe(
+      filter(Boolean),
+      switchMap((user) => this.usersService.getSessionsForUser(user.id)),
+      tap((sessions) => this._sessions.next(sessions)),
+      catchError(() => {
+        this._sessions.next(undefined);
+        return of(undefined);
+      }),
+    );
   }
 }
