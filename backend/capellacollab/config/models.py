@@ -255,7 +255,6 @@ class ClaimMappingConfig(BaseConfig):
 
 class AuthenticationConfig(BaseConfig):
     endpoints: AuthOauthEndpointsConfig = AuthOauthEndpointsConfig()
-    audience: str = pydantic.Field(default="default")
     mapping: ClaimMappingConfig = ClaimMappingConfig()
     scopes: list[str] = pydantic.Field(
         default=["openid", "profile", "offline_access"],
