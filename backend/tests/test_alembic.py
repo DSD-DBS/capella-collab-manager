@@ -9,7 +9,6 @@ import docker
 import docker.models.containers
 import pytest
 import sqlalchemy
-from alembic import command
 from alembic.config import Config
 
 from capellacollab.core.database import migration
@@ -20,10 +19,24 @@ log.setLevel("DEBUG")
 client = docker.from_env()
 
 
+def wait_for_container(
+    container: docker.models.containers.Container, timeout=5
+):
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        container.reload()
+        if container.status == "running":
+            return
+        time.sleep(1)
+    raise TimeoutError(
+        f"Waited for container '{container.name}' with image '{container.image}'"
+    )
+
+
 @pytest.fixture(name="docker_database")
 def fixture_docker_database():
     log.info("Start database")
-    container = client.containers.run(
+    container: docker.models.containers.Container = client.containers.run(
         image="postgres",
         environment={
             "POSTGRES_PASSWORD": "dev",
@@ -41,6 +54,9 @@ def fixture_docker_database():
         ports={"5432/tcp": None},
     )
 
+    wait_for_container(container)
+    container.reload()
+
     yield container
 
     container.stop()
@@ -55,7 +71,6 @@ def fixture_alembic_revision(request) -> str:
 def fixture_initialized_database(
     docker_database: docker.models.containers.Container, alembic_revision: str
 ):
-    docker_database.reload()
     port = docker_database.ports["5432/tcp"][0]["HostPort"]
     for _ in range(int(database_connect_timeout / 2)):
         log.debug("Wait until database accepts connections")
