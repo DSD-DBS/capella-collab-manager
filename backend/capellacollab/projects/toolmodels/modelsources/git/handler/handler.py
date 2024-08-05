@@ -10,8 +10,7 @@ import typing as t
 
 import requests
 
-import capellacollab.projects.toolmodels.modelsources.git.models as git_models
-import capellacollab.settings.modelsources.git.models as settings_git_models
+from capellacollab.core import cache
 
 from .. import exceptions
 
@@ -20,59 +19,48 @@ if t.TYPE_CHECKING:
 
 
 class GitHandler:
+    cache: cache.Cache = cache.InMemoryCache()
+
     def __init__(
         self,
-        git_model: git_models.DatabaseGitModel,
-        git_instance: settings_git_models.DatabaseGitInstance,
-    ) -> None:
-        self.git_model = git_model
-        self.git_instance = git_instance
-        self.check_git_instance_has_api_url()
-
-    def check_git_instance_has_api_url(self):
-        if not self.git_instance.api_url:
-            raise exceptions.GitInstanceAPIEndpointNotFoundError()
-
-    @abc.abstractmethod
-    async def get_project_id_by_git_url(self) -> str:
-        pass
-
-    @abc.abstractmethod
-    async def get_last_job_run_id_for_git_model(
-        self, job_name: str, project_id: str | None = None
-    ) -> tuple[str, str]:
-        pass
-
-    @abc.abstractmethod
-    def get_artifact_from_job_as_json(
-        self,
+        path: str,
+        revision: str,
+        password: str,
+        api_url: str,
         project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
-    ) -> dict:
+    ) -> None:
+        self.path = path
+        self.revision = revision
+        self.password = password
+        self.api_url = api_url
+        self.project_id = project_id
+
+    @classmethod
+    @abc.abstractmethod
+    async def get_project_id_by_git_url(
+        cls, path: str, password: str, api_url: str
+    ) -> str:
+        pass
+
+    @abc.abstractmethod
+    async def get_last_job_run_id(self, job_name: str) -> tuple[str, str]:
         pass
 
     @abc.abstractmethod
     def get_artifact_from_job_as_content(
-        self,
-        project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
+        self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
         pass
 
     @abc.abstractmethod
-    async def get_file_from_repository(
-        self,
-        project_id: str,
-        trusted_file_path: str,
-        revision: str | None = None,
+    def get_file_from_repository(
+        self, trusted_file_path: str, revision: str | None = None
     ) -> bytes:
         pass
 
     @abc.abstractmethod
     def get_last_updated_for_file_path(
-        self, project_id: str, file_path: str, revision: str | None
+        self, file_path: str, revision: str | None
     ) -> datetime.datetime | None:
         pass
 
@@ -96,27 +84,62 @@ class GitHandler:
         job_name: str,
         revision: str | None = None,
     ) -> tuple[t.Any, bytes]:
-        project_id = await self.get_project_id_by_git_url()
         try:
-            return (
-                self.get_last_updated_for_file_path(
-                    project_id,
-                    trusted_file_path,
-                    revision=revision,
-                ),
-                await self.get_file_from_repository(
-                    project_id, trusted_file_path, revision
-                ),
+            f_last_updated = self.get_last_updated_for_file_path(
+                trusted_file_path, revision
             )
+
+            f_content = self._get_content_from_cache(
+                trusted_file_path, "file", revision
+            )
+
+            if not f_content:
+                f_content = self.get_file_from_repository(
+                    trusted_file_path, revision
+                )
+                self._store_content_in_cache(
+                    trusted_file_path, f_content, "file", revision
+                )
+            return (f_last_updated, f_content)
         except (requests.HTTPError, exceptions.GitRepositoryFileNotFoundError):
             pass
 
-        job_id, last_updated = await self.get_last_job_run_id_for_git_model(
-            job_name, project_id
+        job_id, a_last_updated = await self.get_last_job_run_id(job_name)
+
+        a_content = self._get_content_from_cache(
+            f"{job_id}-{trusted_file_path}", "artifact", revision
         )
-        return (
-            last_updated,
-            self.get_artifact_from_job_as_content(
-                project_id, job_id, trusted_file_path
-            ),
-        )
+        if not a_content:
+            a_content = self.get_artifact_from_job_as_content(
+                job_id, trusted_file_path
+            )
+            self._store_content_in_cache(
+                f"{job_id}-{trusted_file_path}",
+                a_content,
+                "artifact",
+                revision,
+            )
+
+        return (a_last_updated, a_content)
+
+    def _get_content_from_cache(
+        self, content_id: str, prefix: str, revision: str | None = None
+    ) -> bytes | None:
+        revision = revision if revision else self.revision
+
+        key = f"{prefix}-{self.project_id}-{content_id}-{revision}"
+
+        return GitHandler.cache.get(key)
+
+    def _store_content_in_cache(
+        self,
+        content_id: str,
+        content: bytes,
+        prefix: str,
+        revision: str | None = None,
+    ) -> None:
+        revision = revision if revision else self.revision
+
+        key = f"{prefix}-{self.project_id}-{content_id}-{revision}"
+
+        GitHandler.cache.set(key, content)

@@ -43,7 +43,7 @@ def fixture_git_instance_api_url(
 def fixture_git_instance(
     db: orm.Session, git_type: git_models.GitType, git_instance_api_url: str
 ) -> git_models.DatabaseGitInstance:
-    git_instance = git_models.DatabaseGitInstance(
+    git_instance = git_models.PostGitInstance(
         name="test",
         url="https://example.com/test/project",
         api_url=git_instance_api_url,

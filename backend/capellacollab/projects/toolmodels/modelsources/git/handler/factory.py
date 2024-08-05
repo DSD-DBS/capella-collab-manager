@@ -14,22 +14,48 @@ from . import exceptions, handler
 
 
 class GitHandlerFactory:
+    project_id_cache: dict[str, str] = {}
+
     @staticmethod
-    def create_git_handler(
+    async def create_git_handler(
         db: orm.Session, git_model: git_models.DatabaseGitModel
     ) -> handler.GitHandler:
+        """
+        Create a git handler for the given git model.
+
+        Args:
+            db (orm.Session): Database session.
+            git_model (git_models.DatabaseGitModel): The git model instance.
+
+        Returns:
+            handler.GitHandler: An instance of GitHandler.
+
+        Raises:
+            GitInstanceAPIEndpointNotFoundError: If the git instance API endpoint is not found.
+            GitInstanceUnsupportedError: If the git instance type is unsupported.
+        """
         git_instance = GitHandlerFactory.get_git_instance_for_git_model(
             db, git_model
         )
-        match git_instance.type:
-            case settings_git_models.GitType.GITLAB:
-                return gitlab_handler.GitlabHandler(git_model, git_instance)
-            case settings_git_models.GitType.GITHUB:
-                return github_handler.GithubHandler(git_model, git_instance)
-            case _:
-                raise exceptions.GitInstanceUnsupportedError(
-                    instance_name=str(git_instance.type)
-                )
+
+        if not git_instance.api_url:
+            raise exceptions.GitInstanceAPIEndpointNotFoundError()
+
+        project_id = GitHandlerFactory.project_id_cache.get(
+            f"{git_model.path}-{str(git_instance.type)}", None
+        )
+
+        if project_id is None:
+            project_id = await GitHandlerFactory._get_project_id(
+                git_model, git_instance.type, git_instance.api_url
+            )
+            GitHandlerFactory.project_id_cache[
+                f"{git_model.path}-{str(git_instance.type)}"
+            ] = project_id
+
+        return GitHandlerFactory._create_specific_git_handler(
+            git_model, git_instance.type, git_instance.api_url, project_id
+        )
 
     @staticmethod
     def get_git_instance_for_git_model(
@@ -48,3 +74,52 @@ class GitHandlerFactory:
             if git_model.path.startswith(instance.url):
                 return instance
         raise exceptions.NoMatchingGitInstanceError
+
+    @staticmethod
+    async def _get_project_id(
+        git_model: git_models.DatabaseGitModel,
+        git_instance_type: settings_git_models.GitType,
+        api_url: str,
+    ) -> str:
+        match git_instance_type:
+            case settings_git_models.GitType.GITLAB:
+                return await gitlab_handler.GitlabHandler.get_project_id_by_git_url(
+                    git_model.path, git_model.password, api_url
+                )
+            case settings_git_models.GitType.GITHUB:
+                return await github_handler.GithubHandler.get_project_id_by_git_url(
+                    git_model.path, git_model.password, api_url
+                )
+            case _:
+                raise exceptions.GitInstanceUnsupportedError(
+                    instance_name=str(git_instance_type)
+                )
+
+    @staticmethod
+    def _create_specific_git_handler(
+        git_model: git_models.DatabaseGitModel,
+        git_instance_type: settings_git_models.GitType,
+        api_url: str,
+        project_id: str,
+    ) -> handler.GitHandler:
+        match git_instance_type:
+            case settings_git_models.GitType.GITLAB:
+                return gitlab_handler.GitlabHandler(
+                    git_model.path,
+                    git_model.revision,
+                    git_model.password,
+                    api_url,
+                    project_id,
+                )
+            case settings_git_models.GitType.GITHUB:
+                return github_handler.GithubHandler(
+                    git_model.path,
+                    git_model.revision,
+                    git_model.password,
+                    api_url,
+                    project_id,
+                )
+            case _:
+                raise exceptions.GitInstanceUnsupportedError(
+                    instance_name=str(git_instance_type)
+                )

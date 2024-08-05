@@ -49,10 +49,10 @@ def get_existing_primary_git_model(
     raise exceptions.NoGitRepositoryAssignedToModelError(tool_model.slug)
 
 
-def get_git_handler(
+async def get_git_handler(
     git_model: git_models.DatabaseGitModel = fastapi.Depends(
         get_existing_primary_git_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> handler.GitHandler:
-    return factory.GitHandlerFactory.create_git_handler(db, git_model)
+    return await factory.GitHandlerFactory.create_git_handler(db, git_model)

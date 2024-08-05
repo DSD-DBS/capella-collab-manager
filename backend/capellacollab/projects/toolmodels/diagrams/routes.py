@@ -47,7 +47,7 @@ async def get_diagram_metadata(
         ) = await handler.get_file_from_repository_or_artifacts_as_json(
             "diagram_cache/index.json",
             "update_capella_diagram_cache",
-            "diagram-cache/" + handler.git_model.revision,
+            "diagram-cache/" + handler.revision,
         )
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram metadata", exc_info=True)
@@ -83,7 +83,7 @@ async def get_diagram(
         _, diagram = await handler.get_file_from_repository_or_artifacts(
             f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg",
             "update_capella_diagram_cache",
-            "diagram-cache/" + handler.git_model.revision,
+            "diagram-cache/" + handler.revision,
         )
     except requests.exceptions.HTTPError:
         logger.info("Failed fetching diagram", exc_info=True)
