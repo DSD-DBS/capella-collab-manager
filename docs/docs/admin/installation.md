@@ -36,8 +36,7 @@ future.
 
 === "microK8s"
 
-    !!! info
-        We have tested the instructions with Ubuntu Server 22.04.
+    INFO: We have tested the instructions with Ubuntu Server 22.04.
 
     1. Run steps 1-4 of the official microK8s [`Getting started`](https://microk8s.io/docs/getting-started) guide.
 
@@ -68,7 +67,7 @@ future.
         Make sure to update the `backend.storageClassName` in the `values.yaml` in step 6 to `nfs-csi`.
         All new Jupyter file-shares and personal workspaces will use the new storage class then.
 
-        !!! warning "User mapping for non-root containers"
+        WARNING: **User mapping for non-root containers**
             If you want to run the session containers as non-root, you can set the `runAsUser` value in the `podSecurityContext` of the values.yaml.
             In the default configuration, `runAsUser` is set to `1004370000`.
 
@@ -109,21 +108,24 @@ of memory.
 The Collaboration Manager requires two different namespaces. For security and
 overview reasons, they are separated:
 
-<!-- prettier-ignore -->
 - Capella Collaboration Manager control namespace: In this namespace, we run
-  the core application. It has full control over the sessions namespace and  consists of the following services:
-    - Frontend
-    - Backend
-    - Documentation
-    - Guacamole
-    - Prometheus
-    - Grafana (Loki), can be disabled in the `values.yaml`
+  the core application. It has full control over the sessions namespace and
+  consists of the following services:
 
-- Sessions namespace. The namespace is controlled by the control namespace and you won't need to touch it. In the session namespace, the following services run:
-    - Storage for persistent workspaces
-    - Storage for Juypter file-shares
-    - Pipeline jobs for nightly TeamForCapella to Git synchronisation
-    - Session containers (Capella, Papyrus, Juypter, pure::variants)
+  - Frontend
+  - Backend
+  - Documentation
+  - Guacamole
+  - Prometheus
+  - Grafana (Loki), can be disabled in the `values.yaml`
+
+- Sessions namespace. The namespace is controlled by the control namespace and
+  you won't need to touch it. In the session namespace, the following services
+  run:
+  - Storage for persistent workspaces
+  - Storage for Juypter file-shares
+  - Pipeline jobs for nightly TeamForCapella to Git synchronisation
+  - Session containers (Capella, Papyrus, Juypter, pure::variants)
 
 ---
 
@@ -177,11 +179,9 @@ chmod 600 values.yaml
 
 Adjust all values according to your needs.
 
-!!! info
-
-    You can overwrite individual images by setting the `docker.images.*` values.
-    This is useful to set Guacamole to a fixed version to avoid restarts during updates,
-    which would lead to session interruptions.
+INFO: You can overwrite individual images by setting the `docker.images.*`
+values. This is useful to set Guacamole to a fixed version to avoid restarts
+during updates, which would lead to session interruptions.
 
 ## Step 7: Install the Application in the Cluster
 
@@ -240,13 +240,13 @@ If a value is false, check the backend logs for more information.
 
 ## Step 10: Add TeamForCapella Support
 
-!!! info "TeamForCapella server required"
+INFO: **TeamForCapella server required**
 
     The setup of the TeamForCapella server and license server itself will
     not be part of this tutorial. To process, you'll need to have a running and
     reachable TeamForCapella server.
 
-!!! info "Container registry required"
+INFO: **Container registry required**
 
     For the TeamForCapella support, you'll need to build own Docker images. In order to use this in the cluster, an external or internal container registry is required.
 

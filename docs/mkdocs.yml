@@ -157,7 +157,9 @@ plugins:
 
 markdown_extensions:
   - meta
-  - admonition
+  - mdx_truly_sane_lists:
+      truly_sane: false
+  - callouts
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.extra
