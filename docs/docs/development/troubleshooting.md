@@ -12,17 +12,17 @@ fails with errors like "Could not resolve host", `k3d-myregistry.localhost`
 isn't resolved properly to `127.0.0.1`. To resolve this, you can try the
 following options:
 
-<!-- prettier-ignore -->
 - On Debian/Ubuntu based systems, you can install nss-myhostname.
   `nss-myhostname` resolves all subdomains of localhost to localhost:
-   ```sh
-   sudo apt install libnss-myhostname
-   ```
+
+  ```sh
+  sudo apt install libnss-myhostname
+  ```
 
 - Add the following line to the `/etc/hosts` on the host machine:
-   ```
-   127.0.0.1 k3d-myregistry.localhost
-   ```
+  ```
+  127.0.0.1 k3d-myregistry.localhost
+  ```
 
 After applying the steps, verify that the registry is reachable by running
 `make reach-registry` again.
