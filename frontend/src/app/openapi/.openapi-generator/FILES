@@ -6,6 +6,7 @@ api/events.service.ts
 api/health.service.ts
 api/integrations-pure-variants.service.ts
 api/metadata.service.ts
+api/navbar.service.ts
 api/notices.service.ts
 api/projects-events.service.ts
 api/projects-models-backups.service.ts
@@ -31,6 +32,8 @@ model/authorization-response.ts
 model/backup-pipeline-run.ts
 model/backup.ts
 model/base-user.ts
+model/built-in-link-item.ts
+model/built-in-navbar-link.ts
 model/cpu-resources-input.ts
 model/cpu-resources-output.ts
 model/create-backup.ts
@@ -43,6 +46,7 @@ model/create-tool-nature-output.ts
 model/create-tool-output.ts
 model/create-tool-version-input.ts
 model/create-tool-version-output.ts
+model/custom-navbar-link.ts
 model/diagram-cache-metadata.ts
 model/diagram-metadata.ts
 model/environment.ts
@@ -76,6 +80,9 @@ model/metadata-configuration-output.ts
 model/metadata.ts
 model/model-artifact-status.ts
 model/models.ts
+model/navbar-configuration-input-external-links-inner.ts
+model/navbar-configuration-input.ts
+model/navbar-configuration-output.ts
 model/notice-level.ts
 model/notice-response.ts
 model/page-history-event.ts

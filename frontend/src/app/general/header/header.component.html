@@ -20,35 +20,38 @@
     <div class="ml-5 basis-1/3 select-none text-2xl text-primary">
       Capella Collaboration Manager
     </div>
-    <div class="flex basis-1/3 justify-center gap-2">
-      @for (item of navBarService.navBarItems; track item.name) {
-        @if (userService.validateUserRole(item.requiredRole)) {
-          @if (item.href) {
-            <a
-              mat-flat-button
-              color="primary"
-              [attr.href]="item.href"
-              [attr.target]="item.target"
-              class=""
-            >
-              {{ item.name }}
-              @if (item.icon) {
-                <mat-icon iconPositionEnd>{{ item.icon }}</mat-icon>
-              }
-            </a>
-          } @else {
-            <a
-              mat-flat-button
-              color="primary"
-              [routerLink]="item.routerLink"
-              class=""
-            >
-              {{ item.name }}
-            </a>
+    @if (navBarService.navbarItems$ | async) {
+      <div class="flex basis-1/3 justify-center gap-2">
+        @for (item of navBarService.navbarItems$ | async; track item.name) {
+          @if (userService.validateUserRole(item.requiredRole)) {
+            @if (item.href) {
+              <a
+                mat-flat-button
+                color="primary"
+                [attr.href]="item.href"
+                [attr.target]="item.target"
+                class=""
+              >
+                {{ item.name }}
+                @if (item.icon) {
+                  <mat-icon iconPositionEnd>{{ item.icon }}</mat-icon>
+                }
+              </a>
+            } @else {
+              <a
+                mat-flat-button
+                color="primary"
+                [routerLink]="item.routerLink"
+                class=""
+              >
+                {{ item.name }}
+              </a>
+            }
           }
         }
-      }
-    </div>
+      </div>
+    }
+
     <div class="!mr-5 hidden basis-1/3 items-center justify-end gap-2 xl:flex">
       <mat-menu #profileMenu="matMenu" class="flex items-center">
         <a

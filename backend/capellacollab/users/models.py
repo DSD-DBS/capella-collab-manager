@@ -20,7 +20,7 @@ if t.TYPE_CHECKING:
     from capellacollab.users.tokens.models import DatabaseUserToken
 
 
-class Role(enum.Enum):
+class Role(str, enum.Enum):
     USER = "user"
     ADMIN = "administrator"
 

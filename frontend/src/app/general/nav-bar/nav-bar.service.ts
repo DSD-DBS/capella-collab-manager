@@ -5,20 +5,53 @@
 
 import { Injectable } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { UserRole } from 'src/app/services/user/user.service';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import {
+  BuiltInLinkItem,
+  NavbarConfigurationOutput,
+  NavbarService as OpenAPINavbarService,
+  Role,
+} from 'src/app/openapi';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavBarService {
-  sidenav?: MatSidenav;
+  constructor(private navbarService: OpenAPINavbarService) {
+    this.loadNavbarConfig().subscribe();
+  }
 
+  loadNavbarConfig(): Observable<NavbarConfigurationOutput> {
+    return this.navbarService
+      .getNavbar()
+      .pipe(tap((navConf) => this._navbarConfig.next(navConf)));
+  }
+
+  private _navbarConfig = new BehaviorSubject<
+    NavbarConfigurationOutput | undefined
+  >(undefined);
+
+  readonly navbarItems$ = this._navbarConfig.pipe(
+    map(
+      (navbarConfig): NavBarItem[] =>
+        navbarConfig?.external_links.map((link) => ({
+          name: link.name,
+          href: link.service ? this._linkMap[link.service] : link.href,
+          target: '_blank',
+          icon: 'open_in_new',
+          requiredRole: link.role,
+        })) || [],
+    ),
+    map((items) => [...this.internalNavbarItems, ...items]),
+  );
+
+  sidenav?: MatSidenav;
   toggle(): void {
     this.sidenav?.toggle();
   }
 
-  navBarItems: NavBarItem[] = [
+  private internalNavbarItems: NavBarItem[] = [
     {
       name: 'Projects',
       routerLink: '/projects',
@@ -39,28 +72,13 @@ export class NavBarService {
       routerLink: ['/sessions', 'overview'],
       requiredRole: 'administrator',
     },
-    {
-      name: 'Prometheus',
-      href: environment.prometheus_url,
-      target: '_blank',
-      icon: 'open_in_new',
-      requiredRole: 'administrator',
-    },
-    {
-      name: 'Grafana',
-      href: environment.grafana_url,
-      target: '_blank',
-      icon: 'open_in_new',
-      requiredRole: 'administrator',
-    },
-    {
-      name: 'Documentation',
-      href: environment.docs_url + '/',
-      target: '_blank',
-      icon: 'open_in_new',
-      requiredRole: 'user',
-    },
   ];
+
+  private _linkMap: Record<BuiltInLinkItem, string> = {
+    prometheus: environment.prometheus_url,
+    grafana: environment.grafana_url,
+    documentation: environment.docs_url + '/',
+  };
 }
 
 export type NavBarItem = {
@@ -68,6 +86,6 @@ export type NavBarItem = {
   routerLink?: string | string[];
   href?: string;
   target?: string;
-  requiredRole: UserRole;
+  requiredRole: Role;
   icon?: string;
 };
