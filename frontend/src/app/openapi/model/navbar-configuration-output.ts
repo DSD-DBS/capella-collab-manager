@@ -9,15 +9,13 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { NavbarConfigurationInput } from './navbar-configuration-input';
-import { MetadataConfigurationInput } from './metadata-configuration-input';
+import { NavbarConfigurationInputExternalLinksInner } from './navbar-configuration-input-external-links-inner';
 
 
-/**
- * Global application configuration.
- */
-export interface GlobalConfigurationInput { 
-    metadata?: MetadataConfigurationInput;
-    navbar?: NavbarConfigurationInput;
+export interface NavbarConfigurationOutput { 
+    /**
+     * Links to display in the navigation bar.
+     */
+    external_links: Array<NavbarConfigurationInputExternalLinksInner>;
 }
 

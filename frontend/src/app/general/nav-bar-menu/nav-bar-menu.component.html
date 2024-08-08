@@ -4,34 +4,36 @@
  -->
 
 <mat-list>
-  @for (item of navBarService.navBarItems; track $index) {
-    <div>
-      @if (userService.validateUserRole(item.requiredRole)) {
-        @if (item.href) {
-          <a
-            class="items-center"
-            mat-list-item
-            (click)="navBarService.toggle()"
-            [attr.href]="item.href"
-            [attr.target]="item.target"
-          >
-            {{ item.name }}
-            @if (item.icon) {
-              <mat-icon>{{ item.icon }}</mat-icon>
-            }
-          </a>
-        } @else {
-          <a
-            mat-list-item
-            (click)="navBarService.toggle()"
-            [routerLink]="item.routerLink"
-          >
-            {{ item.name }}
-          </a>
+  @if (navBarService.navbarItems$ | async) {
+    @for (item of (navBarService.navbarItems$ | async)!; track $index) {
+      <div>
+        @if (userService.validateUserRole(item.requiredRole)) {
+          @if (item.href) {
+            <a
+              class="items-center"
+              mat-list-item
+              (click)="navBarService.toggle()"
+              [attr.href]="item.href"
+              [attr.target]="item.target"
+            >
+              {{ item.name }}
+              @if (item.icon) {
+                <mat-icon>{{ item.icon }}</mat-icon>
+              }
+            </a>
+          } @else {
+            <a
+              mat-list-item
+              (click)="navBarService.toggle()"
+              [routerLink]="item.routerLink"
+            >
+              {{ item.name }}
+            </a>
+          }
         }
-      }
-      <mat-divider></mat-divider>
-    </div>
+        <mat-divider></mat-divider>
+      </div>
+    }
   }
   <mat-divider></mat-divider>
   <a

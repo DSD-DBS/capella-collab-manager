@@ -11,6 +11,7 @@ from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
 from capellacollab.health import routes as health_routes
 from capellacollab.metadata import routes as core_metadata
+from capellacollab.navbar import routes as navbar_routes
 from capellacollab.notices import routes as notices_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
@@ -29,6 +30,7 @@ router.include_router(
     tags=["Health"],
 )
 router.include_router(core_metadata.router, tags=["Metadata"])
+router.include_router(navbar_routes.router, tags=["Navbar"])
 router.include_router(
     sessions_routes.router,
     prefix="/sessions",

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import abc
+import enum
 import typing as t
 
 import pydantic
@@ -37,6 +38,62 @@ class MetadataConfiguration(core_pydantic.BaseModelStrict):
     environment: str = pydantic.Field(default="-", description="general")
 
 
+class BuiltInLinkItem(str, enum.Enum):
+    GRAFANA = "grafana"
+    PROMETHEUS = "prometheus"
+    DOCUMENTATION = "documentation"
+
+
+class UserRole(str, enum.Enum):
+    USER = "user"
+    ADMIN = "administrator"
+
+
+class BuiltInNavbarLink(core_pydantic.BaseModelStrict):
+    name: str
+    service: BuiltInLinkItem = pydantic.Field(
+        description="Built-in service to link to.",
+    )
+    role: UserRole = pydantic.Field(
+        description="Role required to see this link.",
+    )
+
+
+class CustomNavbarLink(core_pydantic.BaseModelStrict):
+    name: str
+    href: str = pydantic.Field(
+        description="URL to link to.",
+    )
+    role: UserRole = pydantic.Field(
+        description="Role required to see this link.",
+    )
+
+
+class NavbarConfiguration(core_pydantic.BaseModelStrict):
+    external_links: t.List[t.Union[BuiltInNavbarLink, CustomNavbarLink]] = (
+        pydantic.Field(
+            default=[
+                {
+                    "name": "Grafana",
+                    "service": BuiltInLinkItem.GRAFANA,
+                    "role": UserRole.ADMIN,
+                },
+                {
+                    "name": "Prometheus",
+                    "service": BuiltInLinkItem.PROMETHEUS,
+                    "role": UserRole.ADMIN,
+                },
+                {
+                    "name": "Documentation",
+                    "service": BuiltInLinkItem.DOCUMENTATION,
+                    "role": UserRole.USER,
+                },
+            ],
+            description="Links to display in the navigation bar.",
+        )
+    )
+
+
 class ConfigurationBase(core_pydantic.BaseModelStrict, abc.ABC):
     """
     Base class for configuration models. Can be used to define new configurations
@@ -53,6 +110,10 @@ class GlobalConfiguration(ConfigurationBase):
 
     metadata: MetadataConfiguration = pydantic.Field(
         default_factory=MetadataConfiguration
+    )
+
+    navbar: NavbarConfiguration = pydantic.Field(
+        default_factory=NavbarConfiguration
     )
 
 
