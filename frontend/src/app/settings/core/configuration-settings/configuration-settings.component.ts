@@ -8,6 +8,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
+import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ConfigurationSettingsService } from 'src/app/settings/core/configuration-settings/configuration-settings.service';
@@ -26,6 +27,7 @@ export class ConfigurationSettingsComponent implements OnInit {
     private configurationSettingsService: ConfigurationSettingsService,
     private toastService: ToastService,
     private metadataService: MetadataService,
+    private navbarService: NavBarService,
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +54,7 @@ export class ConfigurationSettingsComponent implements OnInit {
           );
           this.fetchConfiguration();
           this.metadataService.loadBackendMetadata().subscribe();
+          this.navbarService.loadNavbarConfig().subscribe();
         },
       });
   }

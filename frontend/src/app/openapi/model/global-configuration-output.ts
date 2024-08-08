@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { NavbarConfigurationOutput } from './navbar-configuration-output';
 import { MetadataConfigurationOutput } from './metadata-configuration-output';
 
 
@@ -17,5 +18,6 @@ import { MetadataConfigurationOutput } from './metadata-configuration-output';
  */
 export interface GlobalConfigurationOutput { 
     metadata: MetadataConfigurationOutput;
+    navbar: NavbarConfigurationOutput;
 }
 

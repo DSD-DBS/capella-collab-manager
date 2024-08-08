@@ -9,15 +9,13 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { NavbarConfigurationInput } from './navbar-configuration-input';
-import { MetadataConfigurationInput } from './metadata-configuration-input';
 
 
-/**
- * Global application configuration.
- */
-export interface GlobalConfigurationInput { 
-    metadata?: MetadataConfigurationInput;
-    navbar?: NavbarConfigurationInput;
-}
+export type BuiltInLinkItem = 'grafana' | 'prometheus' | 'documentation';
+
+export const BuiltInLinkItem = {
+    Grafana: 'grafana' as BuiltInLinkItem,
+    Prometheus: 'prometheus' as BuiltInLinkItem,
+    Documentation: 'documentation' as BuiltInLinkItem
+};
 

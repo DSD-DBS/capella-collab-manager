@@ -9,15 +9,12 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { NavbarConfigurationInput } from './navbar-configuration-input';
-import { MetadataConfigurationInput } from './metadata-configuration-input';
 
 
-/**
- * Global application configuration.
- */
-export interface GlobalConfigurationInput { 
-    metadata?: MetadataConfigurationInput;
-    navbar?: NavbarConfigurationInput;
-}
+export type UserRole = 'user' | 'administrator';
+
+export const UserRole = {
+    User: 'user' as UserRole,
+    Administrator: 'administrator' as UserRole
+};
 
