@@ -46,9 +46,9 @@ old direction from breaking. This can be done by adding a line to the
 
 ```yaml
 plugins:
-  - redirects:
-      redirect_maps:
-        'path/to/old/template.md': 'path/to/new/template.md' # Reason for the move
+    - redirects:
+          redirect_maps:
+              'path/to/old/template.md': 'path/to/new/template.md' # Reason for the move
 ```
 
 ### Tree structure

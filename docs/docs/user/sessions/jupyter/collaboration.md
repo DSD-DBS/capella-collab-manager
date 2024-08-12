@@ -12,8 +12,8 @@ create a shared space accessible by all project members.
 
 ### Permissions
 
-- **Read/Write Permission**: Allows users to edit the notebook files.
-- **Read-only Permission**: Grants view-only access to the Jupyter notebooks.
+-   **Read/Write Permission**: Allows users to edit the notebook files.
+-   **Read-only Permission**: Grants view-only access to the Jupyter notebooks.
 
 ### Create Project Notebook Share
 

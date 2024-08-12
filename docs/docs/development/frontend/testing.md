@@ -16,14 +16,14 @@ it against the potential benefits.
 
 ### Technologies
 
-- We use [Jasmine] as testing framework
-- [Karma] is used as test runner
-- We use [istanbul] to measure and visualize the code coverage
+-   We use [Jasmine] as testing framework
+-   [Karma] is used as test runner
+-   We use [istanbul] to measure and visualize the code coverage
 
 ### Additional Sources
 
-- [Official angular testing guide]
-- Recommended: [Detailed angular testing guide]
+-   [Official angular testing guide]
+-   Recommended: [Detailed angular testing guide]
 
 ### General
 
@@ -72,7 +72,7 @@ and what is missing, one can open the `index.html` file in the
 
 ### Technologies
 
-- We use [playwright] for E2E testing
+-   We use [playwright] for E2E testing
 
 ### Test Generation
 

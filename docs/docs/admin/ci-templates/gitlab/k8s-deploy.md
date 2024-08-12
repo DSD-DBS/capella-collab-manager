@@ -12,17 +12,17 @@ Please add the following section to your `.gitlab-ci.yml`:
 
 ```yaml
 include:
-  - remote: https://raw.githubusercontent.com/DSD-DBS/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/k8s-deploy.yml
+    - remote: https://raw.githubusercontent.com/DSD-DBS/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/k8s-deploy.yml
 ```
 
 You have to add the following environment variables on repository level. Make
 sure to enable the "Expand variable reference" flag.
 
-- `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
-  `secret.k8s.json` files.
-- `GRAFANA_HELM_CHART`: (Optional) - This variable is used to set the URL for
-  the Grafana Helm chart. It is useful if your deployment environment has
-  limited access, so you can specify a URL that is accessible for you.
+-   `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
+    `secret.k8s.json` files.
+-   `GRAFANA_HELM_CHART`: (Optional) - This variable is used to set the URL for
+    the Grafana Helm chart. It is useful if your deployment environment has
+    limited access, so you can specify a URL that is accessible for you.
 
 ## SOPS configuration
 
@@ -34,11 +34,11 @@ following structure:
 
 ```yaml
 creation_rules:
-  - path_regex: .*
-    encrypted_regex: ^(password|secret|adminPassword|uri|token)
-    key_groups:
-      - pgp:
-          - <GPG fingerprint>
+    - path_regex: .*
+      encrypted_regex: ^(password|secret|adminPassword|uri|token)
+      key_groups:
+          - pgp:
+                - <GPG fingerprint>
 ```
 
 Ensure that the GPG fingerprint of the Gitlab runner is present in the
@@ -56,11 +56,11 @@ The file has to contain the following content:
 
 ```json
 {
-  "server": "<k8s server>",
-  "namespace": "<namespace>",
-  "release": "<release>",
-  "username": "<username>",
-  "token": "<unencrypted token>"
+    "server": "<k8s server>",
+    "namespace": "<namespace>",
+    "release": "<release>",
+    "username": "<username>",
+    "token": "<unencrypted token>"
 }
 ```
 

@@ -13,14 +13,14 @@ Our goal is to ensure all features are optimized for mobile view.
 
 ## Requirements
 
-- Smallest width is 375px (iPhone SE)
-- Smallest height is 667px (iPhone SE)
-- The breakpoint width between mobile and desktop view is 1280px for the
-  navigation bar. When the screen is smaller than 1280px, the navigation bar is
-  hidden and can be expanded by clicking on the hamburger menu. The application
-  should be able to be used on all screen sizes that are wider than the
-  smallest width. Therefore the breakpoint can vary from component to
-  component.
+-   Smallest width is 375px (iPhone SE)
+-   Smallest height is 667px (iPhone SE)
+-   The breakpoint width between mobile and desktop view is 1280px for the
+    navigation bar. When the screen is smaller than 1280px, the navigation bar
+    is hidden and can be expanded by clicking on the hamburger menu. The
+    application should be able to be used on all screen sizes that are wider
+    than the smallest width. Therefore the breakpoint can vary from component
+    to component.
 
 ## Responsive design with TailwindCSS
 
@@ -33,16 +33,16 @@ uses flexbox on devices larger than `768px`.
 
 ### Best Practices
 
-- **Avoid Tables**: They're not natively responsive. Making them so demands
-  significant effort.
-- **Leverage Flexboxes**: Ideally, utilize `class="flex flex-wrap"` to ensure
-  content adjusts appropriately on various screens.
-- **Set Boundaries**: Implement `max-w-[90vw]` to avoid content spilling out of
-  view. You can change the `class="90vw"` to another value, depending on your
-  needs.
-- **Centering Content**: When aesthetics and usability align, consider
-  vertically centering elements via `class="flex justify-center"` on the parent
-  element.
+-   **Avoid Tables**: They're not natively responsive. Making them so demands
+    significant effort.
+-   **Leverage Flexboxes**: Ideally, utilize `class="flex flex-wrap"` to ensure
+    content adjusts appropriately on various screens.
+-   **Set Boundaries**: Implement `max-w-[90vw]` to avoid content spilling out
+    of view. You can change the `class="90vw"` to another value, depending on
+    your needs.
+-   **Centering Content**: When aesthetics and usability align, consider
+    vertically centering elements via `class="flex justify-center"` on the
+    parent element.
 
 ### Example from the application
 

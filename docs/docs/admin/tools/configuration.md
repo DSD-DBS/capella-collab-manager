@@ -10,20 +10,20 @@
 To add a tool to the Collaboration Manager, it must fulfill the following
 requirements:
 
-- The tool must run in a single Docker container (no sidecar containers).
-- The Docker container has to run with a non-root user.
-- The Docker image has to be deployed to a Docker registry, which is accessible
-  from the Collaboration Manager server environment.
-- The tool must be exposed via RDP or HTTP/HTTPS.
-- If the tool is exposed via RDP, it must accept basic authentication. For
-  HTTP-based tools, authentication is handled automatically via
-  pre-authentication.
-- The container must expose a `/metrics` endpoint with an `idletime_minutes`
-  gauge metric in the OpenMetrics format, which returns the time in minutes
-  since the last user interaction. The metric is used to determine if the
-  session is idle and can be terminated.
-- If you want to capture session logs and make them accessible via Grafana
-  Loki, they have to be written to disk (stdout/stderr are not persisted).
+-   The tool must run in a single Docker container (no sidecar containers).
+-   The Docker container has to run with a non-root user.
+-   The Docker image has to be deployed to a Docker registry, which is
+    accessible from the Collaboration Manager server environment.
+-   The tool must be exposed via RDP or HTTP/HTTPS.
+-   If the tool is exposed via RDP, it must accept basic authentication. For
+    HTTP-based tools, authentication is handled automatically via
+    pre-authentication.
+-   The container must expose a `/metrics` endpoint with an `idletime_minutes`
+    gauge metric in the OpenMetrics format, which returns the time in minutes
+    since the last user interaction. The metric is used to determine if the
+    session is idle and can be terminated.
+-   If you want to capture session logs and make them accessible via Grafana
+    Loki, they have to be written to disk (stdout/stderr are not persisted).
 
 ## YAML Configuration
 
@@ -39,12 +39,12 @@ An example configuration looks like this:
 
 ```yaml
 resources:
-  cpu:
-    requests: 0.4
-    limits: 2
-  memory:
-    requests: 1.6Gi
-    limits: 6Gi
+    cpu:
+        requests: 0.4
+        limits: 2
+    memory:
+        requests: 1.6Gi
+        limits: 6Gi
 ```
 
 The values are Kubernetes resource requests and limits. More information is
@@ -238,7 +238,7 @@ A variable is defined in the tool configuration:
 
 ```yaml
 environment:
-  MY_TOOL_USERNAME_WITH_PREFIX: 'test_{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}'
+    MY_TOOL_USERNAME_WITH_PREFIX: 'test_{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}'
 ```
 
 In this example, we map the `MY_TOOL_USERNAME` variable to the
@@ -272,16 +272,16 @@ The configuration looks like:
 
 ```yaml
 connection:
-  methods:
-    - identifier: <unique-identifier>
-      type: guacamole
-      name: Classic
-      description: ''
-      ports:
-        metrics: 9118
-        rdp: 3389
-      environment:
-        ENVIRONMENT_VARIABLE: test
+    methods:
+        - identifier: <unique-identifier>
+          type: guacamole
+          name: Classic
+          description: ''
+          ports:
+              metrics: 9118
+              rdp: 3389
+          environment:
+              ENVIRONMENT_VARIABLE: test
 ```
 
 #### HTTP(S)
@@ -291,19 +291,19 @@ configuration looks like:
 
 ```yaml
 connection:
-  methods:
-    - identifier: <unique-identifier>
-      type: http
-      name: HTTP
-      description: ''
-      ports:
-        metrics: 9118
-        http: 10000
-      environment:
-        ENVIRONMENT_VARIABLE: test
-      redirect_url: '{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}'
-      cookies:
-        token: '{CAPELLACOLLAB_SESSION_TOKEN}'
+    methods:
+        - identifier: <unique-identifier>
+          type: http
+          name: HTTP
+          description: ''
+          ports:
+              metrics: 9118
+              http: 10000
+          environment:
+              ENVIRONMENT_VARIABLE: test
+          redirect_url: '{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}'
+          cookies:
+              token: '{CAPELLACOLLAB_SESSION_TOKEN}'
 ```
 
 ##### Authentication

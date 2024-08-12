@@ -86,27 +86,28 @@
 
 ## Some General Words
 
-<!-- prettier-ignore -->
-- **Git-only** - the modeling team uses a git repository to work on the model.
-  The team may use git branches to work on features or capabilities in parallel
-  and a main branch is used for integration and release-tagging. This way of
-  working gives the modeling leads / change control board great control over
-  what contents make it to the model that is used for releases (of things like
-  design documentation). On the downside this co-working method is fairly
-  complicated and requires skilled modeling leadership for challenges like
-  merge conflict resolution and fragmentation management (a way to break up
-  model into smaller files to reduce density of merge conflicts).
-- **Git + TeamForCapella** - with this approach the modeling team can co-work
-  with a very high degree of concurrency and stay away from the difficulties of
-  merge conflict resolution. On the downside it is much harder to control what
-  makes it into the model as there is no barrier except for maybe a modeling
-  process that would stop a person from making changes that are not allowed.
-  Yet there are a few ways around that limitation. For teams with basic or no
-  experience in modeling and git this is probably the best way to start
-  co-woking. Git is still used for nightly backup of the model and
-  release-tagging.
+-   **Git-only** - the modeling team uses a git repository to work on the
+    model. The team may use git branches to work on features or capabilities in
+    parallel and a main branch is used for integration and release-tagging.
+    This way of working gives the modeling leads / change control board great
+    control over what contents make it to the model that is used for releases
+    (of things like design documentation). On the downside this co-working
+    method is fairly complicated and requires skilled modeling leadership for
+    challenges like merge conflict resolution and fragmentation management (a
+    way to break up model into smaller files to reduce density of merge
+    conflicts).
+-   **Git + TeamForCapella** - with this approach the modeling team can co-work
+    with a very high degree of concurrency and stay away from the difficulties
+    of merge conflict resolution. On the downside it is much harder to control
+    what makes it into the model as there is no barrier except for maybe a
+    modeling process that would stop a person from making changes that are not
+    allowed. Yet there are a few ways around that limitation. For teams with
+    basic or no experience in modeling and git this is probably the best way to
+    start co-woking. Git is still used for nightly backup of the model and
+    release-tagging.
 
-    !!! info "Info: TeamForCapella license required"
+    !!! info "TeamForCapella license required"
+
         For this co-working method to be enabled you need a valid
         TeamForCapella license and TeamForCapella server installed and
         integrated with Collab-Manager.
