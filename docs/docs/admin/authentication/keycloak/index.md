@@ -73,8 +73,6 @@ backend:
     endpoints:
       wellKnown: [...]/.well-known/openid-configuration # (1)!
 
-    audience: default
-
     claimMapping: # (2)!
       idpIdentifier: sub
       username: preferred_username
