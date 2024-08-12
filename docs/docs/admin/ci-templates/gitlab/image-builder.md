@@ -12,7 +12,7 @@ Please add the following section to your `.gitlab-ci.yml`:
 
 ```yaml
 include:
-  - remote: https://raw.githubusercontent.com/DSD-DBS/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/image-builder.yml
+    - remote: https://raw.githubusercontent.com/DSD-DBS/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/image-builder.yml
 ```
 
 The build images are tagged with the revision they were build with (e.g., when
@@ -22,13 +22,13 @@ running for main the tag would be `:main`). All characters matching the regex
 You have to add the following environment variables on repository level. Make
 sure to enable the "Expand variable reference" flag.
 
-- `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
-  `secret.docker.json` file (More about this file [below](#docker-sops-file))
-- Variables specifying how to name each image:
-  - `FRONTEND_IMAGE_NAME` (defaults to `capella/collab/frontend`)
-  - `BACKEND_IMAGE_NAME` (default to `capella/collab/backend`)
-  - `DOCS_IMAGE_NAME` (defaults to `capella/collab/docs`)
-  - `GUACAMOLE_IMAGE_NAME` (defaults to `capella/collab/guacamole`)
+-   `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
+    `secret.docker.json` file (More about this file [below](#docker-sops-file))
+-   Variables specifying how to name each image:
+    -   `FRONTEND_IMAGE_NAME` (defaults to `capella/collab/frontend`)
+    -   `BACKEND_IMAGE_NAME` (default to `capella/collab/backend`)
+    -   `DOCS_IMAGE_NAME` (defaults to `capella/collab/docs`)
+    -   `GUACAMOLE_IMAGE_NAME` (defaults to `capella/collab/guacamole`)
 
 This is the (minimal) configuration. For more advanced configuration options,
 please refer to the
@@ -45,11 +45,11 @@ following structure:
 
 ```yaml
 creation_rules:
-  - path_regex: .*
-    encrypted_regex: ^(password|secret|adminPassword|uri|token)
-    key_groups:
-      - pgp:
-          - <GPG fingerprint>
+    - path_regex: .*
+      encrypted_regex: ^(password|secret|adminPassword|uri|token)
+      key_groups:
+          - pgp:
+                - <GPG fingerprint>
 ```
 
 Ensure that the GPG fingerprint of the Gitlab runner is present in the
@@ -67,9 +67,9 @@ Then, enter the following content:
 
 ```json
 {
-  "registry": "<registry>",
-  "username": "<username>",
-  "password": "<password>"
+    "registry": "<registry>",
+    "username": "<username>",
+    "password": "<password>"
 }
 ```
 

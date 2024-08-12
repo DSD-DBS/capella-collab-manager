@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+singleQuote: true
+overrides:
+  - files: '*.md'
+    options:
+      tabWidth: 4
+      proseWrap: always
+      printWidth: 79

@@ -34,14 +34,14 @@ guide.
 1. Enter the connection string for the TeamForCapella server. There two ways to
    find the correct one. Make sure that the host is prefixed with `tcp://`.
 
-   1. Global administrators can navigate to `Menu` > `Settings` >
-      `Model sources` > `TeamForCapella` > Select the instance > `Host`.
-   1. Project managers can use the TeamForCapella connection flow described in
-      the
-      [Connect to a TeamForCapella repository](../../../user/tools/capella/teamforcapella/export/index.md)
-      guide. In the `Connect to Shared Project` dialog, select the repository,
-      expand "Connection information" and copy the "Repository host".
-      ![Find out T4C server host](./find-out-repository-host.png)
+    1. Global administrators can navigate to `Menu` > `Settings` >
+       `Model sources` > `TeamForCapella` > Select the instance > `Host`.
+    1. Project managers can use the TeamForCapella connection flow described in
+       the
+       [Connect to a TeamForCapella repository](../../../user/tools/capella/teamforcapella/export/index.md)
+       guide. In the `Connect to Shared Project` dialog, select the repository,
+       expand "Connection information" and copy the "Repository host".
+       ![Find out T4C server host](./find-out-repository-host.png)
 
 1. Enter the repository name and confirm with "Ok".
    ![Open CDO session](./open-cdo-session.png)

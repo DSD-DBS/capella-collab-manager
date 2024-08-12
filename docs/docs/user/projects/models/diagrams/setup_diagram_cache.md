@@ -37,8 +37,8 @@
 
 1.  Follow the CI template instructions
 
-    - [Gitlab](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/gitlab/diagram-cache/)
-    - [Github](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/github/diagram-cache/)
+    -   [Gitlab](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/gitlab/diagram-cache/)
+    -   [Github](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/github/diagram-cache/)
 
     to add the diagram cache pipeline to the linked repository.
 

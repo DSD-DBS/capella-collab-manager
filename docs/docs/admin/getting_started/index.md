@@ -47,6 +47,6 @@ Collaboration Manager.
 
 More advanced features include:
 
-- Read-only models from Git
-- Connect to a Team4Capella server (commercial product)
-- Manage users and user access
+-   Read-only models from Git
+-   Connect to a Team4Capella server (commercial product)
+-   Manage users and user access

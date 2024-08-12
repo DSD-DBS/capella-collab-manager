@@ -73,8 +73,8 @@ In the same directory of the component, add a file `{component_name}.docs.mdx`
 and use the following code as a template:
 
 ```mdx
-import * as Component from './component-name.stories.ts'
-import { Meta, Title, Story, Canvas, Unstyled } from '@storybook/blocks'
+import * as Component from './component-name.stories.ts';
+import { Meta, Title, Story, Canvas, Unstyled } from '@storybook/blocks';
 
 <Meta of={Component} />
 
@@ -91,9 +91,9 @@ devices:
 
 ```mdx
 <Unstyled>
-  <div style={{ width: '500px' }}>
-    <Story of={Component.ExampleStory} />
-  </div>
+    <div style={{ width: '500px' }}>
+        <Story of={Component.ExampleStory} />
+    </div>
 </Unstyled>
 ```
 
