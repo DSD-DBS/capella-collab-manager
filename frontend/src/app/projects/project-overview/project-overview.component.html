@@ -3,22 +3,20 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="px-2.5">
-  <mat-form-field id="search" appearance="outline" class="w-full">
-    <mat-label>Search</mat-label>
-    <input
-      autocomplete="off"
-      matInput
-      placeholder="Project Name"
-      type="text"
-      [formControl]="searchControl"
-    />
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
-</div>
+<mat-form-field id="search" appearance="outline" class="w-full">
+  <mat-label>Search</mat-label>
+  <input
+    autocomplete="off"
+    matInput
+    placeholder="Project Name"
+    type="text"
+    [formControl]="searchControl"
+  />
+  <mat-icon matSuffix>search</mat-icon>
+</mat-form-field>
 
-<div class="flex flex-wrap">
-  <a routerLink="/projects/create" class="m-2.5">
+<div class="flex flex-wrap gap-5">
+  <a routerLink="/projects/create">
     <div matRipple class="mat-card-overview new collab-card !m-0">
       <div class="content flex flex-col items-center justify-center">
         Add New Project <br />
@@ -28,54 +26,56 @@
       </div>
     </div>
   </a>
-  <app-mat-card-overview-skeleton-loader
-    [loading]="(filteredProjects$ | async) === undefined"
-  ></app-mat-card-overview-skeleton-loader>
-  <ng-container *ngIf="filteredProjects$ | async">
-    <a
-      class="m-2.5"
-      *ngFor="let project of (filteredProjects$ | async)!"
-      [routerLink]="['/project', project.slug]"
-    >
-      <div
-        [ngClass]="{ 'bg-archived': project.is_archived }"
-        matRipple
-        class="mat-card-overview collab-card !m-0"
-      >
-        <div class="header flex-row">
-          <mat-icon class="mr-1" *ngIf="project.type === 'training'"
-            >school</mat-icon
-          >
-          <span class="">{{ project.name }}</span>
-        </div>
-        <div class="p-3">
-          <div>
-            <div
-              class="line-clamp-4"
-              *ngIf="project.description; else elseBlock"
-            >
-              {{ project.description }}
-            </div>
-            <ng-template #elseBlock>No description provided.</ng-template>
+  @if ((filteredProjects$ | async) === undefined) {
+    <app-mat-card-overview-skeleton-loader
+      class="contents"
+    ></app-mat-card-overview-skeleton-loader>
+  }
+
+  @if (filteredProjects$ | async) {
+    @for (project of (filteredProjects$ | async)!; track project.slug) {
+      <a [routerLink]="['/project', project.slug]">
+        <div
+          [ngClass]="{ 'bg-archived': project.is_archived }"
+          matRipple
+          class="mat-card-overview collab-card !m-0"
+        >
+          <div class="header flex-row">
+            @if (project.type === "training") {
+              <mat-icon class="mr-1">school</mat-icon>
+            }
+
+            <span class="">{{ project.name }}</span>
           </div>
-          <div class="fixed bottom-2 right-2 text-right text-stone-500">
-            <div>
-              {{
-                project.visibility === "internal"
-                  ? "Internal project"
-                  : "Private project"
-              }}
+          <div class="p-3">
+            <div class="line-clamp-4">
+              @if (project.description) {
+                {{ project.description }}
+              } @else {
+                No description provided.
+              }
             </div>
-            <div>
-              {{ project.users.leads }} project lead(s),
-              {{ project.users.contributors }} contributor(s),
-              {{ project.users.subscribers }}
-              subscriber(s)
+            <div class="fixed bottom-2 right-2 text-right text-stone-500">
+              <div>
+                {{
+                  project.visibility === "internal"
+                    ? "Internal project"
+                    : "Private project"
+                }}
+              </div>
+              <div>
+                {{ project.users.leads }} project lead(s),
+                {{ project.users.contributors }} contributor(s),
+                {{ project.users.subscribers }}
+                subscriber(s)
+              </div>
+              @if (project.is_archived) {
+                Archived
+              }
             </div>
-            <div *ngIf="project.is_archived">Archived</div>
           </div>
         </div>
-      </div>
-    </a>
-  </ng-container>
+      </a>
+    }
+  }
 </div>

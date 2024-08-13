@@ -31,7 +31,7 @@ export class MockProjectWrapperService
   public readonly project$ = this._project.asObservable();
   public readonly projects$ = this._projects.asObservable();
 
-  constructor(project: Project, projects: Project[]) {
+  constructor(project: Project | undefined, projects: Project[] | undefined) {
     this._project.next(project);
     this._projects.next(projects);
   }
