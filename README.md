@@ -11,6 +11,7 @@
 ![tests](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/tests.yml/badge.svg)
 ![push](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/push.yml/badge.svg)
 [![codecov](https://codecov.io/github/DSD-DBS/capella-collab-manager/branch/main/graph/badge.svg?token=1UZHL2H54F)](https://codecov.io/github/DSD-DBS/capella-collab-manager)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/capella-collab-manager)](https://artifacthub.io/packages/search?repo=capella-collab-manager)
 
 A web platform for collaboration on MBSE and
 [Capella](https://www.eclipse.org/capella/) projects.
