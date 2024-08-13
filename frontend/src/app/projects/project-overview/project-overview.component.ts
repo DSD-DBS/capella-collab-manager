@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatRipple } from '@angular/material/core';
@@ -24,15 +24,12 @@ import { ProjectWrapperService } from '../service/project.service';
 @Component({
   selector: 'app-project-overview',
   templateUrl: './project-overview.component.html',
-  styleUrls: ['./project-overview.component.css'],
   standalone: true,
   imports: [
     RouterLink,
     MatRipple,
     MatIconComponent,
     MatCardOverviewSkeletonLoaderComponent,
-    NgIf,
-    NgFor,
     NgClass,
     MatIcon,
     AsyncPipe,

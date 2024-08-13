@@ -3,16 +3,21 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<ng-container *ngIf="loading">
-  <ngx-skeleton-loader
-    *ngFor="let _ of _cardNumbersArray"
-    count="1"
-    appearance="circle"
-    [theme]="{
-      'border-radius': '5px',
-      height: '260px',
-      width: '410px',
-      border: '1px solid white',
-    }"
-  ></ngx-skeleton-loader>
-</ng-container>
+@if (loading) {
+  @for (_ of _cardNumbersArray; track $index) {
+    <div class="h-[250px]">
+      <ngx-skeleton-loader
+        count="1"
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '100%',
+          width: '400px',
+          border: '1px solid white',
+          margin: 0,
+        }"
+      ></ngx-skeleton-loader>
+    </div>
+  }
+}
+<div></div>
