@@ -9,18 +9,16 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class PageLayoutService {
-  showHeader = true;
+  showNavbar = true;
   showFooter = true;
   showNotice = true;
 
-  disableAll() {
-    this.showHeader = false;
-    this.showFooter = false;
-    this.showNotice = false;
+  hideNavbar() {
+    this.showNavbar = false;
   }
 
   enableAll() {
-    this.showHeader = true;
+    this.showNavbar = true;
     this.showFooter = true;
     this.showNotice = true;
   }
