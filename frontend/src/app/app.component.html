@@ -7,10 +7,11 @@
   <mat-drawer #sidenav mode="push">
     <app-nav-bar-menu></app-nav-bar-menu>
   </mat-drawer>
+
   <mat-drawer-content class="overall-wrapper">
     @if (
       (fullscreenService.isFullscreen$ | async) === false &&
-      pageLayoutService.showHeader
+      pageLayoutService.showNavbar
     ) {
       <app-header class="h-[50px] xl:h-[100px]"></app-header>
     }
