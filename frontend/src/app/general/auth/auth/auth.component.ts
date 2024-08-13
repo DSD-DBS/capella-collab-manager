@@ -17,7 +17,6 @@ import { WelcomeComponent } from '../../welcome/welcome.component';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  styles: ['.wrapper { min-height: calc(100vh - 16px - 115px - 8px);}'],
   standalone: true,
   imports: [
     MatButton,

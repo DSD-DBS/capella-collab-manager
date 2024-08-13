@@ -54,4 +54,16 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.navBarService.sidenav = this.sidenav;
   }
+
+  constructMinHeight(): string {
+    let stmt = 'calc(100vh - 16px'; // Subtract margin of body
+    if (this.pageLayoutService.showNavbar) {
+      stmt += ' - 100px';
+    }
+    if (this.pageLayoutService.showFooter) {
+      stmt += ' - 115px - 8px';
+    }
+    stmt += ')';
+    return stmt;
+  }
 }
