@@ -18,9 +18,10 @@
 
     <div
       [ngClass]="{
-        'wrapper mx-3 my-2 md:mx-5':
+        'mx-3 my-2 md:mx-5':
           (fullscreenService.isFullscreen$ | async) === false,
       }"
+      [style]="{ 'min-height': constructMinHeight() }"
     >
       @if (
         (fullscreenService.isFullscreen$ | async) === false &&
