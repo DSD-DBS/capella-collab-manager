@@ -8,6 +8,7 @@ from . import (
     http,
     interface,
     jupyter,
+    networking,
     persistent_workspace,
     provisioning,
     pure_variants,
@@ -29,6 +30,7 @@ REGISTER_HOOKS_AUTO_USE: dict[str, interface.HookRegistration] = {
     "read_only_hook": read_only_workspace.ReadOnlyWorkspaceHook(),
     "provisioning": provisioning.ProvisionWorkspaceHook(),
     "session_preparation": session_preparation.GitRepositoryCloningHook(),
+    "networking": networking.NetworkingIntegration(),
 }
 
 

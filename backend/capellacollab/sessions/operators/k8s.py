@@ -99,6 +99,7 @@ class KubernetesOperator:
         volumes: list[models.Volume],
         init_volumes: list[models.Volume],
         annotations: dict[str, str],
+        labels: dict[str, str],
         prometheus_path="/metrics",
         prometheus_port=9118,
     ) -> Session:
@@ -125,6 +126,7 @@ class KubernetesOperator:
             init_volumes=init_volumes,
             tool_resources=tool.config.resources,
             annotations=annotations,
+            labels=labels,
         )
 
         self._create_disruption_budget(
@@ -440,6 +442,51 @@ class KubernetesOperator:
                     f"The Kubernetes operator encountered an unsupported session volume type '{type(volume)}'"
                 )
 
+    def create_network_policy_from_pod_to_label(
+        self,
+        name: str,
+        match_labels_from: dict[str, str],
+        match_labels_to: dict[str, str],
+    ):
+        return self.v1_networking.create_namespaced_network_policy(
+            namespace,
+            client.V1NetworkPolicy(
+                kind="NetworkPolicy",
+                api_version="networking.k8s.io/v1",
+                metadata=client.V1ObjectMeta(name=name),
+                spec=client.V1NetworkPolicySpec(
+                    pod_selector=client.V1LabelSelector(
+                        match_labels=match_labels_to
+                    ),
+                    policy_types=["Ingress"],
+                    ingress=[
+                        client.V1NetworkPolicyIngressRule(
+                            _from=[
+                                client.V1NetworkPolicyPeer(
+                                    pod_selector=client.V1LabelSelector(
+                                        match_labels=match_labels_from
+                                    )
+                                )
+                            ],
+                        )
+                    ],
+                ),
+            ),
+        )
+
+    def delete_network_policy(self, name: str):
+        try:
+            self.v1_networking.delete_namespaced_network_policy(
+                name,
+                namespace,
+            )
+        except exceptions.ApiException as e:
+            # Network policy doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return
+            raise
+
     def _create_deployment(
         self,
         image: str,
@@ -451,6 +498,7 @@ class KubernetesOperator:
         init_volumes: list[models.Volume],
         tool_resources: tools_models.Resources,
         annotations: dict[str, str],
+        labels: dict[str, str],
     ) -> client.V1Deployment:
         k8s_volumes, k8s_volume_mounts = self._map_volumes_to_k8s_volumes(
             volumes
@@ -541,7 +589,7 @@ class KubernetesOperator:
                 selector=client.V1LabelSelector(match_labels={"app": name}),
                 template=client.V1PodTemplateSpec(
                     metadata=client.V1ObjectMeta(
-                        labels={"app": name, "workload": "session"},
+                        labels={"app": name, "workload": "session"} | labels,
                         annotations=annotations,
                     ),
                     spec=client.V1PodSpec(

@@ -73,6 +73,7 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
         ports={"rdp": 3389},
         volumes=[],
         init_volumes=[],
+        labels={},
         annotations={},
     )
 

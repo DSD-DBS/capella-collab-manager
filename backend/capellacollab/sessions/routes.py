@@ -178,6 +178,11 @@ def request_session(
         "capellacollab/connection-method-name": connection_method.name,
     }
 
+    labels: dict[str, str] = {
+        "capellacollab/session-id": session_id,
+        "capellacollab/owner-id": str(user.id),
+    }
+
     session = operator.start_session(
         session_id=session_id,
         image=docker_image,
@@ -191,6 +196,7 @@ def request_session(
         volumes=volumes,
         init_volumes=init_volumes,
         annotations=annotations,
+        labels=labels,
         prometheus_path=tool.config.monitoring.prometheus.path,
         prometheus_port=connection_method.ports.metrics,
     )
