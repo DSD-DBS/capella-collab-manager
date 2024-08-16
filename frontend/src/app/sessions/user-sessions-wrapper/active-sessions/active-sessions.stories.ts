@@ -132,6 +132,142 @@ export const SessionErrorStateStory: Story = {
   ],
 };
 
+export const SessionKillingStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('Killing'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionStoppedStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('ExceededGracePeriod'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionQueuedStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('Preempting'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionNetworkIssuesStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('NetworkNotReady'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionPullingStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('Pulling'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionPulledStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('Pulled'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionScheduledStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('Scheduled'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionFailedSchedulingStateStory: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('FailedScheduling'),
+            ),
+        },
+      ],
+    }),
+  ],
+};
+
 export const SessionUnknownStateStory: Story = {
   args: {},
   decorators: [
