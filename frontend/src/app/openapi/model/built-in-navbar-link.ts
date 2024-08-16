@@ -9,15 +9,22 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { NavbarConfigurationInput } from './navbar-configuration-input';
-import { MetadataConfigurationInput } from './metadata-configuration-input';
+import { Role } from './role';
+import { BuiltInLinkItem } from './built-in-link-item';
 
 
-/**
- * Global application configuration.
- */
-export interface GlobalConfigurationInput { 
-    metadata?: MetadataConfigurationInput;
-    navbar?: NavbarConfigurationInput;
+export interface BuiltInNavbarLink { 
+    name: string;
+    /**
+     * Role required to see this link.
+     */
+    role: Role;
+    /**
+     * Built-in service to link to.
+     */
+    service: BuiltInLinkItem;
 }
+export namespace BuiltInNavbarLink {
+}
+
 

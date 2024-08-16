@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -27,6 +28,7 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
     MatButton,
     MatMenuTrigger,
     BreadcrumbsComponent,
+    AsyncPipe,
   ],
 })
 export class HeaderComponent {

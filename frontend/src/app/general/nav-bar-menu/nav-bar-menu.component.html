@@ -4,7 +4,7 @@
  -->
 
 <mat-list>
-  @for (item of navBarService.navBarItems; track $index) {
+  @for (item of navBarService.navbarItems$ | async; track $index) {
     <div>
       @if (userService.validateUserRole(item.requiredRole)) {
         @if (item.href) {

@@ -149,3 +149,47 @@ def test_metadata_is_updated(
     response = client.get("/api/v1/metadata")
     assert response.status_code == 200
     assert response.json()["environment"] == "test"
+
+
+def test_navbar_is_updated(
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+):
+    admin = users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
+
+    def get_mock_own_user():
+        return admin
+
+    app.dependency_overrides[users_injectables.get_own_user] = (
+        get_mock_own_user
+    )
+
+    response = client.put(
+        "/api/v1/settings/configurations/global",
+        json={
+            "navbar": {
+                "external_links": [
+                    {
+                        "name": "Example",
+                        "href": "https://example.com",
+                        "role": "user",
+                    }
+                ]
+            }
+        },
+    )
+
+    assert response.status_code == 200
+
+    del app.dependency_overrides[users_injectables.get_own_user]
+
+    response = client.get("/api/v1/navbar")
+    assert response.status_code == 200
+    assert response.json()["external_links"][0] == {
+        "name": "Example",
+        "href": "https://example.com",
+        "role": "user",
+    }
