@@ -67,7 +67,7 @@
         <div>
           Description: {{ token.description }} <br />
           Expiration date: {{ token.expiration_date | date }} <br />
-          Creation location: {{ token.source }}
+          Source: {{ token.source }}
           @if (isTokenExpired(token.expiration_date)) {
             <mat-icon color="warn" class="align-middle">warning</mat-icon>
             <span class="text-red-600">This token has expired!</span>

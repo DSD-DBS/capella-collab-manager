@@ -14,6 +14,7 @@ from . import (
     pure_variants,
     read_only_workspace,
     session_preparation,
+    session_token,
     t4c,
 )
 
@@ -23,15 +24,16 @@ REGISTERED_HOOKS: dict[str, interface.HookRegistration] = {
     "pure_variants": pure_variants.PureVariantsIntegration(),
 }
 
-REGISTER_HOOKS_AUTO_USE: dict[str, interface.HookRegistration] = {
-    "persistent_workspace": persistent_workspace.PersistentWorkspaceHook(),
-    "guacamole": guacamole.GuacamoleIntegration(),
-    "http": http.HTTPIntegration(),
-    "read_only_hook": read_only_workspace.ReadOnlyWorkspaceHook(),
-    "provisioning": provisioning.ProvisionWorkspaceHook(),
-    "session_preparation": session_preparation.GitRepositoryCloningHook(),
-    "networking": networking.NetworkingIntegration(),
-}
+REGISTER_HOOKS_AUTO_USE: list[interface.HookRegistration] = [
+    persistent_workspace.PersistentWorkspaceHook(),
+    session_token.SessionTokenIntegration(),
+    guacamole.GuacamoleIntegration(),
+    http.HTTPIntegration(),
+    read_only_workspace.ReadOnlyWorkspaceHook(),
+    provisioning.ProvisionWorkspaceHook(),
+    session_preparation.GitRepositoryCloningHook(),
+    networking.NetworkingIntegration(),
+]
 
 
 def get_activated_integration_hooks(
@@ -42,4 +44,4 @@ def get_activated_integration_hooks(
         hook
         for integration, hook in REGISTERED_HOOKS.items()
         if getattr(tool.integrations, integration, False)
-    ] + list(REGISTER_HOOKS_AUTO_USE.values())
+    ] + list(REGISTER_HOOKS_AUTO_USE)

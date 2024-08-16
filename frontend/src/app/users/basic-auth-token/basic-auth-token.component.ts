@@ -103,11 +103,13 @@ export class BasicAuthTokenComponent implements OnInit {
   }
 
   deleteToken(token: Token) {
-    this.tokenService.deleteToken(token).subscribe();
-    this.toastService.showSuccess(
-      'Token deleted',
-      `The token ${token.description} was successfully deleted!`,
-    );
+    this.tokenService.deleteToken(token).subscribe(() => {
+      this.toastService.showSuccess(
+        'Token deleted',
+        `The token ${token.description} was successfully deleted!`,
+      );
+      this.password = undefined;
+    });
   }
 
   isTokenExpired(expirationDate: string): boolean {
