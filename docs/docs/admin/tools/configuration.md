@@ -74,6 +74,14 @@ variables can be used by the tool:
         </td>
     </tr>
     <tr>
+        <td>`CAPELLACOLLAB_SESSION_API_TOKEN`</td>
+        <td>`collabmanager_0KCYg7Rt3AzurbZgvTO74GEQzIoOg1DK`</td>
+        <td>
+            Token which can be used against the Collaboration Manager API.
+            More information [here](#internal-communication).
+        </td>
+    </tr>
+    <tr>
         <td>`CAPELLACOLLAB_SESSION_ID`</td>
         <td>`tctszsirxuoohabwnhyhmzjdh`</td>
         <td>
@@ -331,6 +339,29 @@ Since version 3.1.0 of the Collaboration Manager, it is no longer necessary for
 the tool itself to handle the authentication. Instead, the Collaboration
 Manager automatically authenticates all users via pre-authentication with
 session tokens.
+
+### Internal communication
+
+Sessions can communicate with the Collaboration Manager API. In addition,
+sessions of the same user can communicate via inter-session communication.
+
+Here is an example of how to use the API to identify another session and send a
+request to it. You can run the code from a Jupyter session.
+
+```py
+import os
+import requests
+
+backend_url = os.getenv("CAPELLACOLLAB_API_BASE_URL")
+user_id = os.getenv("CAPELLACOLLAB_SESSION_REQUESTER_USER_ID")
+username = os.getenv("CAPELLACOLLAB_SESSION_REQUESTER_USERNAME")
+pat = os.getenv("CAPELLACOLLAB_SESSION_API_TOKEN")
+
+response = requests.get(f"{backend_url}/v1/users/{user_id}/sessions", auth=(username, pat))
+
+internal_endpoint = response.json()[0]["internal_endpoint"]
+requests.get(f"http://{internal_endpoint}").content
+```
 
 ## Configuration examples
 

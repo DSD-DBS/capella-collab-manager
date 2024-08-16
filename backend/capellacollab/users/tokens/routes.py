@@ -55,6 +55,7 @@ def create_token_for_user(
         scope=permissions_models.GlobalScopes.model_validate(
             post_token.scopes
         ),
+        title=post_token.title,
         description=post_token.description,
         expiration_date=post_token.expiration_date,
         source=post_token.source,
@@ -68,6 +69,7 @@ def create_token_for_user(
     return models.UserTokenWithPassword(
         id=token.id,
         user_id=token.user_id,
+        title=token.title,
         created_at=token.created_at,
         expiration_date=token.expiration_date,
         requested_scopes=util.get_database_token_scopes(token),
@@ -102,6 +104,7 @@ def get_all_tokens_of_user(
         models.UserToken(
             id=token.id,
             user_id=token.user_id,
+            title=token.title,
             created_at=token.created_at,
             expiration_date=token.expiration_date,
             requested_scopes=util.get_database_token_scopes(token),

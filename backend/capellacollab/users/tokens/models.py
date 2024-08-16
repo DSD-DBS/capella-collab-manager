@@ -48,6 +48,7 @@ class UserToken(core_pydantic.BaseModel):
         description="The actual scope of the token. It might be less than the requested scope."
     )
     created_at: datetime.datetime | None
+    title: str
     description: str
     source: str
 
@@ -62,6 +63,7 @@ class UserTokenWithPassword(UserToken):
 
 class PostToken(core_pydantic.BaseModel):
     expiration_date: datetime.date
+    title: str
     description: str
     source: str
     scopes: FineGrainedResource
@@ -82,6 +84,7 @@ class DatabaseUserToken(database.Base):
     hash: orm.Mapped[str]
     expiration_date: orm.Mapped[datetime.date]
     created_at: orm.Mapped[datetime.datetime | None]
+    title: orm.Mapped[str]
     description: orm.Mapped[str]
     source: orm.Mapped[str]
 

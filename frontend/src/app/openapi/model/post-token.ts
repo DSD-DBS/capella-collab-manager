@@ -14,6 +14,7 @@ import { FineGrainedResourceInput } from './fine-grained-resource-input';
 
 export interface PostToken { 
     expiration_date: string;
+    title: string;
     description: string;
     source: string;
     scopes: FineGrainedResourceInput;
