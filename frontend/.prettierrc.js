@@ -4,5 +4,10 @@
  */
 
 module.exports = {
-  plugins: [require.resolve("prettier-plugin-tailwindcss")],
+  plugins: [
+    require.resolve("prettier-plugin-tailwindcss"),
+    require.resolve("@trivago/prettier-plugin-sort-imports"),
+  ],
+  importOrder: ["^[./]"],
+  importOrderParserPlugins: ["typescript", "decorators-legacy"],
 };
