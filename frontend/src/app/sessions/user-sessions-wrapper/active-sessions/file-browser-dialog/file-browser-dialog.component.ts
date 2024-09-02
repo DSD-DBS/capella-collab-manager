@@ -61,7 +61,7 @@ import { FileExistsDialogComponent } from './file-exists-dialog/file-exists-dial
   ],
 })
 export class FileBrowserDialogComponent implements OnInit {
-  files: Array<[File, string]> = [];
+  files: [File, string][] = [];
   uploadProgress: number | null = null;
   loadingFiles = false;
 
@@ -111,8 +111,7 @@ export class FileBrowserDialogComponent implements OnInit {
             if (!this.files.includes([file, path]) && response) {
               this.files.push([file, path]);
               if (parentNode.children) {
-                for (let i = 0; i < parentNode.children.length; i++) {
-                  const child = parentNode.children[i];
+                for (const child of parentNode.children) {
                   if (child.name === name) {
                     child.isNew = true;
                     break;
@@ -144,8 +143,7 @@ export class FileBrowserDialogComponent implements OnInit {
       this.treeControl.expand(parentNode);
       return true;
     } else if (parentNode.children) {
-      for (let i = 0; i < parentNode.children.length; i++) {
-        const child = parentNode.children[i];
+      for (const child of parentNode.children) {
         result = this.addFileToTree(child, path, name);
         if (result) {
           this.treeControl.expand(parentNode);
@@ -158,8 +156,8 @@ export class FileBrowserDialogComponent implements OnInit {
 
   checkIfFileExists(parentNode: PathNode, fileName: string): boolean {
     if (parentNode.children) {
-      for (let i = 0; i < parentNode.children.length; i++) {
-        if (fileName == parentNode.children[i].name) return true;
+      for (const child of parentNode.children) {
+        if (fileName == child.name) return true;
       }
     }
     return false;
@@ -175,8 +173,8 @@ export class FileBrowserDialogComponent implements OnInit {
       this.treeControl.expand(parentNode);
       result = true;
     } else if (parentNode.children) {
-      for (let i = 0; i < parentNode.children?.length; i++) {
-        result = this._expandToNode(parentNode.children[i], node);
+      for (const child of parentNode.children) {
+        result = this._expandToNode(child, node);
         if (result) {
           this.treeControl.expand(parentNode);
         }
@@ -227,10 +225,10 @@ export class FileBrowserDialogComponent implements OnInit {
   removeFileFromSelection(path: string, filename: string): void {
     let file;
     let prefix = null;
-    for (let i = 0; i < this.files.length; i++) {
-      file = this.files[i][0];
-      prefix = this.files[i][1];
-      if (this.files[i][0].name === filename && this.files[i][1] === path) {
+    for (const fileIter of this.files) {
+      file = fileIter[0];
+      prefix = fileIter[1];
+      if (file.name === filename && prefix === path) {
         break;
       }
     }
@@ -280,9 +278,7 @@ export class FileBrowserDialogComponent implements OnInit {
       next: (response: Blob) => {
         saveAs(
           response,
-          `${filename
-            .replace(/^[\/\\: ]+/, '')
-            .replace(/[\/\\: ]+/g, '_')}.zip`,
+          `${filename.replace(/^[/\\: ]+/, '').replace(/[/\\: ]+/g, '_')}.zip`,
         );
         this.session.download_in_progress = false;
       },

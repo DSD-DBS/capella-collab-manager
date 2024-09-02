@@ -203,14 +203,14 @@ export class TilingWindowManagerComponent implements OnInit {
   }
 }
 
-type ResizeState = {
+interface ResizeState {
   index?: number;
   startX?: number;
   leftSession?: TilingSession;
   rightSession?: TilingSession;
   startWidthLeft?: number;
   startWidthRight?: number;
-};
+}
 
 type ValidResizeState = Required<ResizeState>;
 

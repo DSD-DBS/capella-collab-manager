@@ -99,7 +99,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
-  public availableGitInstances?: Array<GitInstance>;
+  public availableGitInstances?: GitInstance[];
   public selectedGitInstance?: GitInstance;
 
   private revisions?: Revisions;

@@ -32,6 +32,6 @@ export function areRestrictionsEqual(
   return a.allow_pure_variants === b.allow_pure_variants;
 }
 
-export type ModelRestrictions = {
+export interface ModelRestrictions {
   allow_pure_variants: boolean;
-};
+}

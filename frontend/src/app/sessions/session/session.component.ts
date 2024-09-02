@@ -49,7 +49,7 @@ import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-win
 export class SessionComponent implements OnInit, OnDestroy {
   cachedSessions?: CachedSession[] = undefined;
 
-  selectedWindowType: string = 'floating';
+  selectedWindowType = 'floating';
 
   constructor(
     public userSessionService: UserSessionService,

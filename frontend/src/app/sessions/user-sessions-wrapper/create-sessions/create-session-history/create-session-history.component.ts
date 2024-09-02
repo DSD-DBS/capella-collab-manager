@@ -140,10 +140,10 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
   }
 }
 
-export type ResolvedSessionRequestHistory = {
+export interface ResolvedSessionRequestHistory {
   tool: Tool;
   version: ToolVersion;
   connectionMethod: ConnectionMethod;
   loading: boolean;
   lastTimeRequested: Date;
-};
+}

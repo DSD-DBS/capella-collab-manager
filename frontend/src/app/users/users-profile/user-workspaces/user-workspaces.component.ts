@@ -42,6 +42,10 @@ export class UserWorkspacesComponent {
     this.reloadWorkspaces();
   }
 
+  get user(): User | undefined {
+    return this._user;
+  }
+
   reloadWorkspaces() {
     this.workspaces = undefined;
     if (
@@ -57,10 +61,6 @@ export class UserWorkspacesComponent {
       },
       error: () => (this.workspaces = undefined),
     });
-  }
-
-  get user(): User | undefined {
-    return this._user;
   }
 
   constructor(

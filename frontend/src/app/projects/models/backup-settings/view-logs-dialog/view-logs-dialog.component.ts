@@ -84,9 +84,9 @@ export class ViewLogsDialogComponent {
   }
 }
 
-export type ViewLogsData = {
+export interface ViewLogsData {
   projectSlug: string;
   modelSlug: string;
   job_id: string;
   backup_id: number;
-};
+}

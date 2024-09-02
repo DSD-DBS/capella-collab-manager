@@ -15,13 +15,9 @@ import {
 import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 import { environment } from 'src/environments/environment';
 
-export interface LocalStorage {
-  [id: string]: string;
-}
+export type LocalStorage = Record<string, string>;
 
-export interface Cookies {
-  [id: string]: string;
-}
+export type Cookies = Record<string, string>;
 
 export interface ReadonlySession extends Session {
   project: Project;

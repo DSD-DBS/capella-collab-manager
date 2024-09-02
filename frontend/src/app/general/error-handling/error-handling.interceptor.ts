@@ -119,7 +119,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
           reader.onload = (e: Event) => {
             try {
               const errmsg = JSON.parse(
-                (<FileReaderEventTarget>e.target).result,
+                (e.target as FileReaderEventTarget).result,
               );
               reject(
                 new HttpErrorResponse({
@@ -130,7 +130,7 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
                   url: err.url || undefined,
                 }),
               );
-            } catch (e) {
+            } catch {
               reject(err);
             }
           };

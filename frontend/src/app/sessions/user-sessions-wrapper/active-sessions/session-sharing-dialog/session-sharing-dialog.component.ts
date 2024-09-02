@@ -60,7 +60,7 @@ export class SessionSharingDialogComponent {
   });
 
   loading = false;
-  users: Array<AddedUser> = [];
+  users: AddedUser[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public session: Session,
@@ -180,8 +180,8 @@ export class SessionSharingDialogComponent {
   }
 }
 
-type AddedUser = {
+interface AddedUser {
   username: string;
   state: 'success' | 'pending' | 'error';
   tooltip: string;
-};
+}

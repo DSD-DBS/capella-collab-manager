@@ -93,17 +93,17 @@ export class PipelineService {
   }
 }
 
-export type Pipeline = {
+export interface Pipeline {
   id: number;
   t4c_model: SimpleT4CModel;
   git_model: BaseGitModel;
   run_nightly: boolean;
   include_commit_history: boolean;
-};
+}
 
-export type PostPipeline = {
+export interface PostPipeline {
   t4cmodelId: number;
   gitmodelId: number;
   includeCommitHistory: boolean;
   runNightly: boolean;
-};
+}

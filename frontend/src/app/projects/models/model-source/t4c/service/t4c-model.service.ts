@@ -122,20 +122,20 @@ export class T4CModelService {
   }
 }
 
-export type SubmitT4CModel = {
+export interface SubmitT4CModel {
   t4c_instance_id: number;
   t4c_repository_id: number;
   name: string;
-};
+}
 
-export type T4CModel = {
+export interface T4CModel {
   name: string;
   id: number;
   repository: T4CRepository;
-};
+}
 
-export type SimpleT4CModel = {
+export interface SimpleT4CModel {
   project_name: string;
   repository_name: string;
   instance_name: string;
-};
+}

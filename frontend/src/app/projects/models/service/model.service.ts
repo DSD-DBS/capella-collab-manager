@@ -140,7 +140,7 @@ export class ModelWrapperService {
   }
 
   asyncSlugValidator(ignoreModel?: ToolModel): AsyncValidatorFn {
-    const ignoreSlug = !!ignoreModel ? ignoreModel.slug : -1;
+    const ignoreSlug = ignoreModel ? ignoreModel.slug : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const modelSlug = slugify(control.value, { lower: true });
       return this.models$.pipe(

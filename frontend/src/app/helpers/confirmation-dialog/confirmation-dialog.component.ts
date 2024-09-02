@@ -22,7 +22,7 @@ export interface ConfirmationDialogData {
   imports: [FormsModule, MatFormField, MatInput, MatButton],
 })
 export class ConfirmationDialogComponent implements OnInit {
-  inputText: string = '';
+  inputText = '';
 
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogComponent, boolean>,

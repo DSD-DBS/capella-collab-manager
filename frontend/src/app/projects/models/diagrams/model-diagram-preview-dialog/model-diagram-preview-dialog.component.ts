@@ -42,7 +42,7 @@ export class ModelDiagramPreviewDialogComponent implements AfterViewInit {
   }
 }
 
-export type MatDialogPreviewData = {
+export interface MatDialogPreviewData {
   diagram: DiagramMetadata;
   content: string | ArrayBuffer;
-};
+}

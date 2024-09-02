@@ -193,11 +193,9 @@ export class ModelDiagramDialogComponent implements OnInit {
   }
 }
 
-export interface Diagrams {
-  [uuid: string]: Diagram;
-}
+export type Diagrams = Record<string, Diagram>;
 
-type Diagram = {
+interface Diagram {
   loading: boolean;
   content?: string | ArrayBuffer | null;
-};
+}

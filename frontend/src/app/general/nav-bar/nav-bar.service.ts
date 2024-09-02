@@ -80,11 +80,11 @@ export class NavBarService {
   };
 }
 
-export type NavBarItem = {
+export interface NavBarItem {
   name: string;
   routerLink?: string | string[];
   href?: string;
   target?: string;
   requiredRole: Role;
   icon?: string;
-};
+}

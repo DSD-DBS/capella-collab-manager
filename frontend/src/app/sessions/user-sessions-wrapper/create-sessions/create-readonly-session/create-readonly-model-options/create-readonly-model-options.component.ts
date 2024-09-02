@@ -29,13 +29,13 @@ import {
   existingRevisionValidator,
 } from 'src/app/services/git/git.service';
 
-export type ModelOptions = {
+export interface ModelOptions {
   model: ToolModel;
   primaryGitModel: GetGitModel;
   include: boolean;
   revision: string;
   deepClone: boolean;
-};
+}
 
 @Component({
   selector: 'create-readonly-model-options',

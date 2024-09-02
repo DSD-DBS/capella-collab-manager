@@ -71,7 +71,7 @@ export class MockT4CInstanceWrapperService
     };
   }
 
-  resetT4CInstance(): void {}
+  resetT4CInstance(): void {} // eslint-disable-line @typescript-eslint/no-empty-function
 }
 
 export class MockT4CRepositoryWrapperService
@@ -87,7 +87,7 @@ export class MockT4CRepositoryWrapperService
     this._repositories.next(repositories);
   }
 
-  reset() {}
+  reset() {} // eslint-disable-line @typescript-eslint/no-empty-function
 
   asyncNameValidator(): AsyncValidatorFn {
     return (_control: AbstractControl): Observable<ValidationErrors | null> => {

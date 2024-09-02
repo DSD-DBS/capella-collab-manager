@@ -41,6 +41,6 @@ export class LoadFilesService {
   }
 }
 
-export type UploadResponse = {
+export interface UploadResponse {
   message: string;
-};
+}

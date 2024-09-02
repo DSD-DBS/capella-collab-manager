@@ -41,7 +41,7 @@ export class PureVariantsService {
   }
 }
 
-export type PureVariantsConfiguration = {
+export interface PureVariantsConfiguration {
   license_server_url?: string;
   license_key_filename: string;
-};
+}
