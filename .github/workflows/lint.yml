@@ -51,3 +51,7 @@ jobs:
       - name: Run pre-commit
         run: |-
           pre-commit run --all-files
+      - name: Print changed files
+        if: failure()
+        run: |-
+          git add . && git status -vv
