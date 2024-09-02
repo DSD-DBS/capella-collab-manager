@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 export function absoluteUrlValidator(): ValidatorFn {

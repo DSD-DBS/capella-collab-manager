@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import {
   Component,
   Input,
@@ -10,7 +9,6 @@ import {
   ViewChild,
   ViewChildren,
 } from '@angular/core';
-
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';

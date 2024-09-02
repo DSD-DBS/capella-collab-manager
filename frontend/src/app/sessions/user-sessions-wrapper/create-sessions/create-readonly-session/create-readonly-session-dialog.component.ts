@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { DialogRef } from '@angular/cdk/dialog';
 import { Component, Inject, OnInit } from '@angular/core';
 import {
@@ -15,9 +14,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';

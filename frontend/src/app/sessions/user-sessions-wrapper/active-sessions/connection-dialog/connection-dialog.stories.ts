@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { UserWrapperService } from 'src/app/services/user/user.service';

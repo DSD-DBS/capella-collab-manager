@@ -2,10 +2,8 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs';

@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import {
@@ -17,7 +16,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import {
-  MatDialogRef as MatDialogRef,
+  MatDialogRef,
   MAT_DIALOG_DATA,
   MatDialogClose,
 } from '@angular/material/dialog';

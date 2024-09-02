@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { BehaviorSubject } from 'rxjs';
 import { Project } from 'src/app/openapi';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';

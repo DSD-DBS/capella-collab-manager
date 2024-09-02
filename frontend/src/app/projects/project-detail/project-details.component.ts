@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';

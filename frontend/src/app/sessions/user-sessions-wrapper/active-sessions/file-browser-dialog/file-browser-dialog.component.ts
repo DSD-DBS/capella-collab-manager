@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { NgIf, NgClass } from '@angular/common';
 import { HttpEvent, HttpEventType } from '@angular/common/http';

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
+import { HttpClientModule } from '@angular/common/http';
 import { SpyLocation } from '@angular/common/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -27,7 +27,7 @@ import {
   findElByTestId,
   setFieldValue,
 } from 'src/../tests/spec-helper/element.spec-helper';
-
+import { PatchProject, Project, Visibility } from 'src/app/openapi';
 import { ToastService } from '../../helpers/toast/toast.service';
 import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
 import {
@@ -35,8 +35,6 @@ import {
   ProjectVisibilityDescriptions,
 } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
-import { HttpClientModule } from '@angular/common/http';
-import { PatchProject, Project, Visibility } from 'src/app/openapi';
 
 const mockProjects: Project[] = [
   {

@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {

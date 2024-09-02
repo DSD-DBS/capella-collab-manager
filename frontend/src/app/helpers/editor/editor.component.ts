@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import {
   AfterViewInit,
   Component,
@@ -14,7 +13,6 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-
 import * as monaco from 'monaco-editor';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { v4 as uuidv4 } from 'uuid';

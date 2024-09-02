@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgClass } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';

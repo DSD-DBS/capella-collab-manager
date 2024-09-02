@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgModule } from '@angular/core';
 import { Data, RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from 'src/app/general/404/404.component';
@@ -20,8 +19,8 @@ import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
 import { EventsComponent } from './events/events.component';
-import { AuthComponent } from './general/auth/auth/auth.component';
 import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
+import { AuthComponent } from './general/auth/auth/auth.component';
 import { LogoutRedirectComponent } from './general/auth/logout-redirect/logout-redirect.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';

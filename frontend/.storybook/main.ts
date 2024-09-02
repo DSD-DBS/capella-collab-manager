@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import type { StorybookConfig } from '@storybook/angular';
 
 const config: StorybookConfig = {

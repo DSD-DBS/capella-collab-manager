@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
