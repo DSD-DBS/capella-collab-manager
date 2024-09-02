@@ -71,6 +71,9 @@ export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   @Input({ required: true })
   project!: Project;
 
+  @Input()
+  expanded = false;
+
   ngAfterViewInit(): void {
     hljs.highlightAll();
   }
@@ -138,6 +141,6 @@ model = capellambse.MelodyModel(
 })
 export class HighlightPipeTransform implements PipeTransform {
   transform(value: string, language: string): string {
-    return hljs.highlight(language, value).value;
+    return hljs.highlight(value, { language }).value;
   }
 }

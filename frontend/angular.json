@@ -34,7 +34,9 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "monaco-editor/min/vs/editor/editor.main.css",
               "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "monaco-editor/min/vs/editor/editor.main.css",
+              "node_modules/highlight.js/styles/default.css"
             ],
             "loader": {
               ".ttf": "file"
@@ -151,7 +153,8 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "monaco-editor/min/vs/editor/editor.main.css",
               "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/highlight.js/styles/default.css"
             ]
           }
         },
@@ -168,7 +171,8 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "monaco-editor/min/vs/editor/editor.main.css",
               "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/highlight.js/styles/default.css"
             ]
           }
         }
