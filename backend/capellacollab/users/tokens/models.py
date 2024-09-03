@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 import datetime
+import enum
 import typing as t
 
 import sqlalchemy as sa
@@ -22,6 +23,17 @@ class UserToken(core_pydantic.BaseModel):
     source: str
 
 
+class UserTokenResource(str, enum.Enum):
+    OWN_SESSIONS = "own_sessions"
+
+
+class UserTokenVerb(str, enum.Enum):
+    GET = "GET"
+    CREATE = "CREATE"
+    UPDATE = "UPDATE"
+    DELETE = "DELETE"
+
+
 class UserTokenWithPassword(UserToken):
     password: str
 
@@ -30,6 +42,7 @@ class PostToken(core_pydantic.BaseModel):
     expiration_date: datetime.date
     description: str
     source: str
+    scopes: list[tuple[UserTokenResource, set[UserTokenVerb]]]
 
 
 class DatabaseUserToken(database.Base):
