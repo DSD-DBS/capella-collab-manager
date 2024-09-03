@@ -9,29 +9,34 @@
       value
     }}</span></span
   >
-  <button
-    *ngIf="blurValue && !valueRevealed"
-    (click)="valueRevealed = true"
-    matTooltip="Show value"
-    class="flex"
-  >
-    <mat-icon>blur_off</mat-icon>
-  </button>
-  <button
-    *ngIf="blurValue && valueRevealed"
-    (click)="valueRevealed = false"
-    matTooltip="Hide value"
-    class="flex"
-  >
-    <mat-icon>blur_on</mat-icon>
-  </button>
-  <button
-    *ngIf="value"
-    [cdkCopyToClipboard]="value!"
-    matTooltip="Copy value to clipboard"
-    (click)="showClipboardMessage()"
-    class="flex"
-  >
-    <mat-icon>content_copy</mat-icon>
-  </button>
+  @if (blurValue) {
+    @if (valueRevealed) {
+      <button
+        (click)="valueRevealed = false"
+        matTooltip="Hide value"
+        class="flex"
+      >
+        <mat-icon>blur_on</mat-icon>
+      </button>
+    } @else {
+      <button
+        (click)="valueRevealed = true"
+        matTooltip="Show value"
+        class="flex"
+      >
+        <mat-icon>blur_off</mat-icon>
+      </button>
+    }
+  }
+
+  @if (value) {
+    <button
+      [cdkCopyToClipboard]="value!"
+      matTooltip="Copy value to clipboard"
+      (click)="showClipboardMessage()"
+      class="flex"
+    >
+      <mat-icon>content_copy</mat-icon>
+    </button>
+  }
 </div>
