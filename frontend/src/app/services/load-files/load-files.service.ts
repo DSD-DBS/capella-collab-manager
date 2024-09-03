@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -42,6 +41,6 @@ export class LoadFilesService {
   }
 }
 
-export type UploadResponse = {
+export interface UploadResponse {
   message: string;
-};
+}

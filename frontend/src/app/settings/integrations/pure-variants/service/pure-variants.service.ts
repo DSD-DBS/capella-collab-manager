@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -42,7 +41,7 @@ export class PureVariantsService {
   }
 }
 
-export type PureVariantsConfiguration = {
+export interface PureVariantsConfiguration {
   license_server_url?: string;
   license_key_filename: string;
-};
+}

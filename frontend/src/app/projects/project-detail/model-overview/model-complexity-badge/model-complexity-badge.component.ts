@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,6 +12,7 @@ import { filter, map, switchMap } from 'rxjs';
 import { ModelComplexityBadgeService } from 'src/app/projects/project-detail/model-overview/model-complexity-badge/service/model-complexity-badge.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { environment } from 'src/environments/environment';
+
 @Component({
   selector: 'app-model-complexity-badge',
   standalone: true,

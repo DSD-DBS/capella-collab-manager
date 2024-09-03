@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -19,63 +18,63 @@ import { environment } from 'src/environments/environment';
 // The generator has a pretty long name, so we're going to shorten it.
 export type ConnectionMethod = ToolSessionConnectionOutputMethodsInner;
 
-export type ToolSessionProvisioningConfiguration = {
+export interface ToolSessionProvisioningConfiguration {
   max_number_of_models?: number;
-};
+}
 
-export type ToolSessionConnectionConfiguration = {
+export interface ToolSessionConnectionConfiguration {
   methods: ConnectionMethod[];
-};
+}
 
-export type WorkspaceConfiguration = {
+export interface WorkspaceConfiguration {
   mounting_enabled: boolean;
-};
+}
 
-export type ToolSessionConfiguration = {
+export interface ToolSessionConfiguration {
   connection: ToolSessionConnectionConfiguration;
   provisioning: ToolSessionProvisioningConfiguration;
   persistent_workspaces: WorkspaceConfiguration;
-};
+}
 
-export type CreateTool = {
+export interface CreateTool {
   name: string;
   integrations: ToolIntegrations;
   config: ToolSessionConfiguration;
-};
+}
 
-export type ToolIntegrations = {
+export interface ToolIntegrations {
   t4c: boolean | null;
   pure_variants: boolean | null;
   jupyter: boolean | null;
-};
+}
 
-export type CreateToolVersion = {
+export interface CreateToolVersion {
   name: string;
   config: ToolVersionConfig;
-};
+}
 
-export type ToolVersionConfig = {
+export interface ToolVersionConfig {
   is_recommended: boolean;
   is_deprecated: boolean;
   compatible_versions: number[];
-};
+}
 
 export type ToolVersionWithTool = ToolVersion & { tool: Tool };
 
-export type CreateToolNature = {
+export interface CreateToolNature {
   name: string;
-};
+}
 
-export type ToolExtended = {
+export interface ToolExtended {
   natures: ToolNature[];
   versions: ToolVersion[];
-};
+}
 
-export type ToolDockerimages = {
+export interface ToolDockerimages {
   persistent: string;
   readonly: string | undefined;
   backup: string | undefined;
-};
+}
 
 @Injectable({
   providedIn: 'root',

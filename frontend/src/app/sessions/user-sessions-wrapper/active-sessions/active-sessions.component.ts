@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgClass, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';

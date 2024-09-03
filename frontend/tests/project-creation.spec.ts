@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { test, expect } from '@playwright/test';
 import { config } from 'tests/config.playwright';
 

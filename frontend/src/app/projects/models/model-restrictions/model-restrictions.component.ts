@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {

@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +13,7 @@ import { DisplayValueComponent } from 'src/app/helpers/display-value/display-val
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { User, UsersService, Workspace } from 'src/app/openapi';
 import { UserWrapperService } from 'src/app/services/user/user.service';
+
 @Component({
   selector: 'app-user-workspaces',
   standalone: true,
@@ -42,6 +42,10 @@ export class UserWorkspacesComponent {
     this.reloadWorkspaces();
   }
 
+  get user(): User | undefined {
+    return this._user;
+  }
+
   reloadWorkspaces() {
     this.workspaces = undefined;
     if (
@@ -57,10 +61,6 @@ export class UserWorkspacesComponent {
       },
       error: () => (this.workspaces = undefined),
     });
-  }
-
-  get user(): User | undefined {
-    return this._user;
   }
 
   constructor(

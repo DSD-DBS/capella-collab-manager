@@ -51,12 +51,12 @@ export class TokenService {
   }
 }
 
-export type Token = {
+export interface Token {
   description: string;
   expiration_date: string;
   source: string;
   id: number;
-};
+}
 
 export type CreateTokenResponse = Token & {
   password: string;

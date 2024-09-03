@@ -2,9 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-
 import {
   ProjectUserRole,
   ProjectUserService,

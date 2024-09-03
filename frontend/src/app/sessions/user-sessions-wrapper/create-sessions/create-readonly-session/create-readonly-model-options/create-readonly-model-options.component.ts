@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgFor, NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import {
@@ -30,13 +29,13 @@ import {
   existingRevisionValidator,
 } from 'src/app/services/git/git.service';
 
-export type ModelOptions = {
+export interface ModelOptions {
   model: ToolModel;
   primaryGitModel: GetGitModel;
   include: boolean;
   revision: string;
   deepClone: boolean;
-};
+}
 
 @Component({
   selector: 'create-readonly-model-options',

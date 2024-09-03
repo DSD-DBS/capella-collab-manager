@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Session } from 'src/app/openapi';
 import { ReadonlySession } from 'src/app/sessions/service/session.service';
 import { mockHttpConnectionMethod, mockToolVersionWithTool } from './tool';

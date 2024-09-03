@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -33,13 +32,13 @@ export class MonitoringService {
   }
 }
 
-export type GeneralHealth = {
+export interface GeneralHealth {
   guacamole: boolean;
   database: boolean;
   operator: boolean;
-};
+}
 
-export type ToolmodelStatus = {
+export interface ToolmodelStatus {
   project_slug: string;
   model_slug: string;
 
@@ -48,13 +47,13 @@ export type ToolmodelStatus = {
   pipeline_status: PipelineRunStatus;
   model_badge_status: ModelModifierStatus;
   diagram_cache_status: ModelModifierStatus;
-};
+}
 
-export type ProjectStatus = {
+export interface ProjectStatus {
   project_slug: string;
 
   warnings: string[];
-};
+}
 
 export type ModelModifierStatus =
   | 'success'

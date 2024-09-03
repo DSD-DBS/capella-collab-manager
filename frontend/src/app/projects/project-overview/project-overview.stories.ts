@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { mockProject, MockProjectWrapperService } from 'src/storybook/project';

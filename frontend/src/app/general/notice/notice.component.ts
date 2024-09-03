@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgFor } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { NoticeService } from '../../services/notice/notice.service';

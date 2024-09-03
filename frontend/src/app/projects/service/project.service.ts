@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Injectable } from '@angular/core';
 import {
   AbstractControl,
@@ -93,7 +92,7 @@ export class ProjectWrapperService {
   }
 
   asyncSlugValidator(ignoreProject?: Project): AsyncValidatorFn {
-    const ignoreSlug = !!ignoreProject ? ignoreProject.slug : -1;
+    const ignoreSlug = ignoreProject ? ignoreProject.slug : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const projectSlug = slugify(control.value, { lower: true });
       return this.projects$.pipe(

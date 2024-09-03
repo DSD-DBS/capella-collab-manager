@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
@@ -212,12 +211,12 @@ export class ProjectUserService {
   }
 }
 
-export type ProjectUser = {
+export interface ProjectUser {
   project_name: string;
   permission: ProjectUserPermission;
   role: ProjectUserRole;
   user: User;
-};
+}
 
 export type ProjectUserPermission = 'read' | 'write';
 export type ProjectUserRole = 'user' | 'manager' | 'administrator';

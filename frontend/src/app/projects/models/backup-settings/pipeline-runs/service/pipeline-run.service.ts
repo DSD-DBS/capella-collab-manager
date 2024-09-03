@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -197,17 +196,15 @@ export class PipelineRunService {
   }
 }
 
-export type PipelineRun = {
+export interface PipelineRun {
   status: PipelineRunStatus;
   triggerer: User;
   id: number;
   trigger_time: string;
   environment: PipelineRunEnvironment;
-};
-
-interface PipelineRunEnvironment {
-  [key: string]: string;
 }
+
+type PipelineRunEnvironment = Record<string, string>;
 
 export type PipelineRunStatus =
   | 'pending'

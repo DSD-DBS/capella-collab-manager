@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { NgClass, NgIf } from '@angular/common';
 import { Component, Input } from '@angular/core';

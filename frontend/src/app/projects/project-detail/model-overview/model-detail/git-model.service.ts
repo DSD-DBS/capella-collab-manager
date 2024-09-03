@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
@@ -27,7 +26,7 @@ export class GitModelService {
   loadGitModels(project_slug: string, model_slug: string): void {
     this.http
       .get<
-        Array<GetGitModel>
+        GetGitModel[]
       >(this.BACKEND_URL_PREFIX + `/projects/${project_slug}/models/${model_slug}/modelsources/git`)
       .subscribe((gitModels) => this._gitModels.next(gitModels));
   }
@@ -113,12 +112,12 @@ export class GitModelService {
   }
 }
 
-export type BaseGitModel = {
+export interface BaseGitModel {
   path: string;
   revision: string;
   entrypoint: string;
   username: string;
-};
+}
 
 export type CreateGitModel = BaseGitModel & {
   password?: string;

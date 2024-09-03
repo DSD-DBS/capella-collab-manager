@@ -2,9 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Component, OnInit, ViewChild } from '@angular/core';
-
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';

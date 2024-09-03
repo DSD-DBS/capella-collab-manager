@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import {
   Meta,
   StoryObj,
@@ -11,7 +10,6 @@ import {
 } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
 import { Session } from 'src/app/openapi';
-
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import {
   createPersistentSessionWithState,

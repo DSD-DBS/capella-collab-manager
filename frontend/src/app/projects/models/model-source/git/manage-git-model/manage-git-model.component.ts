@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import {
   Component,
@@ -100,7 +99,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
-  public availableGitInstances?: Array<GitInstance>;
+  public availableGitInstances?: GitInstance[];
   public selectedGitInstance?: GitInstance;
 
   private revisions?: Revisions;

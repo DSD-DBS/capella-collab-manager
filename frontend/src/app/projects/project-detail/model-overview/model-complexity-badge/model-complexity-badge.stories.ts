@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Meta, StoryObj } from '@storybook/angular';
 import { base64ModelBadge } from 'src/storybook/model-badge';
 import { ModelComplexityBadgeComponent } from './model-complexity-badge.component';

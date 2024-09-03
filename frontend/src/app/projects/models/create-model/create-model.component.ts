@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { NgClass, NgSwitch, NgSwitchCase } from '@angular/common';
 import {

@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgIf, AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { MatButton } from '@angular/material/button';

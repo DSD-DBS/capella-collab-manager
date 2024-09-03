@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
@@ -21,7 +20,7 @@ import { ToolExtended, ToolWrapperService } from './tool.service';
   imports: [RouterLink, MatRipple, MatIconComponent, NgFor, NgIf, MatIcon],
 })
 export class ToolsSettingsComponent {
-  tools: { [id: string]: ToolExtended } = {};
+  tools: Record<string, ToolExtended> = {};
 
   constructor(public toolService: ToolWrapperService) {
     this.tools = {};

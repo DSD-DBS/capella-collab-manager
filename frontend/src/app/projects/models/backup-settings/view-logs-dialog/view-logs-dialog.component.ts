@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -85,9 +84,9 @@ export class ViewLogsDialogComponent {
   }
 }
 
-export type ViewLogsData = {
+export interface ViewLogsData {
   projectSlug: string;
   modelSlug: string;
   job_id: string;
   backup_id: number;
-};
+}

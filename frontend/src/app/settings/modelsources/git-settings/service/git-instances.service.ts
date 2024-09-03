@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
@@ -89,7 +88,7 @@ export class GitInstancesService {
   }
 
   asyncNameValidator(ignoreInstance?: GitInstance): AsyncValidatorFn {
-    const ignoreId = !!ignoreInstance ? ignoreInstance.id : -1;
+    const ignoreId = ignoreInstance ? ignoreInstance.id : -1;
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       return this.gitInstances$.pipe(
         take(1),
@@ -105,23 +104,23 @@ export class GitInstancesService {
   }
 }
 
-export type BackendBasicGitInstance = {
+export interface BackendBasicGitInstance {
   id: number;
   name: string;
   url: string;
   api_url?: string;
   type: GitType;
-};
+}
 
 export type BasicGitInstance = Omit<GitInstance, 'id'>;
 
-export type GitInstance = {
+export interface GitInstance {
   id: number;
   name: string;
   url: string;
   apiURL?: string;
   type: GitType;
-};
+}
 
 export type GitType = 'general' | 'gitlab' | 'github' | 'azuredevops';
 

@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -12,8 +11,6 @@ import { BehaviorSubject } from 'rxjs';
 export class SessionHistoryService {
   LOCAL_STORAGE_SESSION_HISTORY_KEY = 'sessionRequestHistory';
   MAX_SESSIONS_IN_HISTORY = 3;
-
-  constructor() {}
 
   sessionHistory = new BehaviorSubject<SessionRequestHistory[] | undefined>(
     undefined,
@@ -93,9 +90,9 @@ export class SessionHistoryService {
   }
 }
 
-export type SessionRequestHistory = {
+export interface SessionRequestHistory {
   toolId: number;
   versionId: number;
   connectionMethodId: string;
   lastRequested: Date;
-};
+}

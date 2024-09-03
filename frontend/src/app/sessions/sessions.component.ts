@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Component } from '@angular/core';
 import { WelcomeComponent } from '../general/welcome/welcome.component';
 import { ActiveSessionsComponent } from './user-sessions-wrapper/active-sessions/active-sessions.component';

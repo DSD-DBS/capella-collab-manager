@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { DatePipe } from '@angular/common';
 import {
   Component,
@@ -194,11 +193,9 @@ export class ModelDiagramDialogComponent implements OnInit {
   }
 }
 
-export interface Diagrams {
-  [uuid: string]: Diagram;
-}
+export type Diagrams = Record<string, Diagram>;
 
-type Diagram = {
+interface Diagram {
   loading: boolean;
   content?: string | ArrayBuffer | null;
-};
+}

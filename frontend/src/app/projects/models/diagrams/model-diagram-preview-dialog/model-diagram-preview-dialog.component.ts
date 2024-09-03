@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import {
   AfterViewInit,
   Component,
@@ -43,7 +42,7 @@ export class ModelDiagramPreviewDialogComponent implements AfterViewInit {
   }
 }
 
-export type MatDialogPreviewData = {
+export interface MatDialogPreviewData {
   diagram: DiagramMetadata;
   content: string | ArrayBuffer;
-};
+}

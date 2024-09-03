@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { CommonModule } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {
@@ -61,7 +60,7 @@ export class SessionSharingDialogComponent {
   });
 
   loading = false;
-  users: Array<AddedUser> = [];
+  users: AddedUser[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public session: Session,
@@ -181,8 +180,8 @@ export class SessionSharingDialogComponent {
   }
 }
 
-type AddedUser = {
+interface AddedUser {
   username: string;
   state: 'success' | 'pending' | 'error';
   tooltip: string;
-};
+}

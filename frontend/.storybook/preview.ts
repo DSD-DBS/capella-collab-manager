@@ -2,18 +2,17 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
-import type { Preview } from '@storybook/angular';
-import { setCompodocJson } from '@storybook/addon-docs/angular';
-import docJson from '../documentation.json';
+import { DialogRef } from '@angular/cdk/dialog';
 import { HttpClientModule } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
+import { setCompodocJson } from '@storybook/addon-docs/angular';
+import type { Preview } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
-import { RouterModule } from '@angular/router';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatDialogRef } from '@angular/material/dialog';
-import { DialogRef } from '@angular/cdk/dialog';
+import docJson from '../documentation.json';
 
 setCompodocJson(docJson);
 

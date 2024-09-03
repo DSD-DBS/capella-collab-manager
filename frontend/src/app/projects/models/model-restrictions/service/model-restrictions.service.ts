@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -33,6 +32,6 @@ export function areRestrictionsEqual(
   return a.allow_pure_variants === b.allow_pure_variants;
 }
 
-export type ModelRestrictions = {
+export interface ModelRestrictions {
   allow_pure_variants: boolean;
-};
+}

@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgFor, NgIf, NgClass } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
@@ -204,14 +203,14 @@ export class TilingWindowManagerComponent implements OnInit {
   }
 }
 
-type ResizeState = {
+interface ResizeState {
   index?: number;
   startX?: number;
   leftSession?: TilingSession;
   rightSession?: TilingSession;
   startWidthLeft?: number;
   startWidthRight?: number;
-};
+}
 
 type ValidResizeState = Required<ResizeState>;
 

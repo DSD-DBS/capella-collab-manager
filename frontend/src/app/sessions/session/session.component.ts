@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { NgIf, NgFor, NgClass, AsyncPipe, DatePipe } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -50,7 +49,7 @@ import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-win
 export class SessionComponent implements OnInit, OnDestroy {
   cachedSessions?: CachedSession[] = undefined;
 
-  selectedWindowType: string = 'floating';
+  selectedWindowType = 'floating';
 
   constructor(
     public userSessionService: UserSessionService,

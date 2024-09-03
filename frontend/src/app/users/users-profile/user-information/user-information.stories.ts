@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { MatTableDataSource } from '@angular/material/table';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { EventType, HistoryEvent } from 'src/app/openapi';

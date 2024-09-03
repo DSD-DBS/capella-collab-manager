@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
 import { Injectable } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
@@ -81,11 +80,11 @@ export class NavBarService {
   };
 }
 
-export type NavBarItem = {
+export interface NavBarItem {
   name: string;
   routerLink?: string | string[];
   href?: string;
   target?: string;
   requiredRole: Role;
   icon?: string;
-};
+}
