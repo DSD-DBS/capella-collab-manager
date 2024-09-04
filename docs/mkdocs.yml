@@ -61,6 +61,7 @@ nav:
               - Export a Model to TeamForCapella: user/tools/capella/teamforcapella/export/index.md
               - TeamForCapella commits and commit messages: user/tools/capella/teamforcapella/commit-messages/index.md
               - See Other Connected Users: user/tools/capella/teamforcapella/connected-users/index.md
+              - Steps after a Model Migration: user/tools/capella/teamforcapella/migration/index.md
           - Git:
               - Working with Git: user/tools/capella/git/index.md
           - Troubleshooting: user/tools/capella/troubleshooting/index.md

@@ -22,7 +22,7 @@
    button and enter your [session token](../connect/index.md). Click on `Next`.
    ![Select repository for export](./export-repository-selection.png)
 1. Select the overwrite strategy. If the project doesn't exist on the server
-   yet, choose `Replace`. Otherwise, select `Merge`.
+   yet, choose `Replace`. Otherwise, select `Merge`. <br>
    ![Overwrite strategy](./select-overwrite-strategy.png)
 1. In the next step, you have to select images to export.
 1. Finish the export with `Finish`.
