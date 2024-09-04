@@ -1,0 +1,113 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<form class="dialog min-w-96" [formGroup]="feedbackForm" (submit)="submit()">
+  <h1 class="text-lg font-semibold">
+    @if (data.sessions.length === 0) {
+      How has your experience been?
+    } @else if (data.sessions.length === 1) {
+      How was your session?
+    } @else {
+      How were your sessions?
+    }
+  </h1>
+  <div>
+    <div class="space-y-4">
+      <div class="flex justify-center space-x-4">
+        <button
+          (click)="setRating('bad')"
+          mat-icon-button
+          color="warn"
+          type="button"
+          [class]="
+            feedbackForm.get('rating')?.value === 'bad' ? '!bg-gray-200' : ''
+          "
+        >
+          <mat-icon>sentiment_dissatisfied</mat-icon>
+        </button>
+        <button
+          (click)="setRating('okay')"
+          mat-icon-button
+          type="button"
+          [class]="
+            feedbackForm.get('rating')?.value === 'okay' ? '!bg-gray-200' : ''
+          "
+        >
+          <mat-icon>sentiment_neutral</mat-icon>
+        </button>
+        <button
+          (click)="setRating('good')"
+          mat-icon-button
+          color="primary"
+          type="button"
+          [class]="
+            feedbackForm.get('rating')?.value === 'good' ? '!bg-gray-200' : ''
+          "
+        >
+          <mat-icon>sentiment_satisfied</mat-icon>
+        </button>
+      </div>
+
+      @if (
+        feedbackForm.get("rating")?.value === "bad" ||
+        feedbackForm.get("rating")?.value === "okay"
+      ) {
+        <mat-form-field class="w-full">
+          <mat-label>What can we do better?</mat-label>
+          <textarea matInput formControlName="feedbackText"></textarea>
+          <mat-hint>Try and be as specific as possible </mat-hint>
+        </mat-form-field>
+
+        @if ((feedbackService.anonymityPolicy$ | async) === "ask_user") {
+          <div>
+            <mat-checkbox formControlName="shareContact"
+              >I want to be contacted about this</mat-checkbox
+            >
+          </div>
+        }
+      }
+
+      <div class="flex max-w-72 items-center gap-2 text-xs text-gray-500">
+        @if (
+          (feedbackService.anonymityPolicy$ | async) === "force_identified" ||
+          feedbackForm.get("shareContact")?.value
+        ) {
+          <mat-icon class="size-4 shrink-0">privacy_tip</mat-icon>
+          <span>
+            Your contact information will be shared with
+            <strong>{{
+              (metadataService.backendMetadata | async)?.provider ||
+                "Systems Engineering Toolchain team"
+            }}</strong
+            >. You may be contacted for further information.
+          </span>
+        } @else {
+          <mat-icon class="shrink-0">security</mat-icon>
+          <span> Your feedback will be anonymous. </span>
+        }
+      </div>
+
+      @if (data.sessions.length > 0) {
+        <div class="flex items-center gap-2 text-xs text-gray-500">
+          <mat-icon class="size-4 shrink-0">storage</mat-icon>
+          <span> Your feedback includes anonymized session details.</span>
+        </div>
+      }
+    </div>
+  </div>
+  <div class="mt-2 flex w-full justify-end space-x-2">
+    <button mat-flat-button mat-dialog-close type="button">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="
+        feedbackForm.invalid || feedbackForm.untouched || submitButton.disabled
+      "
+    >
+      {{ submitButton.text }}
+    </button>
+  </div>
+</form>

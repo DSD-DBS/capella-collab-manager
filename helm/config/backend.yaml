@@ -78,3 +78,12 @@ logging:
 
 requests:
   timeout: 5
+
+{{ if .Values.alerting.email.enabled }}
+smtp:
+  enabled: {{ .Values.alerting.email.enabled }}
+  host: "{{ .Values.alerting.email.host }}"
+  user: "{{ .Values.alerting.email.username }}"
+  password: "{{ .Values.alerting.email.password }}"
+  sender: "{{ .Values.alerting.email.sender }}"
+{{ end }}

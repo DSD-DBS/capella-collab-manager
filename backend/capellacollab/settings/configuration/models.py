@@ -89,6 +89,70 @@ class NavbarConfiguration(core_pydantic.BaseModelStrict):
     )
 
 
+class FeedbackAnonymityPolicy(str, enum.Enum):
+    FORCE_ANONYMOUS = "force_anonymous"
+    FORCE_IDENTIFIED = "force_identified"
+    ASK_USER = "ask_user"
+
+
+class FeedbackIntervalConfiguration(core_pydantic.BaseModelStrict):
+    enabled: bool = pydantic.Field(
+        default=True,
+        description="Whether the feedback interval is enabled.",
+    )
+    hours_between_prompt: int = pydantic.Field(
+        default=168,
+        description="The interval in hours between feedback requests.",
+        ge=0,
+    )
+
+
+class FeedbackProbabilityConfiguration(core_pydantic.BaseModelStrict):
+    enabled: bool = pydantic.Field(
+        default=True,
+        description="Whether the feedback probability is enabled.",
+    )
+    percentage: int = pydantic.Field(
+        default=100,
+        description="The percentage of users that will be asked for feedback.",
+        ge=0,
+        le=100,
+    )
+
+
+class FeedbackConfiguration(core_pydantic.BaseModelStrict):
+    enabled: bool = pydantic.Field(
+        default=False,
+        description="Enable or disable the feedback system. If enabled, SMTP configuration is required.",
+    )
+    after_session: FeedbackProbabilityConfiguration = pydantic.Field(
+        default_factory=FeedbackProbabilityConfiguration,
+        description="If a feedback form is shown after terminating a session.",
+    )
+    on_footer: bool = pydantic.Field(
+        default=True,
+        description="Should a general feedback button be shown.",
+    )
+    on_session_card: bool = pydantic.Field(
+        default=True,
+        description="Should a feedback button be shown on the session cards.",
+    )
+    interval: FeedbackIntervalConfiguration = pydantic.Field(
+        default_factory=FeedbackIntervalConfiguration,
+        description="Request feedback at regular intervals.",
+    )
+    receivers: list[pydantic.EmailStr] = pydantic.Field(
+        default=[],
+        description="Email addresses to send feedback to.",
+        examples=[[], ["test@example.com"]],
+    )
+    anonymity_policy: FeedbackAnonymityPolicy = pydantic.Field(
+        default=FeedbackAnonymityPolicy.ASK_USER,
+        description="If feedback should be anonymous or identified.",
+        examples=["force_anonymous", "force_identified", "ask_user"],
+    )
+
+
 class ConfigurationBase(core_pydantic.BaseModelStrict, abc.ABC):
     """
     Base class for configuration models. Can be used to define new configurations
@@ -109,6 +173,10 @@ class GlobalConfiguration(ConfigurationBase):
 
     navbar: NavbarConfiguration = pydantic.Field(
         default_factory=NavbarConfiguration
+    )
+
+    feedback: FeedbackConfiguration = pydantic.Field(
+        default_factory=FeedbackConfiguration
     )
 
 

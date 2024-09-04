@@ -4,7 +4,7 @@
  */
 import {
   HTTPConnectionMethodOutput,
-  Tool,
+  ToolOutput,
   ToolNature,
   ToolVersion,
 } from 'src/app/openapi';
@@ -50,7 +50,7 @@ export const mockToolNature: Readonly<ToolNature> = {
   name: 'fakeNature',
 };
 
-export const mockTool: Readonly<Tool> = {
+export const mockTool: Readonly<ToolOutput> = {
   id: 1,
   name: 'fakeTool',
   integrations: {

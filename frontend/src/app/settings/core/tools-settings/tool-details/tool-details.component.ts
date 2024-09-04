@@ -11,7 +11,7 @@ import { filter, map, mergeMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Tool, ToolsService } from 'src/app/openapi';
+import { ToolOutput, ToolsService } from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor/editor.component';
 import { ToolWrapperService } from '../tool.service';
@@ -36,7 +36,7 @@ import { ToolVersionComponent } from './tool-version/tool-version.component';
 export class ToolDetailsComponent {
   @ViewChild(EditorComponent) editor: EditorComponent | undefined;
 
-  selectedTool?: Tool;
+  selectedTool?: ToolOutput;
 
   constructor(
     private route: ActivatedRoute,
@@ -64,7 +64,7 @@ export class ToolDetailsComponent {
       });
   }
 
-  submitValue(value: Tool): void {
+  submitValue(value: ToolOutput): void {
     const { id, ...valueWithoutID } = value; // eslint-disable-line @typescript-eslint/no-unused-vars
     this.toolsService
       .updateTool(this.selectedTool!.id, valueWithoutID)

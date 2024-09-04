@@ -26,6 +26,7 @@ dependencies = [
   "alembic==1.13.2",
   "appdirs",
   "cachetools",
+  "email-validator",
   "fastapi>=0.112.4",
   "kubernetes",
   "psycopg2-binary>2.9.7",

@@ -33,13 +33,13 @@ import { CreateToolVersionOutput } from '../model/create-tool-version-output';
 // @ts-ignore
 import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
-import { Tool } from '../model/tool';
-// @ts-ignore
 import { ToolNature } from '../model/tool-nature';
+// @ts-ignore
+import { ToolOutput } from '../model/tool-output';
 // @ts-ignore
 import { ToolVersion } from '../model/tool-version';
 // @ts-ignore
-import { ToolVersionWithTool } from '../model/tool-version-with-tool';
+import { ToolVersionWithToolOutput } from '../model/tool-version-with-tool-output';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -119,9 +119,9 @@ export class ToolsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createTool(createToolInput: CreateToolInput, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Tool>;
-    public createTool(createToolInput: CreateToolInput, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Tool>>;
-    public createTool(createToolInput: CreateToolInput, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Tool>>;
+    public createTool(createToolInput: CreateToolInput, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolOutput>;
+    public createTool(createToolInput: CreateToolInput, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolOutput>>;
+    public createTool(createToolInput: CreateToolInput, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolOutput>>;
     public createTool(createToolInput: CreateToolInput, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (createToolInput === null || createToolInput === undefined) {
             throw new Error('Required parameter createToolInput was null or undefined when calling createTool.');
@@ -180,7 +180,7 @@ export class ToolsService {
         }
 
         let localVarPath = `/api/v1/tools`;
-        return this.httpClient.request<Tool>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolOutput>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: createToolInput,
@@ -800,9 +800,9 @@ export class ToolsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getToolById(toolId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Tool>;
-    public getToolById(toolId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Tool>>;
-    public getToolById(toolId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Tool>>;
+    public getToolById(toolId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolOutput>;
+    public getToolById(toolId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolOutput>>;
+    public getToolById(toolId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolOutput>>;
     public getToolById(toolId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (toolId === null || toolId === undefined) {
             throw new Error('Required parameter toolId was null or undefined when calling getToolById.');
@@ -852,7 +852,7 @@ export class ToolsService {
         }
 
         let localVarPath = `/api/v1/tools/${this.configuration.encodeParam({name: "toolId", value: toolId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
-        return this.httpClient.request<Tool>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolOutput>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1162,9 +1162,9 @@ export class ToolsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getTools(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<Tool>>;
-    public getTools(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<Tool>>>;
-    public getTools(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<Tool>>>;
+    public getTools(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ToolOutput>>;
+    public getTools(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ToolOutput>>>;
+    public getTools(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ToolOutput>>>;
     public getTools(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
@@ -1211,7 +1211,7 @@ export class ToolsService {
         }
 
         let localVarPath = `/api/v1/tools`;
-        return this.httpClient.request<Array<Tool>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ToolOutput>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1229,9 +1229,9 @@ export class ToolsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getVersionsForAllTools(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ToolVersionWithTool>>;
-    public getVersionsForAllTools(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ToolVersionWithTool>>>;
-    public getVersionsForAllTools(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ToolVersionWithTool>>>;
+    public getVersionsForAllTools(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<ToolVersionWithToolOutput>>;
+    public getVersionsForAllTools(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<ToolVersionWithToolOutput>>>;
+    public getVersionsForAllTools(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<ToolVersionWithToolOutput>>>;
     public getVersionsForAllTools(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
@@ -1278,7 +1278,7 @@ export class ToolsService {
         }
 
         let localVarPath = `/api/v1/tools/*/versions`;
-        return this.httpClient.request<Array<ToolVersionWithTool>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<Array<ToolVersionWithToolOutput>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -1298,9 +1298,9 @@ export class ToolsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateTool(toolId: number, createToolInput: CreateToolInput, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Tool>;
-    public updateTool(toolId: number, createToolInput: CreateToolInput, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Tool>>;
-    public updateTool(toolId: number, createToolInput: CreateToolInput, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Tool>>;
+    public updateTool(toolId: number, createToolInput: CreateToolInput, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<ToolOutput>;
+    public updateTool(toolId: number, createToolInput: CreateToolInput, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<ToolOutput>>;
+    public updateTool(toolId: number, createToolInput: CreateToolInput, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<ToolOutput>>;
     public updateTool(toolId: number, createToolInput: CreateToolInput, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (toolId === null || toolId === undefined) {
             throw new Error('Required parameter toolId was null or undefined when calling updateTool.');
@@ -1362,7 +1362,7 @@ export class ToolsService {
         }
 
         let localVarPath = `/api/v1/tools/${this.configuration.encodeParam({name: "toolId", value: toolId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
-        return this.httpClient.request<Tool>('put', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<ToolOutput>('put', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: createToolInput,

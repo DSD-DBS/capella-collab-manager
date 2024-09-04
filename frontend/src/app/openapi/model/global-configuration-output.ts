@@ -11,6 +11,7 @@
 
 import { NavbarConfigurationOutput } from './navbar-configuration-output';
 import { MetadataConfigurationOutput } from './metadata-configuration-output';
+import { FeedbackConfigurationOutput } from './feedback-configuration-output';
 
 
 /**
@@ -19,5 +20,6 @@ import { MetadataConfigurationOutput } from './metadata-configuration-output';
 export interface GlobalConfigurationOutput { 
     metadata: MetadataConfigurationOutput;
     navbar: NavbarConfigurationOutput;
+    feedback: FeedbackConfigurationOutput;
 }
 

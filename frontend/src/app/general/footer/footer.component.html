@@ -42,6 +42,12 @@
         >Contribute on GitHub
         <mat-icon inline class="align-bottom">open_in_new</mat-icon></a
       >
+      &nbsp;
+      @if (feedbackService.showOnFooter$ | async) {
+        <button (click)="feedbackService.showDialog([], 'In footer')">
+          Give Feedback
+        </button>
+      }
     </div>
   </div>
   <div id="placeholder" class="hidden md:basis-1/3 xl:block"></div>

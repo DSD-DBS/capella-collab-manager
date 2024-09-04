@@ -11,10 +11,14 @@
 
 
 
-export interface SessionPorts { 
+export interface FeedbackProbabilityConfigurationInput { 
     /**
-     * Port of the metrics endpoint in the container.
+     * Whether the feedback probability is enabled.
      */
-    metrics: number;
+    enabled?: boolean;
+    /**
+     * The percentage of users that will be asked for feedback.
+     */
+    percentage?: number;
 }
 

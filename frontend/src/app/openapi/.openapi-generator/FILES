@@ -3,6 +3,7 @@ api/api.ts
 api/authentication.service.ts
 api/configuration.service.ts
 api/events.service.ts
+api/feedback.service.ts
 api/health.service.ts
 api/integrations-pure-variants.service.ts
 api/metadata.service.ts
@@ -28,6 +29,7 @@ api/users.service.ts
 configuration.ts
 encoder.ts
 index.ts
+model/anonymized-session.ts
 model/authorization-response.ts
 model/backup-pipeline-run.ts
 model/backup.ts
@@ -52,6 +54,15 @@ model/diagram-metadata.ts
 model/environment-value.ts
 model/environment-value1.ts
 model/event-type.ts
+model/feedback-anonymity-policy.ts
+model/feedback-configuration-input.ts
+model/feedback-configuration-output.ts
+model/feedback-interval-configuration-input.ts
+model/feedback-interval-configuration-output.ts
+model/feedback-probability-configuration-input.ts
+model/feedback-probability-configuration-output.ts
+model/feedback-rating.ts
+model/feedback.ts
 model/file-tree.ts
 model/file-type.ts
 model/get-revision-model.ts
@@ -130,7 +141,8 @@ model/role.ts
 model/session-connection-information.ts
 model/session-monitoring-input.ts
 model/session-monitoring-output.ts
-model/session-ports.ts
+model/session-ports-input.ts
+model/session-ports-output.ts
 model/session-provisioning-request.ts
 model/session-sharing.ts
 model/session-tool-configuration-input.ts
@@ -148,6 +160,7 @@ model/t4-c-repository.ts
 model/token-request.ts
 model/tool-backup-configuration-input.ts
 model/tool-backup-configuration-output.ts
+model/tool-input.ts
 model/tool-integrations-input.ts
 model/tool-integrations-output.ts
 model/tool-model-provisioning-input.ts
@@ -155,11 +168,13 @@ model/tool-model-provisioning-output.ts
 model/tool-model-restrictions.ts
 model/tool-model.ts
 model/tool-nature.ts
+model/tool-output.ts
 model/tool-session-configuration-input.ts
 model/tool-session-configuration-output.ts
 model/tool-session-connection-input-methods-inner.ts
 model/tool-session-connection-input.ts
-model/tool-session-connection-method.ts
+model/tool-session-connection-method-input.ts
+model/tool-session-connection-method-output.ts
 model/tool-session-connection-output-methods-inner.ts
 model/tool-session-connection-output.ts
 model/tool-session-environment-input.ts
@@ -169,9 +184,9 @@ model/tool-session-sharing-configuration-input.ts
 model/tool-session-sharing-configuration-output.ts
 model/tool-version-configuration-input.ts
 model/tool-version-configuration-output.ts
-model/tool-version-with-tool.ts
+model/tool-version-with-tool-input.ts
+model/tool-version-with-tool-output.ts
 model/tool-version.ts
-model/tool.ts
 model/toolmodel-status.ts
 model/user-metadata.ts
 model/user-token-with-password.ts

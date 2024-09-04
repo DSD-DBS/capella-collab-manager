@@ -6,15 +6,17 @@
 # Configure for your Organization
 
 When running the Collaboration Manager in production, you may want to provide
-information about the team responsible for it, as well as an imprint and
-privacy policy.
+information about the team responsible for it.
 
 You can set this information from the configuration page in the admin
 interface. Navigate to _Settings_, then _Configuration_, then edit the file to
 your liking.
 
-Here, you can also edit the links in the navigation bar if you are not using
-the default monitoring services.
+## About your Organization
+
+You can set URLs to your organization's privacy policy and imprint. These are
+shown in the footer. The provider field should be used for the name of the team
+responsible for the Collaboration Manager.
 
 ```yaml
 metadata:
@@ -23,6 +25,15 @@ metadata:
     provider: Systems Engineering Toolchain team
     authentication_provider: OAuth2
     environment: '-'
+```
+
+## Navigation Bar
+
+You can edit the links in the navigation bar. This can be useful if you want to
+link to external resources or if you are not using the default monitoring
+setup.
+
+```yaml
 navbar:
     external_links:
         - name: Grafana
@@ -51,3 +62,52 @@ The `role` field and can be one of `user` or `administrator`. While this will
 hide the link from users without the appropriate role, it is not a security
 feature, and you should make sure that the linked service enforces the
 necessary access controls.
+
+## Feedback
+
+!!! info "Configure SMTP server for feedback"
+
+    For feedback to be sent, you need to configure an SMTP server in the
+    `values.yaml` of the Helm chart. Have a look at the `alerting.email`
+    configuration.
+
+Capella Collaboration Manager can prompt users for feedback. This can be useful
+for learning about any potential issues users may be facing.
+
+There are several different types of feedback prompt:
+
+-   After a session: Prompt the user for feedback after they have manually
+    terminated a session. You can reduce the percentage of users that are
+    prompted by changing the `percentage` field.
+-   On the session card: Show a feedback button on the session card.
+-   In the footer: Show a feedback button in the footer.
+-   Interval: Prompt the user for feedback after a certain number of hours have
+    passed since the last prompt.
+
+```yaml
+feedback:
+    enabled: true
+    after_session:
+        enabled: true
+        percentage: 25
+    on_footer: true
+    on_session_card: true
+    interval:
+        enabled: true
+        hours_between_prompt: 168
+    receivers:
+        - test1@example.com
+        - test2@example.com
+    anonymity_policy: ask_user
+```
+
+Prompts that are associated with a session automatically include anonymized
+metadata about the session.
+
+By default, users can choose to share their contact information when providing
+feedback. This can be disabled or made mandatory by changing the
+`anonymity_policy` field from `ask_user` to `force_anonymous` or
+`force_identified`, respectively.
+
+Feedback will be sent by email to the address specified in the `receiver`
+field.

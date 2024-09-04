@@ -23,7 +23,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter, map, Observable, take, tap } from 'rxjs';
-import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
+import { ToolOutput, ToolModel, ToolVersion } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
@@ -63,7 +63,7 @@ export class CreateReadonlySessionComponent implements OnInit {
 
   public toolSelectionForm = this.fb.group(
     {
-      tool: this.fb.control<Tool | null>(null, Validators.required),
+      tool: this.fb.control<ToolOutput | null>(null, Validators.required),
       version: this.fb.control<ToolVersion | null>(
         { value: null, disabled: true },
         Validators.required,
@@ -133,7 +133,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     return allVersions.find((v) => v.id === id);
   }
 
-  get tools(): Tool[] | undefined {
+  get tools(): ToolOutput[] | undefined {
     if (this.models === undefined) {
       return undefined;
     }
@@ -144,7 +144,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     );
   }
 
-  removesToolDuplicates(tools: Tool[]): Tool[] {
+  removesToolDuplicates(tools: ToolOutput[]): ToolOutput[] {
     return tools.filter(
       (value, index, self) =>
         index === self.findIndex((tool) => tool.id === value.id),
@@ -178,7 +178,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     );
   }
 
-  onToolChange(tool: Tool): void {
+  onToolChange(tool: ToolOutput): void {
     this.toolSelectionForm.controls.version.enable();
     this.toolSelectionForm.controls.version.patchValue(null);
 

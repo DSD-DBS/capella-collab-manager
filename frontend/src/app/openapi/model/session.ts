@@ -11,9 +11,9 @@
 
 import { BaseUser } from './base-user';
 import { SessionType } from './session-type';
+import { ToolVersionWithToolOutput } from './tool-version-with-tool-output';
 import { Message } from './message';
-import { ToolVersionWithTool } from './tool-version-with-tool';
-import { ToolSessionConnectionMethod } from './tool-session-connection-method';
+import { ToolSessionConnectionMethodOutput } from './tool-session-connection-method-output';
 import { SessionSharing } from './session-sharing';
 
 
@@ -22,12 +22,12 @@ export interface Session {
     type: SessionType;
     created_at: string;
     owner: BaseUser;
-    version: ToolVersionWithTool;
+    version: ToolVersionWithToolOutput;
     state: string;
     warnings: Array<Message>;
     last_seen: string;
     connection_method_id: string;
-    connection_method: ToolSessionConnectionMethod | null;
+    connection_method: ToolSessionConnectionMethodOutput | null;
     shared_with: Array<SessionSharing>;
 }
 export namespace Session {

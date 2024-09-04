@@ -10,10 +10,10 @@
  */
 
 import { GitModel } from './git-model';
+import { ToolOutput } from './tool-output';
 import { T4CModel } from './t4-c-model';
 import { ToolVersion } from './tool-version';
 import { ToolModelRestrictions } from './tool-model-restrictions';
-import { Tool } from './tool';
 import { ToolNature } from './tool-nature';
 
 
@@ -23,7 +23,7 @@ export interface ToolModel {
     name: string;
     description: string;
     display_order: number | null;
-    tool: Tool;
+    tool: ToolOutput;
     version: ToolVersion | null;
     nature: ToolNature | null;
     git_models: Array<GitModel> | null;

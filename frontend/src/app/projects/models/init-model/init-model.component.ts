@@ -20,7 +20,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import { SKIP_ERROR_HANDLING_CONTEXT } from 'src/app/general/error-handling/error-handling.interceptor';
 import {
-  Tool,
+  ToolOutput,
   ToolModel,
   ToolNature,
   ToolVersion,
@@ -92,7 +92,7 @@ export class InitModelComponent implements OnInit {
           }
         }),
         map((model: ToolModel) => model.tool),
-        switchMap((tool: Tool) =>
+        switchMap((tool: ToolOutput) =>
           combineLatest([
             this.toolsService.getToolVersions(tool.id, undefined, undefined, {
               context: SKIP_ERROR_HANDLING_CONTEXT,

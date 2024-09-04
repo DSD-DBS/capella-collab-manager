@@ -9,17 +9,17 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { SessionPorts } from './session-ports';
+import { SessionPortsOutput } from './session-ports-output';
 import { ToolSessionSharingConfigurationOutput } from './tool-session-sharing-configuration-output';
 import { EnvironmentValue1 } from './environment-value1';
 
 
-export interface ToolSessionConnectionMethod { 
+export interface ToolSessionConnectionMethodOutput { 
     id: string;
     type: string;
     name: string;
     description: string;
-    ports: SessionPorts;
+    ports: SessionPortsOutput;
     /**
      * Connection method specific environment variables. Check the global environment field for more information. 
      */

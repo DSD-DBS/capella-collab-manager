@@ -11,6 +11,7 @@ import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ConfigurationSettingsService } from 'src/app/settings/core/configuration-settings/configuration-settings.service';
 import { EditorComponent as EditorComponent_1 } from '../../../helpers/editor/editor.component';
+import { FeedbackService } from '../../../sessions/feedback/feedback.service';
 
 @Component({
   selector: 'app-configuration-settings',
@@ -26,6 +27,7 @@ export class ConfigurationSettingsComponent implements OnInit {
     private toastService: ToastService,
     private metadataService: MetadataService,
     private navbarService: NavBarService,
+    private feedbackService: FeedbackService,
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +55,7 @@ export class ConfigurationSettingsComponent implements OnInit {
           this.fetchConfiguration();
           this.metadataService.loadBackendMetadata().subscribe();
           this.navbarService.loadNavbarConfig().subscribe();
+          this.feedbackService.loadFeedbackConfig().subscribe();
         },
       });
   }

@@ -14,7 +14,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Tool, ToolVersion, ToolsService } from 'src/app/openapi';
+import { ToolOutput, ToolVersion, ToolsService } from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../../helpers/editor/editor.component';
 import { CreateToolVersion, ToolWrapperService } from '../../tool.service';
@@ -35,10 +35,10 @@ import { CreateToolVersion, ToolWrapperService } from '../../tool.service';
   ],
 })
 export class ToolVersionComponent {
-  _tool?: Tool = undefined;
+  _tool?: ToolOutput = undefined;
 
   @Input()
-  set tool(value: Tool | undefined) {
+  set tool(value: ToolOutput | undefined) {
     if (this._tool && this._tool.id === value?.id) return;
 
     this._tool = value;
