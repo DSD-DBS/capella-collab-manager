@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import typing as t
 
-import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
@@ -37,7 +36,7 @@ class DatabaseT4CModel(database.Base):
         sa.ForeignKey("t4c_repositories.id"), init=False
     )
     repository: orm.Mapped[DatabaseT4CRepository] = orm.relationship(
-        back_populates="models"
+        back_populates="integrations"
     )
 
     model_id: orm.Mapped[int] = orm.mapped_column(
@@ -60,28 +59,7 @@ class PatchT4CModel(core_pydantic.BaseModel):
     t4c_repository_id: int | None = None
 
 
-class SimpleT4CModel(core_pydantic.BaseModel):
-    project_name: str
-    repository_name: str
-    instance_name: str
-
-    @pydantic.model_validator(mode="before")
-    @classmethod
-    def transform_database_t4c_model(cls, data: t.Any) -> t.Any:
-        if isinstance(data, DatabaseT4CModel):
-            return SimpleT4CModel(
-                project_name=data.name,
-                repository_name=data.repository.name,
-                instance_name=data.repository.instance.name,
-            )
-        return data
-
-
-class T4CModel(core_pydantic.BaseModel):
+class SimpleT4CModelWithRepository(core_pydantic.BaseModel):
     id: int
     name: str
-    repository: repositories_models.T4CRepository
-
-
-class T4CRepositoryWithModels(repositories_models.T4CRepository):
-    models: list[T4CModel]
+    repository: repositories_models.SimpleT4CRepository

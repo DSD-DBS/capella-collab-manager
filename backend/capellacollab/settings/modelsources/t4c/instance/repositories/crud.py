@@ -89,7 +89,7 @@ def _get_user_write_t4c_repositories(
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
     stmt = (
         sa.select(models.DatabaseT4CRepository)
-        .join(models.DatabaseT4CRepository.models)
+        .join(models.DatabaseT4CRepository.integrations)
         .join(t4c_models.DatabaseT4CModel.model)
         .join(toolmodels_models.DatabaseToolModel.version)
         .where(
@@ -114,7 +114,7 @@ def _get_admin_t4c_repositories(
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
     stmt = (
         sa.select(models.DatabaseT4CRepository)
-        .join(models.DatabaseT4CRepository.models)
+        .join(models.DatabaseT4CRepository.integrations)
         .join(t4c_models.DatabaseT4CModel.model)
         .join(toolmodels_models.DatabaseToolModel.version)
         .where(

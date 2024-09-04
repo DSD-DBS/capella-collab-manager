@@ -9,16 +9,18 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { GitModel } from './git-model';
-import { SimpleT4CModelWithRepository } from './simple-t4-c-model-with-repository';
+import { ProjectType } from './project-type';
+import { Visibility } from './visibility';
 
 
-export interface Backup { 
+export interface SimpleProject { 
     id: number;
-    k8s_cronjob_id: string | null;
-    t4c_model: SimpleT4CModelWithRepository;
-    git_model: GitModel;
-    run_nightly: boolean;
-    include_commit_history: boolean;
+    name: string;
+    slug: string;
+    visibility: Visibility;
+    type: ProjectType;
 }
+export namespace SimpleProject {
+}
+
 

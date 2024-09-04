@@ -9,19 +9,19 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { T4CLicenseServerUsage } from './t4-c-license-server-usage';
-import { Message } from './message';
+import { T4CRepositoryStatus } from './t4-c-repository-status';
+import { SimpleT4CModelWithToolModel } from './simple-t4-c-model-with-tool-model';
 import { SimpleT4CInstance } from './simple-t4-c-instance';
 
 
-export interface T4CLicenseServer { 
-    name: string;
-    usage_api: string;
-    license_key: string;
+export interface SimpleT4CRepositoryWithIntegrations { 
     id: number;
-    license_server_version: string | null;
-    usage: T4CLicenseServerUsage | null;
-    warnings: Array<Message>;
-    instances: Array<SimpleT4CInstance>;
+    name: string;
+    status: T4CRepositoryStatus | null;
+    instance: SimpleT4CInstance;
+    integrations: Array<SimpleT4CModelWithToolModel>;
 }
+export namespace SimpleT4CRepositoryWithIntegrations {
+}
+
 

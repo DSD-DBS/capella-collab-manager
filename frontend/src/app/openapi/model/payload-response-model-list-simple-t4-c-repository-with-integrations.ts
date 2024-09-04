@@ -10,12 +10,12 @@
  */
 
 import { Message } from './message';
-import { T4CRepository } from './t4-c-repository';
+import { SimpleT4CRepositoryWithIntegrations } from './simple-t4-c-repository-with-integrations';
 
 
-export interface PayloadResponseModelListT4CRepository { 
+export interface PayloadResponseModelListSimpleT4CRepositoryWithIntegrations { 
     warnings: Array<Message> | null;
     errors: Array<Message> | null;
-    payload: Array<T4CRepository>;
+    payload: Array<SimpleT4CRepositoryWithIntegrations>;
 }
 

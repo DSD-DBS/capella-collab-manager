@@ -36,6 +36,7 @@ class ProjectType(enum.Enum):
 
 
 class Project(core_pydantic.BaseModel):
+    id: int
     name: str
     slug: str
     description: str | None = None
@@ -84,6 +85,14 @@ class Project(core_pydantic.BaseModel):
             )
 
         return data
+
+
+class SimpleProject(core_pydantic.BaseModel):
+    id: int
+    name: str
+    slug: str
+    visibility: Visibility
+    type: ProjectType
 
 
 class PatchProject(core_pydantic.BaseModel):

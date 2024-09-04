@@ -106,7 +106,7 @@ model/patch-t4-c-model.ts
 model/patch-tool-model.ts
 model/patch-user.ts
 model/path-validation.ts
-model/payload-response-model-list-t4-c-repository.ts
+model/payload-response-model-list-simple-t4-c-repository-with-integrations.ts
 model/payload-response-model-session-connection-information.ts
 model/persistent-session-tool-configuration-input.ts
 model/persistent-session-tool-configuration-output.ts
@@ -152,8 +152,13 @@ model/session-type.ts
 model/session.ts
 model/share-session-request.ts
 model/simple-license-server.ts
-model/simple-t4-c-instace.ts
-model/simple-t4-c-model.ts
+model/simple-project.ts
+model/simple-t4-c-instance.ts
+model/simple-t4-c-model-with-repository.ts
+model/simple-t4-c-model-with-tool-model.ts
+model/simple-t4-c-repository-with-integrations.ts
+model/simple-t4-c-repository.ts
+model/simple-tool-model.ts
 model/simple-tool-version.ts
 model/status-response.ts
 model/submit-t4-c-model.ts
@@ -161,7 +166,6 @@ model/t4-c-instance.ts
 model/t4-c-license-server-base.ts
 model/t4-c-license-server-usage.ts
 model/t4-c-license-server.ts
-model/t4-c-model.ts
 model/t4-c-repository-status.ts
 model/t4-c-repository.ts
 model/token-request.ts

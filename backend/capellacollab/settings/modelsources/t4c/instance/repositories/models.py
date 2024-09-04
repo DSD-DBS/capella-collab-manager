@@ -15,6 +15,9 @@ from capellacollab.core import pydantic as core_pydantic
 from capellacollab.settings.modelsources.t4c.instance import (
     models as t4c_models,
 )
+from capellacollab.settings.modelsources.t4c.instance import (
+    models2 as t4c_models2,
+)
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
@@ -45,7 +48,7 @@ class DatabaseT4CRepository(database.Base):
         back_populates="repositories"
     )
 
-    models: orm.Mapped[list[DatabaseT4CModel]] = orm.relationship(
+    integrations: orm.Mapped[list[DatabaseT4CModel]] = orm.relationship(
         back_populates="repository",
         cascade="all, delete",
         default_factory=list,
@@ -72,5 +75,6 @@ class T4CRepository(CreateT4CRepository):
     status: T4CRepositoryStatus | None = None
 
 
-class T4CInstanceWithRepositories(t4c_models.T4CInstance):
-    repositories: list[T4CRepository]
+class SimpleT4CRepository(CreateT4CRepository):
+    id: int
+    instance: t4c_models2.SimpleT4CInstance

@@ -32,7 +32,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { SubmitT4CModel, T4CModel } from 'src/app/openapi';
+import { SimpleT4CModelWithRepository, SubmitT4CModel } from 'src/app/openapi';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
@@ -76,7 +76,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
 
   selectedRepository?: ExtendedT4CRepository;
 
-  t4cModel?: T4CModel;
+  t4cModel?: SimpleT4CModelWithRepository;
 
   constructor(
     public projectService: ProjectWrapperService,

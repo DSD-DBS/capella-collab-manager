@@ -27,7 +27,7 @@ import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
 import { PatchT4CInstance } from '../model/patch-t4-c-instance';
 // @ts-ignore
-import { PayloadResponseModelListT4CRepository } from '../model/payload-response-model-list-t4-c-repository';
+import { PayloadResponseModelListSimpleT4CRepositoryWithIntegrations } from '../model/payload-response-model-list-simple-t4-c-repository-with-integrations';
 // @ts-ignore
 import { ResponseModel } from '../model/response-model';
 // @ts-ignore
@@ -647,9 +647,9 @@ export class SettingsModelsourcesT4CInstancesService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listT4cRepositories(t4cInstanceId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PayloadResponseModelListT4CRepository>;
-    public listT4cRepositories(t4cInstanceId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PayloadResponseModelListT4CRepository>>;
-    public listT4cRepositories(t4cInstanceId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PayloadResponseModelListT4CRepository>>;
+    public listT4cRepositories(t4cInstanceId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PayloadResponseModelListSimpleT4CRepositoryWithIntegrations>;
+    public listT4cRepositories(t4cInstanceId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PayloadResponseModelListSimpleT4CRepositoryWithIntegrations>>;
+    public listT4cRepositories(t4cInstanceId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PayloadResponseModelListSimpleT4CRepositoryWithIntegrations>>;
     public listT4cRepositories(t4cInstanceId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (t4cInstanceId === null || t4cInstanceId === undefined) {
             throw new Error('Required parameter t4cInstanceId was null or undefined when calling listT4cRepositories.');
@@ -699,7 +699,7 @@ export class SettingsModelsourcesT4CInstancesService {
         }
 
         let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories`;
-        return this.httpClient.request<PayloadResponseModelListT4CRepository>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<PayloadResponseModelListSimpleT4CRepositoryWithIntegrations>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

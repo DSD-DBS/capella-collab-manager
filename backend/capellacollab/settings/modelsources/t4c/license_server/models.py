@@ -12,6 +12,9 @@ from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core import models as core_models
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.settings.modelsources.t4c.instance import (
+    models2 as t4c_instance_models2,
+)
 
 from . import interface
 
@@ -56,18 +59,12 @@ class SimpleLicenseServer(T4CLicenseServerBase):
     id: int
 
 
-class SimpleT4CInstace(core_pydantic.BaseModel):
-    # Class has to be in this module to avoid circular imports
-    id: int
-    name: str
-
-
 class T4CLicenseServer(T4CLicenseServerBase):
     id: int
     license_server_version: str | None = None
     usage: interface.T4CLicenseServerUsage | None = None
     warnings: list[core_models.Message] = []
-    instances: list[SimpleT4CInstace] = []
+    instances: list[t4c_instance_models2.SimpleT4CInstance] = []
 
     @pydantic.model_validator(mode="after")
     def add_from_api(self) -> t.Any:

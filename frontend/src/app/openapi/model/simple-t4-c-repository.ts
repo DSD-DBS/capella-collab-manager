@@ -9,12 +9,12 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { T4CRepository } from './t4-c-repository';
+import { SimpleT4CInstance } from './simple-t4-c-instance';
 
 
-export interface T4CModel { 
-    id: number;
+export interface SimpleT4CRepository { 
     name: string;
-    repository: T4CRepository;
+    id: number;
+    instance: SimpleT4CInstance;
 }
 

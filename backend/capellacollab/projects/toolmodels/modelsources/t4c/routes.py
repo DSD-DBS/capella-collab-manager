@@ -40,7 +40,7 @@ router = fastapi.APIRouter(
 
 @router.get(
     "",
-    response_model=list[models.T4CModel],
+    response_model=list[models.SimpleT4CModelWithRepository],
 )
 def list_t4c_models(
     model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
@@ -53,7 +53,7 @@ def list_t4c_models(
 
 @router.get(
     "/{t4c_model_id}",
-    response_model=models.T4CModel,
+    response_model=models.SimpleT4CModelWithRepository,
     responses=responses.api_exceptions(
         [
             exceptions.T4CIntegrationNotFoundError(-1),
@@ -71,7 +71,7 @@ def get_t4c_model(
 
 @router.post(
     "",
-    response_model=models.T4CModel,
+    response_model=models.SimpleT4CModelWithRepository,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(
@@ -108,7 +108,7 @@ def create_t4c_model(
 
 @router.patch(
     "/{t4c_model_id}",
-    response_model=models.T4CModel,
+    response_model=models.SimpleT4CModelWithRepository,
     dependencies=[
         fastapi.Depends(
             auth_injectables.RoleVerification(

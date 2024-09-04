@@ -12,10 +12,13 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.projects import models as projects_models
 
 # Importing the modules here does not work as it produces a pydantic error for the CapellaModel
 from capellacollab.projects.toolmodels.modelsources.git.models import GitModel
-from capellacollab.projects.toolmodels.modelsources.t4c.models import T4CModel
+from capellacollab.projects.toolmodels.modelsources.t4c.models import (
+    SimpleT4CModelWithRepository,
+)
 from capellacollab.tools import models as tools_models
 
 from .restrictions import models as restrictions_models
@@ -132,6 +135,12 @@ class ToolModel(core_pydantic.BaseModel):
     version: tools_models.ToolVersion | None = None
     nature: tools_models.ToolNature | None = None
     git_models: list[GitModel] | None = None
-    t4c_models: list[T4CModel] | None = None
-
+    t4c_models: list[SimpleT4CModelWithRepository] | None = None
     restrictions: restrictions_models.ToolModelRestrictions | None = None
+
+
+class SimpleToolModel(core_pydantic.BaseModel):
+    id: int
+    slug: str
+    name: str
+    project: projects_models.SimpleProject

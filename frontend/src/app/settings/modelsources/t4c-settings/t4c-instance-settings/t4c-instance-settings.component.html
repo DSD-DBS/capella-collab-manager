@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="collab-card w-full">
+<div class="collab-card w-full sm:w-[456px]">
   <div class="mb-2 flex items-center justify-between">
     <h2 class="text-xl font-medium">Repositories</h2>
     <button
@@ -35,62 +35,95 @@
         );
         track repository.id
       ) {
-        <div class="my-[10px] flex justify-between rounded border px-2 shadow">
-          <div class="flex">
-            <div class="my-auto ml-0 mr-[15px] flex flex-col items-center">
-              <span class="text-nowrap text-sm">No. {{ repository.id }}</span>
-              <mat-icon mat-list-icon>{{
-                mapStatusToText(repository.status).icon
-              }}</mat-icon>
-            </div>
+        <div class="my-[10px] flex rounded border px-2 shadow">
+          <div class="my-auto ml-0 mr-[15px] flex flex-col items-center">
+            <span class="text-nowrap text-sm">No. {{ repository.id }}</span>
+            <mat-icon mat-list-icon>{{
+              mapStatusToText(repository.status).icon
+            }}</mat-icon>
+          </div>
 
-            <div>
+          <div class="w-full">
+            <div class="flex items-center justify-between gap-2">
               <div>
                 <span class="break-all text-lg">{{ repository.name }}</span>
+                <div class="text-sm">
+                  {{ mapStatusToText(repository.status).text }}
+                </div>
               </div>
-              <div class="text-sm">
-                {{ mapStatusToText(repository.status).text }} <br />
+              <div class="my-auto flex flex-row">
+                @if (repository.status === "OFFLINE") {
+                  <button
+                    mat-icon-button
+                    (click)="startRepository(repository)"
+                    matTooltip="Start repository"
+                  >
+                    <mat-icon class="text-green-500"
+                      >power_settings_new</mat-icon
+                    >
+                  </button>
+                } @else if (repository.status === "ONLINE") {
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="stopRepository(repository)"
+                    matTooltip="Stop repository"
+                  >
+                    <mat-icon>power_settings_new</mat-icon>
+                  </button>
+                } @else if (repository.status === "NOT_FOUND") {
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="recreateRepository(repository)"
+                    matTooltip="Recreate repository on instance"
+                  >
+                    <mat-icon>sync</mat-icon>
+                  </button>
+                }
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteRepository(repository)"
+                  matTooltip="Delete repository"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
               </div>
             </div>
-          </div>
-          <div class="my-auto flex flex-row">
-            <button
-              mat-icon-button
-              *ngIf="repository.status === 'OFFLINE'"
-              (click)="startRepository(repository)"
-              matTooltip="Start repository"
-            >
-              <mat-icon class="text-green-500">power_settings_new</mat-icon>
-            </button>
-
-            <button
-              mat-icon-button
-              color="warn"
-              *ngIf="repository.status === 'ONLINE'"
-              (click)="stopRepository(repository)"
-              matTooltip="Stop repository"
-            >
-              <mat-icon>power_settings_new</mat-icon>
-            </button>
-
-            <button
-              mat-icon-button
-              color="primary"
-              *ngIf="repository.status === 'NOT_FOUND'"
-              (click)="recreateRepository(repository)"
-              matTooltip="Recreate repository on instance"
-            >
-              <mat-icon>sync</mat-icon>
-            </button>
-
-            <button
-              mat-icon-button
-              color="warn"
-              (click)="deleteRepository(repository)"
-              matTooltip="Delete repository"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
+            <div class="text-sm">
+              @for (
+                integration of repository.integrations;
+                track integration.id
+              ) {
+                <a
+                  class="my-2 flex items-center justify-between gap-2 rounded border p-2 shadow"
+                  [routerLink]="[
+                    '/project',
+                    integration.model.project.slug,
+                    'model',
+                    integration.model.slug,
+                    'modelsources',
+                    't4c-model',
+                    integration.id,
+                  ]"
+                  target="_blank"
+                >
+                  <div>
+                    <b>Project: </b>{{ integration.model.project.name }} <br />
+                    <b>Model: </b>{{ integration.model.name }} <br />
+                    <b>Team for Capella Project: </b>{{ integration.name }}
+                  </div>
+                  <div class="mr-0.5 text-primary">
+                    <mat-icon>open_in_new</mat-icon>
+                  </div>
+                </a>
+              } @empty {
+                <div class="my-2 rounded border p-2 shadow">
+                  This repository is not in use currently.
+                </div>
+              }
+            </div>
           </div>
         </div>
       }
@@ -101,15 +134,15 @@
       <mat-form-field appearance="outline" class="h-[4em] w-full">
         <mat-label>Repository name</mat-label>
         <input matInput formControlName="name" />
-        <mat-error *ngIf="form.controls.name.errors?.required"
-          >Please enter a name</mat-error
-        >
-        <mat-error *ngIf="form.controls.name.errors?.uniqueName"
-          >Repository already exists</mat-error
-        >
-        <mat-error *ngIf="form.controls.name.errors?.pattern"
-          >The following characters are allowed: A-Z, a-z, 0-9, _, -
-        </mat-error>
+        @if (form.controls.name.errors?.required) {
+          <mat-error>Please enter a name</mat-error>
+        } @else if (form.controls.name.errors?.uniqueName) {
+          <mat-error>Repository already exists</mat-error>
+        } @else if (form.controls.name.errors?.pattern) {
+          <mat-error
+            >The following characters are allowed: A-Z, a-z, 0-9, _, -
+          </mat-error>
+        }
       </mat-form-field>
       <button
         class="!h-[56px]"

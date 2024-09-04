@@ -49,7 +49,7 @@ class Backup(core_pydantic.BaseModel):
     id: int
     k8s_cronjob_id: str | None = None
 
-    t4c_model: t4c_models.SimpleT4CModel
+    t4c_model: t4c_models.SimpleT4CModelWithRepository
     git_model: git_models.GitModel
     run_nightly: bool
     include_commit_history: bool
