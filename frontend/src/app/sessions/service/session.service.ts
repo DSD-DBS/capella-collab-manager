@@ -101,6 +101,7 @@ export class SessionService {
 
     let text = state;
     let css = 'warning';
+    let icon = 'pending';
     let success = false;
     switch (state) {
       case 'Created':
@@ -111,54 +112,66 @@ export class SessionService {
         text = 'Session started';
         css = 'success';
         success = true;
+        icon = 'check';
         break;
       case 'Failed':
       case 'FailedCreatePodContainer':
         text = 'Failed to create session';
         css = 'error';
+        icon = 'error';
         break;
       case 'Killing':
         text = 'Stopping session';
         css = 'error';
+        icon = 'close';
         break;
       case 'Preempting':
         text = 'Session is waiting in the queue';
         css = 'error';
+        icon = 'timer_pause';
         break;
       case 'BackOff':
         text = 'Session crashed unexpectedly';
         css = 'error';
+        icon = 'error';
         break;
       case 'ExceededGracePeriod':
         text = 'The session stopped.';
         css = 'error';
+        icon = 'cancel';
         break;
 
       case 'FailedKillPod':
         text = 'Failed to stop session';
         css = 'error';
+        icon = 'error';
         break;
       case 'NetworkNotReady':
         text = 'Backend network issues';
         css = 'error';
+        icon = 'cloud_off';
         break;
       case 'Pulling':
         text = 'Preparation of the session';
         css = 'warning';
+        icon = 'downloading';
         break;
       case 'Pulled':
         text = 'Preparation finished';
         css = 'warning';
+        icon = 'download_done';
         break;
 
       // Some additional reasons that came up
       case 'Scheduled':
         text = 'Your session is scheduled';
         css = 'warning';
+        icon = 'schedule';
         break;
       case 'FailedScheduling':
         text = 'High demand. Please wait a moment.';
         css = 'warning';
+        icon = 'timer_pause';
         break;
 
       // OpenShift specific
@@ -171,53 +184,64 @@ export class SessionService {
       case 'Pending':
         text = 'Your session is scheduled';
         css = 'warning';
+        icon = 'schedule';
         break;
       case 'Running':
         text = 'Session is running';
         css = 'success';
         success = true;
+        icon = 'check';
         break;
 
       // Cases for starting containers
       case 'START_LOAD_MODEL':
         text = 'Modelloading started';
         css = 'warning';
+        icon = 'downloading';
         break;
       case 'FINISH_LOAD_MODEL':
         text = 'Modelloading finished';
         css = 'warning';
+        icon = 'download_done';
         break;
       case 'FAILURE_LOAD_MODEL':
         text = 'Error during loading of the model';
         css = 'error';
+        icon = 'error';
         break;
       case 'START_PREPARE_WORKSPACE':
         text = 'Started workspace preparation';
         css = 'warning';
+        icon = 'downloading';
         break;
       case 'FINISH_PREPARE_WORKSPACE':
         text = 'Workspace preparation finished';
         css = 'warning';
+        icon = 'download_done';
         break;
       case 'FAILURE_PREPARE_WORKSPACE':
         text = 'Error during workspace preparation';
         css = 'error';
+        icon = 'error';
         break;
       case 'START_SESSION':
         text = 'Session started';
         css = 'success';
         success = true;
+        icon = 'check';
         break;
       case 'unknown':
       case 'Unknown':
         text = 'Unknown State';
         css = 'primary';
+        icon = 'help';
         break;
     }
 
     return {
       text: text || '',
       css: css,
+      icon: icon,
       success: success,
     };
   }
@@ -226,5 +250,6 @@ export class SessionService {
 export interface SessionState {
   text: string;
   css: string;
+  icon: string;
   success: boolean;
 }

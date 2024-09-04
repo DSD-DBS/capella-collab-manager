@@ -47,9 +47,12 @@
         </b>
         <div>
           <h3
-            class="rounded text-center !text-white"
+            class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
             [ngClass]="sessionService.beautifyState(session.state).css"
           >
+            <mat-icon>{{
+              sessionService.beautifyState(session.state).icon
+            }}</mat-icon>
             {{ sessionService.beautifyState(session.state).text }}
           </h3>
           <p class="mt-1.5">
