@@ -5,7 +5,10 @@
 
 # Capella Troubleshooting
 
-!!! question "My Capella crashed. What should I do?"
+<!-- prettier-ignore -->
+??? question "My Capella crashed. What should I do? <a href="#capella-crash">:material-link:</a>"
+
+    <span id="capella-crash" />
 
     Capella can crash for many different reasons. Many issues are issues with
     Eclipse Capella itself, so we try to escalate issues there. Bugs can be
@@ -21,7 +24,10 @@
     1. You should now see the list of events and you can try to find an entry with
        a matching timestamp.
 
-!!! question "The description editor doesn't load anymore"
+<!-- prettier-ignore -->
+??? question "The description editor doesn't load anymore <a href="#description-editor">:material-link:</a>"
+
+    <span id="description-editor" />
 
     In some cases the description doesn't load anymore, is just a blank page, or looks like this:
 
@@ -51,5 +57,37 @@
 
     - End your session and request a new session in the Capella Collaboration Manager.
 
-
     If none of these workarounds help, the only solution is to reset your workspace. Please contact your administrator for assistance.
+
+<!-- prettier-ignore -->
+??? question "My Capella is slow. What can I do? <a href="#slow-capella">:material-link:</a>"
+
+    <span id="slow-capella" />
+
+    A slow Capella instance can have multiple reasons. Here are some common issues:
+
+    1.  __Disable the automatic refresh in the Semantic Browser__
+
+        The automatic refresh of the Semantic Browser slows down Capella when connected to a TeamForCapella repository.
+
+        By default, the Semantic Browser auto-refresh is enabled. You can disable it in each session using the button marked in the screenshot (red/right box).
+        After you've disabled the auto-refresh, you can manually refresh the Semantic Browser by clicking the refresh button (blue/left box):
+        ![Semantic Browser](./semantic-browser-autorefresh.png)
+
+        When you want to save the option for all future sessions, disable it in the UI first and then close Capella to save the workbench state: <br>
+        ![Exit Capella](./exit-capella.png){:style="width:300px"}
+
+    1.  __Close all unrelated projects and tabs__
+
+        Navigate to the project explorer in Capella and right-click the project you want to work on.
+        Select "Close projects":
+
+        ![Close projects](./close-projects.png){:style="width:300px"}
+
+        Then, confirm the dialog:
+
+        ![Confirm to close the projects](./confirm-close-projects.png)
+
+        This will close all projects except the selected one.
+
+    If none of those steps help, please reach out to your system administrator.

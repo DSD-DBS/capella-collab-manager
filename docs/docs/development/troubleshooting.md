@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Troubleshooting
+# Development Troubleshooting
 
 ## The `k3d` Registry is Unreachable
 
