@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -25,14 +25,15 @@ import {
   InputDialogResult,
 } from 'src/app/helpers/input-dialog/input-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Project, User } from 'src/app/openapi';
-import { AddUserToProjectDialogComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
-import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import {
+  Project,
   ProjectUser,
   ProjectUserPermission,
-  ProjectUserService,
-} from 'src/app/projects/project-detail/project-users/service/project-user.service';
+  User,
+} from 'src/app/openapi';
+import { AddUserToProjectDialogComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
+import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
+import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import { ProjectWrapperService } from '../../service/project.service';
 
@@ -42,7 +43,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   templateUrl: './project-user-settings.component.html',
   standalone: true,
   imports: [
-    NgIf,
     MatButton,
     MatIcon,
     MatDivider,
@@ -51,7 +51,6 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatInput,
     FormsModule,
     MatSuffix,
-    NgFor,
     RouterLink,
     MatIconButton,
     MatTooltip,
@@ -79,6 +78,14 @@ export class ProjectUserSettingsComponent implements OnInit {
       .subscribe((project) => {
         this.project = project;
       });
+  }
+
+  get permissions() {
+    return ProjectUserService.PERMISSIONS;
+  }
+
+  get advanced_roles() {
+    return ProjectUserService.ADVANCED_ROLES;
   }
 
   removeUserFromProject(user: User): void {
@@ -166,7 +173,7 @@ export class ProjectUserSettingsComponent implements OnInit {
             next: () =>
               this.toastService.showSuccess(
                 `User modified`,
-                `User '${user.name}' is no longer project lead in the project '${projectName}'`,
+                `User '${user.name}' is no longer project administrator in the project '${projectName}'`,
               ),
           });
       }
@@ -217,15 +224,12 @@ export class ProjectUserSettingsComponent implements OnInit {
     if (projectUsers === undefined || projectUsers === null) {
       return undefined;
     }
+
     return projectUsers?.filter(
       (pUser) =>
         pUser.role == role &&
         pUser.user.name.toLowerCase().includes(this.search.toLowerCase()),
     );
-  }
-
-  capitalizeFirstLetter(role: string) {
-    return role.charAt(0).toUpperCase() + role.slice(1);
   }
 
   openAddUserDialog() {
@@ -244,7 +248,11 @@ export class ProjectUserSettingsComponent implements OnInit {
     });
   }
 
-  hasRoute(route: string) {
+  hasRoute(route: string): boolean {
     return this.router.url.includes(route);
+  }
+
+  isInProjectCreation(): boolean {
+    return this.hasRoute('projects/create');
   }
 }

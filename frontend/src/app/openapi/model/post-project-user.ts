@@ -14,6 +14,9 @@ import { ProjectUserPermission } from './project-user-permission';
 
 
 export interface PostProjectUser { 
+    /**
+     * The role of the user in the project. Can be \'user\' or \'manager\'. Manager is also referred to as project administrator in the documentation.
+     */
     role: ProjectUserRole;
     permission: ProjectUserPermission;
     username: string;

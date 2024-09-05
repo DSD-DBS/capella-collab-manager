@@ -3,15 +3,15 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex flex-wrap justify-between">
+<div class="flex flex-wrap justify-between gap-2">
   <div class="grow basis-1">
-    <div class="flex flex-wrap items-stretch">
+    <div class="flex flex-wrap items-stretch gap-2">
       <app-project-metadata class="flex-1"></app-project-metadata>
       <app-create-readonly-session class="flex"></app-create-readonly-session>
     </div>
     <app-model-overview></app-model-overview>
   </div>
-  <div *ngIf="projectUserService.verifyRole('manager')">
+  @if (projectUserService.verifyRole("manager")) {
     <app-project-user-settings></app-project-user-settings>
-  </div>
+  }
 </div>

@@ -225,7 +225,7 @@ def update_project_user(
     ],
 )
 def remove_user_from_project(
-    reason: str = fastapi.Body(),
+    reason: str = fastapi.Body(media_type="text/plain"),
     project: projects_models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),

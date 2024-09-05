@@ -7,7 +7,7 @@
 
 !!! warning
 
-    You need to have the Administrator or Project Lead role for a
+    You need to have the global administrator or project administrator role for a
     project to perform the following steps.
 
 !!! danger

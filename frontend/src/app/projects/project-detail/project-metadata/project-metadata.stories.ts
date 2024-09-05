@@ -3,25 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import {
-  ProjectUserRole,
-  ProjectUserService,
-} from 'src/app/projects/project-detail/project-users/service/project-user.service';
+import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { mockProject } from 'src/storybook/project';
+import { MockProjectUserService } from 'src/storybook/project-users';
 import { ProjectMetadataComponent } from './project-metadata.component';
-
-class MockProjectUserService implements Partial<ProjectUserService> {
-  user: ProjectUserRole;
-
-  constructor(user: ProjectUserRole) {
-    this.user = user;
-  }
-
-  verifyRole(requiredRole: ProjectUserRole): boolean {
-    const roles = ['user', 'manager', 'administrator'];
-    return roles.indexOf(requiredRole) <= roles.indexOf(this.user);
-  }
-}
 
 const meta: Meta<ProjectMetadataComponent> = {
   title: 'Project Components / Project Metadata',

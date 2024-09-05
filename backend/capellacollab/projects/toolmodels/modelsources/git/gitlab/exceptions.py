@@ -14,7 +14,7 @@ class GitlabAccessDeniedError(git_exceptions.AccessDeniedError):
             title="Insufficient Gitlab API access scope",
             reason=(
                 "The registered token has not enough permissions to access the Gitlab API. "
-                "Access scope 'read_api' is required. Please contact your project lead."
+                "Access scope 'read_api' is required. Please contact your project administrator."
             ),
             err_code="GITLAB_ACCESS_DENIED",
         )

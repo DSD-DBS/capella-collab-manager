@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   MatAnchor,
@@ -44,8 +44,6 @@ import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-co
     MatTooltip,
     MatIcon,
     MatButton,
-    NgIf,
-    NgFor,
     NgxSkeletonLoaderModule,
     ModelComplexityBadgeComponent,
     MatMiniFabAnchor,

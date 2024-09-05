@@ -15,7 +15,7 @@
     reported to the Eclipse Capella team directly in the
     [Github repository](https://github.com/eclipse/capella/issues).
 
-    Administrators can see the logs of all sessions to identify the issues
+    Global administrators can see the logs of all sessions to identify the issues
     remotely. In addition, the session owner can also see the events in the UI.
     In your session, please follow these steps:
 

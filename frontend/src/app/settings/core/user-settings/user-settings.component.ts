@@ -95,6 +95,10 @@ export class UserSettingsComponent implements OnInit {
     return this.createUserFormGroup.controls.idpIdentifier;
   }
 
+  get advanced_roles() {
+    return ProjectUserService.ADVANCED_ROLES;
+  }
+
   userNameAlreadyExistsValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (this.users.find((user) => user.name == control.value)) {

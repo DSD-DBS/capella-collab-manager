@@ -11,7 +11,7 @@ Projects are self-managed. There are different roles for this:
         <th>Permissions</th>
     </tr>
     <tr>
-        <td>`Administrator`</td>
+        <td>`Global Administrator`</td>
         <td>
             :material-check-all: All permissions <br>
             :material-check: Manage TeamForCapella instances <br>
@@ -19,7 +19,7 @@ Projects are self-managed. There are different roles for this:
             :material-check: Manage Git repositories</td>
     </tr>
     <tr>
-        <td>`Project lead`</td>
+        <td>`Project administrator`</td>
         <td>
             :material-check: Manage users of a project <br>
             :material-check: Manage model sources <br>

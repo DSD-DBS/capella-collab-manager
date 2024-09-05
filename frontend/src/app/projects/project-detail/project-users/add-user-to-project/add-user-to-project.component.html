@@ -4,58 +4,53 @@
  -->
 
 <div class="dialog">
-  <h2>Add user</h2>
+  <h2 class="mb-2 text-xl font-medium">Add User to Project</h2>
   <form [formGroup]="addUserToProjectForm">
     <mat-form-field appearance="fill">
       <mat-label>Username</mat-label>
       <input matInput formControlName="username" />
-      <mat-error *ngIf="username.getError('required')">
-        Please enter a username!
-      </mat-error>
-      <mat-error *ngIf="username.getError('lowerCaseError')">
-        Usernames can only contain lowercase letters!
-      </mat-error>
-      <mat-error *ngIf="username.getError('userAlreadyInProjectError')">
-        The user is already a member of this project!
-      </mat-error>
+      @if (username.getError("required")) {
+        <mat-error> Please enter a username! </mat-error>
+      } @else if (username.getError("lowerCaseError")) {
+        <mat-error> Usernames can only contain lowercase letters! </mat-error>
+      } @else if (username.getError("userAlreadyInProjectError")) {
+        <mat-error> The user is already a member of this project! </mat-error>
+      }
     </mat-form-field>
     <br />
-    <mat-form-field appearance="fill">
-      <mat-label>Role</mat-label>
-      <mat-select formControlName="role">
-        <mat-option
-          *ngFor="let role of projectUserService.ROLES | keyvalue"
-          [value]="role.key"
-          >{{ role.value }}</mat-option
-        >
-      </mat-select>
-      <mat-error>You have to select a role!</mat-error>
-    </mat-form-field>
-    <div *ngIf="addUserToProjectForm.value.role !== 'manager'">
-      <mat-form-field
-        appearance="fill"
-        *ngIf="addUserToProjectForm.value.role !== 'manager'"
-      >
-        <mat-label>Permission</mat-label>
-        <mat-select formControlName="permission">
-          <mat-option
-            *ngFor="let permission of projectUserService.PERMISSIONS | keyvalue"
-            [value]="permission.key"
-            >{{ permission.value }}</mat-option
-          >
-        </mat-select>
-        <mat-error>You have to select a permission!</mat-error>
-      </mat-form-field>
+    <div class="my-1">
+      Role: <br />
+      <mat-radio-group formControlName="role" aria-label="Role">
+        @for (role of roles | keyvalue; track role.key) {
+          <mat-radio-button [value]="role.key">{{
+            role.value
+          }}</mat-radio-button>
+        }
+      </mat-radio-group>
     </div>
+
+    @if (addUserToProjectForm.value.role !== "manager") {
+      <div class="my-1">
+        Permission: <br />
+        <mat-radio-group formControlName="permission" aria-label="Role">
+          @for (permission of permissions | keyvalue; track permission.key) {
+            <mat-radio-button [value]="permission.key">{{
+              permission.value
+            }}</mat-radio-button>
+          }
+        </mat-radio-group>
+      </div>
+    }
     <mat-form-field appearance="fill">
       <mat-label>Reason</mat-label>
       <textarea rows="10" matInput formControlName="reason"></textarea>
-      <mat-error *ngIf="addUserToProjectForm.controls.reason.errors?.required">
-        Please enter a reason!
-      </mat-error>
+      @if (addUserToProjectForm.controls.reason.errors?.required) {
+        <mat-error> Please enter a reason! </mat-error>
+      }
     </mat-form-field>
     <div class="flex justify-between">
-      <button (click)="addUser()" mat-flat-button color="primary">
+      <button (click)="close()" mat-stroked-button type="button">Cancel</button>
+      <button (click)="addUser()" mat-flat-button type="submit" color="primary">
         Add user <mat-icon iconPositionEnd>navigate_next</mat-icon>
       </button>
     </div>

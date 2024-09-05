@@ -758,7 +758,7 @@ export class ProjectsService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
-            'application/json'
+            'text/plain'
         ];
         const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
         if (httpContentTypeSelected !== undefined) {

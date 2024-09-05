@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
@@ -13,28 +12,33 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { User } from 'src/app/openapi';
+import {
+  ProjectsService,
+  ProjectUser,
+  ProjectUserPermission,
+  ProjectUserRole,
+} from 'src/app/openapi';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectUserService {
   constructor(
-    private http: HttpClient,
-    private projectService: ProjectWrapperService,
+    private projectWrapperService: ProjectWrapperService,
+    private projectsService: ProjectsService,
   ) {
     this.resetProjectUserOnProjectReset();
     this.resetProjectUsersOnProjectReset();
     this.loadProjectUsersOnProjectChange();
     this.loadProjectUserOnProjectChange();
   }
-  BACKEND_URL_PREFIX = environment.backend_url + '/projects';
-
-  PERMISSIONS = { read: 'read only', write: 'read & write' };
-  ROLES = { user: 'User', manager: 'Manager' };
-  ADVANCED_ROLES = { administrator: 'Administrator', ...this.ROLES };
+  static PERMISSIONS = { read: 'Read only', write: 'Read & Write' };
+  static ROLES = { user: 'User', manager: 'Project Administrator' };
+  static ADVANCED_ROLES = {
+    administrator: 'Administrator',
+    ...ProjectUserService.ROLES,
+  };
 
   private _projectUser = new BehaviorSubject<ProjectUser | undefined>(
     undefined,
@@ -56,8 +60,8 @@ export class ProjectUserService {
       ),
     );
 
-  resetProjectUserOnProjectReset() {
-    this.projectService.project$
+  private resetProjectUserOnProjectReset() {
+    this.projectWrapperService.project$
       .pipe(
         filter((project) => project === undefined),
         tap(() => {
@@ -67,8 +71,8 @@ export class ProjectUserService {
       .subscribe();
   }
 
-  resetProjectUsersOnProjectReset() {
-    this.projectService.project$
+  private resetProjectUsersOnProjectReset() {
+    this.projectWrapperService.project$
       .pipe(
         filter((project) => project === undefined),
         tap(() => {
@@ -102,13 +106,11 @@ export class ProjectUserService {
 
   loadProjectUserOnProjectChange(): void {
     this._projectUser.next(undefined);
-    this.projectService.project$
+    this.projectWrapperService.project$
       .pipe(
         filter(Boolean),
         switchMap((project) =>
-          this.http.get<ProjectUser>(
-            `${this.BACKEND_URL_PREFIX}/${project.slug}/users/current`,
-          ),
+          this.projectsService.getCurrentProjectUser(project.slug),
         ),
       )
       .pipe(
@@ -122,7 +124,7 @@ export class ProjectUserService {
   loadProjectUsersOnProjectChange(): void {
     this._projectUsers.next(undefined);
     combineLatest([
-      this.projectService.project$.pipe(filter(Boolean)),
+      this.projectWrapperService.project$.pipe(filter(Boolean)),
       this.projectUser$.pipe(
         filter(
           (projectUser) =>
@@ -139,8 +141,8 @@ export class ProjectUserService {
 
   loadProjectUsers(projectSlug: string): void {
     this._projectUsers.next(undefined);
-    this.http
-      .get<ProjectUser[]>(`${this.BACKEND_URL_PREFIX}/${projectSlug}/users`)
+    this.projectsService
+      .getUsersForProject(projectSlug)
       .pipe(
         tap((projectUsers) => {
           this._projectUsers.next(projectUsers);
@@ -153,11 +155,11 @@ export class ProjectUserService {
     projectSlug: string,
     username: string,
     role: SimpleProjectUserRole,
-    permission: string,
+    permission: ProjectUserPermission,
     reason: string,
   ): Observable<ProjectUser> {
-    return this.http
-      .post<ProjectUser>(`${this.BACKEND_URL_PREFIX}/${projectSlug}/users`, {
+    return this.projectsService
+      .addUserToProject(projectSlug, {
         username,
         role,
         permission,
@@ -176,14 +178,11 @@ export class ProjectUserService {
     role: SimpleProjectUserRole,
     reason: string,
   ): Observable<null> {
-    return this.http
-      .patch<null>(
-        `${this.BACKEND_URL_PREFIX}/${projectSlug}/users/${userID}`,
-        {
-          role,
-          reason,
-        },
-      )
+    return this.projectsService
+      .updateProjectUser(projectSlug, userID, {
+        role,
+        reason,
+      })
       .pipe(tap(() => this.loadProjectUsers(projectSlug)));
   }
 
@@ -193,10 +192,10 @@ export class ProjectUserService {
     permission: ProjectUserPermission,
     reason: string,
   ): Observable<null> {
-    return this.http.patch<null>(
-      `${this.BACKEND_URL_PREFIX}/${projectSlug}/users/${userID}`,
-      { permission, reason },
-    );
+    return this.projectsService.updateProjectUser(projectSlug, userID, {
+      permission,
+      reason,
+    });
   }
 
   deleteUserFromProject(
@@ -204,20 +203,12 @@ export class ProjectUserService {
     userID: number,
     reason: string,
   ): Observable<void> {
-    return this.http.delete<void>(
-      `${this.BACKEND_URL_PREFIX}/${projectSlug}/users/${userID}`,
-      { body: reason },
+    return this.projectsService.removeUserFromProject(
+      projectSlug,
+      userID,
+      reason,
     );
   }
 }
 
-export interface ProjectUser {
-  project_name: string;
-  permission: ProjectUserPermission;
-  role: ProjectUserRole;
-  user: User;
-}
-
-export type ProjectUserPermission = 'read' | 'write';
-export type ProjectUserRole = 'user' | 'manager' | 'administrator';
 export type SimpleProjectUserRole = 'user' | 'manager';

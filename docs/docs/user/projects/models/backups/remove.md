@@ -7,7 +7,7 @@
 
 !!! warning
 
-    Only administrators and project leads can remove pipelines.
+    Only global administrators and project administrators can remove pipelines.
 
 1. Select the project in the `Projects` overview.
 1. In the model overview, select the `Synchronize`-button

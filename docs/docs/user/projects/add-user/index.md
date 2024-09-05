@@ -5,7 +5,7 @@
 
 !!! warning
 
-    You need to have the Administrator or Project Lead role for a
+    You need to have the administrator or project administrator role for a
     project to perform the following steps.
 
 ## Add User to Project
@@ -37,7 +37,8 @@
     You can select from the following options:
 
     -   Remove a user from the project
-    -   Set role of the user to [project lead](../../projects/roles.md) or
+    -   Set role of the user to
+        [project administrator](../../projects/roles.md) or
         [user](../../projects/roles.md)
     -   Set permission of the user to
         [read/write](../../sessions/types/index.md) or

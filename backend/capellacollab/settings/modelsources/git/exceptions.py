@@ -13,7 +13,7 @@ class GitRepositoryAccessError(core_exceptions.BaseError):
             title="Error while accessing the Git repository",
             reason=(
                 "There was an error accessing the model. "
-                "Please ask your project lead for more information. "
+                "Please ask your project administrator for more information. "
                 "In most cases, the credentials need to be updated."
             ),
             err_code="GIT_REPOSITORY_ACCESS_ERROR",

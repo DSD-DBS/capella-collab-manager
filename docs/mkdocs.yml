@@ -72,7 +72,7 @@ nav:
       - api/swagger.md
       - api/redoc.md
       - api/openapi.md
-  - Administrator Documentation:
+  - System Administrator Documentation:
       - Introduction: admin/index.md
       - Installation: admin/installation.md
       - Authentication:

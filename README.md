@@ -32,7 +32,7 @@ multiple organizations. Here are some of the key features:
 - Single sign-on (SSO) via [OAuth2](https://oauth.net/2/)
 - No need to install or maintain local Capella clients - clients are made on
   demand in an underlaying [Kubernetes](https://kubernetes.io/) cluster
-- Access to projects and models is self-managed by project leads, model owners
+- Access to projects and models is self-managed by project admins, model owners
   or delegates
 - Within a project a user could have read or read & write access. Read-only
   users don't consume licenses in Team for Capella projects.
@@ -60,7 +60,7 @@ In addition, we have integrated commercial products:
 
 - [pure::variants](https://www.pure-systems.com/purevariants)
   - Automatic license injection
-  - Access to licenses is self-managed by project leads
+  - Access to licenses is self-managed by project admins
 
 We've prepared a small video, where we showcase the diagram cache feature and
 show how you can use Capella and Jupyter in split view in the browser:

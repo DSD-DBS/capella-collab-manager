@@ -5,5 +5,6 @@
 import { componentWrapperDecorator } from '@storybook/angular';
 
 export const dialogWrapper = componentWrapperDecorator(
-  (story) => `<div class="rounded-md border shadow">${story}</div>`,
+  (story) =>
+    `<div class="rounded-md border shadow bg-white w-fit">${story}</div>`,
 );
