@@ -144,6 +144,7 @@
           "builder": "@storybook/angular:start-storybook",
           "options": {
             "configDir": ".storybook",
+            "quiet": true,
             "browserTarget": "capellacollab:build:development",
             "compodoc": true,
             "compodocArgs": ["-e", "json", "-d", "."],
@@ -162,6 +163,8 @@
           "builder": "@storybook/angular:build-storybook",
           "options": {
             "configDir": ".storybook",
+            "webpackStatsJson": true,
+
             "browserTarget": "capellacollab:build:storybook",
             "compodoc": true,
             "compodocArgs": ["-e", "json", "-d", "."],

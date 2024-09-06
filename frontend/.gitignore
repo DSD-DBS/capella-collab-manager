@@ -60,6 +60,7 @@ Thumbs.db
 /playwright/.cache/
 
 *storybook.log
+storybook-static
 documentation.json
 
 .nx
