@@ -13,7 +13,7 @@ import { ToolSessionSharingConfigurationOutput } from './tool-session-sharing-co
 import { HTTPConnectionMethodOutput } from './http-connection-method-output';
 import { GuacamoleConnectionMethodOutput } from './guacamole-connection-method-output';
 import { HTTPPortsOutput } from './http-ports-output';
-import { Environment1 } from './environment1';
+import { EnvironmentValue1 } from './environment-value1';
 
 
 export interface ToolSessionConnectionOutputMethodsInner { 
@@ -25,7 +25,7 @@ export interface ToolSessionConnectionOutputMethodsInner {
     /**
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
-    environment: { [key: string]: Environment1; };
+    environment: { [key: string]: EnvironmentValue1; };
     sharing: ToolSessionSharingConfigurationOutput;
     redirect_url: string;
     /**

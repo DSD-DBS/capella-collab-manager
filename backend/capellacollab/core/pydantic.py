@@ -7,11 +7,17 @@ import pydantic
 
 
 def datetime_serializer(
+    dt: datetime.datetime,
+) -> datetime.datetime:
+    return dt.replace(tzinfo=datetime.UTC)
+
+
+def datetime_serializer_optional(
     dt: datetime.datetime | None,
 ) -> datetime.datetime | None:
-    if dt:
-        return dt.replace(tzinfo=datetime.UTC)
-    return None
+    if dt is None:
+        return None
+    return datetime_serializer(dt)
 
 
 class BaseModel(pydantic.BaseModel):

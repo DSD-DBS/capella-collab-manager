@@ -38,10 +38,10 @@ class User(BaseUser):
     last_login: datetime.datetime | None = None
 
     _validate_created = pydantic.field_serializer("created")(
-        core_pydantic.datetime_serializer
+        core_pydantic.datetime_serializer_optional
     )
     _validate_last_login = pydantic.field_serializer("last_login")(
-        core_pydantic.datetime_serializer
+        core_pydantic.datetime_serializer_optional
     )
 
 

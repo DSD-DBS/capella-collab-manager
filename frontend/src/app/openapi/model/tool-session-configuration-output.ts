@@ -12,8 +12,8 @@
 import { ToolSessionConnectionOutput } from './tool-session-connection-output';
 import { ResourcesOutput } from './resources-output';
 import { SessionMonitoringOutput } from './session-monitoring-output';
+import { EnvironmentValue1 } from './environment-value1';
 import { PersistentWorkspaceSessionConfigurationOutput } from './persistent-workspace-session-configuration-output';
-import { Environment1 } from './environment1';
 import { ToolModelProvisioningOutput } from './tool-model-provisioning-output';
 
 
@@ -22,7 +22,7 @@ export interface ToolSessionConfigurationOutput {
     /**
      * Environment variables, which are mounted into session containers. You can use f-strings to reference other environment variables in the value. 
      */
-    environment: { [key: string]: Environment1; };
+    environment: { [key: string]: EnvironmentValue1; };
     connection: ToolSessionConnectionOutput;
     monitoring: SessionMonitoringOutput;
     /**
