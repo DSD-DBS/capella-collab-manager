@@ -54,12 +54,13 @@ export class AuthRedirectComponent implements OnInit {
           'Missing nonce or code verifier value',
           'The nonce or code verifier value is missing in the session storage. If you initiated the login yourself, please retry, and if the error persists or you did not initiate the login, please contact your system administrator',
         );
+        this.redirectToLogin();
       } else if (redirectTo === null) {
         this.toastService.showError(
           'State mismatch error',
           'The state returned by the authentication server does not match the local state. If you initiated the login yourself, please retry, and if the error persists or you did not initiate the login, please contact your system administrator.',
         );
-        this.router.navigateByUrl('/auth');
+        this.redirectToLogin();
       } else {
         sessionStorage.removeItem(params.state);
         sessionStorage.removeItem(this.authService.SESSION_STORAGE_NONCE_KEY);
@@ -79,9 +80,13 @@ export class AuthRedirectComponent implements OnInit {
               this.userService.updateOwnUser();
               this.router.navigateByUrl(redirectTo);
             },
-            error: () => this.router.navigateByUrl('/auth'),
+            error: () => this.redirectToLogin(),
           });
       }
     });
+  }
+
+  redirectToLogin(): void {
+    this.router.navigateByUrl('/auth');
   }
 }
