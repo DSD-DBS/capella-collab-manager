@@ -18,7 +18,10 @@ test:
 	fi
 
 storybook:
-	ng run capellacollab:storybook --quiet
+	ng run capellacollab:storybook
+
+build-storybook:
+	ng run capellacollab:build-storybook
 
 openapi:
 	python postprocess_openapi_schema.py
