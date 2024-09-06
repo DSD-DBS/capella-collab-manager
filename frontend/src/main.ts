@@ -7,10 +7,11 @@ import {
   withInterceptorsFromDi,
   provideHttpClient,
 } from '@angular/common/http';
-import { enableProdMode, importProvidersFrom } from '@angular/core';
+import { enableProdMode, importProvidersFrom, isDevMode } from '@angular/core';
 import { MatNativeDateModule } from '@angular/material/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideServiceWorker } from '@angular/service-worker';
 import { ToastrModule } from 'ngx-toastr';
 import { BASE_PATH } from 'src/app/openapi';
 import { AppRoutingModule } from './app/app-routing.module';
@@ -51,5 +52,9 @@ bootstrapApplication(AppComponent, {
       provide: BASE_PATH,
       useValue: environment.backend_url.replace('/api/v1', ''), // The /api/v1 prefix is automatically added by the openapi generator
     },
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 }).catch((err) => console.error(err));

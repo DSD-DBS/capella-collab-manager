@@ -29,7 +29,15 @@
             "browser": "src/main.ts",
             "polyfills": ["src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets", "src/fonts"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/fonts",
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "monaco-editor/min/vs/editor/editor.main.css",
@@ -59,7 +67,8 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
