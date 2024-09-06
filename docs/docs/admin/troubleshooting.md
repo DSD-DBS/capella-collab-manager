@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Troubleshooting
+# Administrator Troubleshooting
 
 ## Can't resolve registry
 

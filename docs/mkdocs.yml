@@ -50,7 +50,7 @@ nav:
           - Terminate Session: user/sessions/terminate.md
           - Taking Screenshots: user/sessions/screenshots/index.md
           - Files Browser: user/sessions/files/index.md
-          - Troubleshooting: user/sessions/troubleshooting.md
+          - Troubleshooting: user/sessions/troubleshooting/index.md
       - Capella:
           - Introduction: user/tools/capella/introduction.md
           - Update a Capella Model to a Newer Version: user/tools/capella/migration/index.md
