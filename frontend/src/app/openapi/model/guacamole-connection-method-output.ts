@@ -11,7 +11,7 @@
 
 import { ToolSessionSharingConfigurationOutput } from './tool-session-sharing-configuration-output';
 import { RDPPortsOutput } from './rdp-ports-output';
-import { Environment1 } from './environment1';
+import { EnvironmentValue1 } from './environment-value1';
 
 
 export interface GuacamoleConnectionMethodOutput { 
@@ -23,7 +23,7 @@ export interface GuacamoleConnectionMethodOutput {
     /**
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
-    environment: { [key: string]: Environment1; };
+    environment: { [key: string]: EnvironmentValue1; };
     sharing: ToolSessionSharingConfigurationOutput;
 }
 export namespace GuacamoleConnectionMethodOutput {

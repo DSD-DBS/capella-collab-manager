@@ -9,7 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { Environment } from './environment';
+import { EnvironmentValue } from './environment-value';
 import { ToolSessionSharingConfigurationInput } from './tool-session-sharing-configuration-input';
 import { HTTPPortsInput } from './http-ports-input';
 
@@ -23,7 +23,7 @@ export interface HTTPConnectionMethodInput {
     /**
      * Connection method specific environment variables. Check the global environment field for more information. 
      */
-    environment?: { [key: string]: Environment; };
+    environment?: { [key: string]: EnvironmentValue; };
     sharing?: ToolSessionSharingConfigurationInput;
     redirect_url?: string;
     /**

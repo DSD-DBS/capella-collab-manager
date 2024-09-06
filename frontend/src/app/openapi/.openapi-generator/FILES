@@ -49,8 +49,8 @@ model/create-tool-version-output.ts
 model/custom-navbar-link.ts
 model/diagram-cache-metadata.ts
 model/diagram-metadata.ts
-model/environment.ts
-model/environment1.ts
+model/environment-value.ts
+model/environment-value1.ts
 model/event-type.ts
 model/file-tree.ts
 model/file-type.ts
