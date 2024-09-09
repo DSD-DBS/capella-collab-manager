@@ -46,7 +46,7 @@
     "@angular/cli": "~18.2.2",
     "@angular/compiler-cli": "~18.2.2",
     "@compodoc/compodoc": "^1.1.25",
-    "@eslint/js": "^9.9.1",
+    "@eslint/js": "^9.10.0",
     "@playwright/test": "^1.46.1",
     "@storybook/addon-docs": "^8.2.9",
     "@storybook/addon-essentials": "^8.2.9",
