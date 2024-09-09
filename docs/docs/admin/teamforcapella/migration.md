@@ -11,7 +11,7 @@
 
 1.  Open a new persistent session with the old Capella version.
 1.  Check that nobody is connected to the remote repository:
-    [See who is connected to a TeamForCapella repository](../../user/tools/capella/teamforcapella/connect/index.md)
+    [See who is connected to a TeamForCapella repository](../../user/tools/capella/teamforcapella/connected-users/index.md)
 1.  Run a backup pipeline and verify that the latest changes are included in
     the Git repository. If the Git repository is already up-to-date, there will
     be no additional commit. In this case, you should check the status of the
