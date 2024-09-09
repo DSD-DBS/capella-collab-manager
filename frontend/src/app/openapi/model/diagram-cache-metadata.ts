@@ -15,5 +15,6 @@ import { DiagramMetadata } from './diagram-metadata';
 export interface DiagramCacheMetadata { 
     diagrams: Array<DiagramMetadata>;
     last_updated: string;
+    job_id: string | null;
 }
 

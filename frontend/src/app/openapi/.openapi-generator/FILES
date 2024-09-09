@@ -98,7 +98,6 @@ model/notice-level.ts
 model/notice-response.ts
 model/page-history-event.ts
 model/page-pipeline-run.ts
-model/patch-git-model.ts
 model/patch-project-user.ts
 model/patch-project.ts
 model/patch-t4-c-instance.ts
@@ -132,6 +131,7 @@ model/prometheus-configuration-output.ts
 model/protocol.ts
 model/pure-variants-licenses-input.ts
 model/pure-variants-licenses-output.ts
+model/put-git-model.ts
 model/rdp-ports-input.ts
 model/rdp-ports-output.ts
 model/resources-input.ts

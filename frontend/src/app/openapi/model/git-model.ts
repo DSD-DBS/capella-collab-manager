@@ -18,7 +18,7 @@ export interface GitModel {
     username: string;
     password: boolean;
     id: number;
-    name: string;
     primary: boolean;
+    repository_id: string | null;
 }
 
