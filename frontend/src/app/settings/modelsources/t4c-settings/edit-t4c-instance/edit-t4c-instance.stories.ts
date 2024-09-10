@@ -23,9 +23,51 @@ export const AddInstance: Story = {
   args: {},
 };
 
-export const ModifyExistingInstance: Story = {
+export const ExistingInstance: Story = {
   args: {
     existing: true,
+    capellaVersions: [mockToolVersion],
+  },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: T4CInstanceWrapperService,
+          useFactory: () =>
+            new MockT4CInstanceWrapperService(mockT4CInstance, [
+              mockT4CInstance,
+            ]),
+        },
+      ],
+    }),
+  ],
+};
+
+export const EditExistingInstance: Story = {
+  args: {
+    existing: true,
+    editing: true,
+    capellaVersions: [mockToolVersion],
+  },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: T4CInstanceWrapperService,
+          useFactory: () =>
+            new MockT4CInstanceWrapperService(mockT4CInstance, [
+              mockT4CInstance,
+            ]),
+        },
+      ],
+    }),
+  ],
+};
+
+export const ArchivedInstance: Story = {
+  args: {
+    existing: true,
+    isArchived: true,
     capellaVersions: [mockToolVersion],
   },
   decorators: [

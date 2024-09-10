@@ -42,7 +42,6 @@ import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-insta
 @Component({
   selector: 'app-edit-t4c-instance',
   templateUrl: './edit-t4c-instance.component.html',
-  styleUrls: ['./edit-t4c-instance.component.css'],
   standalone: true,
   imports: [
     NgIf,
@@ -152,7 +151,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   enableEditing(): void {
     this.editing = true;
     this.form.enable();
-    this.form.controls.name.disable();
 
     this.form.controls.password.patchValue('');
     this.form.controls.password.removeValidators(Validators.required);
