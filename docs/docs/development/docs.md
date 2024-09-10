@@ -101,7 +101,7 @@ subsections:
     </tr>
     <tr>
         <td><b>/admin</b></td>
-        <td>Administrator documentation</td>
+        <td>System Administrator documentation</td>
         <td>For System administrators and businesses, who are interested in administering their own instances.</td>
     </tr>
     <tr>

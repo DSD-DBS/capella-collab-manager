@@ -44,9 +44,9 @@ class PermissionForProjectLeadsNotAllowedError(core_exceptions.BaseError):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
             err_code="PERMISSION_FOR_PROJECT_LEADS_NOT_ALLOWED",
-            title="Permission for project leads not allowed",
+            title="Permission for project administrator not allowed",
             reason=(
-                "Project leads can't be given permissions. "
+                "Project administrators can't be given permissions. "
                 "They already have full access to the project."
             ),
         )

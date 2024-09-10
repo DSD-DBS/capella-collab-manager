@@ -6,9 +6,9 @@
 # Create a _Collaboration Manager_ Model
 
 We offer a guided process to create models in a project. To create a model, you
-have to be at least [project lead](../../projects/roles.md). If you're coming
-from project creation, you're ready to go. Otherwise, please navigate to the
-_Projects_ tab of the navigation bar, open the project in which you want to
+have to be at least [project administrator](../../projects/roles.md). If you're
+coming from project creation, you're ready to go. Otherwise, please navigate to
+the _Projects_ tab of the navigation bar, open the project in which you want to
 create a model, and click on the “+” icon.
 
 The creation can be interrupted at any step, however an unfinished model will
@@ -30,14 +30,15 @@ following options:
 1. Create a new **Git** repository. This option is not supported yet. Please
    create the repository yourself and continue with the first option.
 1. Link a **TeamForCapella** repository. Only available for the `Capella` tool.
-   If you're project lead and not administrator, you are not able to select
-   this option. You'll need assistance by an administrator. You can abort the
-   process here and continue with the help of an administrator later on.
+   If you're project administrator and not global administrator, you are not
+   able to select this option. You'll need assistance by an administrator. You
+   can abort the process here and continue with the help of an administrator
+   later on.
 1. Create a **TeamForCapella** repository. Only available for the `Capella`
-   tool. If you're project lead and not administrator, you are not able to
-   select this option. You'll need assistance by an administrator. You can
-   abort the process here and continue with the help of an administrator later
-   on.
+   tool. If you're project administrator and not global administrator, you are
+   not able to select this option. You'll need assistance by an administrator.
+   You can abort the process here and continue with the help of an
+   administrator later on.
 
 ## Step 3: Add Source
 
@@ -84,7 +85,7 @@ You have to enter the following information:
 
          The credentials should be scoped and should only work for the required
          repository. When changing the repository URL and the credentials are not
-         changed, other project leads can gain access to different repositories
+         changed, other project administrators can gain access to different repositories
          with your token.
 
 ### Step 3.2 Link Existing T4C Repository

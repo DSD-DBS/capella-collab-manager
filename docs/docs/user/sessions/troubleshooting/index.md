@@ -42,12 +42,12 @@
     <span id="modelloading-failed" />
 
     This happens if the loading of one of the models fails.
-    Please reach out your project lead. If you are project lead, please check
+    Please reach out your project administrator. If you are project administrator, please check
     the primary Git models with a matching tool version of your project.
     These are used for the `read-only` session. Common mistakes are wrong
     credentials, wrong entrypoints (e.g. with typos) and missing `aird`-files.
 
-    If you have no success, please reach out your administrator. Administrators
+    If you have no success, please reach out your global administrator. They
     can see the logs of read-only sessions.
 
 <!-- prettier-ignore -->

@@ -10,15 +10,15 @@ from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.projects.users import models as projects_users_models
+from capellacollab.users import models as users_models
 
 from . import crud, exceptions, injectables, models
 
 router = fastapi.APIRouter(
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.ADMIN
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
             )
         )
     ],

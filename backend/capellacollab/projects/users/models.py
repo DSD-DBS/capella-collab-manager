@@ -5,6 +5,7 @@
 import enum
 import typing as t
 
+import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
@@ -35,7 +36,13 @@ class ProjectUser(core_pydantic.BaseModel):
 
 
 class PostProjectUser(core_pydantic.BaseModel):
-    role: ProjectUserRole
+    role: ProjectUserRole = pydantic.Field(
+        description=(
+            "The role of the user in the project. "
+            "Can be 'user' or 'manager'. Manager is also referred "
+            "to as project administrator in the documentation."
+        )
+    )
     permission: ProjectUserPermission
     username: str
     reason: str

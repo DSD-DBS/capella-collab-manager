@@ -4,7 +4,7 @@
  -->
 
 <div>
-  <div class="mt-1.5 flex items-center">
+  <div class="mb-2 mt-1.5 flex items-center">
     <h2 class="text-xl font-medium">Models</h2>
     @if (projectUserService.verifyRole("manager")) {
       <a
@@ -44,171 +44,180 @@
       }
     }
   </div>
-  <div class="flex flex-wrap">
-    <div class="flex" *ngIf="(modelService.models$ | async) === undefined">
-      <div *ngFor="let card of [0, 1, 2]">
+  <div class="flex flex-wrap gap-2">
+    @if ((modelService.models$ | async) === undefined) {
+      @for (card of [0, 1, 2]; track $index) {
         <ngx-skeleton-loader
           appearance="circle"
           [theme]="{
             'border-radius': '5px',
             height: '280px',
             width: '500px',
-            margin: '10px',
+            margin: '0px',
+            padding: '0px',
             border: '1px solid white',
           }"
         ></ngx-skeleton-loader>
-      </div>
-    </div>
-
-    <div
-      class="collab-card m-[10px] flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col !p-0"
-      *ngFor="let model of modelService.models$ | async"
-    >
+      }
+    }
+    @for (model of modelService.models$ | async; track model.id) {
       <div
-        class="flex justify-between rounded-t bg-primary p-2.5 align-middle text-white"
+        class="collab-card flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col !p-0"
       >
-        <div class="ml-2.5">
-          <div class="select-text text-xl" style="word-break: break-word">
-            {{ model.name }}
+        <div
+          class="flex justify-between rounded-t bg-primary p-2.5 align-middle text-white"
+        >
+          <div class="ml-2.5">
+            <div class="select-text text-xl" style="word-break: break-word">
+              {{ model.name }}
+            </div>
+            <span class="select-text text-base">
+              {{ model.tool.name }}
+              @if (model.version) {
+                {{ model.version.name }}
+              } @else {
+                (Version not specified)
+              }
+            </span>
           </div>
-          <span class="select-text text-base">
-            {{ model.tool.name }}
-            <span *ngIf="model.version"> {{ model.version.name }}</span>
-            <span *ngIf="!model.version"> (Version not specified)</span>
-          </span>
-        </div>
 
-        <div class="flex items-center align-middle">
-          <div
-            class="collab-card mx-[4px] flex h-[50px] items-center !bg-green-800 !p-0 text-white"
-          >
-            <div class="mx-[8px] text-center">
-              <div class="text-xs">Nature</div>
-              <div *ngIf="model.nature" class="text-sm">
-                {{ model.nature.name }}
-              </div>
-              <div *ngIf="!model.nature" class="text-sm">Not specified</div>
-            </div>
-          </div>
-          <div
-            class="collab-card mx-[4px] flex h-[50px] items-center !bg-red-800 !p-0 text-white"
-          >
-            <div class="mx-[8px] text-center">
-              <div class="text-nowrap text-xs">Working mode</div>
-              <div class="text-sm">
-                {{ getPrimaryWorkingMode(model) }}
+          <div class="flex items-center align-middle">
+            <div
+              class="collab-card mx-[4px] flex h-[50px] items-center !bg-green-800 !p-0 text-white"
+            >
+              <div class="mx-[8px] text-center">
+                <div class="text-xs">Nature</div>
+                <span class="text-sm">
+                  @if (model.nature) {
+                    {{ model.nature.name }}
+                  } @else {
+                    Not specified
+                  }
+                </span>
               </div>
             </div>
+            <div
+              class="collab-card mx-[4px] flex h-[50px] items-center !bg-red-800 !p-0 text-white"
+            >
+              <div class="mx-[8px] text-center">
+                <div class="text-nowrap text-xs">Working mode</div>
+                <div class="text-sm">
+                  {{ getPrimaryWorkingMode(model) }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="flex grow flex-col justify-between">
-        <div class="m-2.5 select-text">
-          {{ model.description || "This model has no description." }}
-        </div>
-        <div class="flex justify-center">
-          <app-model-complexity-badge
-            class="w-[95%]"
-            *ngIf="model.tool.name === 'Capella'"
-            [modelSlug]="model.slug"
-          ></app-model-complexity-badge>
-        </div>
-        <div class="m-2.5">
-          <a
-            mat-mini-fab
-            color="primary"
-            matTooltip="Configure model"
-            class="!m-1.5"
-            [routerLink]="['model', model.slug, 'metadata']"
-            *ngIf="projectUserService.verifyRole('manager')"
-          >
-            <mat-icon>settings</mat-icon>
-          </a>
-          <a
-            mat-mini-fab
-            color="primary"
-            matTooltip="Model restrictions"
-            class="!m-1.5"
-            [routerLink]="['model', model.slug, 'restrictions']"
-            *ngIf="userService.user?.role === 'administrator'"
-          >
-            <mat-icon>key</mat-icon>
-          </a>
-          <button
-            mat-mini-fab
-            color="primary"
-            matTooltip="Move model to different project"
-            class="!m-1.5"
-            (click)="openMoveToProjectDialog(model)"
-            *ngIf="projectUserService.verifyRole('manager')"
-          >
-            <mat-icon>drive_file_move</mat-icon>
-          </button>
-          <a
-            mat-mini-fab
-            color="primary"
-            matTooltip="Configure model sources"
-            class="!m-1.5"
-            [routerLink]="['model', model.slug, 'modelsources']"
-            *ngIf="projectUserService.verifyRole('manager')"
-          >
-            <mat-icon>link</mat-icon>
-          </a>
-          <a
-            mat-mini-fab
-            color="primary"
-            matTooltip="Start synchronization"
-            class="!m-1.5"
-            (click)="openPipelineDialog(model)"
-            *ngIf="
-              projectUserService.verifyRole('manager') &&
+        <div class="flex grow flex-col justify-between">
+          <div class="m-2.5 select-text">
+            {{ model.description || "This model has no description." }}
+          </div>
+          <div class="flex justify-center">
+            @if (model.tool.name === "Capella") {
+              <app-model-complexity-badge
+                class="w-[95%]"
+                [modelSlug]="model.slug"
+              ></app-model-complexity-badge>
+            }
+          </div>
+          <div class="m-2.5">
+            @if (userService.user?.role === "administrator") {
+              <a
+                mat-mini-fab
+                color="primary"
+                matTooltip="Model restrictions"
+                class="!m-1.5"
+                [routerLink]="['model', model.slug, 'restrictions']"
+              >
+                <mat-icon>key</mat-icon>
+              </a>
+            }
+            @if (projectUserService.verifyRole("manager")) {
+              <a
+                mat-mini-fab
+                color="primary"
+                matTooltip="Configure model"
+                class="!m-1.5"
+                [routerLink]="['model', model.slug, 'metadata']"
+              >
+                <mat-icon>settings</mat-icon>
+              </a>
+              <button
+                mat-mini-fab
+                color="primary"
+                matTooltip="Move model to different project"
+                class="!m-1.5"
+                (click)="openMoveToProjectDialog(model)"
+              >
+                <mat-icon>drive_file_move</mat-icon>
+              </button>
+              <a
+                mat-mini-fab
+                color="primary"
+                matTooltip="Configure model sources"
+                class="!m-1.5"
+                [routerLink]="['model', model.slug, 'modelsources']"
+              >
+                <mat-icon>link</mat-icon>
+              </a>
+              @if (!project?.is_archived && project?.type !== "training") {
+                <a
+                  mat-mini-fab
+                  color="primary"
+                  matTooltip="Start synchronization"
+                  class="!m-1.5"
+                  (click)="openPipelineDialog(model)"
+                >
+                  <mat-icon>sync</mat-icon>
+                </a>
+              }
+            }
+
+            @if (model.git_models) {
+              <a
+                mat-mini-fab
+                color="primary"
+                matTooltip="Open git repository"
+                class="!m-1.5"
+                target="_blank"
+                [disabled]="!getPrimaryGitModelURL(model)"
+                [href]="getPrimaryGitModelURL(model)"
+              >
+                <mat-icon>open_in_new</mat-icon>
+              </a>
+              @if (model.tool.name === "Capella") {
+                <button
+                  mat-mini-fab
+                  color="primary"
+                  matTooltip="Show diagrams of model"
+                  class="!m-1.5"
+                  [disabled]="!getPrimaryGitModelURL(model)"
+                  (click)="openDiagramsDialog(model)"
+                >
+                  <mat-icon>image_search</mat-icon>
+                </button>
+              }
+            }
+
+            @if (
               !project?.is_archived &&
-              project?.type !== 'training'
-            "
-          >
-            <mat-icon>sync</mat-icon>
-          </a>
-          <a
-            mat-mini-fab
-            color="primary"
-            matTooltip="Open git repository"
-            class="!m-1.5"
-            target="_blank"
-            [disabled]="!getPrimaryGitModelURL(model)"
-            [href]="getPrimaryGitModelURL(model)"
-            *ngIf="model.git_models"
-          >
-            <mat-icon>open_in_new</mat-icon>
-          </a>
-          <a
-            mat-mini-fab
-            color="primary"
-            matTooltip="Request persistent session"
-            class="!m-1.5"
-            routerLink="/sessions"
-            *ngIf="
-              !project?.is_archived &&
-              project?.type !== 'training' &&
+              project?.type !== "training" &&
               model.t4c_models &&
-              projectUserService.verifyPermission('write')
-            "
-          >
-            <mat-icon>screen_share</mat-icon>
-          </a>
-
-          <button
-            mat-mini-fab
-            color="primary"
-            matTooltip="Show diagrams of model"
-            class="!m-1.5"
-            [disabled]="!getPrimaryGitModelURL(model)"
-            (click)="openDiagramsDialog(model)"
-            *ngIf="model.git_models && model.tool.name === 'Capella'"
-          >
-            <mat-icon>image_search</mat-icon>
-          </button>
+              projectUserService.verifyPermission("write")
+            ) {
+              <a
+                mat-mini-fab
+                color="primary"
+                matTooltip="Request persistent session"
+                class="!m-1.5"
+                routerLink="/sessions"
+              >
+                <mat-icon>screen_share</mat-icon>
+              </a>
+            }
+          </div>
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>

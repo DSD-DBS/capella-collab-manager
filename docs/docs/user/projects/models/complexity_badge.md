@@ -13,7 +13,7 @@
 
     - A file called `model-complexity-badge.svg` has to exist in the repository.
       We provide a Gitlab CI template and a Github action to generate the file. Find more information below.
-    - Only project leads can set up the model complexity badge. In addition, one needs access to the Git repository of the model.
+    - Only project administrators can set up the model complexity badge. In addition, one needs access to the Git repository of the model.
 
 1.  To set up the model complexity badge, you need to add the Git API URL to
     your Git instance. More information

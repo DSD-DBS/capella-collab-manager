@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, KeyValuePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {
   AbstractControl,
@@ -21,10 +21,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 import { Observable, map, take } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Project } from 'src/app/openapi';
+import { Project, ProjectUserPermission } from 'src/app/openapi';
 import {
   ProjectUserService,
   SimpleProjectUserRole,
@@ -41,10 +42,9 @@ import {
     MatFormField,
     MatLabel,
     MatInput,
-    NgIf,
+    MatRadioModule,
     MatError,
     MatSelect,
-    NgFor,
     MatOption,
     MatButton,
     MatIcon,
@@ -58,8 +58,8 @@ export class AddUserToProjectDialogComponent {
         validators: [Validators.required],
         asyncValidators: [this.asyncUserAlreadyInProjectValidator()],
       }),
-      role: new FormControl('', Validators.required),
-      permission: new FormControl(''),
+      role: new FormControl('user', Validators.required),
+      permission: new FormControl('read'),
       reason: new FormControl('', Validators.required),
     },
     this.permissionRequiredValidator(),
@@ -71,6 +71,14 @@ export class AddUserToProjectDialogComponent {
     private matDialogRef: MatDialogRef<AddUserToProjectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { project: Project },
   ) {}
+
+  get permissions() {
+    return ProjectUserService.PERMISSIONS;
+  }
+
+  get roles() {
+    return ProjectUserService.ROLES;
+  }
 
   asyncUserAlreadyInProjectValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
@@ -97,7 +105,7 @@ export class AddUserToProjectDialogComponent {
       const permission = control.get('permission')!;
       const role = control.get('role');
       if (
-        permission?.value in this.projectUserService.PERMISSIONS ||
+        permission?.value in ProjectUserService.PERMISSIONS ||
         role?.value == 'manager'
       ) {
         permission?.setErrors(null);
@@ -119,7 +127,7 @@ export class AddUserToProjectDialogComponent {
           this.data.project.slug,
           formValue.username as string,
           formValue.role as SimpleProjectUserRole,
-          permission as string,
+          permission as ProjectUserPermission,
           formValue.reason as string,
         )
         .subscribe(() => {
@@ -128,8 +136,12 @@ export class AddUserToProjectDialogComponent {
             `User added`,
             `User '${formValue.username}' has been added to project '${this.data.project.name}'`,
           );
-          this.matDialogRef.close();
+          this.close();
         });
     }
+  }
+
+  close(): void {
+    this.matDialogRef.close();
   }
 }

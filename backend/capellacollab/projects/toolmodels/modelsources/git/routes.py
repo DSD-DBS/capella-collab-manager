@@ -88,7 +88,7 @@ async def get_revisions_of_primary_git_model(
     ],
 )
 async def get_revisions_with_model_credentials(
-    url: str = fastapi.Body(),
+    url: str = fastapi.Body(media_type="text/plain"),
     git_model: models.DatabaseGitModel = fastapi.Depends(
         injectables.get_existing_git_model
     ),
