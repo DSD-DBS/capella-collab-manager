@@ -72,7 +72,7 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
   loadLastSessions() {
     this.toolService._tools.pipe(filter(Boolean), take(1)).subscribe(() => {
       this.sessionHistoryService.sessionHistory
-        .pipe(filter(Boolean))
+        .pipe(filter(Boolean), take(1))
         .subscribe((sessions) => {
           this.resolvedHistory = [];
           this.sessionsToBeLoaded = sessions.length;
