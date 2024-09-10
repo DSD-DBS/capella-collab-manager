@@ -7,7 +7,13 @@ import pytest
 import responses
 from sqlalchemy import orm
 
+import capellacollab.settings.modelsources.t4c.repositories.models as settings_t4c_repositories_models
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.toolmodels import crud as toolmodels_crud
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    crud as models_t4c_crud,
+)
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import interface as sessions_hooks_interface
@@ -84,6 +90,35 @@ def test_t4c_configuration_hook_as_admin(
     assert len(json.loads(result["environment"]["T4C_JSON"])) == 1
     assert result["environment"]["T4C_USERNAME"] == admin.name
     assert result["environment"]["T4C_PASSWORD"]
+    assert not result["warnings"]
+    assert mock_add_user_to_repository.call_count == 1
+
+
+@responses.activate
+@pytest.mark.usefixtures("t4c_model")
+def test_t4c_configuration_hook_with_same_repository_used_twice(
+    db: orm.Session,
+    admin: users_models.DatabaseUser,
+    project: projects_models.DatabaseProject,
+    capella_tool_version: tools_models.DatabaseVersion,
+    mock_add_user_to_repository: responses.BaseResponse,
+    t4c_repository: settings_t4c_repositories_models.DatabaseT4CRepository,
+):
+    model = toolmodels_models.PostToolModel(
+        name="test2", description="test", tool_id=capella_tool_version.tool.id
+    )
+    db_model = toolmodels_crud.create_model(
+        db, project, model, capella_tool_version.tool, capella_tool_version
+    )
+    models_t4c_crud.create_t4c_model(db, db_model, t4c_repository, "default2")
+    result = t4c.T4CIntegration().configuration_hook(
+        db=db,
+        user=admin,
+        tool_version=capella_tool_version,
+        session_type=sessions_models.SessionType.PERSISTENT,
+    )
+
+    assert len(json.loads(result["environment"]["T4C_JSON"])) == 1
     assert not result["warnings"]
     assert mock_add_user_to_repository.call_count == 1
 
@@ -167,7 +202,7 @@ def test_configuration_hook_as_rw_user(
 
 @responses.activate
 @pytest.mark.usefixtures("t4c_model", "project_user")
-def test_configuration_hook_for_compatible_took(
+def test_configuration_hook_for_compatible_tool(
     db: orm.Session,
     user: users_models.DatabaseUser,
     capella_tool_version: tools_models.DatabaseVersion,
