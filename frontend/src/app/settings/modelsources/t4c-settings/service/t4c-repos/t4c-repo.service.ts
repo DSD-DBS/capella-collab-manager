@@ -121,7 +121,7 @@ export class T4CRepositoryWrapperService {
   }
 }
 
-type ExtendedT4CRepositoryStatus = T4CRepositoryStatus | 'LOADING';
+export type ExtendedT4CRepositoryStatus = T4CRepositoryStatus | 'LOADING';
 
 export interface ExtendedT4CRepository {
   name: string;

@@ -33,6 +33,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { CreateT4CRepository, T4CInstance } from 'src/app/openapi';
 import {
   ExtendedT4CRepository,
+  ExtendedT4CRepositoryStatus,
   T4CRepositoryWrapperService,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-repo-deletion-dialog.component';
@@ -134,4 +135,34 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
       .recreateRepository(repository.instance.id, repository.id)
       .subscribe();
   }
+
+  mapStatusToText(status: ExtendedT4CRepositoryStatus | null): StatusMapping {
+    switch (status) {
+      case 'LOADING':
+        return {
+          icon: 'sync',
+          text: 'Hang tight while we refresh the list.',
+        };
+      case 'INITIAL':
+        return { icon: 'cloud_upload', text: 'Repository is started.' };
+      case 'INSTANCE_UNREACHABLE':
+        return { icon: 'sync_problem', text: 'The instance is unreachable.' };
+      case 'NOT_FOUND':
+        return {
+          icon: 'block',
+          text: 'Repository not found on the TeamForCapella server.',
+        };
+      case 'OFFLINE':
+        return { icon: 'cloud_off', text: 'Repository is offline.' };
+      case 'ONLINE':
+        return { icon: 'cloud_queue', text: 'Repository is up & running' };
+      case null:
+        return { icon: 'error', text: 'Unknown status' };
+    }
+  }
+}
+
+interface StatusMapping {
+  icon: string;
+  text: string;
 }

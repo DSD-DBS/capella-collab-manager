@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div>
-  <div class="my-2 flex items-center justify-between">
+<div class="collab-card w-full">
+  <div class="mb-2 flex items-center justify-between">
     <h2 class="text-xl font-medium">Repositories</h2>
     <button
       mat-stroked-button
@@ -16,133 +16,112 @@
       </div>
     </button>
   </div>
+  <mat-form-field class="!h-[4em] w-full" appearance="outline">
+    <mat-label>Search</mat-label>
+    <input
+      [(ngModel)]="search"
+      autocomplete="off"
+      matInput
+      placeholder="Repository"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
 
-  <div class="collab-card w-full">
-    <div>
-      <mat-form-field class="w-full" appearance="outline">
-        <mat-label>Search</mat-label>
-        <input
-          [(ngModel)]="search"
-          autocomplete="off"
-          matInput
-          placeholder="Repository"
-        />
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </div>
-
-    <div class="max-h-[50vh] overflow-y-scroll">
-      <div
-        class="mx-[5px] my-[10px] flex justify-between"
-        *ngFor="
-          let repository of getFilteredRepositories(
-            t4cRepoService.repositories$ | async
-          )
-        "
-      >
-        <div class="flex">
-          <div class="my-auto ml-0 mr-[15px]">
-            <mat-icon mat-list-icon *ngIf="repository.status === 'LOADING'"
-              >sync</mat-icon
-            >
-            <mat-icon mat-list-icon *ngIf="repository.status === 'OFFLINE'"
-              >cloud_off</mat-icon
-            >
-            <mat-icon mat-list-icon *ngIf="repository.status === 'ONLINE'"
-              >cloud_queue</mat-icon
-            >
-            <mat-icon mat-list-icon *ngIf="repository.status === 'NOT_FOUND'"
-              >block</mat-icon
-            >
-            <mat-icon mat-list-icon *ngIf="repository.status === 'INITIAL'"
-              >cloud_upload</mat-icon
-            >
-            <mat-icon
-              mat-list-icon
-              *ngIf="repository.status === 'INSTANCE_UNREACHABLE'"
-              >sync_problem</mat-icon
-            >
-          </div>
-
-          <div>
-            <div class="break-all text-lg">
-              {{ repository.name }}
+  <div class="overflow-y-scroll">
+    <div class="mr-2 max-h-[50vh]">
+      @for (
+        repository of getFilteredRepositories(
+          t4cRepoService.repositories$ | async
+        );
+        track repository.id
+      ) {
+        <div class="my-[10px] flex justify-between rounded border px-2 shadow">
+          <div class="flex">
+            <div class="my-auto ml-0 mr-[15px] flex flex-col items-center">
+              <span class="text-nowrap text-sm">No. {{ repository.id }}</span>
+              <mat-icon mat-list-icon>{{
+                mapStatusToText(repository.status).icon
+              }}</mat-icon>
             </div>
+
             <div>
-              Repository ID: {{ repository.id }} <br />
-              status: {{ repository.status }}
+              <div>
+                <span class="break-all text-lg">{{ repository.name }}</span>
+              </div>
+              <div class="text-sm">
+                {{ mapStatusToText(repository.status).text }} <br />
+              </div>
             </div>
           </div>
-        </div>
-        <div class="my-auto flex flex-row">
-          <button
-            mat-icon-button
-            *ngIf="repository.status === 'OFFLINE'"
-            (click)="startRepository(repository)"
-            matTooltip="Start repository"
-          >
-            <mat-icon class="text-green-500">power_settings_new</mat-icon>
-          </button>
+          <div class="my-auto flex flex-row">
+            <button
+              mat-icon-button
+              *ngIf="repository.status === 'OFFLINE'"
+              (click)="startRepository(repository)"
+              matTooltip="Start repository"
+            >
+              <mat-icon class="text-green-500">power_settings_new</mat-icon>
+            </button>
 
-          <button
-            mat-icon-button
-            color="warn"
-            *ngIf="repository.status === 'ONLINE'"
-            (click)="stopRepository(repository)"
-            matTooltip="Stop repository"
-          >
-            <mat-icon>power_settings_new</mat-icon>
-          </button>
+            <button
+              mat-icon-button
+              color="warn"
+              *ngIf="repository.status === 'ONLINE'"
+              (click)="stopRepository(repository)"
+              matTooltip="Stop repository"
+            >
+              <mat-icon>power_settings_new</mat-icon>
+            </button>
 
-          <button
-            mat-icon-button
-            color="primary"
-            *ngIf="repository.status === 'NOT_FOUND'"
-            (click)="recreateRepository(repository)"
-            matTooltip="Recreate repository on instance"
-          >
-            <mat-icon>sync</mat-icon>
-          </button>
+            <button
+              mat-icon-button
+              color="primary"
+              *ngIf="repository.status === 'NOT_FOUND'"
+              (click)="recreateRepository(repository)"
+              matTooltip="Recreate repository on instance"
+            >
+              <mat-icon>sync</mat-icon>
+            </button>
 
-          <button
-            mat-icon-button
-            color="warn"
-            (click)="deleteRepository(repository)"
-            matTooltip="Delete repository"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <form [formGroup]="form">
-      <div class="flex w-full items-center justify-between gap-8 pt-[18px]">
-        <mat-form-field appearance="fill" class="w-full">
-          <mat-label>Repository name</mat-label>
-          <input matInput formControlName="name" />
-          <mat-error *ngIf="form.controls.name.errors?.required"
-            >Please enter a name</mat-error
-          >
-          <mat-error *ngIf="form.controls.name.errors?.uniqueName"
-            >Repository already exists</mat-error
-          >
-          <mat-error *ngIf="form.controls.name.errors?.pattern"
-            >The following characters are allowed: A-Z, a-z, 0-9, _, -
-          </mat-error>
-        </mat-form-field>
-        <button
-          class="relative bottom-[7.5px]"
-          mat-stroked-button
-          color="primary"
-          [disabled]="!form.valid"
-          (click)="createRepository()"
-        >
-          <div class="flex items-center">
-            <mat-icon>add</mat-icon>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteRepository(repository)"
+              matTooltip="Delete repository"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
           </div>
-        </button>
-      </div>
-    </form>
+        </div>
+      }
+    </div>
   </div>
+  <form [formGroup]="form">
+    <div class="mt-2 flex w-full items-start justify-between gap-2">
+      <mat-form-field appearance="outline" class="h-[4em] w-full">
+        <mat-label>Repository name</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error *ngIf="form.controls.name.errors?.required"
+          >Please enter a name</mat-error
+        >
+        <mat-error *ngIf="form.controls.name.errors?.uniqueName"
+          >Repository already exists</mat-error
+        >
+        <mat-error *ngIf="form.controls.name.errors?.pattern"
+          >The following characters are allowed: A-Z, a-z, 0-9, _, -
+        </mat-error>
+      </mat-form-field>
+      <button
+        class="!h-[56px]"
+        mat-stroked-button
+        color="primary"
+        [disabled]="!form.valid"
+        (click)="createRepository()"
+      >
+        <div class="flex items-center">
+          <mat-icon>add</mat-icon>
+        </div>
+      </button>
+    </div>
+  </form>
 </div>

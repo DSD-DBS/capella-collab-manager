@@ -72,3 +72,25 @@ export const Repositories: Story = {
     }),
   ],
 };
+
+export const AddRepositories: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: T4CRepositoryWrapperService,
+          useFactory: () =>
+            new MockT4CRepositoryWrapperService([
+              {
+                id: 1,
+                name: 'test',
+                instance: mockT4CInstance,
+                status: 'ONLINE',
+              },
+            ]),
+        },
+      ],
+    }),
+  ],
+};
