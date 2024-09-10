@@ -5,6 +5,7 @@ name: 'Storybook'
 on:
   pull_request:
     branches: ['**']
+    types: [opened, reopened, synchronize, ready_for_review]
     paths:
       - 'frontend/**'
       - '.github/workflows/storybook.yml'
@@ -17,7 +18,10 @@ on:
 jobs:
   chromatic:
     runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
+    # prettier-ignore
+    if:
+      github.actor != 'dependabot[bot]' &&
+      (github.event.pull_request.draft == false || github.event_name == 'push')
     concurrency:
       # prettier-ignore
       group: chromatic-${{ github.event_name }}-${{ github.event.pull_request.number }}
