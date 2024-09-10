@@ -40,6 +40,7 @@ export class T4CInstanceWrapperService {
   );
 
   loadInstances(): void {
+    this._t4cInstances.next(undefined);
     this.t4cInstanceService.getT4cInstances().subscribe({
       next: (instances) => this._t4cInstances.next(instances),
       error: () => this._t4cInstances.next(undefined),

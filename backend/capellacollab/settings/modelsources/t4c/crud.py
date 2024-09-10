@@ -71,3 +71,11 @@ def update_t4c_instance(
     db.commit()
 
     return instance
+
+
+def delete_t4c_instance(
+    db: orm.Session,
+    instance: models.DatabaseT4CInstance,
+):
+    db.delete(instance)
+    db.commit()
