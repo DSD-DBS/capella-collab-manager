@@ -3,13 +3,63 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div
-  class="wrapper"
-  *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
->
-  <h1 class="!m-separator">Git repositories</h1>
-  <div class="flex flex-wrap">
-    <a class="m-m-card" [routerLink]="['..', 'git-model', 'create']">
+<h2 class="mb-2 text-xl font-medium">Git repositories</h2>
+<div class="flex flex-wrap gap-2">
+  <a [routerLink]="['..', 'git-model', 'create']">
+    <div matRipple class="mat-card-overview new collab-card">
+      <div class="content">
+        Use existing repository <br />
+        <div class="icon">
+          <app-mat-icon size="70px">link</app-mat-icon>
+        </div>
+      </div>
+    </div>
+  </a>
+  @if ((gitModelService.gitModels$ | async) === undefined) {
+    <app-mat-card-overview-skeleton-loader
+      class="contents"
+      [rows]="1"
+      [reservedCards]="1"
+    ></app-mat-card-overview-skeleton-loader>
+  } @else {
+    @for (gitModel of gitModelService.gitModels$ | async; track gitModel.id) {
+      <a [routerLink]="['..', 'git-model', gitModel.id]">
+        <div matRipple class="mat-card-overview collab-card">
+          <div class="header flex items-center justify-between">
+            Integration {{ gitModel.id }}
+            @if (gitModel.primary) {
+              <mat-icon>star</mat-icon>
+            }
+          </div>
+
+          <div class="content">
+            <span class="line-clamp-1 break-all"
+              ><b>Path:</b> {{ gitModel.path }}</span
+            >
+            <span class="line-clamp-1 break-all"
+              ><b>Revision:</b> {{ gitModel.revision }}</span
+            >
+            <span class="line-clamp-1 break-all"
+              ><b>Entrypoint:</b> {{ gitModel.entrypoint }}</span
+            >
+            @if (gitModel.username) {
+              <span class="line-clamp-1 break-all">
+                <b>Username:</b> {{ gitModel.username }}
+              </span>
+            }
+          </div>
+        </div>
+      </a>
+    }
+  }
+</div>
+@if (
+  (modelService.model$ | async)?.tool?.integrations?.t4c &&
+  userService.user?.role === "administrator"
+) {
+  <h2 class="mb-2 mt-5 text-xl font-medium">TeamForCapella repositories</h2>
+  <div class="flex flex-wrap gap-2">
+    <a [routerLink]="['..', 't4c-model', 'create-existing']">
       <div matRipple class="mat-card-overview new collab-card">
         <div class="content">
           Use existing repository <br />
@@ -19,79 +69,42 @@
         </div>
       </div>
     </a>
-
-    <app-mat-card-overview-skeleton-loader
-      [rows]="1"
-      [reservedCards]="2"
-      [loading]="(gitModelService.gitModels$ | async) === undefined"
-    ></app-mat-card-overview-skeleton-loader>
-    <a
-      class="m-m-card"
-      *ngFor="let gitModel of gitModelService.gitModels$ | async"
-      [routerLink]="['..', 'git-model', gitModel.id]"
-    >
-      <div matRipple class="mat-card-overview collab-card">
-        <div class="header">Integration {{ gitModel.id }}</div>
+    <a [routerLink]="['..', 't4c-model', 'create-new']">
+      <div matRipple class="mat-card-overview new collab-card">
         <div class="content">
-          <div>Path: {{ gitModel.path }}</div>
-          <div>Revision: {{ gitModel.revision }}</div>
-          <div>Entry point: {{ gitModel.entrypoint }}</div>
-          <div>Primary: {{ gitModel.primary ? "True" : "False" }}</div>
-          <div>Username: {{ gitModel.username }}</div>
-          <div>Password set: {{ gitModel.password ? "True" : "False" }}</div>
+          Create new repository <br />
+          <div class="icon">
+            <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+          </div>
         </div>
       </div>
     </a>
-  </div>
-  <div
-    *ngIf="
-      (modelService.model$ | async)!.tool.integrations.t4c &&
-      userService.user?.role === 'administrator'
-    "
-  >
-    <h1 class="!m-separator">TeamForCapella repositories</h1>
-    <div class="flex flex-wrap">
-      <a class="m-m-card" [routerLink]="['..', 't4c-model', 'create-existing']">
-        <div matRipple class="mat-card-overview new collab-card">
-          <div class="content">
-            Use existing repository <br />
-            <div class="icon">
-              <app-mat-icon size="70px">link</app-mat-icon>
-            </div>
-          </div>
-        </div>
-      </a>
-
-      <a class="m-m-card" [routerLink]="['..', 't4c-model', 'create-new']">
-        <div matRipple class="mat-card-overview new collab-card">
-          <div class="content">
-            Create new repository <br />
-            <div class="icon">
-              <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
-            </div>
-          </div>
-        </div>
-      </a>
-
+    @if ((t4cModelService.t4cModels$ | async) === undefined) {
+      <app-mat-card-overview-skeleton-loader
+        class="contents"
+        [rows]="1"
+        [reservedCards]="2"
+      ></app-mat-card-overview-skeleton-loader>
+    } @else {
       <a
-        class="m-m-card"
         *ngFor="let t4cModel of t4cModelService.t4cModels$ | async"
         [routerLink]="['..', 't4c-model', t4cModel.id]"
       >
         <div matRipple class="mat-card-overview collab-card">
           <div class="header">Integration {{ t4cModel.id }}</div>
           <div class="content">
-            <div>Instance: {{ t4cModel.repository.instance.name }}</div>
-            <div>Repository: {{ t4cModel.repository.name }}</div>
-            <div>T4C model name: {{ t4cModel.name }}</div>
+            <span class="line-clamp-1 break-all"
+              ><b>Instance:</b> {{ t4cModel.repository.instance.name }}</span
+            >
+            <span class="line-clamp-1 break-all"
+              ><b>Repository:</b> {{ t4cModel.repository.name }}</span
+            >
+            <span class="line-clamp-1 break-all"
+              ><b>Project:</b> {{ t4cModel.name }}</span
+            >
           </div>
         </div>
       </a>
-      <app-mat-card-overview-skeleton-loader
-        [rows]="1"
-        [reservedCards]="2"
-        [loading]="(t4cModelService.t4cModels$ | async) === undefined"
-      ></app-mat-card-overview-skeleton-loader>
-    </div>
+    }
   </div>
-</div>
+}

@@ -5,6 +5,7 @@
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter } from 'rxjs';
@@ -20,7 +21,6 @@ import { ProjectWrapperService } from '../../service/project.service';
 @Component({
   selector: 'app-model-detail',
   templateUrl: './model-detail.component.html',
-  styleUrls: ['./model-detail.component.css'],
   standalone: true,
   imports: [
     NgIf,
@@ -30,6 +30,7 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatCardOverviewSkeletonLoaderComponent,
     NgFor,
     AsyncPipe,
+    MatIconModule,
   ],
 })
 export class ModelDetailComponent implements OnInit, OnDestroy {

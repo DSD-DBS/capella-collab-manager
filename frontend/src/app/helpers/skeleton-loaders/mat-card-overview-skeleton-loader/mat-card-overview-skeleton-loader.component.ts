@@ -12,7 +12,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   imports: [NgxSkeletonLoaderModule],
 })
 export class MatCardOverviewSkeletonLoaderComponent implements OnInit {
-  @Input() loading = true;
   @Input() reservedCards = 1;
 
   @Input() rows: number | undefined = undefined;
