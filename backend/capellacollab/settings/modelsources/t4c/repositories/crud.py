@@ -105,6 +105,7 @@ def _get_user_write_t4c_repositories(
             == projects_users_models.ProjectUserPermission.WRITE
         )
         .where(projects_users_models.ProjectUserAssociation.user == user)
+        .distinct()
     )
 
     return db.execute(stmt).scalars().all()
@@ -123,6 +124,7 @@ def _get_admin_t4c_repositories(
         )
         .join(toolmodels_models.DatabaseToolModel.project)
         .where(projects_models.DatabaseProject.is_archived.is_(False))
+        .distinct()
     )
 
     return db.execute(stmt).scalars().all()
