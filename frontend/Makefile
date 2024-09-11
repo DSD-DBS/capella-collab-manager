@@ -3,7 +3,7 @@
 
 export NG_FORCE_TTY=false
 
-HOST ?= 127.0.0.1
+HOST ?= localhost
 
 .ONESHELL:
 

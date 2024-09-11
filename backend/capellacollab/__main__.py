@@ -43,7 +43,7 @@ logging.basicConfig(
 
 ALLOW_ORIGINS = (
     [f"{config.general.scheme}//{config.general.host}:{config.general.port}"]
-    + ["http://localhost:4200"]
+    + ["http://localhost:4200", "http://127.0.0.1:4200"]
     if core.DEVELOPMENT_MODE
     else []
 )
