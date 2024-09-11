@@ -91,6 +91,19 @@ def edit_t4c_instance(
     return crud.update_t4c_instance(db, instance, body)
 
 
+@router.delete(
+    "/{t4c_instance_id}",
+    status_code=204,
+)
+def delete_t4c_instance(
+    instance: models.DatabaseT4CInstance = fastapi.Depends(
+        injectables.get_existing_instance
+    ),
+    db: orm.Session = fastapi.Depends(database.get_db),
+):
+    crud.delete_t4c_instance(db, instance)
+
+
 @router.get(
     "/{t4c_instance_id}/licenses",
     response_model=models.GetSessionUsageResponse,

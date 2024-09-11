@@ -2,11 +2,12 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgClass, NgIf, AsyncPipe } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { MatCardOverviewSkeletonLoaderComponent } from 'src/app/helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
 
@@ -19,11 +20,10 @@ import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
     RouterLink,
     MatRipple,
     MatIconComponent,
-    NgFor,
     NgClass,
     MatIcon,
-    NgIf,
     AsyncPipe,
+    MatCardOverviewSkeletonLoaderComponent,
   ],
 })
 export class T4CSettingsComponent {

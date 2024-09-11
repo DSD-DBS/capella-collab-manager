@@ -24,33 +24,36 @@
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
           <mat-label>Name</mat-label>
           <input matInput formControlName="name" />
-          <mat-error *ngIf="form.controls.name.errors?.required">
-            The name is required.
-          </mat-error>
-          <mat-error *ngIf="form.controls.name.errors?.uniqueName"
-            >An instance with the same name already exists.
-          </mat-error>
+          @if (form.controls.name.errors?.required) {
+            <mat-error>The name is required.</mat-error>
+          } @else if (form.controls.name.errors?.uniqueName) {
+            <mat-error>
+              An instance with the same name already exists.
+            </mat-error>
+          }
         </mat-form-field>
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
           <mat-label>Capella version</mat-label>
           <mat-select formControlName="version_id">
-            <mat-option
-              *ngFor="let version of capellaVersions"
-              [value]="version.id"
-            >
-              {{ version.name }}
-            </mat-option>
+            @for (version of capellaVersions; track version.id) {
+              <mat-option [value]="version.id">
+                {{ version.name }}
+              </mat-option>
+            }
           </mat-select>
           @if (
-            (t4cInstanceService.t4cInstance$ | async) !== undefined &&
-            (t4cInstanceService.t4cInstance$ | async)!.version.id !==
+            (t4cInstanceWrapperService.t4cInstance$ | async) !== undefined &&
+            (t4cInstanceWrapperService.t4cInstance$ | async)!.version.id !==
               form.value.version_id
           ) {
             <mat-hint class="max-w-[180px]"
               >Models are not auto-migrated on version change.</mat-hint
             >
-          } @else if (form.controls.version_id.errors?.required) {
-            <mat-error> The version is required. </mat-error>
+          } @else if (
+            form.controls.version_id.errors?.required ||
+            form.controls.version_id.errors?.min
+          ) {
+            <mat-error>The version is required.</mat-error>
           }
         </mat-form-field>
       </fieldset>
@@ -59,7 +62,7 @@
           <mat-label>License configuration</mat-label>
           <input matInput formControlName="license" />
           @if (form.controls.license.errors?.required) {
-            <mat-error> The license configuration is required. </mat-error>
+            <mat-error>The license configuration is required.</mat-error>
           }
         </mat-form-field>
       </fieldset>
@@ -71,11 +74,9 @@
         >
           <mat-label>Protocol</mat-label>
           <mat-select formControlName="protocol">
-            <mat-option
-              *ngFor="let protocol of ['tcp', 'ssl', 'ws', 'wss']"
-              [value]="protocol"
-              >{{ protocol }}</mat-option
-            >
+            @for (protocol of protocols; track protocol) {
+              <mat-option [value]="protocol">{{ protocol }}</mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field subscriptSizing="dynamic" id="host" appearance="fill">
@@ -92,19 +93,15 @@
         >
           <mat-label>Port</mat-label>
           <input matInput inputmode="numeric" formControlName="port" />
-          <mat-error
-            *ngIf="
-              form.controls.port.errors?.min || form.controls.port.errors?.max
-            "
-          >
-            Valid ports are between 0 and 65535.
-          </mat-error>
-          <mat-error *ngIf="form.controls.port.errors?.pattern">
-            We only support numerical ports :(
-          </mat-error>
-          <mat-error *ngIf="form.controls.port.errors?.required">
-            The port is required.
-          </mat-error>
+          @if (
+            form.controls.port.errors?.min || form.controls.port.errors?.max
+          ) {
+            <mat-error>Valid ports are between 0 and 65535.</mat-error>
+          } @else if (form.controls.port.errors?.pattern) {
+            <mat-error>Only numerical ports are supported.</mat-error>
+          } @else if (form.controls.port.errors?.required) {
+            <mat-error>The port is required.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field
@@ -114,20 +111,16 @@
         >
           <mat-label>CDO port</mat-label>
           <input matInput inputmode="numeric" formControlName="cdo_port" />
-          <mat-error
-            *ngIf="
-              form.controls.cdo_port.errors?.min ||
-              form.controls.cdo_port.errors?.max
-            "
-          >
-            Valid CDO ports are between 0 and 65535.
-          </mat-error>
-          <mat-error *ngIf="form.controls.cdo_port.errors?.pattern">
-            We only support numerical CDO ports :(
-          </mat-error>
-          <mat-error *ngIf="form.controls.cdo_port.errors?.required">
-            The CDO port is required.
-          </mat-error>
+          @if (form.controls.cdo_port.errors?.required) {
+            <mat-error>The CDO port is required.</mat-error>
+          } @else if (form.controls.cdo_port.errors?.pattern) {
+            <mat-error>Only numerical ports are supported.</mat-error>
+          } @else if (
+            form.controls.cdo_port.errors?.min ||
+            form.controls.cdo_port.errors?.max
+          ) {
+            <mat-error>Valid CDO ports are between 0 and 65535.</mat-error>
+          }
         </mat-form-field>
 
         <mat-form-field
@@ -137,48 +130,43 @@
         >
           <mat-label>HTTP port</mat-label>
           <input matInput inputmode="numeric" formControlName="http_port" />
-          <mat-error
-            *ngIf="
-              form.controls.http_port.errors?.min ||
-              form.controls.http_port.errors?.max
-            "
-          >
-            Valid ports are between 0 and 65535.
-          </mat-error>
-          <mat-error *ngIf="form.controls.http_port.errors?.pattern">
-            We only support numerical ports :(
-          </mat-error>
+          @if (form.controls.http_port.errors?.pattern) {
+            <mat-error>Only numerical ports are supported.</mat-error>
+          } @else if (
+            form.controls.http_port.errors?.min ||
+            form.controls.http_port.errors?.max
+          ) {
+            <mat-error>Valid ports are between 0 and 65535.</mat-error>
+          }
         </mat-form-field>
       </fieldset>
       <fieldset class="flex flex-wrap items-start gap-2">
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
           <mat-label>License server API</mat-label>
           <input matInput formControlName="usage_api" />
-          <mat-error *ngIf="form.controls.usage_api.errors?.pattern">
-            The URL should start with “http(s)://”
-          </mat-error>
-          <mat-error *ngIf="form.controls.usage_api.errors?.required">
-            The license server API is required.
-          </mat-error>
+          @if (form.controls.usage_api.errors?.required) {
+            <mat-error>The license server API is required.</mat-error>
+          } @else if (form.controls.usage_api.errors?.pattern) {
+            <mat-error>The URL should start with "http(s)://"</mat-error>
+          }
         </mat-form-field>
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
           <mat-label>Experimental REST API</mat-label>
           <input matInput formControlName="rest_api" />
-          <mat-error *ngIf="form.controls.rest_api.errors?.pattern">
-            The URL should start with “http(s)://”
-          </mat-error>
-          <mat-error *ngIf="form.controls.rest_api.errors?.required">
-            The REST server URL is required.
-          </mat-error>
+          @if (form.controls.rest_api.errors?.required) {
+            <mat-error>The REST server URL is required.</mat-error>
+          } @else if (form.controls.rest_api.errors?.pattern) {
+            <mat-error>The URL should start with "http(s)://"</mat-error>
+          }
         </mat-form-field>
       </fieldset>
       <fieldset class="flex flex-wrap items-start gap-2">
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
           <mat-label>Username</mat-label>
           <input matInput autocomplete="off" formControlName="username" />
-          <mat-error *ngIf="form.controls.username.errors?.required">
-            The username is required.
-          </mat-error>
+          @if (form.controls.username.errors?.required) {
+            <mat-error> The username is required. </mat-error>
+          }
         </mat-form-field>
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
           <mat-label>Password</mat-label>
@@ -188,67 +176,73 @@
             autocomplete="new-password"
             formControlName="password"
           />
-          <mat-error *ngIf="form.controls.password.errors?.required">
-            The password is required.
-          </mat-error>
-          <mat-hint *ngIf="existing && !form.value.password"
-            >Is not changed if empty</mat-hint
-          >
+          @if (form.controls.password.errors?.required) {
+            <mat-error> The password is required. </mat-error>
+          } @else if (existing && !form.value.password) {
+            <mat-hint>Is not changed if empty</mat-hint>
+          } @else {
+            <mat-hint></mat-hint>
+          }
         </mat-form-field>
       </fieldset>
-      <div *ngIf="editing" class="flex justify-between">
-        <button
-          mat-flat-button
-          type="button"
-          color="warn"
-          (click)="cancelEditing()"
-        >
-          Cancel
-        </button>
-        <button mat-flat-button type="submit" color="primary">Submit</button>
-      </div>
-      <div
-        *ngIf="
-          !editing &&
-          existing &&
-          (t4cInstanceService.t4cInstance$ | async) !== undefined
-        "
-        class="flex justify-between"
-      >
-        <div *ngIf="!isArchived; else archivePlaceholder">
-          <button mat-flat-button color="primary" (click)="enableEditing()">
-            Edit
+      <div class="flex justify-between gap-2 *:basis-1/4">
+        @if (!existing) {
+          <button
+            mat-flat-button
+            color="primary"
+            class="ml-auto"
+            type="submit"
+            [disabled]="!form.valid"
+          >
+            Create
           </button>
-        </div>
-        <ng-template #archivePlaceholder>
-          <div class="grow"></div>
-        </ng-template>
-        <button mat-flat-button color="primary" (click)="toggleArchive()">
-          <mat-icon class="mat-icon-position left">{{
-            this.isArchived ? "unarchive" : "archive"
-          }}</mat-icon>
-          {{ this.isArchived ? "Unarchive" : "Archive" }}
-        </button>
-      </div>
-      <div *ngIf="!existing" class="text-right">
-        <button
-          mat-flat-button
-          color="primary"
-          type="submit"
-          [disabled]="!form.valid"
-        >
-          Create
-        </button>
+        } @else if (editing) {
+          <button
+            mat-flat-button
+            type="button"
+            color="primary"
+            (click)="cancelEditing()"
+          >
+            Cancel
+          </button>
+          <button mat-flat-button type="submit" color="primary">Submit</button>
+        } @else if (
+          (t4cInstanceWrapperService.t4cInstance$ | async) !== undefined
+        ) {
+          @if (!isArchived) {
+            <button mat-flat-button color="primary" (click)="enableEditing()">
+              Edit
+            </button>
+          } @else {
+            <div></div>
+          }
+          <button
+            (click)="deleteT4CRepository()"
+            mat-flat-button
+            type="button"
+            color="warn"
+          >
+            <mat-icon>delete_forever</mat-icon>
+            <span>Delete</span>
+          </button>
+          <button mat-flat-button color="primary" (click)="toggleArchive()">
+            @if (!isArchived) {
+              <mat-icon>archive</mat-icon>
+            }
+            {{ this.isArchived ? "Unarchive" : "Archive" }}
+          </button>
+          <div></div>
+        }
       </div>
     </form>
   </div>
 
-  @if ((t4cInstanceService.t4cInstance$ | async) !== undefined) {
+  @if ((t4cInstanceWrapperService.t4cInstance$ | async) !== undefined) {
     <app-t4c-instance-settings
-      [instance]="(t4cInstanceService.t4cInstance$ | async)!"
+      [instance]="(t4cInstanceWrapperService.t4cInstance$ | async)!"
     ></app-t4c-instance-settings>
     <app-licences
-      [instance]="(t4cInstanceService.t4cInstance$ | async)!"
+      [instance]="(t4cInstanceWrapperService.t4cInstance$ | async)!"
     ></app-licences>
   }
 </div>

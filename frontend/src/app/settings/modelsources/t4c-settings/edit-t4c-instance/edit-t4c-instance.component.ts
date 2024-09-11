@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -13,6 +13,7 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
   MatFormField,
   MatLabel,
@@ -24,13 +25,15 @@ import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map } from 'rxjs';
+import { filter, map, take } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   CreateT4CInstance,
   PatchT4CInstance,
   Protocol,
+  SettingsModelsourcesT4CService,
   ToolVersion,
 } from 'src/app/openapi';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
@@ -44,7 +47,6 @@ import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-insta
   templateUrl: './edit-t4c-instance.component.html',
   standalone: true,
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatFormField,
@@ -52,7 +54,6 @@ import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-insta
     MatInput,
     MatError,
     MatSelect,
-    NgFor,
     MatOption,
     MatHint,
     MatButton,
@@ -80,18 +81,18 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   public form = new FormGroup({
     name: new FormControl('', {
       validators: Validators.required,
-      asyncValidators: this.t4cInstanceService.asyncNameValidator(),
+      asyncValidators: this.t4cInstanceWrapperService.asyncNameValidator(),
     }),
-    version_id: new FormControl(-1, Validators.required),
+    version_id: new FormControl(-1, [Validators.required, Validators.min(0)]),
     license: new FormControl('', Validators.required),
-    protocol: new FormControl<Protocol>('tcp', Validators.required),
+    protocol: new FormControl<Protocol>('ws', Validators.required),
     host: new FormControl('', Validators.required),
     port: new FormControl(2036, [Validators.required, ...this.portValidators]),
     cdo_port: new FormControl(12036, [
       Validators.required,
       ...this.portValidators,
     ]),
-    http_port: new FormControl<number | null>(null, this.portValidators),
+    http_port: new FormControl(8080, this.portValidators),
     usage_api: new FormControl('', [
       Validators.required,
       Validators.pattern(/^https?:\/\//),
@@ -104,13 +105,19 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     password: new FormControl('', [Validators.required]),
   });
 
+  get protocols(): Protocol[] {
+    return Object.values(Protocol);
+  }
+
   constructor(
-    public t4cInstanceService: T4CInstanceWrapperService,
+    public t4cInstanceWrapperService: T4CInstanceWrapperService,
+    private t4cInstanceService: SettingsModelsourcesT4CService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
     private toolService: ToolWrapperService,
     private breadcrumbsService: BreadcrumbsService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -124,10 +131,10 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
         this.form.disable();
 
         this.instanceId = instanceId;
-        this.t4cInstanceService.loadInstance(instanceId);
+        this.t4cInstanceWrapperService.loadInstance(instanceId);
       });
 
-    this.t4cInstanceService.t4cInstance$
+    this.t4cInstanceWrapperService.t4cInstance$
       .pipe(untilDestroyed(this), filter(Boolean))
       .subscribe((initialT4CInstance) => {
         const t4cInstance = {
@@ -137,7 +144,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
         this.isArchived = t4cInstance.is_archived;
         this.form.patchValue(t4cInstance);
         this.form.controls.name.setAsyncValidators(
-          this.t4cInstanceService.asyncNameValidator(t4cInstance),
+          this.t4cInstanceWrapperService.asyncNameValidator(t4cInstance),
         );
         this.breadcrumbsService.updatePlaceholder({ t4cInstance });
       });
@@ -162,13 +169,13 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     this.form.disable();
 
     if (this.instanceId) {
-      this.t4cInstanceService.loadInstance(this.instanceId);
+      this.t4cInstanceWrapperService.loadInstance(this.instanceId);
     }
   }
 
   create(): void {
     if (this.form.valid) {
-      this.t4cInstanceService
+      this.t4cInstanceWrapperService
         .createInstance(this.form.value as CreateT4CInstance)
         .subscribe((instance) => {
           this.toastService.showSuccess(
@@ -184,7 +191,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
 
   update(): void {
     if (this.form.valid && this.instanceId) {
-      this.t4cInstanceService
+      this.t4cInstanceWrapperService
         .updateInstance(this.instanceId, this.form.value as PatchT4CInstance)
         .subscribe((instance) => {
           this.editing = false;
@@ -199,7 +206,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
 
   toggleArchive(): void {
     if (this.instanceId) {
-      this.t4cInstanceService
+      this.t4cInstanceWrapperService
         .updateInstance(this.instanceId, {
           is_archived: !this.isArchived,
         })
@@ -224,7 +231,42 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.t4cInstanceService.resetT4CInstance();
+    this.t4cInstanceWrapperService.resetT4CInstance();
     this.breadcrumbsService.updatePlaceholder({ t4cInstance: undefined });
+  }
+
+  deleteT4CRepository(): void {
+    this.t4cInstanceWrapperService.t4cInstance$
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((instance) => {
+        if (!instance) {
+          return;
+        }
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          data: {
+            title: 'Delete TeamForCapella Server Instance',
+            text:
+              `Do you really want to remove the integration of the TeamForCapella server '${instance?.name}'? ` +
+              'This will remove all integrations of related repositories in projects. ' +
+              'Repositories will no longer be injected into sessions and no session token will be issues for the repository anymore. ' +
+              'The server itself will not be removed, only the link between the Capella Collaboration Manager and the TeamForCapella server.',
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result: boolean) => {
+          if (result) {
+            this.t4cInstanceService.deleteT4cInstance(instance.id).subscribe({
+              next: () => {
+                this.toastService.showSuccess(
+                  `TeamForCapella instance removed`,
+                  `The TeamForCapella instance '${instance.name}' and all related repositories have been removed.`,
+                );
+                this.t4cInstanceWrapperService.loadInstances();
+                this.router.navigateByUrl('/settings/modelsources/t4c');
+              },
+            });
+          }
+        });
+      });
   }
 }

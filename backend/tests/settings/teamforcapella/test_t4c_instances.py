@@ -6,6 +6,12 @@ import responses
 from fastapi import status, testclient
 from sqlalchemy import orm
 
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    crud as models_t4c_crud,
+)
+from capellacollab.projects.toolmodels.modelsources.t4c import (
+    models as models_t4c_models,
+)
 from capellacollab.settings.modelsources.t4c import crud as t4c_crud
 from capellacollab.settings.modelsources.t4c import (
     exceptions as settings_t4c_exceptions,
@@ -258,6 +264,22 @@ def test_patch_t4c_instance_already_existing_name(
         in detail["reason"]
     )
     assert "name already used" in detail["title"]
+
+
+@pytest.mark.usefixtures("admin")
+def test_delete_t4c_instance(
+    client: testclient.TestClient,
+    db: orm.Session,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+    t4c_model: models_t4c_models.DatabaseT4CModel,
+):
+    response = client.delete(
+        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}",
+    )
+
+    assert response.status_code == 204
+    assert t4c_crud.get_t4c_instance_by_id(db, t4c_instance.id) is None
+    assert models_t4c_crud.get_t4c_model_by_id(db, t4c_model.id) is None
 
 
 def test_injectables_raise_when_archived_instance(

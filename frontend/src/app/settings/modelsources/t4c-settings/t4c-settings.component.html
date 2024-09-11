@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<article class="flex flex-wrap">
-  <a [routerLink]="['create']" class="m-2.5">
+<article class="flex flex-wrap gap-2">
+  <a [routerLink]="['create']">
     <div matRipple class="mat-card-overview new collab-card m-0">
       <div class="content flex flex-col items-center justify-center">
         Add an instance <br />
@@ -15,31 +15,39 @@
     </div>
   </a>
 
-  <a
-    *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
-    [routerLink]="['instance', instance.id]"
-    class="m-2.5"
-  >
-    <div
-      matRipple
-      class="mat-card-overview collab-card m-0"
-      [ngClass]="{ 'bg-gray-300': instance.is_archived }"
-    >
-      <div class="header">{{ instance.name }}</div>
-      <div class="content">
-        <mat-icon class="aligned">tag</mat-icon> <b> Capella version:</b>
-        {{ instance.version.name }}
-        <br />
-        <mat-icon class="aligned">link</mat-icon><b> Host:</b>
-        {{ instance.protocol }}://{{ instance.host }}:{{ instance.port }}
-      </div>
+  @if ((t4cInstanceService.t4cInstances$ | async) === undefined) {
+    <app-mat-card-overview-skeleton-loader
+      class="contents"
+      [rows]="2"
+      [reservedCards]="1"
+    ></app-mat-card-overview-skeleton-loader>
+  } @else {
+    @for (
+      instance of t4cInstanceService.t4cInstances$ | async;
+      track instance.id
+    ) {
+      <a [routerLink]="['instance', instance.id]">
+        <div
+          matRipple
+          class="mat-card-overview collab-card m-0"
+          [ngClass]="{ 'bg-gray-300': instance.is_archived }"
+        >
+          <div class="header">{{ instance.name }}</div>
+          <div class="content">
+            <mat-icon class="aligned">tag</mat-icon> <b> Capella version:</b>
+            {{ instance.version.name }}
+            <br />
+            <mat-icon class="aligned">link</mat-icon><b> Host:</b>
+            {{ instance.protocol }}://{{ instance.host }}:{{ instance.port }}
+          </div>
 
-      <div
-        *ngIf="instance.is_archived"
-        class="fixed bottom-2 right-2 text-right text-stone-500"
-      >
-        Archived
-      </div>
-    </div>
-  </a>
+          @if (instance.is_archived) {
+            <div class="fixed bottom-2 right-2 text-right text-stone-500">
+              Archived
+            </div>
+          }
+        </div>
+      </a>
+    }
+  }
 </article>
