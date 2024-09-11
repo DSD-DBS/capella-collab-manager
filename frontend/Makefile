@@ -3,10 +3,12 @@
 
 export NG_FORCE_TTY=false
 
+HOST ?= 127.0.0.1
+
 .ONESHELL:
 
 dev:
-	ng serve --host 0.0.0.0 --open
+	ng serve --host $(HOST) --open
 
 test:
 	if [ $(shell which chromium) ]; \
