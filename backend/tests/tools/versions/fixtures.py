@@ -9,6 +9,20 @@ from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 
 
+@pytest.fixture(name="capella_tool_version", params=["6.0.0"])
+def fixture_capella_tool_version(
+    db: orm.Session,
+    capella_tool: tools_models.DatabaseTool,
+    request: pytest.FixtureRequest,
+) -> tools_models.DatabaseVersion:
+    capella_tool_version = tools_crud.get_version_by_tool_id_version_name(
+        db, capella_tool.id, request.param
+    )
+    assert capella_tool_version
+
+    return capella_tool_version
+
+
 @pytest.fixture(name="tool_version")
 def fixture_tool_version(
     db: orm.Session,

@@ -47,3 +47,39 @@ class T4CIntegrationUsedInPipelines(core_exceptions.BaseError):
             ),
             err_code="T4C_INTEGRATION_USED_IN_PIPELINES",
         )
+
+
+class T4CIntegrationWrongCapellaVersion(core_exceptions.BaseError):
+    def __init__(
+        self,
+        t4c_server_name: str,
+        t4c_repository_name: str,
+        server_version_name: str,
+        server_version_id: int,
+        model_version_name: str,
+        model_version_id: int,
+    ):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="The TeamForCapella server is not compatible with Capella model",
+            reason=(
+                f"The repository '{t4c_repository_name}' of the TeamForCapella server '{t4c_server_name}' "
+                f"has version {server_version_name} (ID {server_version_id}), "
+                f"but the model has version {model_version_name} (ID {model_version_id}). "
+                "Make sure that those versions match or are compatible with each other."
+            ),
+            err_code="T4C_INTEGRATION_WRONG_CAPELLA_VERSION",
+        )
+
+
+class T4CIntegrationVersionRequired(core_exceptions.BaseError):
+    def __init__(self, toolmodel_slug: str):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="The Capella model requires a version to proceed",
+            reason=(
+                f"To link a TeamForCapella repository, the Capella model '{toolmodel_slug}' has to have a version. "
+                "Please add a version first."
+            ),
+            err_code="T4C_INTEGRATION_NO_VERSION",
+        )

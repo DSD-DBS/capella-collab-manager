@@ -60,20 +60,6 @@ def fixture_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
     return capella_tool
 
 
-@pytest.fixture(name="capella_tool_version", params=["6.0.0"])
-def fixture_capella_tool_version(
-    db: orm.Session,
-    capella_tool: tools_models.DatabaseTool,
-    request: pytest.FixtureRequest,
-) -> tools_models.DatabaseVersion:
-    capella_tool_version = tools_crud.get_version_by_tool_id_version_name(
-        db, capella_tool.id, request.param
-    )
-    assert capella_tool_version
-
-    return capella_tool_version
-
-
 @pytest.fixture(name="jupyter_tool")
 def fixture_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
     return database_migration.create_jupyter_tool(db)

@@ -5,7 +5,7 @@
 
 <h2 class="mb-2 text-xl font-medium">Git repositories</h2>
 <div class="flex flex-wrap gap-5">
-  <a [routerLink]="['..', 'git-model', 'create']" class="w-full sm:w-fit">
+  <a [routerLink]="['git-model', 'create']" class="w-full sm:w-fit">
     <div matRipple class="mat-card-overview new collab-card">
       <div class="content">
         Use existing repository <br />
@@ -23,10 +23,7 @@
     ></app-mat-card-overview-skeleton-loader>
   } @else {
     @for (gitModel of gitModelService.gitModels$ | async; track gitModel.id) {
-      <a
-        [routerLink]="['..', 'git-model', gitModel.id]"
-        class="w-full sm:w-fit"
-      >
+      <a [routerLink]="['git-model', gitModel.id]" class="w-full sm:w-fit">
         <div matRipple class="mat-card-overview collab-card">
           <div class="header flex items-center justify-between">
             Integration {{ gitModel.id }}
@@ -62,10 +59,7 @@
 ) {
   <h2 class="mb-2 mt-5 text-xl font-medium">TeamForCapella repositories</h2>
   <div class="flex flex-wrap gap-5">
-    <a
-      [routerLink]="['..', 't4c-model', 'create-existing']"
-      class="w-full sm:w-fit"
-    >
+    <a [routerLink]="['t4c-model', 'create-existing']" class="w-full sm:w-fit">
       <div matRipple class="mat-card-overview new collab-card">
         <div class="content">
           Use existing repository <br />
@@ -75,7 +69,7 @@
         </div>
       </div>
     </a>
-    <a [routerLink]="['..', 't4c-model', 'create-new']" class="w-full sm:w-fit">
+    <a [routerLink]="['t4c-model', 'create-new']" class="w-full sm:w-fit">
       <div matRipple class="mat-card-overview new collab-card">
         <div class="content">
           Create new repository <br />
@@ -94,7 +88,7 @@
     } @else {
       <a
         *ngFor="let t4cModel of t4cModelService.t4cModels$ | async"
-        [routerLink]="['..', 't4c-model', t4cModel.id]"
+        [routerLink]="['t4c-model', t4cModel.id]"
         class="w-full sm:w-fit"
       >
         <div matRipple class="mat-card-overview collab-card">

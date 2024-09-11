@@ -15,14 +15,14 @@ from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.settings.modelsources.t4c import (
-    injectables as settings_t4c_injecatbles,
+    injectables as settings_t4c_injectables,
 )
 from capellacollab.settings.modelsources.t4c.repositories import (
     injectables as settings_t4c_repositories_injectables,
 )
 from capellacollab.users import models as users_models
 
-from . import crud, exceptions, injectables, models
+from . import crud, exceptions, injectables, models, util
 
 router = fastapi.APIRouter(
     dependencies=[
@@ -87,7 +87,7 @@ def create_t4c_model(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    instance = settings_t4c_injecatbles.get_existing_unarchived_instance(
+    instance = settings_t4c_injectables.get_existing_unarchived_instance(
         body.t4c_instance_id, db
     )
     repository = (
@@ -95,6 +95,11 @@ def create_t4c_model(
             body.t4c_repository_id, db, instance
         )
     )
+
+    util.verify_compatibility_of_model_and_server(
+        model.name, model.version, repository
+    )
+
     try:
         return crud.create_t4c_model(db, model, repository, body.name)
     except exc.IntegrityError:
@@ -118,14 +123,31 @@ def create_t4c_model(
         ],
     ),
 )
-def edit_t4c_model(
-    body: models.SubmitT4CModel,
+def update_t4c_model(
+    body: models.PatchT4CModel,
     t4c_model: models.DatabaseT4CModel = fastapi.Depends(
         injectables.get_existing_t4c_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    return crud.patch_t4c_model(db, t4c_model, body)
+    if body.t4c_instance_id is not None:
+        instance = settings_t4c_injectables.get_existing_unarchived_instance(
+            body.t4c_instance_id, db
+        )
+    else:
+        instance = t4c_model.repository.instance
+
+    repository = (
+        settings_t4c_repositories_injectables.get_existing_t4c_repository(
+            body.t4c_repository_id or t4c_model.repository.id, db, instance
+        )
+    )
+
+    util.verify_compatibility_of_model_and_server(
+        t4c_model.model.name, t4c_model.model.version, repository
+    )
+
+    return crud.patch_t4c_model(db, t4c_model, repository, body.name)
 
 
 @router.delete(

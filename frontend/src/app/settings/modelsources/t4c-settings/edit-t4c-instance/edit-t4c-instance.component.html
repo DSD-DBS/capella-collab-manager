@@ -43,11 +43,10 @@
           </mat-select>
           @if (
             (t4cInstanceWrapperService.t4cInstance$ | async) !== undefined &&
-            (t4cInstanceWrapperService.t4cInstance$ | async)!.version.id !==
-              form.value.version_id
+            editing
           ) {
             <mat-hint class="max-w-[180px]"
-              >Models are not auto-migrated on version change.</mat-hint
+              >The version can't be updated.</mat-hint
             >
           } @else if (
             form.controls.version_id.errors?.required ||
@@ -180,8 +179,6 @@
             <mat-error> The password is required. </mat-error>
           } @else if (existing && !form.value.password) {
             <mat-hint>Is not changed if empty</mat-hint>
-          } @else {
-            <mat-hint></mat-hint>
           }
         </mat-form-field>
       </fieldset>

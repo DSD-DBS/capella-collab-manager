@@ -6,7 +6,6 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from capellacollab.core import database
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.t4c import models
 from capellacollab.settings.modelsources.t4c.repositories import (
@@ -59,10 +58,12 @@ def create_t4c_model(
 def patch_t4c_model(
     db: orm.Session,
     t4c_model: models.DatabaseT4CModel,
-    patch_model: models.SubmitT4CModel,
+    repository: repositories_models.DatabaseT4CRepository,
+    name: str | None = None,
 ) -> models.DatabaseT4CModel:
-    database.patch_database_with_pydantic_object(t4c_model, patch_model)
-
+    if name is not None:
+        t4c_model.name = name
+    t4c_model.repository = repository
     db.commit()
     return t4c_model
 

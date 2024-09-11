@@ -3,65 +3,79 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div
-  *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
-  class="wrapper flex justify-center"
->
-  <div class="collab-card w-[350px] sm:min-w-[420px]">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <app-form-field-skeleton-loader
-        *ngIf="(t4cInstanceService.t4cInstances$ | async) === undefined"
+@if ((projectService.project$ | async) && (modelService.model$ | async)) {
+  <div class="wrapper flex justify-center">
+    <div class="collab-card w-[350px] sm:min-w-[420px]">
+      <form
+        [formGroup]="form"
+        class="flex flex-col gap-2"
+        (ngSubmit)="onSubmit()"
       >
-      </app-form-field-skeleton-loader>
+        @if (t4cModelService.compatibleT4CInstances$ | async) {
+          <fieldset>
+            @if ((t4cModelService.compatibleT4CInstances$ | async)!.length) {
+              <mat-form-field appearance="fill">
+                <mat-label>Instance</mat-label>
+                <mat-select
+                  formControlName="t4cInstanceId"
+                  data-testid="t4c-instance"
+                >
+                  @for (
+                    instance of t4cModelService.compatibleT4CInstances$ | async;
+                    track instance.id
+                  ) {
+                    <mat-option [value]="instance.id">
+                      {{ instance.name }}
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-hint>Only compatible servers are listed.</mat-hint>
+              </mat-form-field>
+            } @else {
+              <div class="rounded border bg-red-200 p-2 text-sm shadow">
+                No compatible T4C instance found! Make sure that the version of
+                the model matches the version of a TeamForCapella server
+                instance.
+              </div>
+            }
+          </fieldset>
+        } @else {
+          <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
+        }
 
-      <fieldset>
-        <mat-form-field
-          *ngIf="(t4cInstanceService.t4cInstances$ | async) !== undefined"
-          appearance="fill"
-        >
-          <mat-label>Instance</mat-label>
-          <mat-select formControlName="t4cInstanceId">
-            <mat-option
-              *ngFor="let instance of t4cInstanceService.t4cInstances$ | async"
-              [value]="instance.id"
-            >
-              {{ instance.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Repository</mat-label>
+            <input matInput formControlName="t4cRepositoryName" />
+            @if (t4cRepositoryNameControl.errors?.pattern) {
+              <mat-error>
+                The following characters are allowed: A-Z, a-z, 0-9, _, -
+              </mat-error>
+            } @else if (t4cRepositoryNameControl.errors?.uniqueName) {
+              <mat-error> Repository already exists </mat-error>
+            }
+          </mat-form-field>
+        </fieldset>
 
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Repository</mat-label>
-          <input matInput formControlName="t4cRepositoryName" />
-          <mat-error *ngIf="t4cRepositoryNameControl.errors?.uniqueName">
-            Repository already exists
-          </mat-error>
-          <mat-error *ngIf="t4cRepositoryNameControl.errors?.pattern">
-            The following characters are allowed: A-Z, a-z, 0-9, _, -
-          </mat-error>
-        </mat-form-field>
-      </fieldset>
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>T4C Project Name</mat-label>
+            <input matInput formControlName="t4cProjectName" />
+          </mat-form-field>
+        </fieldset>
 
-      <fieldset>
-        <mat-form-field appearance="fill">
-          <mat-label>Project</mat-label>
-          <input matInput formControlName="t4cProjectName" />
-        </mat-form-field>
-      </fieldset>
-
-      <div class="flex justify-end">
-        <button
-          mat-flat-button
-          [disabled]="!form.valid"
-          type="submit"
-          color="primary"
-        >
-          Save reference
-          <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
-        </button>
-      </div>
-    </form>
+        <div class="flex justify-end">
+          <button
+            mat-flat-button
+            [disabled]="!form.valid"
+            type="submit"
+            color="primary"
+          >
+            Save reference
+            <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
+}

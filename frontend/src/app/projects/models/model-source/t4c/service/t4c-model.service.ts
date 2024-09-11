@@ -2,22 +2,37 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
   ValidationErrors,
 } from '@angular/forms';
-import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
-import { T4CRepository } from 'src/app/openapi';
-import { environment } from 'src/environments/environment';
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  map,
+  take,
+  tap,
+} from 'rxjs';
+import {
+  ProjectsModelsT4CService,
+  SubmitT4CModel,
+  T4CModel,
+} from 'src/app/openapi';
+import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
+import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class T4CModelService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private modelWrapperService: ModelWrapperService,
+    private t4cInstanceWrapperService: T4CInstanceWrapperService,
+    private t4cModelService: ProjectsModelsT4CService,
+  ) {}
 
   private _t4cModel = new BehaviorSubject<T4CModel | undefined>(undefined);
   public readonly t4cModel$ = this._t4cModel.asObservable();
@@ -25,26 +40,32 @@ export class T4CModelService {
   private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
   public readonly t4cModels$ = this._t4cModels.asObservable();
 
-  urlFactory(projectSlug: string, modelSlug: string): string {
-    return `${environment.backend_url}/projects/${projectSlug}/models/${modelSlug}/modelsources/t4c`;
-  }
+  compatibleT4CInstances$ = combineLatest([
+    this.modelWrapperService.model$,
+    this.t4cInstanceWrapperService.t4cInstances$,
+  ]).pipe(
+    map(([model, instances]) => {
+      return instances?.filter(
+        (instance) =>
+          model?.version?.config.compatible_versions.includes(
+            instance.version.id,
+          ) || model?.version?.id === instance.version.id,
+      );
+    }),
+  );
 
   loadT4CModels(projectSlug: string, modelSlug: string): void {
-    this.http
-      .get<T4CModel[]>(this.urlFactory(projectSlug, modelSlug))
-      .subscribe({
-        next: (models) => this._t4cModels.next(models),
-        error: () => this._t4cModels.next(undefined),
-      });
+    this.t4cModelService.listT4cModels(projectSlug, modelSlug).subscribe({
+      next: (models) => this._t4cModels.next(models),
+      error: () => this._t4cModels.next(undefined),
+    });
   }
 
   loadT4CModel(projectSlug: string, modelSlug: string, id: number): void {
-    this.http
-      .get<T4CModel>(`${this.urlFactory(projectSlug, modelSlug)}/${id}`)
-      .subscribe({
-        next: (model) => this._t4cModel.next(model),
-        error: () => this._t4cModel.next(undefined),
-      });
+    this.t4cModelService.getT4cModel(projectSlug, id, modelSlug).subscribe({
+      next: (model) => this._t4cModel.next(model),
+      error: () => this._t4cModel.next(undefined),
+    });
   }
 
   createT4CModel(
@@ -52,8 +73,8 @@ export class T4CModelService {
     modelSlug: string,
     body: SubmitT4CModel,
   ): Observable<T4CModel> {
-    return this.http
-      .post<T4CModel>(this.urlFactory(projectSlug, modelSlug), body)
+    return this.t4cModelService
+      .createT4cModel(projectSlug, modelSlug, body)
       .pipe(
         tap((model) => {
           this._t4cModel.next(model);
@@ -65,14 +86,11 @@ export class T4CModelService {
   patchT4CModel(
     projectSlug: string,
     modelSlug: string,
-    t4c_model_id: number,
+    t4cModelID: number,
     body: SubmitT4CModel,
   ): Observable<T4CModel> {
-    return this.http
-      .patch<T4CModel>(
-        `${this.urlFactory(projectSlug, modelSlug)}/${t4c_model_id}`,
-        body,
-      )
+    return this.t4cModelService
+      .updateT4cModel(projectSlug, t4cModelID, modelSlug, body)
       .pipe(
         tap((model) => {
           this._t4cModel.next(model);
@@ -86,8 +104,8 @@ export class T4CModelService {
     modelSlug: string,
     t4cModelId: number,
   ): Observable<void> {
-    return this.http
-      .delete<void>(`${this.urlFactory(projectSlug, modelSlug)}/${t4cModelId}`)
+    return this.t4cModelService
+      .deleteT4cModel(projectSlug, t4cModelId, modelSlug)
       .pipe(
         tap(() => {
           this._t4cModel.next(undefined);
@@ -120,22 +138,4 @@ export class T4CModelService {
       );
     };
   }
-}
-
-export interface SubmitT4CModel {
-  t4c_instance_id: number;
-  t4c_repository_id: number;
-  name: string;
-}
-
-export interface T4CModel {
-  name: string;
-  id: number;
-  repository: T4CRepository;
-}
-
-export interface SimpleT4CModel {
-  project_name: string;
-  repository_name: string;
-  instance_name: string;
 }

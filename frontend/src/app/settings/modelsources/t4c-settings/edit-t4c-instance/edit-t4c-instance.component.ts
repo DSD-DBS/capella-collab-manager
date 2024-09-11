@@ -158,6 +158,7 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   enableEditing(): void {
     this.editing = true;
     this.form.enable();
+    this.form.controls.version_id.disable();
 
     this.form.controls.password.patchValue('');
     this.form.controls.password.removeValidators(Validators.required);
