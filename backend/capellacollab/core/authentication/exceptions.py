@@ -56,7 +56,6 @@ class UnknownScheme(core_exceptions.BaseError):
                 "Use 'basic' or 'bearer' instead"
             ),
             err_code="UNKNOWN_SCHEME",
-            headers={"WWW-Authenticate": "Basic, Cookie"},
         )
 
 
@@ -67,7 +66,6 @@ class TokenSignatureExpired(core_exceptions.BaseError):
             title="Token signature expired",
             reason="The Signature of the token is expired. Please refresh the token or request a new access token.",
             err_code="TOKEN_SIGNATURE_EXPIRED",
-            headers={"WWW-Authenticate": "Basic, Cookie"},
         )
 
 
@@ -78,7 +76,6 @@ class RefreshTokenSignatureExpired(core_exceptions.BaseError):
             title="Refresh token signature expired",
             reason="The Signature of the refresh token is expired. Please request a new access token.",
             err_code="REFRESH_TOKEN_EXPIRED",
-            headers={"WWW-Authenticate": "Basic, Cookie"},
         )
 
 
@@ -109,7 +106,6 @@ class UnauthenticatedError(core_exceptions.BaseError):
             title="Unauthenticated",
             reason="Not authenticated",
             err_code="UNAUTHENTICATED",
-            headers={"WWW-Authenticate": "Basic, Cookie"},
         )
 
 
@@ -120,7 +116,6 @@ class InvalidPersonalAccessTokenError(core_exceptions.BaseError):
             title="Personal access token not valid.",
             reason="The used token is not valid.",
             err_code="BASIC_TOKEN_INVALID",
-            headers={"WWW-Authenticate": "Basic, Cookie"},
         )
 
 
@@ -154,5 +149,4 @@ class PersonalAccessTokenExpired(core_exceptions.BaseError):
                 "Please request a new access token."
             ),
             err_code="PAT_EXPIRED",
-            headers={"WWW-Authenticate": "Basic, Cookie"},
         )
