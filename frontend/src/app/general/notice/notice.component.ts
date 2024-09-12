@@ -2,9 +2,9 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { NoticeService } from '../../services/notice/notice.service';
+import { NoticeWrapperService } from 'src/app/general/notice/notice.service';
 
 @Component({
   selector: 'app-notice',
@@ -12,8 +12,8 @@ import { NoticeService } from '../../services/notice/notice.service';
   styleUrls: ['./notice.component.css'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [NgFor],
+  imports: [NgClass, AsyncPipe],
 })
 export class NoticeComponent {
-  constructor(public noticeService: NoticeService) {}
+  constructor(public noticesWrapperService: NoticeWrapperService) {}
 }
