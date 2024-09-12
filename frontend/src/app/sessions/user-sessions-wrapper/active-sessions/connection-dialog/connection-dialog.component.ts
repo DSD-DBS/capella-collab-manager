@@ -46,13 +46,7 @@ export class ConnectionDialogComponent {
   }
 
   redirectToSession(): void {
-    if (!this.connectionInfo) {
-      this.toastService.showError(
-        'Session connection information is not available yet.',
-        'Try again later.',
-      );
-      return;
-    }
+    if (!this.connectionInfo) return;
     this.sessionService.setConnectionInformation(this.connectionInfo);
     if (this.connectionInfo.redirect_url) {
       window.open(this.connectionInfo.redirect_url);
