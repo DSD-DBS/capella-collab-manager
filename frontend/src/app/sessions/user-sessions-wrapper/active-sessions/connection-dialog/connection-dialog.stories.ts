@@ -31,7 +31,13 @@ export default meta;
 type Story = StoryObj<ConnectionDialogComponent>;
 
 export const WithoutTeamForCapella: Story = {
-  args: {},
+  args: {
+    connectionInfo: {
+      local_storage: {},
+      t4c_token: '',
+      redirect_url: 'https://example.com',
+    },
+  },
   decorators: [
     moduleMetadata({
       providers: [
@@ -47,6 +53,7 @@ export const WithoutTeamForCapella: Story = {
         },
       ],
     }),
+    dialogWrapper,
   ],
 };
 
@@ -95,4 +102,8 @@ export const WithoutSessionToken: Story = {
       redirect_url: 'https://example.com',
     },
   },
+};
+
+export const LoadingSessionInfo: Story = {
+  args: {},
 };
