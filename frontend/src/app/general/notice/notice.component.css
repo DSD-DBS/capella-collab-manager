@@ -2,20 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-
-p {
-  margin: 0px;
-  padding: 0px;
-}
-
-h3 {
-  margin: 0px !important;
-}
-
-.url {
-  color: white;
-}
-
 .primary {
   background-color: #004085;
   color: white;

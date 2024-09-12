@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   AbstractControl,
@@ -16,21 +16,17 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle,
-  MatExpansionPanelDescription,
-} from '@angular/material/expansion';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { NoticeWrapperService } from 'src/app/general/notice/notice.service';
 import {
-  CreateNotice,
-  NoticeService,
-} from 'src/app/services/notice/notice.service';
+  CreateNoticeRequest,
+  NoticeLevel,
+  NoticesService,
+} from 'src/app/openapi';
 
 @Component({
   selector: 'app-alert-settings',
@@ -40,20 +36,15 @@ import {
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
+    MatFormFieldModule,
     MatInput,
     MatSelect,
-    NgFor,
     MatOption,
     MatError,
-    NgIf,
     MatButton,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
+    MatExpansionModule,
+    AsyncPipe,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class AlertSettingsComponent {
@@ -70,9 +61,13 @@ export class AlertSettingsComponent {
     return this.createAlertForm.get('message') as FormControl;
   }
 
+  get noticeLevels(): string[] {
+    return Object.values(NoticeLevel);
+  }
+
   constructor(
-    public noticeService: NoticeService,
-    private toastService: ToastService,
+    public noticeWrapperService: NoticeWrapperService,
+    private noticeService: NoticesService,
   ) {}
 
   titleOrDescriptionRequired(): ValidatorFn {
@@ -89,20 +84,10 @@ export class AlertSettingsComponent {
   createNotice(): void {
     if (this.createAlertForm.valid) {
       this.noticeService
-        .createNotice(this.createAlertForm.value as CreateNotice)
+        .createNotice(this.createAlertForm.value as CreateNoticeRequest)
         .subscribe({
           next: () => {
-            this.noticeService.refreshNotices();
-            this.toastService.showSuccess(
-              'Alert created',
-              this.createAlertForm.value.title as string,
-            );
-          },
-          error: () => {
-            this.toastService.showError(
-              'Creation of alert failed',
-              'Please try again',
-            );
+            this.noticeWrapperService.refreshNotices();
           },
         });
     }
@@ -111,14 +96,7 @@ export class AlertSettingsComponent {
   deleteNotice(id: number): void {
     this.noticeService.deleteNotice(id).subscribe({
       next: () => {
-        this.toastService.showSuccess('Alert deleted', 'ID: ' + id);
-        this.noticeService.refreshNotices();
-      },
-      error: () => {
-        this.toastService.showSuccess(
-          'Deletion of alert failed',
-          'Please try again',
-        );
+        this.noticeWrapperService.refreshNotices();
       },
     });
   }

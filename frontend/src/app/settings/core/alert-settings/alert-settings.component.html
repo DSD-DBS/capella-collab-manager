@@ -6,7 +6,6 @@
 <div class="flex flex-col gap-2">
   <div class="collab-card">
     <h2 class="text-xl font-medium">Create new Alert</h2>
-
     <form [formGroup]="createAlertForm" class="flex flex-wrap">
       <div class="flex flex-wrap gap-2">
         <mat-form-field class="form-field" appearance="fill">
@@ -16,22 +15,21 @@
         <mat-form-field class="form-field" appearance="fill">
           <mat-label>Level</mat-label>
           <mat-select formControlName="level">
-            <mat-option
-              *ngFor="let noticeLevel of noticeService.noticeLevels"
-              [value]="noticeLevel"
-            >
-              {{ noticeLevel }}
-            </mat-option>
+            @for (noticeLevel of noticeLevels; track noticeLevel) {
+              <mat-option [value]="noticeLevel">
+                {{ noticeLevel }}
+              </mat-option>
+            }
           </mat-select>
           <mat-error>Please select a level!</mat-error>
         </mat-form-field>
       </div>
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Description</mat-label>
-        <textarea matInput formControlName="message"></textarea
-        ><mat-error *ngIf="message.getError('titleOrDescriptionAvailable')"
-          >Please enter a description or title!</mat-error
-        ></mat-form-field
+        <textarea matInput formControlName="message"></textarea>
+        @if (message.getError("titleOrDescriptionAvailable")) {
+          <mat-error>Please enter a description or title!</mat-error>
+        }</mat-form-field
       ><br />
       <button mat-flat-button color="primary" (click)="createNotice()">
         Create
@@ -40,26 +38,47 @@
   </div>
   <div class="collab-card" id="handle-alerts">
     <h2 class="text-xl font-medium">Handle alerts</h2>
-    <mat-accordion>
-      <mat-expansion-panel *ngFor="let notice of noticeService.notices">
-        <mat-expansion-panel-header class="expansion-panel">
-          <mat-panel-title> {{ notice.title }} </mat-panel-title>
-          <mat-panel-description>
-            {{ notice.level }}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <p>{{ notice.message }}</p>
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="deleteNotice(notice.id)"
-        >
-          Delete!
-        </button>
-      </mat-expansion-panel>
-    </mat-accordion>
-    @if (!noticeService.notices.length) {
-      There are no existing alerts.
+    @if ((noticeWrapperService.notices$ | async) === undefined) {
+      @for (_ of [0, 1, 2]; track $index) {
+        <ngx-skeleton-loader
+          count="1"
+          appearance="circle"
+          [theme]="{
+            'border-radius': '5px',
+            height: '48px',
+            width: '100%',
+            border: '1px solid white',
+            margin: 0,
+            padding: 0,
+          }"
+        ></ngx-skeleton-loader>
+      }
+    } @else {
+      <mat-accordion>
+        @for (
+          notice of noticeWrapperService.notices$ | async;
+          track notice.id
+        ) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header class="expansion-panel">
+              <mat-panel-title> {{ notice.title }} </mat-panel-title>
+              <mat-panel-description>
+                {{ notice.level }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p>{{ notice.message }}</p>
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="deleteNotice(notice.id)"
+            >
+              Delete!
+            </button>
+          </mat-expansion-panel>
+        } @empty {
+          There are no existing alerts.
+        }
+      </mat-accordion>
     }
   </div>
 </div>
