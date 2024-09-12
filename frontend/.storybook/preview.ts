@@ -13,6 +13,7 @@ import type { Preview } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
 import docJson from '../documentation.json';
+import { IconModule } from '../src/app/icon.module';
 
 setCompodocJson(docJson);
 
@@ -41,6 +42,7 @@ const preview: Preview = {
             includeTitleDuplicates: true,
           }),
           RouterModule.forRoot([]),
+          IconModule,
         ),
         importProvidersFrom(BrowserAnimationsModule),
         { provide: MatDialogRef, useValue: {} },

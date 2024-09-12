@@ -25,6 +25,8 @@
     "@angular/platform-browser": "~18.2.3",
     "@angular/platform-browser-dynamic": "~18.2.3",
     "@angular/router": "~18.2.3",
+    "@fontsource/material-symbols-outlined": "^5.0.41",
+    "@fontsource/roboto": "^5.0.15",
     "@ngneat/until-destroy": "^10.0.0",
     "@panzoom/panzoom": "^4.5.1",
     "file-saver": "^2.0.5",

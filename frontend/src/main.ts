@@ -17,6 +17,7 @@ import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
 import { AuthInterceptor } from './app/general/auth/http-interceptor/auth.interceptor';
 import { ErrorHandlingInterceptor } from './app/general/error-handling/error-handling.interceptor';
+import { IconModule } from './app/icon.module';
 import { environment } from './environments/environment';
 
 if (environment.production) {
@@ -38,6 +39,7 @@ bootstrapApplication(AppComponent, {
         resetTimeoutOnDuplicate: true,
         includeTitleDuplicates: true,
       }),
+      IconModule,
     ),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     {
