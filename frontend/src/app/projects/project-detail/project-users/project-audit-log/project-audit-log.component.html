@@ -25,16 +25,15 @@
         let idx = index
       "
     >
-      <ng-container *ngIf="event === undefined || event === 'loading'">
+      @if (event === undefined || event === "loading") {
         <tr *ngFor="let jobRunPage of pageSizeArray">
-          <td *ngFor="let column of [1, 2, 3, 4, 5]">
+          <td *ngFor="let column of [1, 2, 3, 4, 5, 6]">
             <app-text-line-skeleton-loader
               width="80%"
             ></app-text-line-skeleton-loader>
           </td>
         </tr>
-      </ng-container>
-      <ng-container *ngIf="event !== undefined && event !== 'loading'">
+      } @else {
         <ng-container *ngFor="let run of event.items">
           <tr>
             <td>
@@ -57,7 +56,7 @@
             </td>
           </tr>
         </ng-container>
-      </ng-container>
+      }
     </tbody>
   </table>
 </div>

@@ -8,19 +8,18 @@
       <div>
         <mat-form-field appearance="fill" class="w-full max-w-lg">
           <mat-label>Name</mat-label>
-          <input matInput formControlName="name" />
-          <mat-error *ngIf="form.controls.name.errors?.required"
-            >The project name is required.</mat-error
-          >
-          <mat-error *ngIf="form.controls.name.errors?.uniqueSlug"
-            >A project with a similar name already exists.</mat-error
-          >
-          <mat-hint
-            *ngIf="project?.slug !== newSlug && form.controls.name.valid"
-            >If you proceed, the project slug will be changed to
-            <i>{{ newSlug }}</i> - Please make sure to update all
-            references.</mat-hint
-          >
+          <input matInput formControlName="name" data-testid="name-input" />
+          @if (form.controls.name.errors?.required) {
+            <mat-error>The project name is required.</mat-error>
+          } @else if (form.controls.name.errors?.uniqueSlug) {
+            <mat-error>A project with a similar name already exists.</mat-error>
+          } @else if (project?.slug !== newSlug && form.controls.name.valid) {
+            <mat-hint
+              >If you proceed, the project slug will be changed to
+              <i>{{ newSlug }}</i> - Please make sure to update all
+              references.</mat-hint
+            >
+          }
         </mat-form-field>
       </div>
       <div>

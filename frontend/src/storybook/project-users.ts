@@ -9,6 +9,35 @@ import {
   ProjectUserRole,
 } from 'src/app/openapi';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
+import { mockUser } from './user';
+
+export const mockProjectUsers: ProjectUser[] = [
+  {
+    role: 'administrator',
+    permission: 'write',
+    user: { ...mockUser, name: 'administrator1' },
+  },
+  {
+    role: 'administrator',
+    permission: 'write',
+    user: { ...mockUser, name: 'administrator2' },
+  },
+  {
+    role: 'user',
+    permission: 'write',
+    user: { ...mockUser, name: 'projectuser1' },
+  },
+  {
+    role: 'user',
+    permission: 'read',
+    user: { ...mockUser, name: 'projectuserWithReallyLongName' },
+  },
+  {
+    role: 'manager',
+    permission: 'write',
+    user: { ...mockUser, name: 'projectadmin1' },
+  },
+];
 
 export class MockProjectUserService implements Partial<ProjectUserService> {
   role: ProjectUserRole;

@@ -5,234 +5,275 @@
 
 <h2 class="!mb-[10px] text-xl font-medium">General monitoring</h2>
 <div class="flex flex-wrap">
-  <ngx-skeleton-loader
-    *ngIf="generalHealth === undefined"
-    count="1"
-    appearance="circle"
-    [theme]="{
-      'border-radius': '5px',
-      height: '120px',
-      width: '260px',
-      border: '1px solid white',
-      margin: '10px',
-    }"
-  ></ngx-skeleton-loader>
-  <div class="collab-card !mb-[15px] !ml-[10px]" *ngIf="generalHealth">
-    <div *ngIf="generalHealth.guacamole" class="success">
-      <mat-icon class="mat-icon-position top">check</mat-icon> Guacamole is
-      alive
+  @if (!generalHealth) {
+    <ngx-skeleton-loader
+      count="1"
+      appearance="circle"
+      [theme]="{
+        'border-radius': '5px',
+        height: '120px',
+        width: '260px',
+        border: '1px solid white',
+        margin: '10px',
+      }"
+    ></ngx-skeleton-loader>
+  } @else {
+    <div class="collab-card !mb-[15px] !ml-[10px]">
+      @if (generalHealth.guacamole) {
+        <div class="success">
+          <mat-icon class="mat-icon-position top">check</mat-icon> Guacamole is
+          alive
+        </div>
+      } @else {
+        <div class="error">
+          <mat-icon class="mat-icon-position top">error</mat-icon> Guacamole is
+          not alive
+        </div>
+      }
+
+      @if (generalHealth.database) {
+        <div class="success">
+          <mat-icon class="mat-icon-position top">check</mat-icon> The database
+          is alive
+        </div>
+      } @else {
+        <div class="error">
+          <mat-icon class="mat-icon-position top">error</mat-icon> The database
+          is not alive
+        </div>
+      }
+
+      @if (generalHealth.operator) {
+        <div class="success">
+          <mat-icon class="mat-icon-position top">check</mat-icon> The
+          Kubernetes operator is alive
+        </div>
+      } @else {
+        <div class="error">
+          <mat-icon class="mat-icon-position top">error</mat-icon> The
+          Kubernetes operator is not alive
+        </div>
+      }
     </div>
-    <div *ngIf="!generalHealth.guacamole" class="error">
-      <mat-icon class="mat-icon-position top">error</mat-icon> Guacamole is not
-      alive
-    </div>
-    <div *ngIf="generalHealth.database" class="success">
-      <mat-icon class="mat-icon-position top">check</mat-icon> The database is
-      alive
-    </div>
-    <div *ngIf="!generalHealth.database" class="error">
-      <mat-icon class="mat-icon-position top">error</mat-icon> The database is
-      not alive
-    </div>
-    <div *ngIf="generalHealth.operator" class="success">
-      <mat-icon class="mat-icon-position top">check</mat-icon> The Kubernetes
-      operator is alive
-    </div>
-    <div *ngIf="!generalHealth.operator" class="error">
-      <mat-icon class="mat-icon-position top">error</mat-icon> The Kubernetes
-      operator is not alive
-    </div>
-  </div>
+  }
 </div>
 
 <h2 class="!mb-[10px] text-xl font-medium">Projects Monitoring</h2>
 <div class="flex flex-wrap items-stretch gap-5">
-  <ngx-skeleton-loader
-    *ngIf="projectStatuses === undefined"
-    count="4"
-    appearance="circle"
-    [theme]="{
-      'border-radius': '5px',
-      height: '120px',
-      width: '260px',
-      border: '1px solid white',
-      margin: '10px',
-    }"
-  ></ngx-skeleton-loader>
-  <div *ngFor="let projectStatus of projectStatuses">
-    <div
-      class="project-card collab-card !mb-[15px] !ml-[10px] rounded-md shadow-md"
-    >
-      <b>Project</b><br />
-      <a
-        target="_blank"
-        [href]="'project/' + projectStatus.project_slug"
-        class="title mb-1 flex gap-1"
-        >{{ projectStatus.project_slug }}
-        <mat-icon inline>open_in_new</mat-icon></a
-      >
-      <div *ngFor="let warning of projectStatus.warnings" class="warning">
-        <mat-icon class="mat-icon-position top">warning</mat-icon>
-        {{ warning }}
+  @if (!projectStatuses) {
+    <ngx-skeleton-loader
+      count="4"
+      appearance="circle"
+      [theme]="{
+        'border-radius': '5px',
+        height: '120px',
+        width: '260px',
+        border: '1px solid white',
+        margin: '10px',
+      }"
+    ></ngx-skeleton-loader>
+  } @else {
+    @for (projectStatus of projectStatuses; track projectStatus.project_slug) {
+      <div>
+        <div
+          class="project-card collab-card !mb-[15px] !ml-[10px] rounded-md shadow-md"
+        >
+          <b>Project</b><br />
+          <a
+            target="_blank"
+            [href]="'project/' + projectStatus.project_slug"
+            class="title mb-1 flex gap-1"
+            >{{ projectStatus.project_slug }}
+            <mat-icon inline>open_in_new</mat-icon></a
+          >
+          @for (warning of projectStatus.warnings; track warning) {
+            <div class="warning">
+              <mat-icon class="mat-icon-position top">warning</mat-icon>
+              {{ warning }}
+            </div>
+          } @empty {
+            <div class="success">
+              <mat-icon class="mat-icon-position top">check</mat-icon>
+              All checks were successful.
+            </div>
+          }
+        </div>
       </div>
-      <div *ngIf="!projectStatus.warnings.length" class="success">
-        <mat-icon class="mat-icon-position top">check</mat-icon>
-        All checks were successful.
-      </div>
-    </div>
-  </div>
+    }
+  }
 </div>
 
 <h2 class="!mb-[10px] text-xl font-medium">Models monitoring</h2>
 
 <div class="flex flex-wrap items-stretch gap-5">
-  <div *ngIf="toolmodelStatuses === undefined">
-    Loading the monitoring overview can take up to one minute.
-    <br />
-    <ngx-skeleton-loader
-      count="7"
-      appearance="circle"
-      [theme]="{
-        'border-radius': '6px',
-        height: '200px',
-        width: '350px',
-        border: '1px solid white',
-        margin: '10px',
-      }"
-    ></ngx-skeleton-loader>
-  </div>
-  <div *ngFor="let modelStatus of toolmodelStatuses">
-    <div class="models-card collab-card !mb-[15px] !ml-[10px]">
-      <b>Project</b> <br />
-      <a
-        target="_blank"
-        [href]="'project/' + modelStatus.project_slug"
-        class="title mb-1 flex gap-1"
-        >{{ modelStatus.project_slug }}
-        <mat-icon inline>open_in_new</mat-icon></a
-      >
-      <b>Model</b> <br />
-      <a
-        target="_blank"
-        [href]="
-          'project/' +
-          modelStatus.project_slug +
-          '/model/' +
-          modelStatus.model_slug
-        "
-        class="title mb-1 flex gap-1"
-        >{{ modelStatus.model_slug }} <mat-icon inline>open_in_new</mat-icon></a
-      >
-      <div>
-        <!-- git model status -->
-        <div
-          *ngIf="modelStatus.primary_git_repository_status === 'accessible'"
-          class="success"
-        >
-          <mat-icon class="mat-icon-position top">check</mat-icon> The primary
-          linked Git repository is accessible
-        </div>
-        <div *ngIf="modelStatus.primary_git_repository_status === 'unset'">
-          <mat-icon class="mat-icon-position top">settings</mat-icon> No Git
-          repository is linked to this model
-        </div>
-        <div
-          *ngIf="modelStatus.primary_git_repository_status === 'inaccessible'"
-          class="error"
-        >
-          <mat-icon class="mat-icon-position top">error</mat-icon> The primary
-          linked Git repository is not accessible
-        </div>
-      </div>
-      <div>
-        <!-- backup status -->
-        <div *ngIf="modelStatus.pipeline_status === 'success'" class="success">
-          <mat-icon class="mat-icon-position top">check</mat-icon> Last backup
-          has status '{{ modelStatus.pipeline_status }}''
-        </div>
-        <div
-          *ngIf="
-            modelStatus.pipeline_status === 'pending' ||
-            modelStatus.pipeline_status === 'scheduled' ||
-            modelStatus.pipeline_status === 'running'
-          "
-        >
-          <mat-icon class="mat-icon-position top">sync</mat-icon> Last backup
-          has status '{{ modelStatus.pipeline_status }}''
-        </div>
-        <div
-          *ngIf="
-            modelStatus.pipeline_status === 'timeout' ||
-            modelStatus.pipeline_status === 'failure' ||
-            modelStatus.pipeline_status === 'unknown'
-          "
-          class="error"
-        >
-          <mat-icon class="mat-icon-position top">error</mat-icon> Last backup
-          has status '{{ modelStatus.pipeline_status }}''
-        </div>
-        <div *ngIf="modelStatus.pipeline_status === null">
-          <mat-icon class="mat-icon-position top">settings</mat-icon> No last
-          backup pipeline run has been found.
-        </div>
-      </div>
-      <div>
-        <!-- model badge status -->
-        <div
-          *ngIf="modelStatus.model_badge_status === 'success'"
-          class="success"
-        >
-          <mat-icon class="mat-icon-position top">check</mat-icon> The last
-          model badge update was successful
-        </div>
-        <div *ngIf="modelStatus.model_badge_status === 'failure'" class="error">
-          <mat-icon class="mat-icon-position top">error</mat-icon> The last
-          model badge update or fetching has failed
-        </div>
-        <div *ngIf="modelStatus.model_badge_status === 'unconfigured'">
-          <mat-icon class="mat-icon-position top">settings</mat-icon>
-          No model badge configured
-        </div>
-        <div *ngIf="modelStatus.model_badge_status === 'unsupported'">
-          <mat-icon class="mat-icon-position top">settings</mat-icon>
-          The model badge is currently not supported for the linked Git
-          instance.
-        </div>
-      </div>
-      <div>
-        <!-- diagram cache status -->
-        <div
-          *ngIf="modelStatus.diagram_cache_status === 'success'"
-          class="success"
-        >
-          <mat-icon class="mat-icon-position top">check</mat-icon> Last diagram
-          cache update was successful
-        </div>
-        <div
-          *ngIf="modelStatus.diagram_cache_status === 'failure'"
-          class="error"
-        >
-          <mat-icon class="mat-icon-position top">error</mat-icon> Last diagram
-          cache update or fetching has failed
-        </div>
-        <div *ngIf="modelStatus.diagram_cache_status === 'unconfigured'">
-          <mat-icon class="mat-icon-position top">settings</mat-icon>
-          No diagram cache configured
-        </div>
-        <div *ngIf="modelStatus.model_badge_status === 'unsupported'">
-          <mat-icon class="mat-icon-position top">settings</mat-icon>
-          The diagram cache is currently not supported for the linked Git server
-          instance
-        </div>
-      </div>
-
-      <div>
-        <!-- warnings -->
-        <div *ngFor="let warning of modelStatus.warnings" class="warning">
-          <mat-icon class="mat-icon-position top">warning</mat-icon>
-          {{ warning }}
-        </div>
-      </div>
+  @if (!toolmodelStatuses) {
+    <div>
+      Loading the monitoring overview can take up to one minute.
+      <br />
+      <ngx-skeleton-loader
+        count="7"
+        appearance="circle"
+        [theme]="{
+          'border-radius': '6px',
+          height: '200px',
+          width: '350px',
+          border: '1px solid white',
+          margin: '10px',
+        }"
+      ></ngx-skeleton-loader>
     </div>
-  </div>
+  } @else {
+    @for (modelStatus of toolmodelStatuses; track $index) {
+      <div>
+        <div class="models-card collab-card !mb-[15px] !ml-[10px]">
+          <b>Project</b> <br />
+          <a
+            target="_blank"
+            [href]="'project/' + modelStatus.project_slug"
+            class="title mb-1 flex gap-1"
+            >{{ modelStatus.project_slug }}
+            <mat-icon inline>open_in_new</mat-icon></a
+          >
+          <b>Model</b> <br />
+          <a
+            target="_blank"
+            [href]="
+              'project/' +
+              modelStatus.project_slug +
+              '/model/' +
+              modelStatus.model_slug
+            "
+            class="title mb-1 flex gap-1"
+            >{{ modelStatus.model_slug }}
+            <mat-icon inline>open_in_new</mat-icon></a
+          >
+          <div>
+            <!-- git model status -->
+            @switch (modelStatus.primary_git_repository_status) {
+              @case ("accessible") {
+                <div class="success">
+                  <mat-icon class="mat-icon-position top">check</mat-icon> The
+                  primary linked Git repository is accessible
+                </div>
+              }
+              @case ("unset") {
+                <div>
+                  <mat-icon class="mat-icon-position top">settings</mat-icon> No
+                  Git repository is linked to this model
+                </div>
+              }
+              @case ("inaccessible") {
+                <div class="error">
+                  <mat-icon class="mat-icon-position top">error</mat-icon> The
+                  primary linked Git repository is not accessible
+                </div>
+              }
+            }
+          </div>
+          <div>
+            <!-- backup status -->
+            @if (modelStatus.pipeline_status === "success") {
+              <div class="success">
+                <mat-icon class="mat-icon-position top">check</mat-icon> Last
+                backup has status '{{ modelStatus.pipeline_status }}''
+              </div>
+            } @else if (
+              modelStatus.pipeline_status === "pending" ||
+              modelStatus.pipeline_status === "scheduled" ||
+              modelStatus.pipeline_status === "running"
+            ) {
+              <div>
+                <mat-icon class="mat-icon-position top">sync</mat-icon> Last
+                backup has status '{{ modelStatus.pipeline_status }}''
+              </div>
+            } @else if (
+              modelStatus.pipeline_status === "timeout" ||
+              modelStatus.pipeline_status === "failure" ||
+              modelStatus.pipeline_status === "unknown"
+            ) {
+              <div class="error">
+                <mat-icon class="mat-icon-position top">error</mat-icon> Last
+                backup has status '{{ modelStatus.pipeline_status }}''
+              </div>
+            } @else if (modelStatus.pipeline_status === null) {
+              <div>
+                <mat-icon class="mat-icon-position top">settings</mat-icon> No
+                last backup pipeline run has been found.
+              </div>
+            }
+          </div>
+          <div>
+            <!-- model badge status -->
+            @switch (modelStatus.model_badge_status) {
+              @case ("success") {
+                <div class="success">
+                  <mat-icon class="mat-icon-position top">check</mat-icon> The
+                  last model badge update was successful
+                </div>
+              }
+              @case ("failure") {
+                <div class="error">
+                  <mat-icon class="mat-icon-position top">error</mat-icon> The
+                  last model badge update or fetching has failed
+                </div>
+              }
+              @case ("unconfigured") {
+                <div>
+                  <mat-icon class="mat-icon-position top">settings</mat-icon>
+                  No model badge configured
+                </div>
+              }
+              @case ("unsupported") {
+                <div>
+                  <mat-icon class="mat-icon-position top">settings</mat-icon>
+                  The model badge is currently not supported for the linked Git
+                  instance.
+                </div>
+              }
+            }
+          </div>
+          <div>
+            <!-- diagram cache status -->
+            @switch (modelStatus.diagram_cache_status) {
+              @case ("success") {
+                <div class="success">
+                  <mat-icon class="mat-icon-position top">check</mat-icon> Last
+                  diagram cache update was successful
+                </div>
+              }
+              @case ("failure") {
+                <div class="error">
+                  <mat-icon class="mat-icon-position top">error</mat-icon> Last
+                  diagram cache update or fetching has failed
+                </div>
+              }
+              @case ("unconfigured") {
+                <div>
+                  <mat-icon class="mat-icon-position top">settings</mat-icon>
+                  No diagram cache configured
+                </div>
+              }
+              @case ("unsupported") {
+                <div>
+                  <mat-icon class="mat-icon-position top">settings</mat-icon>
+                  The diagram cache is currently not supported for the linked
+                  Git server instance
+                </div>
+              }
+            }
+          </div>
+
+          <div>
+            <!-- warnings -->
+            @for (warning of modelStatus.warnings; track $index) {
+              <div class="warning">
+                <mat-icon class="mat-icon-position top">warning</mat-icon>
+                {{ warning }}
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
 </div>

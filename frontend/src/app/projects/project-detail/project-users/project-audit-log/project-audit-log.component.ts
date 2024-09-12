@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgIf, AsyncPipe, DatePipe } from '@angular/common';
+import { NgFor, AsyncPipe, DatePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -22,7 +22,7 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
   templateUrl: './project-audit-log.component.html',
   styleUrls: ['./project-audit-log.component.css'],
   standalone: true,
-  imports: [NgFor, NgIf, TextLineSkeletonLoaderComponent, AsyncPipe, DatePipe],
+  imports: [NgFor, TextLineSkeletonLoaderComponent, AsyncPipe, DatePipe],
 })
 @UntilDestroy()
 export class ProjectAuditLogComponent implements OnInit, AfterViewInit {

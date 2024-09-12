@@ -25,14 +25,15 @@
                   formControlName="name"
                   data-testId="input-name"
                 />
-                <mat-error *ngIf="form.controls.name.errors?.uniqueSlug">
-                  A project with a name similar to “{{
-                    form.controls.name.errors!.uniqueSlug.value
-                  }}” already exists.
-                </mat-error>
-                <mat-error *ngIf="form.controls.name.errors?.required">
-                  A project name is required.
-                </mat-error>
+                @if (form.controls.name.errors?.uniqueSlug) {
+                  <mat-error>
+                    A project with a name similar to “{{
+                      form.controls.name.errors!.uniqueSlug.value
+                    }}” already exists.
+                  </mat-error>
+                } @else if (form.controls.name.errors?.required) {
+                  <mat-error> A project name is required. </mat-error>
+                }
               </mat-form-field>
             </div>
             <div>
@@ -93,39 +94,40 @@
         <div class="hidden sm:inline">(Optional) Add team members</div>
       </ng-template>
       <h3 class="flex justify-center sm:hidden">(Optional) Add team members</h3>
-      <div *ngIf="projectService.project$ | async" class="flex justify-center">
-        <app-project-user-settings></app-project-user-settings>
-      </div>
-      <div *ngIf="projectService.project$ | async">
-        <div class="flex justify-between">
-          <div></div>
-          <div>
-            <div class="flex w-[312px] justify-end sm:w-[420px]">
-              <a
-                class="mt-[5px]"
-                mat-button
-                color="primary"
-                (click)="stepper.next()"
-                data-testId="button-skipAddMembers"
-              >
-                <ng-container
-                  *ngIf="
-                    projectUserService.nonAdminProjectUsers$ | async as users
-                  "
-                >
-                  {{
-                    !users || users.length === 0 ? "Skip for now" : "Continue"
-                  }}
-                </ng-container>
-                <mat-icon iconPositionEnd class="mat-icon-position right"
-                  >navigate_next</mat-icon
-                >
-              </a>
-            </div>
-          </div>
-          <div></div>
+      @if (projectService.project$ | async) {
+        <div class="flex justify-center">
+          <app-project-user-settings></app-project-user-settings>
         </div>
-      </div>
+        <div>
+          <div class="flex justify-between">
+            <div></div>
+            <div>
+              <div class="flex w-[312px] justify-end sm:w-[420px]">
+                <a
+                  class="mt-[5px]"
+                  mat-button
+                  color="primary"
+                  (click)="stepper.next()"
+                  data-testId="button-skipAddMembers"
+                >
+                  @if (
+                    projectUserService.nonAdminProjectUsers$ | async;
+                    as users
+                  ) {
+                    {{
+                      !users || users.length === 0 ? "Skip for now" : "Continue"
+                    }}
+                  }
+                  <mat-icon iconPositionEnd class="mat-icon-position right"
+                    >navigate_next</mat-icon
+                  >
+                </a>
+              </div>
+            </div>
+            <div></div>
+          </div>
+        </div>
+      }
     </mat-step>
 
     <mat-step>
@@ -156,20 +158,14 @@
               [color]="getColorByModelCreationStep()"
               data-testId="a-skipModelAndFinishProjectCreation"
             >
-              <span *ngIf="modelCreationStep === 'create-model'">
-                Abort model creation and finish
-              </span>
-              <span
-                *ngIf="
-                  modelCreationStep !== 'create-model' &&
-                  modelCreationStep !== 'complete'
-                "
-              >
-                Abort model creation and finish
-              </span>
-              <span *ngIf="modelCreationStep === 'complete'">
-                Finish project creation
-              </span>
+              @if (modelCreationStep === "create-model") {
+                <span> Abort model creation and finish </span>
+              } @else if (modelCreationStep === "complete") {
+                <span> Finish project creation </span>
+              } @else {
+                <span> Abort model creation and finish </span>
+              }
+
               <mat-icon iconPositionEnd class="mat-icon-position right"
                 >check</mat-icon
               >

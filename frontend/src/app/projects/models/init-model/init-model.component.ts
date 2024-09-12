@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NgFor, AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormControl,
@@ -27,17 +27,14 @@ import {
   Tool,
 } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
-import { GitModelService } from '../../project-detail/model-overview/model-detail/git-model.service';
 import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-init-model',
   templateUrl: './init-model.component.html',
-  styleUrls: ['./init-model.component.css'],
   standalone: true,
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatFormField,
@@ -65,7 +62,6 @@ export class InitModelComponent implements OnInit {
   constructor(
     public projectService: ProjectWrapperService,
     public modelService: ModelWrapperService,
-    public gitModelService: GitModelService,
     private toolsService: ToolsService,
   ) {}
 
