@@ -32,7 +32,7 @@ nav:
               - Create a Model: user/projects/models/create.md
               - Update Model Metadata: user/projects/models/metadata.md
               - Backups:
-                  - Setup a Model Backup: user/projects/models/backups/setup.md
+                  - Set up a Model Backup: user/projects/models/backups/setup.md
                   - Trigger a Model Backup: user/projects/models/backups/trigger.md
                   - Remove a Model Backup: user/projects/models/backups/remove.md
               - Diagram cache:

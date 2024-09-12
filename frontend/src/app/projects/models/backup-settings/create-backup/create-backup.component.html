@@ -4,70 +4,107 @@
  -->
 
 <div class="dialog">
-  <h1>Create a new backup pipeline</h1>
-  <form [formGroup]="createBackupForm" *ngIf="t4cAndGitModelExists">
-    <div class="flex flex-row flex-wrap items-center">
-      <div class="collab-card">
-        Please select a T4C model:
-        <mat-selection-list formControlName="t4cmodel" [multiple]="false">
-          <mat-list-option
-            *ngFor="let t4cModel of t4cModelService.t4cModels$ | async"
-            [value]="t4cModel.id"
+  <h2 class="mb-5 text-xl font-medium">Create a new backup pipeline</h2>
+  @if (
+    (this.gitModelService.gitModels$ | async) === undefined ||
+    (this.t4cModelService.t4cModels$ | async) === undefined
+  ) {
+    <ngx-skeleton-loader
+      appearance="circle"
+      [theme]="{
+        'border-radius': '5px',
+        height: '100px',
+        width: '500px',
+        border: '1px solid white',
+      }"
+    ></ngx-skeleton-loader>
+  } @else if (
+    (this.gitModelService.gitModels$ | async)?.length &&
+    (this.t4cModelService.t4cModels$ | async)?.length
+  ) {
+    <form [formGroup]="createBackupForm">
+      <div class="flex flex-row flex-wrap items-center gap-2">
+        <div class="collab-card">
+          <h3 class="text-lg font-bold">TeamForCapella Repository</h3>
+          <div
+            class="flex items-center gap-1 rounded border bg-yellow-300 p-1 text-sm shadow"
           >
-            <div mat-line>TeamForCapella model '{{ t4cModel.name }}'</div>
-            <div mat-line>
-              repository '{{ t4cModel.repository.name }}', instance '{{
-                t4cModel.repository.instance.name
-              }}'
-            </div>
-          </mat-list-option>
-        </mat-selection-list>
-      </div>
-      <mat-icon>arrow_right_alt</mat-icon>
-      <div class="collab-card">
-        Please select a Git model:
-        <mat-selection-list formControlName="gitmodel" [multiple]="false">
-          <mat-list-option
-            *ngFor="let gitModel of gitModelService.gitModels$ | async"
-            [value]="gitModel.id"
+            <mat-icon>warning</mat-icon>
+            <span>The project name has to match exactly.</span>
+          </div>
+
+          <mat-selection-list
+            class="!flex flex-col gap-2"
+            formControlName="t4cmodel"
+            [multiple]="false"
           >
-            <div mat-line>Git model {{ gitModel.id }}</div>
-            <div mat-line>
-              URL '{{ gitModel.path }}', revision '{{ gitModel.revision }}'
-            </div>
-          </mat-list-option>
-        </mat-selection-list>
+            @for (
+              t4cModel of t4cModelService.t4cModels$ | async;
+              track t4cModel.id
+            ) {
+              <mat-list-option class="!h-auto !rounded" [value]="t4cModel.id">
+                <div mat-line>
+                  TeamForCapella Link (No. {{ t4cModel.id }}) <br />
+                  <b>Project:</b> {{ t4cModel.name }}
+                </div>
+                <div mat-line>
+                  <b>Repository:</b> {{ t4cModel.repository.name }} <br />
+                  <b>Instance:</b> {{ t4cModel.repository.instance.name }}
+                </div>
+              </mat-list-option>
+            }
+          </mat-selection-list>
+        </div>
+        <mat-icon>arrow_forward</mat-icon>
+        <div class="collab-card">
+          <h3 class="text-lg font-bold">Git Repository</h3>
+          <mat-selection-list
+            class="!flex flex-col gap-2"
+            formControlName="gitmodel"
+            [multiple]="false"
+          >
+            @for (
+              gitModel of gitModelService.gitModels$ | async;
+              track gitModel.id
+            ) {
+              <mat-list-option class="!h-auto !rounded" [value]="gitModel.id">
+                <div mat-line>Git Repository Link (No. {{ gitModel.id }})</div>
+                <div mat-line>
+                  <b>URL:</b> {{ gitModel.path }}<br />
+                  <b>Revision:</b> {{ gitModel.revision }}
+                </div>
+              </mat-list-option>
+            }
+          </mat-selection-list>
+        </div>
       </div>
-    </div>
-    <hr />
-    <div>Please specify the configuration for your backup job:</div>
-    <form formGroupName="configuration">
-      <mat-checkbox formControlName="runNightly"
-        >Run nightly (at 3 am)</mat-checkbox
-      ><br />
-      <mat-checkbox formControlName="includeCommitHistory"
-        >Include commit history</mat-checkbox
-      >
+      <form class="mt-5" formGroupName="configuration">
+        <mat-checkbox formControlName="runNightly"
+          >Run nightly (at 3 am)</mat-checkbox
+        ><br />
+      </form>
     </form>
-  </form>
-
-  <div *ngIf="!t4cAndGitModelExists">
+    <div class="mt-2 flex justify-between gap-button">
+      <button mat-stroked-button [mat-dialog-close]="false">
+        <mat-icon>cancel</mat-icon>
+        Cancel
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="createGitBackup()"
+        cdkFocusInitial
+        [disabled]="!createBackupForm.valid || loading"
+      >
+        Create
+        <mat-icon>navigate_next</mat-icon>
+      </button>
+    </div>
+  } @else {
     Please add a T4C model and Git model first!
-  </div>
-
-  <div class="mt-button flex justify-between gap-button">
-    <button mat-stroked-button class="w-full" [mat-dialog-close]="false">
+    <button mat-stroked-button class="mt-5 w-full" [mat-dialog-close]="false">
+      <mat-icon>cancel</mat-icon>
       Cancel
     </button>
-    <button
-      mat-raised-button
-      color="primary"
-      *ngIf="t4cAndGitModelExists"
-      (click)="createGitBackup()"
-      cdkFocusInitial
-      [disabled]="!createBackupForm.valid"
-    >
-      Create
-    </button>
-  </div>
+  }
 </div>

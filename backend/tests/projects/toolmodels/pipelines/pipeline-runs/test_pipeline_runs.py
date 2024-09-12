@@ -15,6 +15,7 @@ import capellacollab.projects.toolmodels.backups.runs.crud as pipeline_runs_crud
 import capellacollab.projects.toolmodels.backups.runs.models as pipeline_runs_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
 from capellacollab.__main__ import app
+from capellacollab.config import config
 from capellacollab.core.logging import loki
 from capellacollab.projects.toolmodels.backups.runs import (
     injectables as runs_injectables,
@@ -134,7 +135,7 @@ def test_get_events(
 
 
 @pytest.mark.usefixtures("patch_loki")
-def def_get_logs(
+def test_get_logs(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
@@ -147,6 +148,28 @@ def def_get_logs(
 
     assert response.status_code == 200
     assert b"test3" in response.content
+
+
+@pytest.mark.parametrize(
+    "include_commit_history, run_nightly",
+    [(False, False)],
+)
+def test_get_logs_with_loki_disabled(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    client: testclient.TestClient,
+    pipeline: pipelines_models.DatabaseBackup,
+    pipeline_run: pipeline_runs_models.DatabasePipelineRun,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(config.k8s.promtail, "loki_enabled", False)
+
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}/logs",
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"]["err_code"] == "LOKI_DISABLED"
 
 
 @pytest.fixture(name="mock_pipeline_run")

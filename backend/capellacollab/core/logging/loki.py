@@ -25,6 +25,15 @@ class LogEntry(t.TypedDict):
     timestamp: datetime.datetime
 
 
+def is_loki_activated() -> bool:
+    return PROMTAIL_CONFIGURATION.loki_enabled
+
+
+def check_loki_enabled():
+    if not is_loki_activated():
+        raise exceptions.GrafanaLokiDisabled()
+
+
 def push_logs_to_loki(entries: list[LogEntry], labels):
     # Convert the streams and labels into the Loki log format
     log_data = json.dumps(

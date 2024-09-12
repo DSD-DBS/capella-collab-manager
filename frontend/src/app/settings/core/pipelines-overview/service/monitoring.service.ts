@@ -5,7 +5,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PipelineRunStatus } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
+import { PipelineRunStatus } from 'src/app/openapi';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
