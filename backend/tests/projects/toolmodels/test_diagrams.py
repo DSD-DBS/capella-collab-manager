@@ -168,7 +168,7 @@ def fixture_mock_gitlab_diagram_cache_svg(git_type: git_models.GitType):
     "mock_git_rest_api_for_artifacts",
     "mock_git_diagram_cache_index_api",
     "mock_git_get_commit_information_api",
-    "mock_git_redis_cache",
+    "mock_git_valkey_cache",
 )
 def test_get_diagram_metadata_from_repository(
     project: project_models.DatabaseProject,
@@ -216,7 +216,7 @@ def test_get_diagram_metadata_from_repository(
     "mock_git_rest_api_for_artifacts",
     "mock_git_diagram_cache_index_api",
     "mock_git_get_commit_information_api",
-    "mock_git_redis_cache",
+    "mock_git_valkey_cache",
 )
 def test_get_diagram_metadata_from_artifacts(
     project: project_models.DatabaseProject,
@@ -423,7 +423,7 @@ def test_get_diagrams_failed_diagram_cache_job_found(
     "mock_git_diagram_cache_index_api",
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
-    "mock_git_redis_cache",
+    "mock_git_valkey_cache",
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_artifacts(
@@ -482,7 +482,7 @@ def test_get_single_diagram_from_artifacts(
     "mock_git_diagram_cache_index_api",
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
-    "mock_git_redis_cache",
+    "mock_git_valkey_cache",
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_artifacts_with_file_ending(
@@ -596,7 +596,7 @@ def test_get_single_diagram_from_artifacts_with_wrong_file_ending(
     "mock_git_diagram_cache_index_api",
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
-    "mock_git_redis_cache",
+    "mock_git_valkey_cache",
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_repository(

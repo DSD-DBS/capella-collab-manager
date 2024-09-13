@@ -105,6 +105,7 @@ class GitHandlerFactory:
         match git_instance.type:
             case settings_git_models.GitType.GITLAB:
                 return gitlab_handler.GitlabHandler(
+                    git_model.id,
                     git_model.path,
                     git_model.revision,
                     git_model.password,
@@ -113,6 +114,7 @@ class GitHandlerFactory:
                 )
             case settings_git_models.GitType.GITHUB:
                 return github_handler.GithubHandler(
+                    git_model.id,
                     git_model.path,
                     git_model.revision,
                     git_model.password,

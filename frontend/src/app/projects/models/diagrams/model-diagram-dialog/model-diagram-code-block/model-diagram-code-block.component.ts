@@ -23,7 +23,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import hljs from 'highlight.js';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Metadata, Project, ToolModel } from 'src/app/openapi';
+import { JobId, Metadata, Project, ToolModel } from 'src/app/openapi';
 import { getPrimaryGitModel } from 'src/app/projects/models/service/model.service';
 import { UserWrapperService } from 'src/app/services/user/user.service';
 import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.service';
@@ -71,6 +71,9 @@ export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   project!: Project;
 
   @Input()
+  jobId: JobId | undefined;
+
+  @Input()
   expanded = false;
 
   ngAfterViewInit(): void {
@@ -103,7 +106,7 @@ model = capellambse.MelodyModel(
   diagram_cache={
     "path": "${basePath}/api/v1/projects/${this.project!.slug}/models/${
       this.model.slug
-    }/diagrams/%s",
+    }/diagrams/%s${this.jobId ? '?job_id=' + this.jobId : ''}",
     "username": "${this.userService.user?.name}",
     "password": "${this.passwordValue ? this.passwordValue : '**************'}",
   }

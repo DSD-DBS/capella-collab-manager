@@ -15,10 +15,11 @@
   <app-model-diagram-code-block
     [project]="data.project"
     [model]="data.model"
+    [jobId]="this.diagramMetadata?.job_id || undefined"
   ></app-model-diagram-code-block>
 
-  <div class="flex items-center gap-4">
-    <mat-form-field class="mb-[-1.25em] mt-2 w-full pb-1" appearance="outline">
+  <div class="mt-2 flex items-start gap-1">
+    <mat-form-field class="mb-[-1.25em] basis-full pb-1" appearance="outline">
       <mat-label>Search</mat-label>
       <input
         [(ngModel)]="search"
@@ -29,11 +30,13 @@
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
     <button
-      mat-flat-button
+      mat-stroked-button
       type="button"
+      class="!h-[56px]"
       color="primary"
       (click)="clearCache()"
     >
+      <mat-icon class="!w-8">autorenew</mat-icon>
       Clear Cache
     </button>
   </div>

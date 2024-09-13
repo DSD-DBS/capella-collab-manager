@@ -44,8 +44,7 @@ dependencies = [
   "argon2-cffi",
   "typer",
   "lxml",
-  "redis",
-  "redis[hiredis]",
+  "valkey[libvalkey]",
 ]
 
 [project.urls]
@@ -68,7 +67,6 @@ dev = [
   "pytest-cov",
   "aioresponses",
   "types-lxml",
-  "types-redis",
 ]
 
 [tool.black]
@@ -129,6 +127,7 @@ module = [
   "argon2.*",
   "websocket.*",
   "testcontainers.*",
+  "valkey.*",
 ]
 ignore_missing_imports = true
 

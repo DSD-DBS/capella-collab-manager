@@ -147,13 +147,13 @@ def update_git_model_by_id(
     return crud.update_git_model(db, db_git_model, put_git_model)
 
 
-@router.delete("/empty_cache")
+@router.delete("/cache")
 def empty_cache(
     git_model: models.DatabaseGitModel = fastapi.Depends(
         injectables.get_existing_primary_git_model
     ),
 ):
-    cache.GitRedisCache(git_model.path, git_model.revision).clear()
+    cache.GitValkeyCache(git_model_id=git_model.id).clear()
 
 
 @router.delete(

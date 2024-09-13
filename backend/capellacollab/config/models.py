@@ -288,8 +288,8 @@ class DatabaseConfig(BaseConfig):
     )
 
 
-class RedisConfig(BaseConfig):
-    url: str = pydantic.Field(default="redis://localhost:6379/0")
+class ValkeyConfig(BaseConfig):
+    url: str = pydantic.Field(default="valkey://localhost:6379/0")
 
 
 class InitialConfig(BaseConfig):
@@ -371,7 +371,7 @@ class AppConfig(BaseConfig):
     authentication: AuthenticationConfig = AuthenticationConfig()
     prometheus: PrometheusConfig = PrometheusConfig()
     database: DatabaseConfig = DatabaseConfig()
-    redis: RedisConfig = RedisConfig()
+    valkey: ValkeyConfig = ValkeyConfig()
     initial: InitialConfig = InitialConfig()
     logging: LoggingConfig = LoggingConfig()
     requests: RequestsConfig = RequestsConfig()

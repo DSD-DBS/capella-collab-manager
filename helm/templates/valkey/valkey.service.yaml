@@ -4,15 +4,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-backend-redis
+  name: {{ .Release.Name }}-backend-valkey
   labels:
-    id: {{ .Release.Name }}-service-backend-redis
+    id: {{ .Release.Name }}-service-backend-valkey
 spec:
   type: ClusterIP
   selector:
-    id: {{ .Release.Name }}-deployment-backend-redis
+    id: {{ .Release.Name }}-deployment-valkey
   ports:
     - port: 6379
-      targetPort: redis
+      targetPort: valkey
       protocol: TCP
-      name: redis
+      name: valkey

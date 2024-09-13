@@ -3,12 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
+import { HttpContext } from '@angular/common/http';
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map, switchMap } from 'rxjs';
+import { SKIP_ERROR_HANDLING } from 'src/app/general/error-handling/error-handling.interceptor';
 import { ProjectsModelsModelComplexityBadgeService } from 'src/app/openapi';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { environment } from 'src/environments/environment';
@@ -55,6 +57,11 @@ export class ModelComplexityBadgeComponent implements OnChanges {
           return this.modelComplexityBadgeService.getModelComplexityBadge(
             projectSlug,
             this.modelSlug!,
+            undefined,
+            undefined,
+            {
+              context: new HttpContext().set(SKIP_ERROR_HANDLING, true),
+            },
           );
         }),
       )

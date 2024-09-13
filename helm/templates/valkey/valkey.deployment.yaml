@@ -4,50 +4,48 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-backend-redis
+  name: {{ .Release.Name }}-backend-valkey
   labels:
-    id: {{ .Release.Name }}-deployment-backend-redis
+    id: {{ .Release.Name }}-deployment-valkey
 spec:
-  replicas: {{ .Values.replicaCount.backendRedis | default 1 }}
+  replicas: {{ .Values.replicaCount.valkey | default 1 }}
   selector:
     matchLabels:
-      id: {{ .Release.Name }}-deployment-backend-redis
+      id: {{ .Release.Name }}-deployment-valkey
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        id: {{ .Release.Name }}-deployment-backend-redis
+        id: {{ .Release.Name }}-deployment-valkey
     spec:
       automountServiceAccountToken: false
       volumes:
         - name: data
           emptyDir: {}
         - name: config
-          configMap:
-            name: {{ .Release.Name }}-redis
-            items:
-              - key: redis-config
-                path: redis.conf
+          secret:
+            secretName: {{ .Release.Name }}-valkey
       containers:
-        - name: {{ .Release.Name }}-backend-redis
-          {{ if .Values.docker.images.redis }}
-          image: {{ .Values.docker.images.redis }}
+        - name: {{ .Release.Name }}-backend-valkey
+          {{ if .Values.docker.images.valkey }}
+          image: {{ .Values.docker.images.valkey }}
           {{ else }}
-          image: {{ .Values.docker.registry.external }}/redis:7.4
+          image: {{ .Values.docker.registry.external }}/valkey/valkey:7.2.6
           {{ end }}
           ports:
-            - name: redis
+            - name: valkey
               containerPort: 6379
               protocol: TCP
           resources:
             {{ if .Values.development }}
-            limits:
-              cpu: "0.25"
-              memory: 250Mi
             requests:
               cpu: "0.06"
               memory: 20Mi
+            limits:
+              cpu: "0.25"
+              memory: 250Mi
+              ephemeral-storage: "2Gi"
             {{ else }}
             requests:
               cpu: "250m"
@@ -55,9 +53,10 @@ spec:
             limits:
               cpu: "1"
               memory: "3Gi"
+              ephemeral-storage: "5Gi"
             {{ end }}
           volumeMounts:
-            - mountPath: /redis-master-data
+            - mountPath: /valkey-master-data
               name: data
-            - mountPath: /redis-master
+            - mountPath: /valkey-master
               name: config

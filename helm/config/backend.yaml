@@ -66,8 +66,8 @@ database:
   url: "{{ .Values.database.backend.external.uri }}"
   {{ end }}
 
-redis:
-  url: "redis://default:{{ .Values.redis.password }}@{{ .Release.Name }}-backend-redis:6379/0"
+valkey:
+  url: "valkey://default:{{ .Values.valkey.password }}@{{ .Release.Name }}-backend-valkey:6379/0"
 
 pipelines:
   timeout: {{ .Values.pipelines.timeout }}

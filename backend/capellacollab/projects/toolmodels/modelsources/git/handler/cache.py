@@ -6,19 +6,16 @@ import datetime
 from capellacollab.core import database
 
 
-class GitRedisCache:
-    def __init__(self, path: str, revision: str) -> None:
-        self._redis = database.get_redis()
-        self.path = path.replace(":", "-")
-        self.revision = revision
+class GitValkeyCache:
+    def __init__(self, git_model_id: int) -> None:
+        self._valkey = database.get_valkey()
+        self.git_model_id = git_model_id
         super().__init__()
 
     def get_file_data(
-        self, file_path: str, revision: str | None = None
+        self, file_path: str, revision: str
     ) -> tuple[datetime.datetime, bytes] | None:
-        revision = revision or self.revision
-
-        file_data = self._redis.hmget(
+        file_data = self._valkey.hmget(
             name=self._get_file_key(file_path, revision),
             keys=["last_updated", "content"],
         )
@@ -31,7 +28,7 @@ class GitRedisCache:
     def get_artifact_data(
         self, job_id: str | int, file_path: str
     ) -> tuple[datetime.datetime, bytes] | None:
-        artifact_data = self._redis.hmget(
+        artifact_data = self._valkey.hmget(
             name=self._get_artifact_key(job_id, file_path),
             keys=["started_at", "content"],
         )
@@ -46,19 +43,17 @@ class GitRedisCache:
         file_path: str,
         last_updated: datetime.datetime,
         content: bytes,
-        revision: str | None = None,
+        revision: str,
         ttl: int = 3600,
     ) -> None:
-        revision = revision or self.revision
-
-        self._redis.hset(
+        self._valkey.hset(
             name=self._get_file_key(file_path, revision),
             mapping={
                 "last_updated": last_updated.isoformat(),
                 "content": content,
             },
         )
-        self._redis.expire(
+        self._valkey.expire(
             name=self._get_file_key(file_path, revision), time=ttl
         )
 
@@ -70,26 +65,25 @@ class GitRedisCache:
         content: bytes,
         ttl: int = 3600,
     ) -> None:
-        self._redis.hset(
+        self._valkey.hset(
             name=self._get_artifact_key(job_id, file_path),
             mapping={"started_at": started_at.isoformat(), "content": content},
         )
-        self._redis.expire(
+        self._valkey.expire(
             name=self._get_artifact_key(job_id, file_path), time=ttl
         )
 
-    def clear(self, ignore_revision: bool = False) -> None:
-        pattern = f"{self.path}:{self.revision}:*"
-        if ignore_revision:
-            pattern = f"{self.path}:*"
-
-        for key in self._redis.scan_iter(match=pattern):
-            self._redis.delete(key)
+    def clear(self) -> None:
+        for key in self._valkey.scan_iter(match=f"{self.git_model_id}:*"):
+            self._valkey.delete(key)
 
     def _get_file_key(self, file_path: str, revision: str) -> str:
-        file_path = file_path.replace(":", "-")
-        return f"{self.path}:{revision}:f:{file_path}"
+        return f"{self.git_model_id}:f:{self._escape_string(revision)}:{self._escape_string(file_path)}"
 
     def _get_artifact_key(self, job_id: str | int, file_path: str) -> str:
-        file_path = file_path.replace(":", "-")
-        return f"{self.path}:{self.revision}:a:{job_id}:{file_path}"
+        return (
+            f"{self.git_model_id}:a:{job_id}:{self._escape_string(file_path)}"
+        )
+
+    def _escape_string(self, string: str) -> str:
+        return string.replace(":", "-")

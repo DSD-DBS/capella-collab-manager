@@ -12,6 +12,7 @@ from . import cache
 class GitHandler:
     def __init__(
         self,
+        git_model_id: int,
         path: str,
         revision: str,
         password: str,
@@ -23,7 +24,7 @@ class GitHandler:
         self.password = password
         self.api_url = api_url
         self.repository_id = repository_id
-        self.cache = cache.GitRedisCache(path, revision)
+        self.cache = cache.GitValkeyCache(git_model_id)
 
     @classmethod
     @abc.abstractmethod
@@ -114,7 +115,7 @@ class GitHandler:
         """
 
     async def get_file(
-        self, trusted_file_path: str, revision: str | None = None
+        self, trusted_file_path: str, revision: str
     ) -> tuple[datetime.datetime, bytes]:
         last_updated = self.get_last_updated_for_file(
             trusted_file_path, revision

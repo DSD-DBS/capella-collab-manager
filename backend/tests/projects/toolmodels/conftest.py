@@ -16,9 +16,9 @@ import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_rep
 from capellacollab.core import credentials
 
 
-@pytest.fixture(name="mock_git_redis_cache")
-def fixture_mock_git_redis_cache(monkeypatch: pytest.MonkeyPatch):
-    class MockGitRedisCache:
+@pytest.fixture(name="mock_git_valkey_cache")
+def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
+    class MockGitValkeyCache:
         def __init__(self, *args, **kwargs) -> None:
             super().__init__()
 
@@ -42,8 +42,8 @@ def fixture_mock_git_redis_cache(monkeypatch: pytest.MonkeyPatch):
             pass
 
     monkeypatch.setattr(
-        "capellacollab.projects.toolmodels.modelsources.git.handler.cache.GitRedisCache",
-        MockGitRedisCache,
+        "capellacollab.projects.toolmodels.modelsources.git.handler.cache.GitValkeyCache",
+        MockGitValkeyCache,
     )
 
 

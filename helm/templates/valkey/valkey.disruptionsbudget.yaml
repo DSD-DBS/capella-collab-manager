@@ -4,9 +4,9 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ .Release.Name }}-backend-redis
+  name: {{ .Release.Name }}-backend-valkey
 spec:
   minAvailable: 1
   selector:
     matchLabels:
-      id: {{ .Release.Name }}-deployment-backend-redis
+      id: {{ .Release.Name }}-deployment-valkey

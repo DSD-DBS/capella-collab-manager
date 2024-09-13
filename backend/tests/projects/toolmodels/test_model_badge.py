@@ -194,7 +194,7 @@ def test_get_model_badge_fails_without_api_endpoint(
     "mock_git_rest_api",
     "mock_git_model_badge_file_api",
     "mock_git_get_commit_information_api",
-    "mock_git_redis_cache",
+    "mock_git_valkey_cache",
 )
 def test_get_model_badge(
     project: project_models.DatabaseProject,
@@ -233,7 +233,7 @@ def test_get_model_badge(
     "mock_git_model_badge_file_api_not_found",
     "mock_get_model_badge_from_artifacts_api",
     "mock_git_get_commit_information_api",
-    "mock_git_redis_cache",
+    "mock_git_valkey_cache",
 )
 def test_get_model_badge_from_artifacts(
     project: project_models.DatabaseProject,

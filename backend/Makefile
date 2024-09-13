@@ -9,8 +9,7 @@ VENV = .venv
 
 HOST ?= 127.0.0.1
 
-REDIS_PORT = 6379
-REDIS_INSIGHT_PORT = 8001
+VALKEY_PORT = 6379
 
 DATABASE_LOAD_FILE ?= ../local/load.sql
 DATABASE_SAVE_DIR ?= ../local
@@ -34,13 +33,12 @@ database:
 		-e POSTGRES_DB=$(DB_NAME) \
 		postgres
 
-redis:
-	docker start redis || \
+valkey:
+	docker start valkey || \
 	docker run -d \
-		--name redis \
-		-p $(REDIS_PORT):6379 \
-		-p $(REDIS_INSIGHT_PORT):8001 \
-		redis/redis-stack:latest
+		--name valkey \
+		-p $(VALKEY_PORT):6379 \
+		valkey/valkey:latest
 
 app:
 	if [ -d "$(VENV)/bin" ]; then
@@ -68,7 +66,7 @@ install:
 openapi:
 	CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES=1 $(VENV)/bin/python -m capellacollab.cli openapi generate /tmp/openapi.json
 
-dev: database app
+dev: database valkey app
 
 cleanup:
 	docker stop capella-collab-postgres

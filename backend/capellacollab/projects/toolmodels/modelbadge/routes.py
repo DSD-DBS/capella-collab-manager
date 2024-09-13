@@ -41,7 +41,9 @@ async def get_model_complexity_badge(
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     try:
-        file = await git_handler.get_file("model-complexity-badge.svg")
+        file = await git_handler.get_file(
+            "model-complexity-badge.svg", git_handler.revision
+        )
         return responses.SVGResponse(content=file[1])
     except Exception:
         logger.debug(

@@ -5,8 +5,8 @@ import functools
 import typing as t
 
 import pydantic
-import redis
 import sqlalchemy as sa
+import valkey
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
 
@@ -38,8 +38,8 @@ def get_db() -> t.Iterator[orm.Session]:
 
 
 @functools.lru_cache
-def get_redis() -> redis.Redis:
-    return redis.Redis.from_url(config.redis.url, decode_responses=True)
+def get_valkey() -> valkey.Valkey:
+    return valkey.Valkey.from_url(config.valkey.url, decode_responses=True)
 
 
 def patch_database_with_pydantic_object(
