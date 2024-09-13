@@ -4,13 +4,11 @@
  -->
 
 <div *ngIf="(projectService.project$ | async) && (modelService.model$ | async)">
-  <div class="flex-center">
-    <div class="field-separator"></div>
-    <button mat-raised-button (click)="modelInitSelection.emit('create-empty')">
-      <div class="button-content-wrapper">
-        <p class="option-title">Manually configure model</p>
-        <app-mat-icon size="70px">create_new_folder</app-mat-icon>
-      </div>
-    </button>
-  </div>
+  <div class="field-separator"></div>
+  <button mat-raised-button (click)="modelInitSelection.emit('create-empty')">
+    <div class="button-content-wrapper">
+      <p class="option-title">Manually configure model</p>
+      <app-mat-icon size="70px">create_new_folder</app-mat-icon>
+    </div>
+  </button>
 </div>

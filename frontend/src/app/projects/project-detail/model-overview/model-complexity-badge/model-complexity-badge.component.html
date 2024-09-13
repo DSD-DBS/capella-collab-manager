@@ -8,30 +8,31 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-@if (loadingComplexityBadge) {
-  <div class="model-complexity-badge-loader">
-    <ngx-skeleton-loader
-      [theme]="{
-        width: '100%',
-        height: '100%',
-        'border-radius': '5px',
-        border: '1px solid white',
-        margin: 0,
-      }"
-    ></ngx-skeleton-loader>
-  </div>
-} @else {
-  @if (errorCode === undefined) {
-    <div class="flex justify-center" *ngIf="complexityBadge">
+<div class="h-[106.336px]">
+  @if (loadingComplexityBadge) {
+    <div class="size-full text-center">
+      <ngx-skeleton-loader
+        class="h-full"
+        [theme]="{
+          width: '100%',
+          height: '100%',
+          'border-radius': '5px',
+          border: '1px solid white',
+          margin: 0,
+        }"
+      ></ngx-skeleton-loader>
+    </div>
+  } @else if (complexityBadge) {
+    <div class="flex justify-center">
       <img class="w-full" [src]="complexityBadge" />
     </div>
   } @else if (errorCode === "FILE_NOT_FOUND") {
     <div
       (click)="openModelComplexityBadgeDocs()"
-      class="model-complexity-error model-complexity-create"
+      class="flex size-full cursor-pointer items-center justify-between rounded border border-gray-400 p-2 text-center"
     >
-      <mat-icon class="model-complexity-error-icon">open_in_new</mat-icon>
-      <span class="model-complexity-error-text">
+      <mat-icon class="basis-[60px] scale-[2]">open_in_new</mat-icon>
+      <span class="basis-[calc(100%-60px)]">
         <b>Model complexity badge not found.</b><br />
         Click here to learn how to set up the model complexity badge for your
         model.
@@ -39,15 +40,10 @@
     </div>
   } @else {
     <div
-      class="model-complexity-error"
-      *ngIf="
-        !loadingComplexityBadge &&
-        !complexityBadge &&
-        errorCode !== 'FILE_NOT_FOUND'
-      "
+      class="flex size-full items-center justify-between rounded border border-gray-400 p-2 text-center"
     >
-      <mat-icon class="model-complexity-error-icon">error</mat-icon>
-      <span class="model-complexity-error-text"
+      <mat-icon class="basis-[60px] scale-[2]">error</mat-icon>
+      <span class="basis-[calc(100%-60px)]"
         ><b>Error loading the complexity badge.</b> <br />{{
           errorMessage ||
             "Please ask your project administrator or global administrator for help."
@@ -55,4 +51,4 @@
       >
     </div>
   }
-}
+</div>

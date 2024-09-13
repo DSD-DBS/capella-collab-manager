@@ -46,7 +46,6 @@ import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model
 @Component({
   selector: 'app-model-diagram-dialog',
   templateUrl: './model-diagram-dialog.component.html',
-  styleUrls: ['./model-diagram-dialog.component.css'],
   standalone: true,
   imports: [
     ModelDiagramCodeBlockComponent,

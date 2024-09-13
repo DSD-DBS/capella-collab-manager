@@ -78,6 +78,10 @@ const diagrams: Diagrams =
   }
 
 export const Loading: Story = {
+  args: { diagramMetadata: undefined },
+};
+
+export const LoadingWithoutScroll: Story = {
   args: { diagramMetadata: undefined, loaderArray: Array(3).fill(0) },
 };
 
