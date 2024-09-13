@@ -5,16 +5,11 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
-import {
-  Pipeline,
-  PipelineService,
-} from 'src/app/projects/models/backup-settings/service/pipeline.service';
+import { Backup } from 'src/app/openapi';
+import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { TriggerPipelineComponent } from 'src/app/projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { mockBackup } from 'src/storybook/backups';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { mockPrimaryGitModel } from 'src/storybook/git';
-import { mockTeamForCapellaRepository } from 'src/storybook/t4c';
-import { MockUserService, mockUser } from 'src/storybook/user';
 
 const meta: Meta<TriggerPipelineComponent> = {
   title: 'Pipeline Components / Trigger Pipeline',
@@ -35,11 +30,10 @@ const meta: Meta<TriggerPipelineComponent> = {
 export default meta;
 type Story = StoryObj<TriggerPipelineComponent>;
 
-class MockPipelineService implements Partial<PipelineService> {
-  public readonly pipelines$: Observable<Pipeline[] | undefined> =
-    of(undefined);
+class MockPipelineService implements Partial<PipelineWrapperService> {
+  public readonly pipelines$: Observable<Backup[] | undefined> = of(undefined);
 
-  constructor(pipelines?: Pipeline[] | undefined) {
+  constructor(pipelines?: Backup[] | undefined) {
     this.pipelines$ = of(pipelines);
   }
 }
@@ -50,7 +44,7 @@ export const NoPipelineFound: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: PipelineService,
+          provide: PipelineWrapperService,
           useFactory: () => new MockPipelineService([]),
         },
       ],
@@ -64,20 +58,12 @@ export const LoadingPipelines: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: PipelineService,
+          provide: PipelineWrapperService,
           useFactory: () => new MockPipelineService(undefined),
         },
       ],
     }),
   ],
-};
-
-const pipeline = {
-  id: 1,
-  t4c_model: mockTeamForCapellaRepository,
-  git_model: mockPrimaryGitModel,
-  run_nightly: false,
-  include_commit_history: false,
 };
 
 export const PipelineOverview: Story = {
@@ -86,50 +72,16 @@ export const PipelineOverview: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: PipelineService,
+          provide: PipelineWrapperService,
           useFactory: () =>
             new MockPipelineService([
-              pipeline,
+              mockBackup,
               {
-                ...pipeline,
+                ...mockBackup,
                 id: 2,
                 run_nightly: true,
-                include_commit_history: true,
               },
             ]),
-        },
-      ],
-    }),
-  ],
-};
-
-export const OnePipelineSelected: Story = {
-  args: { selectedPipeline: pipeline },
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: PipelineService,
-          useFactory: () => new MockPipelineService([pipeline]),
-        },
-      ],
-    }),
-  ],
-};
-
-export const ForcePipelineDeletion: Story = {
-  args: { selectedPipeline: pipeline },
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: PipelineService,
-          useFactory: () => new MockPipelineService([pipeline]),
-        },
-        {
-          provide: UserWrapperService,
-          useFactory: () =>
-            new MockUserService({ ...mockUser, role: 'administrator' }),
         },
       ],
     }),

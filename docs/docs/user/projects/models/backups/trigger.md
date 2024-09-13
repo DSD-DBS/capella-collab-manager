@@ -11,6 +11,6 @@ You can trigger backups at any time.
 
 1. Select the project in the `Projects` overview.
 1. In the model overview, select the `Synchronize`-button
-   ![Start synchronization](./model-overview.png)
-1. Then, verify the configuration and click the `Run the pipeline` button
-   ![Run the pipeline](./run-pipeline.png)
+   ![Start synchronization](./model-overview.png){width=50%}
+1. Then, find the pipeline you'd like to run and click the `Run pipeline`
+   button ![Run the pipeline](./run-pipeline.png){width=70%}

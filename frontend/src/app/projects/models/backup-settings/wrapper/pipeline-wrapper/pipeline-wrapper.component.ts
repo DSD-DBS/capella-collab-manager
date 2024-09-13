@@ -7,7 +7,7 @@ import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
+import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 
@@ -21,7 +21,7 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
 @UntilDestroy()
 export class PipelineWrapperComponent implements OnInit, OnDestroy {
   constructor(
-    private pipelineService: PipelineService,
+    private pipelineService: PipelineWrapperService,
     private modelService: ModelWrapperService,
     private projectService: ProjectWrapperService,
     private route: ActivatedRoute,

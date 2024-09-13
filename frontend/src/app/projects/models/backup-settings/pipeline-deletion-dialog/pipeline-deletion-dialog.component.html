@@ -1,0 +1,63 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog">
+  <h2 class="mb-2 text-xl font-medium">
+    Remove a TeamForCapella to Git backup pipeline
+  </h2>
+  <p>
+    Do you want to delete the TeamForCapella to Git backup pipeline
+    {{ data.backup.id }}?
+  </p>
+
+  <div
+    class="my-2 flex flex-wrap items-center justify-between gap-y-1 border p-2 shadow"
+  >
+    <span style="flex-basis: 45%"
+      ><b>TeamForCapella</b> <br />
+      Instance <i>{{ data.backup.t4c_model.instance_name }}</i
+      >, <br />Repository <i>{{ data.backup.t4c_model.repository_name }}</i
+      >, <br />Project: <i>{{ data.backup.t4c_model.project_name }}</i> </span
+    ><span style="flex-basis: 10%"
+      ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
+    </span>
+    <span style="flex-basis: 45%">
+      <b>Git</b> <br />
+      URL: <i>{{ data.backup.git_model.path }}</i
+      >, <br />revision: <i>{{ data.backup.git_model.revision }}</i
+      >, <br />entrypoint:
+      <i>{{ data.backup.git_model.entrypoint }}</i>
+    </span>
+  </div>
+
+  @if (userService.validateUserRole("administrator")) {
+    <div class="flex flex-row flex-wrap items-center gap-2 py-2">
+      <mat-slide-toggle
+        [(ngModel)]="force"
+        aria-label="Force deletion of pipeline"
+        matTooltip="Delete pipeline even if the T4C instance is not reachable. In this case we can't revoke the pipeline credentials."
+      >
+        &nbsp;Force deletion
+      </mat-slide-toggle>
+    </div>
+  }
+
+  <div class="mt-2 flex justify-between">
+    <button mat-stroked-button type="button" (click)="onCancel()">
+      <mat-icon>cancel</mat-icon>
+      Cancel
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="loading | async"
+      (click)="removePipeline()"
+    >
+      <mat-icon>navigate_next</mat-icon>
+      Confirm
+    </button>
+  </div>
+</div>

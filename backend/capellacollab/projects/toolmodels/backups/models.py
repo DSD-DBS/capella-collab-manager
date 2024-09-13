@@ -3,6 +3,7 @@
 
 import typing as t
 
+import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
@@ -30,7 +31,17 @@ if t.TYPE_CHECKING:
 class CreateBackup(core_pydantic.BaseModel):
     git_model_id: int
     t4c_model_id: int
-    include_commit_history: bool
+    include_commit_history: bool = pydantic.Field(
+        default=False,
+        description=(
+            "With included commit history, a run can take a long time. Use with caution. "
+            "The TeamForCapella commit messages are exported by default."
+        ),
+        deprecated=(
+            "Due to the sometimes hours-long runtimes with this option enabled, we will remove it with v5.0.0. "
+            "Commit messages are exported automatically."
+        ),
+    )
     run_nightly: bool
 
 

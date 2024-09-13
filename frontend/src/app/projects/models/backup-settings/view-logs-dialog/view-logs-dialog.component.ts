@@ -7,8 +7,9 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
-import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
-import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
+import { ProjectsModelsBackupsService } from 'src/app/openapi';
+import { PipelineRunWrapperService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
+import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
@@ -25,8 +26,9 @@ export class ViewLogsDialogComponent {
   constructor(
     private modelService: ModelWrapperService,
     private projectService: ProjectWrapperService,
-    private pipelineService: PipelineService,
-    public pipelineRunService: PipelineRunService,
+    private pipelineService: PipelineWrapperService,
+    public pipelineRunService: PipelineRunWrapperService,
+    private pipelinesService: ProjectsModelsBackupsService,
   ) {
     this.refreshLogs();
     this.refreshEvents();
@@ -45,11 +47,11 @@ export class ViewLogsDialogComponent {
       .pipe(
         untilDestroyed(this),
         switchMap(([project, model, pipeline, pipelineRun]) => {
-          return this.pipelineRunService.getEvents(
+          return this.pipelinesService.getPipelineRunEvents(
             project.slug,
-            model.slug,
-            pipeline.id,
             pipelineRun.id,
+            pipeline.id,
+            model.slug,
           );
         }),
       )
@@ -69,11 +71,11 @@ export class ViewLogsDialogComponent {
       .pipe(
         untilDestroyed(this),
         switchMap(([project, model, pipeline, pipelineRun]) =>
-          this.pipelineRunService.getLogs(
+          this.pipelinesService.getLogs(
             project.slug,
-            model.slug,
-            pipeline.id,
             pipelineRun.id,
+            pipeline.id,
+            model.slug,
           ),
         ),
       )

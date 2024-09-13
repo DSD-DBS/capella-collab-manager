@@ -15,9 +15,9 @@
     Models are not automatically backed up! Please make sure to set up a nightly
     backup for important content.
 
-We offer a feature to create a backup from any TeamForCapella repository to any
-Git repository. These can be triggered manually and can be executed nightly at
-around 3pm.
+It's possible to create a backup from any TeamForCapella repository to any Git
+repository in a project. Pipelines can be triggered manually and can be
+executed nightly at 3 am UTC.
 
 1.  Navigate to `Projects`
 1.  Select the relevant project
@@ -25,22 +25,16 @@ around 3pm.
     and at least one Git repository to the model (destination)
 1.  In the model overview, select the `Synchronize`-button
 
-    ![Model overview](./model-overview.png)
+    ![Model overview](./model-overview.png){width=50%}
 
 1.  You can see a list of all registered backup pipelines. In our case, there
     is not registered backup pipeline yet.
 
-    ![Backup pipeline](./backups-overview.png)
+    ![Backup pipeline](./backups-overview.png){width=50%}
 
-1.  Click on the `Plus`-icon on the top right and select the corresponding
-    configuration. You have to select a Git model (source) and a T4C model
+1.  Click on the `plus` icon and select a Git model (source) and a T4C model
     (destination).
 
     ![Create a backup pipeline](./create-pipeline.png)
-
-    !!! warning
-
-         If you choose the `Include commit history`-option, backups are resource-intensive
-         and each backup can take up to 5 hours depending on the size!
 
 1.  Confirm your selection with the `Create` button.

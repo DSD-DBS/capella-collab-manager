@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import {
   AbstractControl,
@@ -22,44 +22,41 @@ import {
 } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatSelectionList, MatListOption } from '@angular/material/list';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest } from 'rxjs';
-import {
-  PipelineService,
-  PostPipeline,
-} from 'src/app/projects/models/backup-settings/service/pipeline.service';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CreateBackup, ProjectsModelsBackupsService } from 'src/app/openapi';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import { MatIconComponent } from '../../../../helpers/mat-icon/mat-icon.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-create-backup',
   templateUrl: './create-backup.component.html',
-  styleUrls: ['./create-backup.component.css'],
   standalone: true,
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatSelectionList,
-    NgFor,
     MatListOption,
     MatIcon,
     MatCheckbox,
     MatButton,
     MatDialogClose,
     AsyncPipe,
+    NgxSkeletonLoaderModule,
+    MatIconComponent,
   ],
 })
 export class CreateBackupComponent implements OnInit {
-  t4cAndGitModelExists = false;
+  loading = false;
 
   constructor(
     public gitModelService: GitModelService,
     public t4cModelService: T4CModelService,
     @Inject(MAT_DIALOG_DATA)
     public data: { projectSlug: string; modelSlug: string },
-    private pipelineService: PipelineService,
+    private pipelinesService: ProjectsModelsBackupsService,
     private dialogRef: MatDialogRef<CreateBackupComponent>,
   ) {}
 
@@ -73,25 +70,12 @@ export class CreateBackupComponent implements OnInit {
       this.data.projectSlug,
       this.data.modelSlug,
     );
-
-    combineLatest([
-      this.gitModelService.gitModels$,
-      this.t4cModelService.t4cModels$,
-    ])
-      .pipe(untilDestroyed(this))
-      .subscribe(
-        ([gitModels, t4cModels]) =>
-          (this.t4cAndGitModelExists = !!(
-            gitModels?.length && t4cModels?.length
-          )),
-      );
   }
 
   createBackupForm = new FormGroup({
     gitmodel: new FormControl([], [this.listNotEmptyValidator()]),
     t4cmodel: new FormControl([], [this.listNotEmptyValidator()]),
     configuration: new FormGroup({
-      includeCommitHistory: new FormControl(false),
       runNightly: new FormControl(true),
     }),
   });
@@ -106,22 +90,29 @@ export class CreateBackupComponent implements OnInit {
   }
 
   createGitBackup() {
+    this.loading = true;
     if (this.createBackupForm.valid) {
       const formValue = this.createBackupForm.value;
-      const createBackupformValue: PostPipeline = {
-        gitmodelId: formValue.gitmodel![0],
-        t4cmodelId: formValue.t4cmodel![0],
-        includeCommitHistory: formValue.configuration!.includeCommitHistory!,
-        runNightly: formValue.configuration!.runNightly!,
+      const createBackupformValue: CreateBackup = {
+        git_model_id: formValue.gitmodel![0],
+        t4c_model_id: formValue.t4cmodel![0],
+        include_commit_history: false,
+        run_nightly: formValue.configuration!.runNightly!,
       };
-      this.pipelineService
-        .createPipeline(
+      this.pipelinesService
+        .createBackup(
           this.data.projectSlug,
           this.data.modelSlug,
-          createBackupformValue as PostPipeline,
+          createBackupformValue,
         )
-        .subscribe(() => {
-          this.dialogRef.close(true);
+        .subscribe({
+          next: () => {
+            this.dialogRef.close(true);
+            this.loading = false;
+          },
+          error: () => {
+            this.loading = false;
+          },
         });
     }
   }

@@ -2,23 +2,26 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import { User } from 'src/app/openapi';
-import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
-import { Page, PageWrapper } from 'src/app/schemes';
+import {
+  PagePipelineRun,
+  PipelineRun,
+  PipelineRunStatus,
+  ProjectsModelsBackupsService,
+} from 'src/app/openapi';
+import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 
 @Injectable({
   providedIn: 'root',
 })
 @UntilDestroy()
-export class PipelineRunService {
+export class PipelineRunWrapperService {
   constructor(
-    private http: HttpClient,
-    private pipelineService: PipelineService,
+    private pipelineWrapperService: PipelineWrapperService,
+    private pipelinesService: ProjectsModelsBackupsService,
     private breadcrumbsService: BreadcrumbsService,
   ) {
     this.resetPipelineRunsOnPipelineChange();
@@ -29,7 +32,7 @@ export class PipelineRunService {
   );
   public readonly pipelineRun$ = this._pipelineRun.asObservable();
 
-  private _pipelineRunPages = new BehaviorSubject<PageWrapper<PipelineRun>>({
+  private _pipelineRunPages = new BehaviorSubject<PageWrapperPipelineRun>({
     pages: [],
     total: undefined,
   });
@@ -37,21 +40,10 @@ export class PipelineRunService {
 
   getPipelineRunPage(
     pageNumber: number,
-  ): Observable<Page<PipelineRun> | undefined | 'loading'> {
+  ): Observable<PagePipelineRun | undefined | 'loading'> {
     return this._pipelineRunPages.pipe(
       map((pipelineRunPages) => pipelineRunPages.pages[pageNumber - 1]),
     );
-  }
-
-  urlFactory(
-    projectSlug: string,
-    modelSlug: string,
-    pipelineID: number,
-  ): string {
-    return `${this.pipelineService.urlFactory(
-      projectSlug,
-      modelSlug,
-    )}/${pipelineID}/runs`;
   }
 
   resetPipelineRun() {
@@ -59,7 +51,7 @@ export class PipelineRunService {
   }
 
   resetPipelineRunsOnPipelineChange() {
-    this.pipelineService.pipeline$.subscribe(() => {
+    this.pipelineWrapperService.pipeline$.subscribe(() => {
       this.resetPipelineRuns();
     });
   }
@@ -77,32 +69,14 @@ export class PipelineRunService {
     this._pipelineRunPages.next(pipelineRunPages);
   }
 
-  triggerRun(
-    projectSlug: string,
-    modelSlug: string,
-    pipelineID: number,
-    includeCommitHistory: boolean,
-  ): Observable<PipelineRun> {
-    return this.http.post<PipelineRun>(
-      this.urlFactory(projectSlug, modelSlug, pipelineID),
-      { include_commit_history: includeCommitHistory },
-    );
-  }
-
   loadPipelineRun(
     projectSlug: string,
     modelSlug: string,
     pipelineID: number,
     pipelineRunID: number,
   ): void {
-    this.http
-      .get<PipelineRun>(
-        `${this.urlFactory(
-          projectSlug,
-          modelSlug,
-          pipelineID,
-        )}/${pipelineRunID}`,
-      )
+    this.pipelinesService
+      .getPipelineRun(projectSlug, pipelineRunID, pipelineID, modelSlug)
       .subscribe((pipelineRun) => {
         this._pipelineRun.next(pipelineRun);
         this.breadcrumbsService.updatePlaceholder({ pipelineRun });
@@ -123,21 +97,18 @@ export class PipelineRunService {
 
     this.setPipelineRunPageStatusToLoading(page);
 
-    this.http
-      .get<
-        Page<PipelineRun>
-      >(`${this.urlFactory(projectSlug, modelSlug, pipelineID)}?page=${page}&size=${size}`)
+    this.pipelinesService
+      .getPipelineRuns(projectSlug, pipelineID, modelSlug, page, size)
       .subscribe((pipelineRuns) => {
         const pipelineRunPages = this._pipelineRunPages.getValue();
         pipelineRunPages.pages[page - 1] = pipelineRuns;
 
         this.initalizePipelineRunWrapper(pipelineRunPages);
-
         this._pipelineRunPages.next(pipelineRunPages);
       });
   }
 
-  private initalizePipelineRunWrapper(pageWrapper: PageWrapper<PipelineRun>) {
+  private initalizePipelineRunWrapper(pageWrapper: PageWrapperPipelineRun) {
     if (pageWrapper.total !== undefined) {
       // Do nothing, is already initialized
       return;
@@ -152,38 +123,8 @@ export class PipelineRunService {
 
     // Set the correct length for the array
     pageWrapper.pages = Array.from(
-      { length: firstPage.pages },
+      { length: firstPage.pages! },
       (_, i) => pageWrapper.pages[i],
-    );
-  }
-
-  getLogs(
-    projectSlug: string,
-    modelSlug: string,
-    pipelineID: number,
-    pipelineRunID: number,
-  ): Observable<string> {
-    return this.http.get<string>(
-      `${this.urlFactory(
-        projectSlug,
-        modelSlug,
-        pipelineID,
-      )}/${pipelineRunID}/logs`,
-    );
-  }
-
-  getEvents(
-    projectSlug: string,
-    modelSlug: string,
-    pipelineID: number,
-    pipelineRunID: number,
-  ): Observable<string> {
-    return this.http.get<string>(
-      `${this.urlFactory(
-        projectSlug,
-        modelSlug,
-        pipelineID,
-      )}/${pipelineRunID}/events`,
     );
   }
 
@@ -195,22 +136,7 @@ export class PipelineRunService {
     return ['pending', 'scheduled'].includes(status);
   }
 }
-
-export interface PipelineRun {
-  status: PipelineRunStatus;
-  triggerer: User;
-  id: number;
-  trigger_time: string;
-  environment: PipelineRunEnvironment;
+export interface PageWrapperPipelineRun {
+  pages: (PagePipelineRun | undefined | 'loading')[];
+  total: number | undefined;
 }
-
-type PipelineRunEnvironment = Record<string, string>;
-
-export type PipelineRunStatus =
-  | 'pending'
-  | 'scheduled'
-  | 'running'
-  | 'success'
-  | 'timeout'
-  | 'failure'
-  | 'unknown';

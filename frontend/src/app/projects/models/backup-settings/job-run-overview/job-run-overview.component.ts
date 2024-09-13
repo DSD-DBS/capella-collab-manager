@@ -20,8 +20,8 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter } from 'rxjs';
-import { PipelineRunService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
-import { PipelineService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
+import { PipelineRunWrapperService } from 'src/app/projects/models/backup-settings/pipeline-runs/service/pipeline-run.service';
+import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
@@ -49,12 +49,12 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
   pageElements?: QueryList<ElementRef>;
 
   constructor(
-    public pipelineRunService: PipelineRunService,
+    public pipelineRunService: PipelineRunWrapperService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private projectService: ProjectWrapperService,
     private modelService: ModelWrapperService,
-    private pipelineService: PipelineService,
+    private pipelineService: PipelineWrapperService,
   ) {}
 
   ngOnInit() {
