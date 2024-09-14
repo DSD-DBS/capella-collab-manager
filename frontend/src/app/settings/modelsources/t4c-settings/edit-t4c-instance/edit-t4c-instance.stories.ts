@@ -12,7 +12,7 @@ import { mockToolVersion } from 'src/storybook/tool';
 import { EditT4CInstanceComponent } from './edit-t4c-instance.component';
 
 const meta: Meta<EditT4CInstanceComponent> = {
-  title: 'Settings Components / Modelsources / T4C / Server Instance',
+  title: 'Settings Components/Modelsources/T4C/Server Instance',
   component: EditT4CInstanceComponent,
 };
 

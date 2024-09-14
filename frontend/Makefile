@@ -25,6 +25,10 @@ storybook:
 build-storybook:
 	ng run capellacollab:build-storybook
 
+snapshots:
+	rm -rf __screenshots__
+	npx storycap http://localhost:6006 --serverCmd "npm run storybook" --flat
+
 openapi:
 	python postprocess_openapi_schema.py
 	OPENAPI_DIR=$$(mktemp -d)

@@ -12,7 +12,7 @@ import { mockBackup } from 'src/storybook/backups';
 import { dialogWrapper } from 'src/storybook/decorators';
 
 const meta: Meta<TriggerPipelineComponent> = {
-  title: 'Pipeline Components / Trigger Pipeline',
+  title: 'Pipeline Components/Trigger Pipeline',
   component: TriggerPipelineComponent,
   decorators: [
     moduleMetadata({

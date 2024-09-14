@@ -12,7 +12,7 @@ import { VersionComponent } from 'src/app/general/metadata/version/version.compo
 import { Metadata } from 'src/app/openapi';
 
 const meta: Meta<VersionComponent> = {
-  title: 'General Components / Version',
+  title: 'General Components/Version',
   component: VersionComponent,
 };
 

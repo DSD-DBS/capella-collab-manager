@@ -8,7 +8,7 @@ import { mockUser, MockUserService } from 'src/storybook/user';
 import { UserWorkspacesComponent } from './user-workspaces.component';
 
 const meta: Meta<UserWorkspacesComponent> = {
-  title: 'Settings Components / Users Profile / User Workspaces',
+  title: 'Settings Components/Users Profile/User Workspaces',
   component: UserWorkspacesComponent,
   decorators: [
     moduleMetadata({

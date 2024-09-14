@@ -8,27 +8,25 @@
     <app-welcome />
   </div>
 
-  @if (params.has("error")) {
+  @if (params["error"]) {
     <div class="rounded-md bg-red-700 p-3 text-center text-white shadow-md">
       <p>
         The identity provider raised the following error:<br />
-        <b>{{ params.get("error") }}</b>
+        <b>{{ params["error"] }}</b>
       </p>
-      @if (params.get("error_description")) {
-        {{ params.get("error_description") }}
+      @if (params["error_description"]) {
+        {{ params["error_description"] }}
       }
-      @if (params.get("error_uri")) {
+      @if (params["error_uri"]) {
         More information:
-        <a href="{{ params.get('error_uri') }}">{{
-          params.get("error_uri")
-        }}</a>
+        <a href="{{ params['error_uri'] }}">{{ params["error_uri"] }}</a>
       }
     </div>
   }
 
   <div class="collab-card">
-    @if (reason) {
-      @switch (reason) {
+    @if (params["reason"]) {
+      @switch (params["reason"]) {
         @case ("logout") {
           <div>You've been logged out successfully.</div>
         }

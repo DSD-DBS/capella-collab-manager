@@ -64,3 +64,5 @@ storybook-static
 documentation.json
 
 .nx
+
+__screenshots__

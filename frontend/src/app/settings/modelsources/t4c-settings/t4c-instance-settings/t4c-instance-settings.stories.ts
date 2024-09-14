@@ -11,7 +11,7 @@ import {
 import { T4CInstanceSettingsComponent } from './t4c-instance-settings.component';
 
 const meta: Meta<T4CInstanceSettingsComponent> = {
-  title: 'Settings Components / Modelsources / T4C / Repositories',
+  title: 'Settings Components/Modelsources/T4C/Repositories',
   component: T4CInstanceSettingsComponent,
   parameters: {
     chromatic: { viewports: [380] },

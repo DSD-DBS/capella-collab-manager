@@ -9,7 +9,7 @@ import { MockProjectUserService } from 'src/storybook/project-users';
 import { ProjectMetadataComponent } from './project-metadata.component';
 
 const meta: Meta<ProjectMetadataComponent> = {
-  title: 'Project Components / Project Metadata',
+  title: 'Project Components/Project Metadata',
   component: ProjectMetadataComponent,
 };
 

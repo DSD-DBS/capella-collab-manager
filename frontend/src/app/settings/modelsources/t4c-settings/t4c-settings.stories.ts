@@ -11,7 +11,7 @@ import {
 import { T4CSettingsComponent } from './t4c-settings.component';
 
 const meta: Meta<T4CSettingsComponent> = {
-  title: 'Settings Components / Modelsources / T4C / Server Overview',
+  title: 'Settings Components/Modelsources/T4C/Server Overview',
   component: T4CSettingsComponent,
 };
 

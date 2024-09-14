@@ -11,7 +11,7 @@ import { dialogWrapper } from 'src/storybook/decorators';
 import { startedSession } from 'src/storybook/session';
 
 const meta: Meta<FileBrowserDialogComponent> = {
-  title: 'Session Components / File Browser',
+  title: 'Session Components/File Browser',
   component: FileBrowserDialogComponent,
   decorators: [
     moduleMetadata({

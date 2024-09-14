@@ -11,7 +11,7 @@ import { mockUser, MockUserService } from 'src/storybook/user';
 import { UserInformationComponent } from './user-information.component';
 
 const meta: Meta<UserInformationComponent> = {
-  title: 'Settings Components / Users Profile / User Information',
+  title: 'Settings Components/Users Profile/User Information',
   component: UserInformationComponent,
   decorators: [
     moduleMetadata({

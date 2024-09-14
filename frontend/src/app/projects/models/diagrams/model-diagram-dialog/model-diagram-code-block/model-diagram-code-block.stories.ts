@@ -8,7 +8,7 @@ import { mockProject } from 'src/storybook/project';
 import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block.component';
 
 const meta: Meta<ModelDiagramCodeBlockComponent> = {
-  title: 'Model Components / Model Diagram Code Block',
+  title: 'Model Components/Model Diagram Code Block',
   component: ModelDiagramCodeBlockComponent,
 };
 

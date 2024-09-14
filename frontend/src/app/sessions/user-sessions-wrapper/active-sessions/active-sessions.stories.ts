@@ -33,7 +33,7 @@ class MockUserSessionService implements Partial<UserSessionService> {
 }
 
 const meta: Meta<ActiveSessionsComponent> = {
-  title: 'Session Components / Active Sessions',
+  title: 'Session Components/Active Sessions',
   component: ActiveSessionsComponent,
   decorators: [
     moduleMetadata({

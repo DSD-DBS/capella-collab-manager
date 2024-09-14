@@ -12,7 +12,7 @@ import { mockUser, MockUserService } from 'src/storybook/user';
 import { ModelOverviewComponent } from './model-overview.component';
 
 const meta: Meta<ModelOverviewComponent> = {
-  title: 'Model Components / Model Overview',
+  title: 'Model Components/Model Overview',
   component: ModelOverviewComponent,
 };
 

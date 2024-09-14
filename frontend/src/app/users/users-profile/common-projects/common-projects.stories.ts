@@ -10,7 +10,7 @@ import { MockUserService, mockUser } from 'src/storybook/user';
 import { CommonProjectsComponent } from './common-projects.component';
 
 const meta: Meta<CommonProjectsComponent> = {
-  title: 'Settings Components / Users Profile / Common Projects',
+  title: 'Settings Components/Users Profile/Common Projects',
   component: CommonProjectsComponent,
   decorators: [
     moduleMetadata({

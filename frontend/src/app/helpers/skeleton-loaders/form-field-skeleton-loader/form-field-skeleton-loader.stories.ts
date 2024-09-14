@@ -6,7 +6,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { FormFieldSkeletonLoaderComponent } from './form-field-skeleton-loader.component';
 
 const meta: Meta<FormFieldSkeletonLoaderComponent> = {
-  title: 'Helpers / Skeleton Loaders / Form Field',
+  title: 'Helpers/Skeleton Loaders/Form Field',
   component: FormFieldSkeletonLoaderComponent,
 };
 
@@ -15,10 +15,4 @@ type Story = StoryObj<FormFieldSkeletonLoaderComponent>;
 
 export const Loading: Story = {
   args: {},
-};
-
-export const DoneLoading: Story = {
-  args: {
-    loading: false,
-  },
 };

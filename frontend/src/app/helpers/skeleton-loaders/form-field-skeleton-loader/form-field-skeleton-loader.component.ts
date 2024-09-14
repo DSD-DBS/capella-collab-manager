@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 
 @Component({
@@ -12,6 +12,4 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
   standalone: true,
   imports: [NgxSkeletonLoaderModule],
 })
-export class FormFieldSkeletonLoaderComponent {
-  @Input() loading = true;
-}
+export class FormFieldSkeletonLoaderComponent {}

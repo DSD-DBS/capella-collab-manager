@@ -6,7 +6,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TextLineSkeletonLoaderComponent } from './text-line-skeleton-loader.component';
 
 const meta: Meta<TextLineSkeletonLoaderComponent> = {
-  title: 'Helpers / Skeleton Loaders / Text Line',
+  title: 'Helpers/Skeleton Loaders/Text Line',
   component: TextLineSkeletonLoaderComponent,
 };
 

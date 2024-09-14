@@ -10,7 +10,7 @@ import { NavBarItem, NavBarService } from '../nav-bar/nav-bar.service';
 import { HeaderComponent } from './header.component';
 
 const meta: Meta<HeaderComponent> = {
-  title: 'General Components / Header',
+  title: 'General Components/Header',
   component: HeaderComponent,
 };
 

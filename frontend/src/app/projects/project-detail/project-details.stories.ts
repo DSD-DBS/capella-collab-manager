@@ -8,7 +8,7 @@ import { MockProjectUserService } from 'src/storybook/project-users';
 import { ProjectDetailsComponent } from './project-details.component';
 
 const meta: Meta<ProjectDetailsComponent> = {
-  title: 'Project Components / Project Details',
+  title: 'Project Components/Project Details',
   component: ProjectDetailsComponent,
   parameters: {
     chromatic: { viewports: [1920] },

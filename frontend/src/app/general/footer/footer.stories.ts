@@ -6,10 +6,17 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { FooterComponent } from './footer.component';
 
 const meta: Meta<FooterComponent> = {
-  title: 'General Components / Footer',
+  title: 'General Components/Footer',
   component: FooterComponent,
   parameters: {
     chromatic: { viewports: [430, 1920] },
+    screenshot: {
+      viewports: {
+        mobile: {
+          width: 430,
+        },
+      },
+    },
   },
 };
 
