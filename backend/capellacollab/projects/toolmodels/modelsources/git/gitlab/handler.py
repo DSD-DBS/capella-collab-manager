@@ -47,7 +47,7 @@ class GitlabHandler(handler.GitHandler):
             if job := await self.__get_job_id_for_job_name(
                 pipeline_id, job_name
             ):
-                return job
+                return (str(job[0]), job[1])
 
         raise git_exceptions.GitPipelineJobNotFoundError(
             job_name=job_name, revision=self.revision
@@ -70,7 +70,7 @@ class GitlabHandler(handler.GitHandler):
             response.json()[0]["authored_date"]
         )
 
-    def get_started_at_for_job(self, job_id: str | int) -> datetime.datetime:
+    def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
         response = requests.get(
             f"{self.api_url}/projects/{self.repository_id}/jobs/{job_id}",
             headers={"PRIVATE-TOKEN": self.password},
@@ -117,7 +117,7 @@ class GitlabHandler(handler.GitHandler):
                 return None
 
     def get_artifact_from_job(
-        self, job_id: str | int, trusted_path_to_artifact: str
+        self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
         response = requests.get(
             f"{self.api_url}/projects/{self.repository_id}/jobs/{job_id}/artifacts/{trusted_path_to_artifact}",

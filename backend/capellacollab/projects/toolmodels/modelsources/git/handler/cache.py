@@ -26,7 +26,7 @@ class GitValkeyCache:
         return None
 
     def get_artifact_data(
-        self, job_id: str | int, file_path: str
+        self, job_id: str, file_path: str
     ) -> tuple[datetime.datetime, bytes] | None:
         artifact_data = self._valkey.hmget(
             name=self._get_artifact_key(job_id, file_path),
@@ -59,7 +59,7 @@ class GitValkeyCache:
 
     def put_artifact_data(
         self,
-        job_id: str | int,
+        job_id: str,
         file_path: str,
         started_at: datetime.datetime,
         content: bytes,
@@ -80,7 +80,7 @@ class GitValkeyCache:
     def _get_file_key(self, file_path: str, revision: str) -> str:
         return f"{self.git_model_id}:f:{self._escape_string(revision)}:{self._escape_string(file_path)}"
 
-    def _get_artifact_key(self, job_id: str | int, file_path: str) -> str:
+    def _get_artifact_key(self, job_id: str, file_path: str) -> str:
         return (
             f"{self.git_model_id}:a:{job_id}:{self._escape_string(file_path)}"
         )

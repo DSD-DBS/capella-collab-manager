@@ -6,8 +6,6 @@ from __future__ import annotations
 import logging
 
 import fastapi
-import requests
-from aiohttp import web
 
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
 from capellacollab.core import logging as log
@@ -41,26 +39,13 @@ async def get_model_complexity_badge(
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     try:
-        file = await git_handler.get_file(
-            "model-complexity-badge.svg", git_handler.revision
-        )
-        return responses.SVGResponse(content=file[1])
-    except Exception:
-        logger.debug(
-            "Failed fetching model badge file for %s on revision %s.",
-            git_handler.path,
-            git_handler.revision,
-            exc_info=True,
-        )
-
-    try:
-        artifact = await git_handler.get_artifact(
+        file_or_artifact = await git_handler.get_file_or_artifact(
             "model-complexity-badge.svg", "generate-model-badge"
         )
-        return responses.SVGResponse(content=artifact[2])
-    except (web.HTTPError, requests.HTTPError):
+        return responses.SVGResponse(content=file_or_artifact[2])
+    except Exception:
         logger.debug(
-            "Failed fetching model badge artifact for %s on revision %s.",
+            "Failed fetching model badge file or artifact for %s on revision %s.",
             git_handler.path,
             git_handler.revision,
             exc_info=True,

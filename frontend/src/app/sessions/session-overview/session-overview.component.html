@@ -11,6 +11,7 @@
   Select all sessions
 </mat-checkbox>
 <form [formGroup]="deletionFormGroup">
+  <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
   <table mat-table [dataSource]="sessions" class="mat-elevation-z8">
     <ng-container matColumnDef="checkbox">
       <th mat-header-cell *matHeaderCellDef></th>

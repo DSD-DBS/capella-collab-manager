@@ -42,14 +42,19 @@ class GitHandlerFactory:
 
         if not git_model.repository_id:
             repository_id = await GitHandlerFactory._get_repository_id(
-                git_model, git_instance
+                git_model, git_instance.api_url, git_instance.type
             )
             git_crud.update_git_model_repository_id(
                 db, git_model, repository_id
             )
+        else:
+            repository_id = git_model.repository_id
 
         return GitHandlerFactory._create_specific_git_handler(
-            git_model, git_instance
+            git_model,
+            repository_id,
+            git_instance.api_url,
+            git_instance.type,
         )
 
     @staticmethod
@@ -73,15 +78,13 @@ class GitHandlerFactory:
     @staticmethod
     async def _get_repository_id(
         git_model: git_models.DatabaseGitModel,
-        git_instance: settings_git_models.DatabaseGitInstance,
+        git_instance_api_url: str,
+        git_instance_type: settings_git_models.GitType,
     ) -> str:
-        if not (api_url := git_instance.api_url):
-            raise exceptions.GitInstanceAPIEndpointNotFoundError()
-
-        match git_instance.type:
+        match git_instance_type:
             case settings_git_models.GitType.GITLAB:
                 return await gitlab_handler.GitlabHandler.get_repository_id_by_git_url(
-                    git_model.path, git_model.password, api_url
+                    git_model.path, git_model.password, git_instance_api_url
                 )
             case settings_git_models.GitType.GITHUB:
                 return await github_handler.GithubHandler.get_repository_id_by_git_url(
@@ -89,28 +92,25 @@ class GitHandlerFactory:
                 )
             case _:
                 raise exceptions.GitInstanceUnsupportedError(
-                    instance_name=str(git_instance.type)
+                    instance_name=str(git_instance_type)
                 )
 
     @staticmethod
     def _create_specific_git_handler(
         git_model: git_models.DatabaseGitModel,
-        git_instance: settings_git_models.DatabaseGitInstance,
+        git_model_repository_id: str,
+        git_instance_api_url: str,
+        git_instance_type: settings_git_models.GitType,
     ) -> handler.GitHandler:
-        if not (api_url := git_instance.api_url):
-            raise exceptions.GitInstanceAPIEndpointNotFoundError()
-        if not (repository_id := git_model.repository_id):
-            raise exceptions.GitRepositoryIdNotFoundError()
-
-        match git_instance.type:
+        match git_instance_type:
             case settings_git_models.GitType.GITLAB:
                 return gitlab_handler.GitlabHandler(
                     git_model.id,
                     git_model.path,
                     git_model.revision,
                     git_model.password,
-                    api_url,
-                    repository_id,
+                    git_instance_api_url,
+                    git_model_repository_id,
                 )
             case settings_git_models.GitType.GITHUB:
                 return github_handler.GithubHandler(
@@ -118,10 +118,10 @@ class GitHandlerFactory:
                     git_model.path,
                     git_model.revision,
                     git_model.password,
-                    api_url,
-                    repository_id,
+                    git_instance_api_url,
+                    git_model_repository_id,
                 )
             case _:
                 raise exceptions.GitInstanceUnsupportedError(
-                    instance_name=str(git_instance.type)
+                    instance_name=str(git_instance_type)
                 )

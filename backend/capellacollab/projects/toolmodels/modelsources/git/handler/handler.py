@@ -6,6 +6,9 @@ from __future__ import annotations
 import abc
 import datetime
 
+import requests
+
+from .. import exceptions as git_exceptions
 from . import cache
 
 
@@ -53,7 +56,7 @@ class GitHandler:
 
     @abc.abstractmethod
     def get_artifact_from_job(
-        self, job_id: str | int, trusted_path_to_artifact: str
+        self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
         """
         Retrieve an artifact from a specified job.
@@ -103,7 +106,7 @@ class GitHandler:
         """
 
     @abc.abstractmethod
-    def get_started_at_for_job(self, job_id: str | int) -> datetime.datetime:
+    def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
         """
         Retrieve the start datetime for the specified job in the repository.
 
@@ -115,8 +118,11 @@ class GitHandler:
         """
 
     async def get_file(
-        self, trusted_file_path: str, revision: str
+        self, trusted_file_path: str, revision: str | None = None
     ) -> tuple[datetime.datetime, bytes]:
+        if not revision:
+            revision = self.revision
+
         last_updated = self.get_last_updated_for_file(
             trusted_file_path, revision
         )
@@ -138,8 +144,8 @@ class GitHandler:
         self,
         trusted_file_path: str,
         job_name: str,
-        job_id: str | int | None = None,
-    ) -> tuple[str | int, datetime.datetime, bytes]:
+        job_id: str | None = None,
+    ) -> tuple[str, datetime.datetime, bytes]:
         if not job_id:
             job_id, started_at = await self.get_last_successful_job_run(
                 job_name
@@ -158,3 +164,22 @@ class GitHandler:
         )
 
         return job_id, started_at, content
+
+    async def get_file_or_artifact(
+        self,
+        trusted_file_path: str,
+        job_name: str,
+        job_id: str | None = None,
+        file_revision: str | None = None,
+    ) -> tuple[str | None, datetime.datetime, bytes]:
+        if not job_id:
+            try:
+                file = await self.get_file(trusted_file_path, file_revision)
+                return (None, file[0], file[1])
+            except (
+                requests.HTTPError,
+                git_exceptions.GitRepositoryFileNotFoundError,
+            ):
+                pass
+
+        return await self.get_artifact(trusted_file_path, job_name, job_id)

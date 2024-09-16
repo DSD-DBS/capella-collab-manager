@@ -30,7 +30,7 @@ class GithubHandler(handler.GitHandler):
             created_at = datetime.datetime.fromisoformat(
                 latest_job["created_at"]
             )
-            return (latest_job["id"], created_at)
+            return (str(latest_job["id"]), created_at)
 
         raise git_exceptions.GitPipelineJobNotFoundError(
             job_name=job_name, revision=self.revision
@@ -86,7 +86,7 @@ class GithubHandler(handler.GitHandler):
         return response.json()["workflow_runs"]
 
     def get_artifact_from_job(
-        self, job_id: str | int, trusted_path_to_artifact: str
+        self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
         artifact = self.__get_latest_artifact_metadata(job_id)
         artifact_id = artifact["id"]
@@ -118,7 +118,7 @@ class GithubHandler(handler.GitHandler):
             response.json()[0]["commit"]["author"]["date"]
         )
 
-    def get_started_at_for_job(self, job_id: str | int) -> datetime.datetime:
+    def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
         response = requests.get(
             f"{self.api_url}/repos/{self.repository_id}/actions/runs/{job_id}",
             headers=self.__get_headers(),
@@ -153,7 +153,7 @@ class GithubHandler(handler.GitHandler):
             job_name, matched_jobs[0]["conclusion"]
         )
 
-    def __get_latest_artifact_metadata(self, job_id: str | int):
+    def __get_latest_artifact_metadata(self, job_id: str):
         response = requests.get(
             f"{self.api_url}/repos/{self.repository_id}/actions/runs/{job_id}/artifacts",
             headers=self.__get_headers(),

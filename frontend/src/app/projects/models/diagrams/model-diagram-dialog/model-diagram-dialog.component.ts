@@ -161,7 +161,7 @@ export class ModelDiagramDialogComponent implements OnInit {
           uuid,
           this.data.project.slug,
           this.data.model.slug,
-          this.diagramMetadata?.job_id || undefined,
+          this.diagramMetadata?.job_id ?? undefined,
         )
         .subscribe({
           next: (response: Blob) => {

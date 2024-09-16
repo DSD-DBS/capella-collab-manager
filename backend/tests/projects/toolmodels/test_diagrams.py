@@ -425,7 +425,6 @@ def test_get_diagrams_failed_diagram_cache_job_found(
     "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
 )
-@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_artifacts(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
@@ -484,7 +483,6 @@ def test_get_single_diagram_from_artifacts(
     "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
 )
-@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_artifacts_with_file_ending(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
@@ -542,7 +540,6 @@ def test_get_single_diagram_from_artifacts_with_file_ending(
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
 )
-@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_single_diagram_from_artifacts_with_wrong_file_ending(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
@@ -598,11 +595,11 @@ def test_get_single_diagram_from_artifacts_with_wrong_file_ending(
     "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
 )
-@pytest.mark.usefixtures("project_user", "git_instance", "git_model")
-def test_get_single_diagram_from_repository(
+def test_get_single_diagram_from_file_and_cache(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
+    mock_git_valkey_cache,
 ):
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/_c90e4Hdf2d2UosmJBo0GTw",
@@ -610,3 +607,9 @@ def test_get_single_diagram_from_repository(
 
     assert response.status_code == 200
     assert response.content == EXAMPLE_SVG
+
+    client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/_c90e4Hdf2d2UosmJBo0GTw"
+    )
+
+    assert len(mock_git_valkey_cache.cache) == 1

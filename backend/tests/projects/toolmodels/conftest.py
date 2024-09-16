@@ -19,32 +19,56 @@ from capellacollab.core import credentials
 @pytest.fixture(name="mock_git_valkey_cache")
 def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
     class MockGitValkeyCache:
+        cache: dict[str, tuple[datetime.datetime, bytes]] = {}
+
         def __init__(self, *args, **kwargs) -> None:
             super().__init__()
 
         def get_file_data(
-            self, *args, **kwargs
+            self, file_path: str, revision: str
         ) -> tuple[datetime.datetime, bytes] | None:
-            pass
+            return MockGitValkeyCache.cache.get(f"f:{file_path}", None)
 
         def get_artifact_data(
-            self, *args, **kwargs
+            self, job_id: str, file_path: str
         ) -> tuple[datetime.datetime, bytes] | None:
-            pass
+            return MockGitValkeyCache.cache.get(f"a:{file_path}:{job_id}")
 
-        def put_file_data(self, *args, **kwargs) -> None:
-            pass
+        def put_file_data(
+            self,
+            file_path: str,
+            last_updated: datetime.datetime,
+            content: bytes,
+            revision: str,
+            ttl: int = 3600,
+        ) -> None:
+            MockGitValkeyCache.cache[f"f:{file_path}"] = (
+                last_updated,
+                content,
+            )
 
-        def put_artifact_data(self, *args, **kwargs) -> None:
-            pass
+        def put_artifact_data(
+            self,
+            job_id: str,
+            file_path: str,
+            started_at: datetime.datetime,
+            content: bytes,
+            ttl: int = 3600,
+        ) -> None:
+            MockGitValkeyCache.cache[f"a:{file_path}:{job_id}"] = (
+                started_at,
+                content,
+            )
 
         def clear(self) -> None:
-            pass
+            MockGitValkeyCache.cache.clear()
 
     monkeypatch.setattr(
         "capellacollab.projects.toolmodels.modelsources.git.handler.cache.GitValkeyCache",
         MockGitValkeyCache,
     )
+
+    return MockGitValkeyCache()
 
 
 @pytest.fixture(name="git_type", params=[git_models.GitType.GITLAB])
