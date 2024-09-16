@@ -83,6 +83,7 @@ nav:
       - Monitoring:
           - Alerting: admin/monitoring/alerting.md
           - Dashboards: admin/monitoring/dashboards.md
+          - Grafana Log Explorer: admin/monitoring/logging/explorer.md
           - Pipelines & Model Modifiers: admin/monitoring/frontend.md
       - Integrations:
           - Git: admin/settings/model-sources/git.md
