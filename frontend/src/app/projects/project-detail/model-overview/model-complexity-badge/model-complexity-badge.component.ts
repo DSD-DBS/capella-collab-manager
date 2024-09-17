@@ -23,7 +23,6 @@ import { environment } from 'src/environments/environment';
     MatSlideToggleModule,
   ],
   templateUrl: './model-complexity-badge.component.html',
-  styleUrls: ['./model-complexity-badge.component.css'],
 })
 @UntilDestroy()
 export class ModelComplexityBadgeComponent implements OnChanges {

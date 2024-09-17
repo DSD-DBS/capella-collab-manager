@@ -31,14 +31,16 @@
   @if (this.diagramMetadata?.diagrams?.length === 0) {
     Your model doesn't seem to contain diagrams.
   } @else if (filteredDiagrams === undefined) {
-    <div class="flex flex-wrap">
+    <span>Loading diagrams...</span>
+    <div class="flex flex-wrap gap-2">
       @for (_ of loaderArray; track $index) {
         <ngx-skeleton-loader
-          class="m-2 grow basis-[calc(30%-20px)]"
+          class="h-[338px] min-w-[250px] grow basis-[calc(1/3*(100%-1rem))]"
           [theme]="{
-            'border-radius': '5px',
-            height: '332px',
-            'min-width': '208px',
+            'border-radius': '10px',
+            height: '100%',
+            margin: '0px',
+            padding: '0px',
             border: '1px solid white',
           }"
         ></ngx-skeleton-loader>
@@ -59,12 +61,12 @@
           @if (diagram.success) {
             @if (!diagrams[diagram.uuid] || diagrams[diagram.uuid].loading) {
               <ngx-skeleton-loader
-                class="mb-2 w-full"
+                class="mb-2 h-[200px] w-full"
                 [theme]="{
                   'border-radius': '5px',
                   margin: 0,
                   padding: 0,
-                  height: '200px',
+                  height: '100%',
                   width: '100%',
                   border: '1px solid white',
                 }"
@@ -79,7 +81,9 @@
               </button>
             }
           } @else {
-            <div class="diagram-error">
+            <div
+              class="mb-2 flex h-[200px] flex-col items-center justify-center rounded border border-gray-400 py-[15px] text-center"
+            >
               <mat-icon class="scale-[2] text-red-900">error</mat-icon> <br />
               Diagram export has failed. <br />
               Please contact your diagram cache administrator.

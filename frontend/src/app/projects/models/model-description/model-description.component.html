@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper flex-center flex">
+<div class="wrapper flex">
   <div *ngIf="modelService.model$ | async" class="collab-card grow basis-1">
     <form (submit)="onSubmit()" [formGroup]="form">
       <fieldset>

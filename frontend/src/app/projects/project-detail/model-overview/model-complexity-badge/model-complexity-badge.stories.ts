@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Meta, StoryObj } from '@storybook/angular';
+import { componentWrapperDecorator, Meta, StoryObj } from '@storybook/angular';
 import { base64ModelBadge } from 'src/storybook/model-badge';
 import { ModelComplexityBadgeComponent } from './model-complexity-badge.component';
 
@@ -19,6 +19,11 @@ const meta: Meta<ModelComplexityBadgeComponent> = {
       viewports: [],
     },
   },
+  decorators: [
+    componentWrapperDecorator(
+      (story) => `<div class="w-[475px]">${story}</div>`,
+    ),
+  ],
 };
 
 export default meta;
