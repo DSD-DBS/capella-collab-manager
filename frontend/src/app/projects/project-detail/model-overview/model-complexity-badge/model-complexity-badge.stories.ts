@@ -7,10 +7,17 @@ import { base64ModelBadge } from 'src/storybook/model-badge';
 import { ModelComplexityBadgeComponent } from './model-complexity-badge.component';
 
 const meta: Meta<ModelComplexityBadgeComponent> = {
-  title: 'Model Components / Model Complexity Badge',
+  title: 'Model Components/Model Complexity Badge',
   component: ModelComplexityBadgeComponent,
   parameters: {
     chromatic: { viewports: [500] },
+    screenshot: {
+      viewport: {
+        height: 150,
+        width: 500,
+      },
+      viewports: [],
+    },
   },
 };
 

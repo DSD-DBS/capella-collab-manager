@@ -12,7 +12,7 @@ import { mockT4CModel, MockT4CModelService } from 'src/storybook/t4c';
 import { CreateBackupComponent } from './create-backup.component';
 
 const meta: Meta<CreateBackupComponent> = {
-  title: 'Pipeline Components / Create Backup',
+  title: 'Pipeline Components/Create Backup',
   component: CreateBackupComponent,
   decorators: [
     moduleMetadata({

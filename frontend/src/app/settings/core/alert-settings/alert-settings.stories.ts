@@ -8,7 +8,7 @@ import { mockNotice, MockNoticeWrapperService } from 'src/storybook/notices';
 import { AlertSettingsComponent } from './alert-settings.component';
 
 const meta: Meta<AlertSettingsComponent> = {
-  title: 'Settings Components / Alert Settings',
+  title: 'Settings Components/Alert Settings',
   component: AlertSettingsComponent,
 };
 

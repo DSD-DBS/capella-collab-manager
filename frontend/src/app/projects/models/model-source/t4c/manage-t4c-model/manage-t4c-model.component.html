@@ -59,7 +59,7 @@
         </fieldset>
         <fieldset>
           @if (loading) {
-            <app-form-field-skeleton-loader> </app-form-field-skeleton-loader>
+            <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
           } @else {
             <mat-form-field appearance="fill">
               <mat-label>T4C project name</mat-label>
@@ -93,7 +93,15 @@
             </button>
           }
           @if (loading) {
-            <app-button-skeleton-loader></app-button-skeleton-loader>
+            <ngx-skeleton-loader
+              appearance="circle"
+              [theme]="{
+                'border-radius': '5px',
+                height: '36px',
+                width: '110px',
+                border: '1px solid white',
+              }"
+            ></ngx-skeleton-loader>
           } @else {
             <button
               mat-flat-button

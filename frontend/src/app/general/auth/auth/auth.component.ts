@@ -6,7 +6,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
@@ -26,9 +26,7 @@ import { WelcomeComponent } from '../../welcome/welcome.component';
   ],
 })
 export class AuthComponent implements OnInit {
-  reason = '';
-
-  public params = {} as ParamMap;
+  public params = {} as Params;
 
   constructor(
     public metadataService: MetadataService,
@@ -37,17 +35,14 @@ export class AuthComponent implements OnInit {
     private route: ActivatedRoute,
   ) {
     this.pageLayoutService.hideNavbar();
-    this.route.queryParams.subscribe((params) => {
-      this.reason = params.reason;
-      if (this.reason === 'session-expired') {
-        this.login();
-      }
-    });
   }
 
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe((res) => {
-      this.params = res;
+    this.route.queryParams.subscribe((params) => {
+      this.params = params;
+      if (params.reason && params.reason === 'session-expired') {
+        this.login();
+      }
     });
   }
 

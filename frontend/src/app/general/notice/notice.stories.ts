@@ -9,7 +9,7 @@ import { mockNotice, MockNoticeWrapperService } from 'src/storybook/notices';
 import { NoticeComponent } from './notice.component';
 
 const meta: Meta<NoticeComponent> = {
-  title: 'General Components / Notices',
+  title: 'General Components/Notices',
   component: NoticeComponent,
 };
 

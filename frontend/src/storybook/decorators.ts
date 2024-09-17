@@ -6,5 +6,9 @@ import { componentWrapperDecorator } from '@storybook/angular';
 
 export const dialogWrapper = componentWrapperDecorator(
   (story) =>
-    `<div class="rounded-md border shadow bg-white w-fit">${story}</div>`,
+    `<div class="flex h-[calc(100vh-32px)]">
+      <div class="rounded-md border m-auto shadow bg-white w-fit max-w-full overflow-y-auto">
+      ${story}
+      </div>
+    </div>`,
 );

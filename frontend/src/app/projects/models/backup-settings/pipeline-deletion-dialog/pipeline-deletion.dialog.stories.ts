@@ -12,7 +12,7 @@ import { mockUser, MockUserService } from 'src/storybook/user';
 import { PipelineDeletionDialogComponent } from './pipeline-deletion-dialog.component';
 
 const meta: Meta<PipelineDeletionDialogComponent> = {
-  title: 'Pipeline Components / Pipeline Deletion Dialog',
+  title: 'Pipeline Components/Pipeline Deletion Dialog',
   component: PipelineDeletionDialogComponent,
   decorators: [
     moduleMetadata({
@@ -54,6 +54,5 @@ export const AsAdmin: Story = {
         },
       ],
     }),
-    dialogWrapper,
   ],
 };

@@ -9,7 +9,7 @@ import { mockProject } from 'src/storybook/project';
 import { AddUserToProjectDialogComponent } from './add-user-to-project.component';
 
 const meta: Meta<AddUserToProjectDialogComponent> = {
-  title: 'Project Components / Add User',
+  title: 'Project Components/Add User',
   component: AddUserToProjectDialogComponent,
   decorators: [dialogWrapper],
 };

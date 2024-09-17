@@ -12,7 +12,7 @@ import { MockUserService, mockUser } from 'src/storybook/user';
 import { ConnectionDialogComponent } from './connection-dialog.component';
 
 const meta: Meta<ConnectionDialogComponent> = {
-  title: 'Session Components / Connection Dialog',
+  title: 'Session Components/Connection Dialog',
   component: ConnectionDialogComponent,
   decorators: [
     moduleMetadata({
@@ -53,7 +53,6 @@ export const WithoutTeamForCapella: Story = {
         },
       ],
     }),
-    dialogWrapper,
   ],
 };
 

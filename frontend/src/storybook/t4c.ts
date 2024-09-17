@@ -125,6 +125,8 @@ export class MockT4CModelService implements Partial<T4CModelService> {
   private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
   public readonly t4cModels$ = this._t4cModels.asObservable();
 
+  reset() {} // eslint-disable-line @typescript-eslint/no-empty-function
+
   constructor(t4cModel: T4CModel, t4cModels: T4CModel[]) {
     this._t4cModel.next(t4cModel);
     this._t4cModels.next(t4cModels);

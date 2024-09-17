@@ -9,7 +9,7 @@ import { createPersistentSessionWithState } from 'src/storybook/session';
 import { SessionSharingDialogComponent } from './session-sharing-dialog.component';
 
 const meta: Meta<SessionSharingDialogComponent> = {
-  title: 'Session Components / Session Sharing Dialog',
+  title: 'Session Components/Session Sharing Dialog',
   component: SessionSharingDialogComponent,
   decorators: [
     moduleMetadata({

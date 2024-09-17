@@ -32,6 +32,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -47,14 +48,12 @@ import {
   ExtendedT4CRepository,
   T4CRepositoryWrapperService,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
-import { ButtonSkeletonLoaderComponent } from '../../../../../helpers/skeleton-loaders/button-skeleton-loader/button-skeleton-loader.component';
 import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-manage-t4c-model',
   templateUrl: './manage-t4c-model.component.html',
-  styleUrls: ['./manage-t4c-model.component.css'],
   standalone: true,
   imports: [
     FormsModule,
@@ -70,9 +69,9 @@ import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleto
     MatAutocompleteTrigger,
     MatAutocomplete,
     MatButton,
-    ButtonSkeletonLoaderComponent,
     MatIcon,
     AsyncPipe,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class ManageT4CModelComponent implements OnInit, OnDestroy {

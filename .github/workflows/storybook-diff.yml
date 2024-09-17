@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: CC0-1.0
+name: 'Compare Storybooks'
+
+on: [push, pull_request]
+
+jobs:
+  visual-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install storycap puppeteer http-server
+        working-directory: ./frontend
+      - name: Capture screenshots
+        run:
+          npx storycap http://localhost:6006 --serverCmd "npx -p @angular/cli
+          ng run capellacollab:storybook" --flat
+        working-directory: ./frontend
+      - uses: reg-viz/reg-actions@v2
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          image-directory-path: './frontend/__screenshots__'
+          outdated-comment-action: minimize
+          matching-threshold: 0.01
+          retention-days: 90

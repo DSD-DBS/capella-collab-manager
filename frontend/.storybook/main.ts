@@ -10,6 +10,7 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    'storycap',
   ],
   framework: {
     name: '@storybook/angular',

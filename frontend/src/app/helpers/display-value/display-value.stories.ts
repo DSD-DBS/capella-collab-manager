@@ -6,7 +6,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { DisplayValueComponent } from './display-value.component';
 
 const meta: Meta<DisplayValueComponent> = {
-  title: 'Helpers / Display Value',
+  title: 'Helpers/Display Value',
   component: DisplayValueComponent,
 };
 

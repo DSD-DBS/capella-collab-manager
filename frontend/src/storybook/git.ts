@@ -33,4 +33,6 @@ export class MockGitModelService implements Partial<GitModelService> {
     this._gitModel.next(gitModel);
     this._gitModels.next(gitModels);
   }
+
+  reset() {} // eslint-disable-line @typescript-eslint/no-empty-function
 }

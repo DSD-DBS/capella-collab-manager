@@ -2,38 +2,80 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { convertToParamMap } from '@angular/router';
-import { Meta, StoryObj } from '@storybook/angular';
+import { ActivatedRoute, convertToParamMap, Params } from '@angular/router';
+import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { BehaviorSubject } from 'rxjs';
 import { AuthComponent } from './auth.component';
 
 const meta: Meta<AuthComponent> = {
-  title: 'General Components / Authentication',
+  title: 'General Components/Authentication',
   component: AuthComponent,
 };
 
 export default meta;
 type Story = StoryObj<AuthComponent>;
 
+export class MockActivedRoute {
+  _queryParams = new BehaviorSubject<Params>({});
+  queryParams = this._queryParams.asObservable();
+
+  _queryParamMap = new BehaviorSubject(convertToParamMap({}));
+  queryParamMap = this._queryParamMap.asObservable();
+
+  constructor(params: Params) {
+    this._queryParams.next(params);
+    this._queryParamMap.next(convertToParamMap(params));
+  }
+}
+
 export const IdentityProviderError: Story = {
-  args: {
-    params: convertToParamMap({
-      error: 'access_denied',
-      error_description: 'This is the error description.',
-      error_uri: 'https://example.com/error',
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useFactory: () =>
+            new MockActivedRoute({
+              error: 'access_denied',
+              error_description: 'This is the error description.',
+              error_uri: 'https://example.com/error',
+            }),
+        },
+      ],
     }),
-  },
+  ],
 };
 
 export const Logout: Story = {
-  args: {
-    reason: 'logout',
-  },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useFactory: () =>
+            new MockActivedRoute({
+              reason: 'logout',
+            }),
+        },
+      ],
+    }),
+  ],
 };
 
 export const Login: Story = {};
 
 export const SessionExpired: Story = {
-  args: {
-    reason: 'session-expired',
-  },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useFactory: () =>
+            new MockActivedRoute({
+              reason: 'session-expired',
+            }),
+        },
+      ],
+    }),
+  ],
 };

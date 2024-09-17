@@ -8,7 +8,7 @@ import { dialogWrapper } from 'src/storybook/decorators';
 import { ConfirmationDialogComponent } from './confirmation-dialog.component';
 
 const meta: Meta<ConfirmationDialogComponent> = {
-  title: 'Helpers / Confirmation Dialog',
+  title: 'Helpers/Confirmation Dialog',
   component: ConfirmationDialogComponent,
 };
 

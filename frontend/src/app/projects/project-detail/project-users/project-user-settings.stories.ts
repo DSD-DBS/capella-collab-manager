@@ -9,7 +9,7 @@ import { mockUser } from 'src/storybook/user';
 import { ProjectUserSettingsComponent } from './project-user-settings.component';
 
 const meta: Meta<ProjectUserSettingsComponent> = {
-  title: 'Project Components / Project Users',
+  title: 'Project Components/Project Users',
   component: ProjectUserSettingsComponent,
 };
 

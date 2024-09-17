@@ -11,8 +11,17 @@ import {
 import { CreateSessionHistoryComponent } from './create-session-history.component';
 
 const meta: Meta<CreateSessionHistoryComponent> = {
-  title: 'Session Components / Session History',
+  title: 'Session Components/Session History',
   component: CreateSessionHistoryComponent,
+  parameters: {
+    screenshot: {
+      viewport: {
+        width: 426,
+        height: 330,
+      },
+      viewports: [],
+    },
+  },
 };
 
 export default meta;

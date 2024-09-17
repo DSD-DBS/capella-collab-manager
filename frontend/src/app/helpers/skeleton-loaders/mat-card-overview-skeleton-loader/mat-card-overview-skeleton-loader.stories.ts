@@ -6,7 +6,7 @@ import { componentWrapperDecorator, Meta, StoryObj } from '@storybook/angular';
 import { MatCardOverviewSkeletonLoaderComponent } from './mat-card-overview-skeleton-loader.component';
 
 const meta: Meta<MatCardOverviewSkeletonLoaderComponent> = {
-  title: 'Helpers / Skeleton Loaders / Mat Card Overview',
+  title: 'Helpers/Skeleton Loaders/Mat Card Overview',
   component: MatCardOverviewSkeletonLoaderComponent,
 };
 

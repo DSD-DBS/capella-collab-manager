@@ -15,7 +15,7 @@ import {
 } from './model-diagram-dialog.component';
 
 const meta: Meta<ModelDiagramDialogComponent> = {
-  title: 'Model Components / Model Diagram Cache',
+  title: 'Model Components/Model Diagram Cache',
   component: ModelDiagramDialogComponent,
   decorators: [
     moduleMetadata({

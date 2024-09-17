@@ -14,7 +14,7 @@ import { mockUser, MockUserService } from 'src/storybook/user';
 import { ModelDetailComponent } from './model-detail.component';
 
 const meta: Meta<ModelDetailComponent> = {
-  title: 'Model Components / Model Sources / Overview',
+  title: 'Model Components/Model Sources/Overview',
   component: ModelDetailComponent,
   parameters: {
     chromatic: { viewports: [1920] },

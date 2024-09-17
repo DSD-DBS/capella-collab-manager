@@ -18,7 +18,7 @@ import {
 import { ManageT4CModelComponent } from './manage-t4c-model.component';
 
 const meta: Meta<ManageT4CModelComponent> = {
-  title: 'Model Components / Model Sources / T4C',
+  title: 'Model Components/Model Sources/T4C',
   component: ManageT4CModelComponent,
   decorators: [
     moduleMetadata({

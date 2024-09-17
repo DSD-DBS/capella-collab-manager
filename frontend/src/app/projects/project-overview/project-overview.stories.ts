@@ -8,7 +8,7 @@ import { mockProject, MockProjectWrapperService } from 'src/storybook/project';
 import { ProjectOverviewComponent } from './project-overview.component';
 
 const meta: Meta<ProjectOverviewComponent> = {
-  title: 'Project Components / Project Overview',
+  title: 'Project Components/Project Overview',
   component: ProjectOverviewComponent,
 };
 

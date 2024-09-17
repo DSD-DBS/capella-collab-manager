@@ -8,7 +8,7 @@ import { dialogWrapper } from 'src/storybook/decorators';
 import { InputDialogComponent } from './input-dialog.component';
 
 const meta: Meta<InputDialogComponent> = {
-  title: 'Helpers / Input Dialog',
+  title: 'Helpers/Input Dialog',
   component: InputDialogComponent,
 };
 
