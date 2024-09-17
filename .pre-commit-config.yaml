@@ -151,9 +151,9 @@ repos:
           - --comment-style
           - '{/*|   |*/}'
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v4.0.3
+    rev: 7bdfa5462e2816bd730e7d619f19773b33d7761b
     hooks:
-      - id: reuse
+      - id: reuse-lint-file
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.9.1
     hooks:
