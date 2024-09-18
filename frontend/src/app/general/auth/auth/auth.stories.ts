@@ -5,11 +5,29 @@
 import { ActivatedRoute, convertToParamMap, Params } from '@angular/router';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { BehaviorSubject } from 'rxjs';
+import { MetadataService } from 'src/app/general/metadata/metadata.service';
+import { mockMetadata, MockMetadataService } from 'src/storybook/metadata';
 import { AuthComponent } from './auth.component';
 
 const meta: Meta<AuthComponent> = {
   title: 'General Components/Authentication',
   component: AuthComponent,
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: MetadataService,
+          useFactory: () =>
+            new MockMetadataService(
+              mockMetadata,
+              undefined,
+              undefined,
+              undefined,
+            ),
+        },
+      ],
+    }),
+  ],
 };
 
 export default meta;
