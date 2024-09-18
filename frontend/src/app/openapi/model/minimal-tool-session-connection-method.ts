@@ -9,17 +9,10 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { ToolSessionConfigurationOutput } from './tool-session-configuration-output';
-import { ToolIntegrationsOutput } from './tool-integrations-output';
 
 
-export interface ToolOutput { 
-    /**
-     * Unique identifier of the resource.
-     */
-    id: number;
+export interface MinimalToolSessionConnectionMethod { 
+    id: string;
     name: string;
-    integrations: ToolIntegrationsOutput;
-    config: ToolSessionConfigurationOutput;
 }
 

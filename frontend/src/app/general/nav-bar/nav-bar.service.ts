@@ -76,6 +76,7 @@ export class NavBarService {
   private _linkMap: Record<BuiltInLinkItem, string> = {
     prometheus: environment.prometheus_url,
     grafana: environment.grafana_url,
+    smtp_mock: environment.smtp_mock_url,
     documentation: environment.docs_url + '/',
   };
 }

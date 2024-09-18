@@ -9,9 +9,6 @@ from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.settings.configuration import core as config_core
-from capellacollab.settings.configuration import (
-    models as settings_config_models,
-)
 
 
 class Metadata(core_pydantic.BaseModel):
@@ -35,8 +32,7 @@ router = fastapi.APIRouter()
     response_model=Metadata,
 )
 def get_metadata(db: orm.Session = fastapi.Depends(database.get_db)):
-    cfg = config_core.get_config(db, "global")
-    assert isinstance(cfg, settings_config_models.GlobalConfiguration)
+    cfg = config_core.get_global_configuration(db)
 
     return Metadata.model_validate(
         cfg.metadata.model_dump()

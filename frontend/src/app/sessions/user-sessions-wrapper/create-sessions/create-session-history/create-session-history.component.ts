@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, filter, take } from 'rxjs';
-import { ToolOutput, ToolVersion } from 'src/app/openapi';
+import { Tool, ToolVersion } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import {
   SessionHistoryService,
@@ -50,7 +50,7 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
   }
 
   pushValidResolvedSessionToHistory(
-    tool: ToolOutput,
+    tool: Tool,
     version: ToolVersion,
     session: SessionRequestHistory,
   ) {
@@ -141,7 +141,7 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
 }
 
 export interface ResolvedSessionRequestHistory {
-  tool: ToolOutput;
+  tool: Tool;
   version: ToolVersion;
   connectionMethod: ConnectionMethod;
   loading: boolean;

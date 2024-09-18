@@ -9,21 +9,20 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { MinimalToolSessionConnectionMethod } from './minimal-tool-session-connection-method';
 import { SessionType } from './session-type';
 import { Message } from './message';
-import { ToolSessionConnectionMethodInput } from './tool-session-connection-method-input';
-import { ToolVersionWithToolInput } from './tool-version-with-tool-input';
+import { MinimalToolVersionWithTool } from './minimal-tool-version-with-tool';
 
 
 export interface AnonymizedSession { 
     id: string;
     type: SessionType;
     created_at: string;
-    version: ToolVersionWithToolInput;
+    version: MinimalToolVersionWithTool;
     state?: string;
     warnings?: Array<Message>;
-    connection_method_id: string;
-    connection_method?: ToolSessionConnectionMethodInput | null;
+    connection_method?: MinimalToolSessionConnectionMethod | null;
 }
 export namespace AnonymizedSession {
 }

@@ -4,7 +4,7 @@
  */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { ToolOutput } from 'src/app/openapi';
+import { Tool } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPrimaryGitModel } from 'src/storybook/git';
@@ -25,7 +25,7 @@ const meta: Meta<CreateReadonlySessionDialogComponent> = {
   ],
 };
 
-const tool: ToolOutput = { ...mockTool };
+const tool: Tool = { ...mockTool };
 tool.config.provisioning.max_number_of_models = 1;
 
 const data = {

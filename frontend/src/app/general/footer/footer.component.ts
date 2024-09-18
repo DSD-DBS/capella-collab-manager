@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { VersionComponent } from 'src/app/general/metadata/version/version.component';
-import { FeedbackService } from '../../sessions/feedback/feedback.service';
+import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
+import { FeedbackWrapperService } from '../../sessions/feedback/feedback.service';
 
 @Component({
   selector: 'app-footer',
@@ -20,6 +21,7 @@ export class FooterComponent {
   constructor(
     public dialog: MatDialog,
     public metadataService: MetadataService,
-    public feedbackService: FeedbackService,
+    public feedbackService: FeedbackWrapperService,
+    public authService: AuthenticationWrapperService,
   ) {}
 }

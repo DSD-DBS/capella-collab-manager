@@ -1,117 +1,118 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import smtplib
-import typing as t
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+import logging
 
 from sqlalchemy import orm
 
 from capellacollab.config import config
-from capellacollab.feedback import exceptions
-from capellacollab.feedback.models import AnonymizedSession, Feedback
+from capellacollab.core.email import exceptions as email_exceptions
+from capellacollab.core.email import models as email_models
+from capellacollab.core.email import send as email_send
 from capellacollab.settings.configuration import core as config_core
 from capellacollab.settings.configuration import (
     models as settings_config_models,
 )
-from capellacollab.settings.configuration.models import (
-    FeedbackAnonymityPolicy,
-    FeedbackConfiguration,
-)
 from capellacollab.users import models as users_models
 
+from . import exceptions, models
 
-def format_session(session: AnonymizedSession):
+
+def validate_global_configuration(
+    feedback: settings_config_models.FeedbackConfiguration,
+):
+    if feedback.enabled and not (config.smtp and config.smtp.enabled):
+        raise email_exceptions.SMTPNotConfiguredError()
+
+    if feedback.enabled and not feedback.recipients:
+        raise exceptions.NoFeedbackRecipientsError()
+
+
+def disable_feedback(feedback: settings_config_models.FeedbackConfiguration):
+    feedback.enabled = False
+    feedback.after_session = False
+    feedback.on_footer = False
+    feedback.on_session_card = False
+    feedback.interval.enabled = False
+
+
+def format_session(session: models.AnonymizedSession):
     return f"{session.version.tool.name} ({session.version.name})"
 
 
-def is_feedback_allowed(db: orm.Session):
+def check_if_feedback_is_allowed(db: orm.Session):
     if not config.smtp or not config.smtp.enabled:
-        raise exceptions.SmtpNotSetupError()
+        raise email_exceptions.SMTPNotConfiguredError()
 
-    cfg = config_core.get_config(db, "global")
-    assert isinstance(cfg, settings_config_models.GlobalConfiguration)
-    feedback_config = FeedbackConfiguration.model_validate(
-        cfg.feedback.model_dump()
-    )
-    if not feedback_config.enabled:
+    cfg = config_core.get_global_configuration(db)
+    if not cfg.feedback.enabled:
         raise exceptions.FeedbackNotEnabledError()
 
 
 def format_email(
-    feedback: Feedback,
-    user: t.Optional[users_models.DatabaseUser],
+    feedback: models.Feedback,
+    user: users_models.DatabaseUser | None,
     user_agent: str | None,
-):
-    message = "\n".join(
-        [
-            f"Rating: {feedback.rating.value}",
-            f"Text: {feedback.feedback_text or 'No feedback text provided'}",
-            f"User: {f'{user.name} ({user.email})' if user else 'Anonymous User'}",
-            f"User Agent: {user_agent or 'Unknown'}",
-            f"Feedback Trigger: {feedback.trigger}",
-            *[
-                session.model_dump_json(indent=2)
-                for session in feedback.sessions
-            ],
-        ]
+) -> email_models.EMailContent:
+    rating = feedback.rating.value
+    user_msg = user.name if user else "Anonymous"
+    if user and user.email:
+        user_msg += f" ({user.email})"
+
+    message_list = [
+        f"Rating: {rating.capitalize()}",
+        f"Text: {feedback.feedback_text or 'No feedback text provided'}",
+        f"User: {user_msg}",
+        f"User Agent: {user_agent or 'Unknown'}",
+    ]
+    if feedback.trigger:
+        message_list.append(f"Trigger: {feedback.trigger}")
+    message_list.append("Sessions:")
+    message_list += [
+        session.model_dump_json(indent=2) for session in feedback.sessions
+    ]
+
+    message_list.append("---")
+    message_list.append(
+        f"You receive this email because you're registered as feedback recipient in the "
+        f"Capella Collaboration Manager ({config.general.scheme}://{config.general.host}:{config.general.port})."
     )
+    message_list.append(
+        "If you want to unsubscribe, contact your System Administrator."
+    )
+    message_list.append(
+        "Please note that only the user is validated. All other fields are provided via the API and should not be trusted."
+    )
+    message = "\n".join(message_list)
 
     if len(feedback.sessions) > 0:
-        return {
-            "subject": f"New Feedback {feedback.rating.value.capitalize()} for {', '.join([format_session(session) for session in feedback.sessions])}",
-            "message": message,
-        }
+        sessions = ", ".join(
+            [format_session(session) for session in feedback.sessions]
+        )
+        return email_models.EMailContent(
+            subject=f"New Feedback with rating {rating} for sessions: {sessions}",
+            message=message,
+        )
     else:
-        return {
-            "subject": f"New General Feedback {feedback.rating.value.capitalize()}",
-            "message": message,
-        }
+        return email_models.EMailContent(
+            subject=f"New General Feedback with rating {rating}",
+            message=message,
+        )
 
 
-def send_email(
-    feedback: Feedback,
+def send_feedback_email(
+    db: orm.Session,
+    feedback: models.Feedback,
     user: users_models.DatabaseUser,
     user_agent: str | None,
-    db: orm.Session,
+    logger: logging.LoggerAdapter,
 ):
-    is_feedback_allowed(db)
-    assert config.smtp, "SMTP configuration is not set up"
-
-    cfg = config_core.get_config(db, "global")
-    assert isinstance(cfg, settings_config_models.GlobalConfiguration)
-    feedback_config = FeedbackConfiguration.model_validate(
-        cfg.feedback.model_dump()
-    )
-
-    match feedback_config.anonymity_policy:
-        case FeedbackAnonymityPolicy.FORCE_ANONYMOUS:
-            is_anonymous = True
-        case FeedbackAnonymityPolicy.FORCE_IDENTIFIED:
-            is_anonymous = False
-        case _:
-            is_anonymous = not feedback
+    check_if_feedback_is_allowed(db)
+    assert config.smtp  # Already checked in previous function
+    cfg = config_core.get_global_configuration(db)
 
     email_text = format_email(
-        feedback, None if is_anonymous else user, user_agent
+        feedback, user if feedback.share_contact else None, user_agent
     )
 
-    mailserver = smtplib.SMTP(
-        config.smtp.host.split(":")[0], int(config.smtp.host.split(":")[1])
-    )
-    mailserver.ehlo()
-    mailserver.starttls()
-    mailserver.ehlo()
-    mailserver.login(config.smtp.user, config.smtp.password)
-
-    for receiver in feedback_config.receivers:
-        msg = MIMEMultipart()
-        msg["From"] = config.smtp.sender
-        msg["To"] = receiver
-        msg["Subject"] = email_text["subject"]
-        msg.attach(MIMEText(email_text["message"], "plain"))
-
-        mailserver.sendmail(config.smtp.sender, receiver, msg.as_string())
-
-    mailserver.quit()
+    email_send.send_email(cfg.feedback.recipients, email_text, logger)

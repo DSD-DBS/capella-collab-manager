@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SKIP_ERROR_HANDLING } from 'src/app/general/error-handling/error-handling.interceptor';
 import {
-  ToolOutput,
+  Tool,
   ToolNature,
   ToolSessionConnectionOutputMethodsInner,
   ToolVersion,
@@ -59,7 +59,7 @@ export interface ToolVersionConfig {
   compatible_versions: number[];
 }
 
-export type ToolVersionWithTool = ToolVersion & { tool: ToolOutput };
+export type ToolVersionWithTool = ToolVersion & { tool: Tool };
 
 export interface CreateToolNature {
   name: string;
@@ -87,11 +87,11 @@ export class ToolWrapperService {
 
   baseURL = environment.backend_url + '/tools';
 
-  _tools = new BehaviorSubject<ToolOutput[] | undefined>(undefined);
-  get tools(): ToolOutput[] | undefined {
+  _tools = new BehaviorSubject<Tool[] | undefined>(undefined);
+  get tools(): Tool[] | undefined {
     return this._tools.getValue();
   }
-  get tools$(): Observable<ToolOutput[] | undefined> {
+  get tools$(): Observable<Tool[] | undefined> {
     return this._tools.asObservable();
   }
 
@@ -99,9 +99,9 @@ export class ToolWrapperService {
     this.getTools().subscribe();
   }
 
-  getTools(): Observable<ToolOutput[]> {
+  getTools(): Observable<Tool[]> {
     return this.toolsService.getTools().pipe(
-      tap((tools: ToolOutput[]) => {
+      tap((tools: Tool[]) => {
         this._tools.next(tools);
       }),
     );
@@ -168,7 +168,7 @@ export class ToolWrapperService {
   }
 
   getConnectionIdForTool(
-    tool: ToolOutput,
+    tool: Tool,
     connectionMethodId: string,
   ): ConnectionMethod | undefined {
     return tool?.config?.connection?.methods?.find(
@@ -176,7 +176,7 @@ export class ToolWrapperService {
     );
   }
 
-  getCachedToolById(toolId: number): ToolOutput | undefined {
+  getCachedToolById(toolId: number): Tool | undefined {
     if (this._tools.value === undefined) return undefined;
     return this._tools.value.find((t) => t.id === toolId);
   }

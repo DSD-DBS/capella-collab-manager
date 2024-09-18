@@ -18,7 +18,7 @@ import { UserWrapperService } from 'src/app/services/user/user.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/session-sharing-dialog/session-sharing-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
-import { FeedbackService } from '../../feedback/feedback.service';
+import { FeedbackWrapperService } from '../../feedback/feedback.service';
 import {
   SessionService,
   isPersistentSession,
@@ -54,7 +54,7 @@ export class ActiveSessionsComponent {
     public sessionService: SessionService,
     public beautifyService: BeautifyService,
     public userSessionService: UserSessionService,
-    public feedbackService: FeedbackService,
+    public feedbackService: FeedbackWrapperService,
     private userWrapperService: UserWrapperService,
     private dialog: MatDialog,
   ) {}

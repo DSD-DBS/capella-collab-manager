@@ -8,6 +8,7 @@ import typing as t
 import pydantic
 from sqlalchemy import orm
 
+from capellacollab import core
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.users import models as users_models
@@ -43,6 +44,7 @@ class BuiltInLinkItem(str, enum.Enum):
     GRAFANA = "grafana"
     PROMETHEUS = "prometheus"
     DOCUMENTATION = "documentation"
+    SMTP_MOCK = "smtp_mock"
 
 
 class NavbarLink(core_pydantic.BaseModelStrict):
@@ -67,37 +69,44 @@ class CustomNavbarLink(NavbarLink):
 class NavbarConfiguration(core_pydantic.BaseModelStrict):
     external_links: list[BuiltInNavbarLink | CustomNavbarLink] = (
         pydantic.Field(
-            default=[
-                BuiltInNavbarLink(
-                    name="Grafana",
-                    service=BuiltInLinkItem.GRAFANA,
-                    role=users_models.Role.ADMIN,
-                ),
-                BuiltInNavbarLink(
-                    name="Prometheus",
-                    service=BuiltInLinkItem.PROMETHEUS,
-                    role=users_models.Role.ADMIN,
-                ),
-                BuiltInNavbarLink(
-                    name="Documentation",
-                    service=BuiltInLinkItem.DOCUMENTATION,
-                    role=users_models.Role.USER,
-                ),
-            ],
+            default=(
+                [
+                    BuiltInNavbarLink(
+                        name="Grafana",
+                        service=BuiltInLinkItem.GRAFANA,
+                        role=users_models.Role.ADMIN,
+                    ),
+                    BuiltInNavbarLink(
+                        name="Prometheus",
+                        service=BuiltInLinkItem.PROMETHEUS,
+                        role=users_models.Role.ADMIN,
+                    ),
+                    BuiltInNavbarLink(
+                        name="Documentation",
+                        service=BuiltInLinkItem.DOCUMENTATION,
+                        role=users_models.Role.USER,
+                    ),
+                ]
+                + (
+                    [
+                        BuiltInNavbarLink(
+                            name="SMTP Mock",
+                            service=BuiltInLinkItem.SMTP_MOCK,
+                            role=users_models.Role.USER,
+                        )
+                    ]
+                    if core.DEVELOPMENT_MODE
+                    else []
+                )
+            ),
             description="Links to display in the navigation bar.",
         )
     )
 
 
-class FeedbackAnonymityPolicy(str, enum.Enum):
-    FORCE_ANONYMOUS = "force_anonymous"
-    FORCE_IDENTIFIED = "force_identified"
-    ASK_USER = "ask_user"
-
-
 class FeedbackIntervalConfiguration(core_pydantic.BaseModelStrict):
     enabled: bool = pydantic.Field(
-        default=True,
+        default=core.DEVELOPMENT_MODE,
         description="Whether the feedback interval is enabled.",
     )
     hours_between_prompt: int = pydantic.Field(
@@ -122,34 +131,29 @@ class FeedbackProbabilityConfiguration(core_pydantic.BaseModelStrict):
 
 class FeedbackConfiguration(core_pydantic.BaseModelStrict):
     enabled: bool = pydantic.Field(
-        default=False,
+        default=core.DEVELOPMENT_MODE,
         description="Enable or disable the feedback system. If enabled, SMTP configuration is required.",
     )
-    after_session: FeedbackProbabilityConfiguration = pydantic.Field(
-        default_factory=FeedbackProbabilityConfiguration,
+    after_session: bool = pydantic.Field(
+        default=core.DEVELOPMENT_MODE,
         description="If a feedback form is shown after terminating a session.",
     )
     on_footer: bool = pydantic.Field(
-        default=True,
+        default=core.DEVELOPMENT_MODE,
         description="Should a general feedback button be shown.",
     )
     on_session_card: bool = pydantic.Field(
-        default=True,
+        default=core.DEVELOPMENT_MODE,
         description="Should a feedback button be shown on the session cards.",
     )
     interval: FeedbackIntervalConfiguration = pydantic.Field(
         default_factory=FeedbackIntervalConfiguration,
         description="Request feedback at regular intervals.",
     )
-    receivers: list[pydantic.EmailStr] = pydantic.Field(
-        default=[],
+    recipients: list[pydantic.EmailStr] = pydantic.Field(
+        default=["test@example.com"] if core.DEVELOPMENT_MODE else [],
         description="Email addresses to send feedback to.",
         examples=[[], ["test@example.com"]],
-    )
-    anonymity_policy: FeedbackAnonymityPolicy = pydantic.Field(
-        default=FeedbackAnonymityPolicy.ASK_USER,
-        description="If feedback should be anonymous or identified.",
-        examples=["force_anonymous", "force_identified", "ask_user"],
     )
 
 

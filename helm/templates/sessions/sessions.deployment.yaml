@@ -29,6 +29,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-session-nginx
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
           {{ if .Values.docker.images.nginxUnprivileged }}
           image: {{ .Values.docker.images.nginxUnprivileged }}
           {{ else }}

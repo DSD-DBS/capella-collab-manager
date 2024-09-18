@@ -11,6 +11,11 @@ import {
 import { Observable, of } from 'rxjs';
 import { Session } from 'src/app/openapi';
 import { UserWrapperService } from 'src/app/services/user/user.service';
+import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.service';
+import {
+  mockFeedbackConfig,
+  MockFeedbackWrapperService,
+} from 'src/storybook/feedback';
 import {
   createPersistentSessionWithState,
   mockSuccessReadonlySession,
@@ -279,6 +284,27 @@ export const SessionUnknownStateStory: Story = {
             new MockUserSessionService(
               createPersistentSessionWithState('unknown'),
             ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionWithFeedbackEnabled: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService(
+              createPersistentSessionWithState('Started'),
+            ),
+        },
+        {
+          provide: FeedbackWrapperService,
+          useFactory: () => new MockFeedbackWrapperService(mockFeedbackConfig),
         },
       ],
     }),

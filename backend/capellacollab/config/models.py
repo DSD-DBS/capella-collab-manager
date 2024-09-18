@@ -330,25 +330,30 @@ class PrometheusConfig(BaseConfig):
     )
 
 
-class SmtpConfig(BaseConfig):
+class SMTPConfig(BaseConfig):
     enabled: bool = pydantic.Field(
-        default=False,
+        default=True,
         description="Whether to enable SMTP. Necessary for feedback.",
         examples=[True, False],
     )
     host: str = pydantic.Field(
         description="The SMTP server host.",
+        default="localhost:587",
         examples=["smtp.example.com:587"],
         pattern=r"^(.*):(\d+)$",
     )
     user: str = pydantic.Field(
-        description="The SMTP server user.", examples=["username"]
+        default="username",
+        description="The SMTP server user.",
+        examples=["username"],
     )
     password: str = pydantic.Field(
+        default="password",
         description="The SMTP server password.",
         examples=["password"],
     )
     sender: str = pydantic.Field(
+        default="capella@example.com",
         description="The sender email address.",
         examples=["capella@example.com"],
     )
@@ -366,4 +371,4 @@ class AppConfig(BaseConfig):
     logging: LoggingConfig = LoggingConfig()
     requests: RequestsConfig = RequestsConfig()
     pipelines: PipelineConfig = PipelineConfig()
-    smtp: t.Optional[SmtpConfig] = None
+    smtp: SMTPConfig | None = SMTPConfig()

@@ -3,7 +3,7 @@
 
 import os
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "").lower() in (
+DEVELOPMENT_MODE: bool = os.getenv("DEVELOPMENT_MODE", "").lower() in (
     "1",
     "true",
     "t",

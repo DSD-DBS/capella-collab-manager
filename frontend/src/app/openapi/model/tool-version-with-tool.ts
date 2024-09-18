@@ -9,13 +9,17 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { ToolVersionConfigurationOutput } from './tool-version-configuration-output';
+import { Tool } from './tool';
 
 
-export type FeedbackAnonymityPolicy = 'force_anonymous' | 'force_identified' | 'ask_user';
-
-export const FeedbackAnonymityPolicy = {
-    ForceAnonymous: 'force_anonymous' as FeedbackAnonymityPolicy,
-    ForceIdentified: 'force_identified' as FeedbackAnonymityPolicy,
-    AskUser: 'ask_user' as FeedbackAnonymityPolicy
-};
+export interface ToolVersionWithTool { 
+    /**
+     * Unique identifier of the resource.
+     */
+    id: number;
+    name: string;
+    config: ToolVersionConfigurationOutput;
+    tool: Tool;
+}
 

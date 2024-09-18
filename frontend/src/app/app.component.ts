@@ -18,7 +18,7 @@ import { HeaderComponent } from './general/header/header.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { PageLayoutService } from './page-layout/page-layout.service';
-import { FeedbackService } from './sessions/feedback/feedback.service';
+import { FeedbackWrapperService } from './sessions/feedback/feedback.service';
 import { FullscreenService } from './sessions/service/fullscreen.service';
 
 @Component({
@@ -45,7 +45,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     public pageLayoutService: PageLayoutService,
     public fullscreenService: FullscreenService,
     private navBarService: NavBarService,
-    private feedbackService: FeedbackService,
+    private feedbackService: FeedbackWrapperService,
   ) {
     slugify.extend({ '.': '-' });
   }

@@ -9,17 +9,10 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { ToolVersionConfigurationOutput } from './tool-version-configuration-output';
-import { ToolOutput } from './tool-output';
 
 
-export interface ToolVersionWithToolOutput { 
-    /**
-     * Unique identifier of the resource.
-     */
+export interface MinimalTool { 
     id: number;
-    name: string;
-    config: ToolVersionConfigurationOutput;
-    tool: ToolOutput;
+    name?: string;
 }
 

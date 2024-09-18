@@ -46,7 +46,7 @@
               <h2>Read-only session</h2>
             }
           </b>
-          @if (feedbackService.showOnSessionCard$ | async) {
+          @if ((feedbackService.feedbackConfig$ | async)?.on_session_card) {
             <button
               mat-icon-button
               color="primary"

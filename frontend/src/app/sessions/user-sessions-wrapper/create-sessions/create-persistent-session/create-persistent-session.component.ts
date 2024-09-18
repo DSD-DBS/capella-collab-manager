@@ -19,7 +19,7 @@ import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, map } from 'rxjs';
-import { Session, ToolOutput, ToolVersion } from 'src/app/openapi';
+import { Session, Tool, ToolVersion } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
@@ -55,7 +55,7 @@ import { CreateSessionHistoryComponent } from '../create-session-history/create-
 export class CreatePersistentSessionComponent implements OnInit {
   persistentSession?: Session;
 
-  selectedTool?: ToolOutput;
+  selectedTool?: Tool;
   versions: ToolVersion[] = [];
 
   requestInProgress = false;
@@ -145,7 +145,7 @@ export class CreatePersistentSessionComponent implements OnInit {
       });
   }
 
-  get toolsWithWorkspaceEnabled(): Observable<ToolOutput[] | undefined> {
+  get toolsWithWorkspaceEnabled(): Observable<Tool[] | undefined> {
     return this.toolWrapperService.tools$.pipe(
       map((tools) =>
         tools?.filter(

@@ -90,6 +90,15 @@ spec:
                 port:
                   number: 8080
           {{ end }}
+          {{ if .Values.mocks.smtp }}
+          - path: /smtp
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-smtp-mock
+                port:
+                  number: 8080
+          {{ end }}
       {{ if not .Values.general.wildcardHost }}
       host: {{ .Values.general.host }}
       {{ end }}

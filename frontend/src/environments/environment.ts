@@ -10,4 +10,5 @@ export const environment = {
   api_docs_url: '/api/docs',
   prometheus_url: '/prometheus/graph',
   grafana_url: '/grafana/',
+  smtp_mock_url: '/smtp/',
 };

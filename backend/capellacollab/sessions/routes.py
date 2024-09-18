@@ -37,7 +37,8 @@ router = fastapi.APIRouter(
                 required_role=users_models.Role.USER
             )
         )
-    ]
+    ],
+    responses=responses.api_exceptions(include_authentication=True),
 )
 
 router_without_authentication = fastapi.APIRouter()

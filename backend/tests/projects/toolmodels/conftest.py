@@ -143,7 +143,7 @@ def fixture_mock_git_rest_api_for_artifacts(
 
 
 @pytest.fixture(name="git_query_params")
-def fixture_git_query_params(request: pytest.FixtureRequest) -> t.List[dict]:
+def fixture_git_query_params(request: pytest.FixtureRequest) -> list[dict]:
     return request.param
 
 
@@ -174,7 +174,7 @@ def fixture_mock_git_get_commit_information_api(
     request: pytest.FixtureRequest,
     git_type: git_models.GitType,
     git_response_status: int,
-    git_query_params: t.List[dict],
+    git_query_params: list[dict],
 ):
     match git_type:
         case git_models.GitType.GITLAB:

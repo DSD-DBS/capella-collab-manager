@@ -84,6 +84,11 @@ class ToolSessionSharingConfiguration(core_pydantic.BaseModel):
     )
 
 
+class MinimalToolSessionConnectionMethod(core_pydantic.BaseModel):
+    id: str
+    name: str
+
+
 class ToolSessionConnectionMethod(core_pydantic.BaseModel):
     id: str = pydantic.Field(default_factory=uuid_factory)
     type: str
@@ -514,6 +519,18 @@ class ToolVersion(CreateToolVersion, decorator.PydanticDatabaseModel):
 
 class ToolVersionWithTool(ToolVersion):
     tool: Tool
+
+
+class MinimalTool(core_pydantic.BaseModel):
+    id: int = pydantic.Field(ge=1)
+    name: str = pydantic.Field(default="", min_length=2, max_length=30)
+
+
+class MinimalToolVersionWithTool(core_pydantic.BaseModel):
+    id: int = pydantic.Field(ge=1)
+    name: str = pydantic.Field(default="", min_length=2, max_length=30)
+
+    tool: MinimalTool
 
 
 class ToolNature(core_pydantic.BaseModel):

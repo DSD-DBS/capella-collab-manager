@@ -11,11 +11,12 @@
 
 
 
-export type BuiltInLinkItem = 'grafana' | 'prometheus' | 'documentation';
+export type BuiltInLinkItem = 'grafana' | 'prometheus' | 'documentation' | 'smtp_mock';
 
 export const BuiltInLinkItem = {
     Grafana: 'grafana' as BuiltInLinkItem,
     Prometheus: 'prometheus' as BuiltInLinkItem,
-    Documentation: 'documentation' as BuiltInLinkItem
+    Documentation: 'documentation' as BuiltInLinkItem,
+    SmtpMock: 'smtp_mock' as BuiltInLinkItem
 };
 

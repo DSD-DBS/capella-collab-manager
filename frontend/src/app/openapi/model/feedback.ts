@@ -27,10 +27,7 @@ export interface Feedback {
      * The sessions the feedback is for
      */
     sessions: Array<AnonymizedSession>;
-    /**
-     * What triggered the feedback form
-     */
-    trigger: string;
+    trigger: string | null;
 }
 export namespace Feedback {
 }

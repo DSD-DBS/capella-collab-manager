@@ -19,14 +19,13 @@
       }}.
     </div>
 
-    <div class="flex flex-wrap justify-center gap-1 text-primary">
+    <div class="flex flex-wrap justify-center gap-x-2 text-primary">
       <a
         target="_blank"
         rel="noopener"
         [href]="(metadataService.backendMetadata | async)?.imprint_url"
         >Imprint <mat-icon inline class="align-bottom">open_in_new</mat-icon></a
       >
-      &nbsp;
       <a
         target="_blank"
         rel="noopener"
@@ -34,7 +33,6 @@
         >Privacy statement
         <mat-icon inline class="align-bottom">open_in_new</mat-icon></a
       >
-      &nbsp;
       <a
         target="_blank"
         rel="noopener"
@@ -42,10 +40,13 @@
         >Contribute on GitHub
         <mat-icon inline class="align-bottom">open_in_new</mat-icon></a
       >
-      &nbsp;
-      @if (feedbackService.showOnFooter$ | async) {
+      @if (
+        (feedbackService.feedbackConfig$ | async)?.on_footer &&
+        authService.isLoggedIn()
+      ) {
         <button (click)="feedbackService.showDialog([], 'In footer')">
           Give Feedback
+          <mat-icon inline class="align-bottom">open_in_browser</mat-icon>
         </button>
       }
     </div>

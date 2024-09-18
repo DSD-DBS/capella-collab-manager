@@ -77,8 +77,7 @@ for learning about any potential issues users may be facing.
 There are several different types of feedback prompt:
 
 -   After a session: Prompt the user for feedback after they have manually
-    terminated a session. You can reduce the percentage of users that are
-    prompted by changing the `percentage` field.
+    terminated a session.
 -   On the session card: Show a feedback button on the session card.
 -   In the footer: Show a feedback button in the footer.
 -   Interval: Prompt the user for feedback after a certain number of hours have
@@ -87,27 +86,18 @@ There are several different types of feedback prompt:
 ```yaml
 feedback:
     enabled: true
-    after_session:
-        enabled: true
-        percentage: 25
+    after_session: true
     on_footer: true
     on_session_card: true
     interval:
         enabled: true
         hours_between_prompt: 168
-    receivers:
+    recipients: # (1)!
         - test1@example.com
         - test2@example.com
-    anonymity_policy: ask_user
 ```
 
 Prompts that are associated with a session automatically include anonymized
 metadata about the session.
 
-By default, users can choose to share their contact information when providing
-feedback. This can be disabled or made mandatory by changing the
-`anonymity_policy` field from `ask_user` to `force_anonymous` or
-`force_identified`, respectively.
-
-Feedback will be sent by email to the address specified in the `receiver`
-field.
+1. Feedback will be sent by email to all addresses specified here.

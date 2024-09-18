@@ -58,6 +58,7 @@ docker:
     nginxUnprivileged: null
     mockOauth2Server: null
     prometheus: null
+    smtp4dev: null
 
 general:
   # Base URL on which the service listens
@@ -195,10 +196,11 @@ alerting:
 # The deployment resources are reduced in the the development mode.
 development: false
 
-# Specify if you'd like to use the oauth mock
-# Never set mocks.oauth to True in production!
+# Specify if you'd like to use the oauth or smtp mocks
+# Never set to True in production!
 mocks:
   oauth: False
+  smtp: False
 
 cluster:
   kind: Kubernetes # Kubernetes | OpenShift
@@ -217,6 +219,9 @@ cluster:
   # Specify the name to the imagePullSecret in the namespace
   # It is used for the backend serviceAccount
   imagePullSecret: test
+
+  # Specify the imagePullPolicy for all management portal containers
+  imagePullPolicy: Always
 
   ingressClassName: nginx
 

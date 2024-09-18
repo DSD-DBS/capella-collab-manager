@@ -4,9 +4,8 @@
  */
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import {
-  FeedbackAnonymityPolicy,
   FeedbackConfigurationOutput,
   FeedbackService as OpenAPIFeedbackService,
   Session,
@@ -16,7 +15,7 @@ import { FeedbackDialogComponent } from './feedback-dialog/feedback-dialog.compo
 @Injectable({
   providedIn: 'root',
 })
-export class FeedbackService {
+export class FeedbackWrapperService {
   constructor(
     private feedbackService: OpenAPIFeedbackService,
     public dialog: MatDialog,
@@ -28,9 +27,11 @@ export class FeedbackService {
     FeedbackConfigurationOutput | undefined
   >(undefined);
 
+  public readonly feedbackConfig$ = this._feedbackConfig.asObservable();
+
   loadFeedbackConfig(): Observable<FeedbackConfigurationOutput> {
     return this.feedbackService
-      .getFeedback()
+      .getFeedbackConfiguration()
       .pipe(tap((feedbackConf) => this._feedbackConfig.next(feedbackConf)));
   }
 
@@ -41,33 +42,7 @@ export class FeedbackService {
     });
   }
 
-  // Observable for the feedback configuration
-  get feedbackConfig$(): Observable<FeedbackConfigurationOutput | undefined> {
-    return this._feedbackConfig.asObservable();
-  }
-
-  get enabled$(): Observable<boolean | undefined> {
-    return this.feedbackConfig$.pipe(map((config) => config?.enabled));
-  }
-
-  get showOnFooter$(): Observable<boolean> {
-    return combineLatest([this.enabled$, this.feedbackConfig$]).pipe(
-      map(([enabled, config]) => !!enabled && !!config?.on_footer),
-    );
-  }
-
-  get showOnSessionCard$(): Observable<boolean> {
-    return combineLatest([this.enabled$, this.feedbackConfig$]).pipe(
-      map(([enabled, config]) => !!enabled && !!config?.on_session_card),
-    );
-  }
-
-  get anonymityPolicy$(): Observable<FeedbackAnonymityPolicy | undefined> {
-    return this.feedbackConfig$.pipe(map((config) => config?.anonymity_policy));
-  }
-
   public shouldShowIntervalPrompt() {
-    if (!this.enabled$) return false;
     if (!this._feedbackConfig.value?.interval?.enabled) return false;
     const lastPrompt = localStorage.getItem('feedbackPrompt');
     if (!lastPrompt) {
@@ -77,14 +52,12 @@ export class FeedbackService {
 
     const hoursInterval =
       this._feedbackConfig.value.interval.hours_between_prompt;
-    const now = new Date();
-    const diff = now.getTime() - lastPromptDate.getTime();
+    const diff = new Date().getTime() - lastPromptDate.getTime();
     const hours = diff / (1000 * 60 * 60);
     if (hours >= hoursInterval) {
       return true;
-    } else {
-      return false;
     }
+    return false;
   }
 
   public saveFeedbackPromptDate() {
@@ -92,17 +65,7 @@ export class FeedbackService {
   }
 
   public shouldShowPostSessionPrompt() {
-    if (!this.enabled$) return false;
-    if (
-      !this._feedbackConfig.value?.after_session?.enabled ||
-      this._feedbackConfig.value?.after_session?.percentage === 0
-    ) {
-      return false;
-    }
-
-    return (
-      Math.random() * 100 <
-      this._feedbackConfig.value?.after_session?.percentage
-    );
+    if (this._feedbackConfig.value?.after_session) return true;
+    return false;
   }
 }

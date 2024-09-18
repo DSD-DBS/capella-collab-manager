@@ -29,6 +29,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: prometheus
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
           {{ if .Values.docker.images.prometheus }}
           image: {{ .Values.docker.images.prometheus }}
           {{ else }}
@@ -47,6 +48,7 @@ spec:
             limits:
               cpu: "0.2"
               memory: 200Mi
+              ephemeral-storage: "2Gi"
             requests:
               cpu: "0.05"
               memory: 50Mi
@@ -57,6 +59,7 @@ spec:
             limits:
               cpu: 1
               memory: 1Gi
+              ephemeral-storage: "2Gi"
             {{ end }}
           volumeMounts:
             - name: prometheus-config-volume

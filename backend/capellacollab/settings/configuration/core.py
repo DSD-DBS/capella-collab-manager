@@ -13,3 +13,9 @@ def get_config(db: orm.Session, name: str) -> models.ConfigurationBase:
     if configuration:
         return model_type().model_validate(configuration.configuration)
     return model_type().model_validate({})
+
+
+def get_global_configuration(db: orm.Session) -> models.GlobalConfiguration:
+    cfg = get_config(db, "global")
+    assert isinstance(cfg, models.GlobalConfiguration)
+    return cfg

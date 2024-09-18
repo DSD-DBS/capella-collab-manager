@@ -9,9 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { FeedbackAnonymityPolicy } from './feedback-anonymity-policy';
 import { FeedbackIntervalConfigurationOutput } from './feedback-interval-configuration-output';
-import { FeedbackProbabilityConfigurationOutput } from './feedback-probability-configuration-output';
 
 
 export interface FeedbackConfigurationOutput { 
@@ -22,7 +20,7 @@ export interface FeedbackConfigurationOutput {
     /**
      * If a feedback form is shown after terminating a session.
      */
-    after_session: FeedbackProbabilityConfigurationOutput;
+    after_session: boolean;
     /**
      * Should a general feedback button be shown.
      */
@@ -38,13 +36,6 @@ export interface FeedbackConfigurationOutput {
     /**
      * Email addresses to send feedback to.
      */
-    receivers: Array<string>;
-    /**
-     * If feedback should be anonymous or identified.
-     */
-    anonymity_policy: FeedbackAnonymityPolicy;
+    recipients: Array<string>;
 }
-export namespace FeedbackConfigurationOutput {
-}
-
 

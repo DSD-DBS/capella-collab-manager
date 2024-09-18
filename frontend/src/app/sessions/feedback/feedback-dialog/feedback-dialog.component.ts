@@ -28,10 +28,11 @@ import { MetadataService } from '../../../general/metadata/metadata.service';
 import {
   AnonymizedSession,
   Feedback,
-  FeedbackService as OpenAPIFeedbackService,
+  FeedbackRating,
+  FeedbackService,
   Session,
 } from '../../../openapi';
-import { FeedbackService } from '../feedback.service';
+import { FeedbackWrapperService } from '../feedback.service';
 
 interface DialogData {
   sessions: Session[];
@@ -68,21 +69,34 @@ export class FeedbackDialogComponent {
   });
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    public dialogRef: MatDialogRef<FeedbackDialogComponent>,
     public metadataService: MetadataService,
-    public openApiFeedbackService: OpenAPIFeedbackService,
-    public feedbackService: FeedbackService,
+    public feedbackWrapperService: FeedbackWrapperService,
+    private feedbackService: FeedbackService,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private dialogRef: MatDialogRef<FeedbackDialogComponent>,
   ) {}
 
-  setRating(rating: 'good' | 'okay' | 'bad') {
+  setRating(rating: FeedbackRating) {
     this.feedbackForm.get('rating')?.setValue(rating);
     this.feedbackForm.get('rating')?.markAsTouched();
     this.feedbackForm.get('rating')?.markAsDirty();
-    if (rating === 'good') {
-      this.feedbackForm.get('feedbackText')?.reset();
-      this.feedbackForm.get('shareContact')?.reset();
+  }
+
+  getColorForRating(rating: FeedbackRating) {
+    switch (rating) {
+      case FeedbackRating.Good:
+        return '!text-green-600';
+      case FeedbackRating.Okay:
+        return '!text-yellow-600';
+      case FeedbackRating.Bad:
+        return '!text-red-600';
+      default:
+        return;
     }
+  }
+
+  get ratings(): FeedbackRating[] {
+    return Object.values(FeedbackRating);
   }
 
   submitButton = {
@@ -114,7 +128,7 @@ export class FeedbackDialogComponent {
       trigger: this.data.trigger,
     };
 
-    this.openApiFeedbackService.submitFeedback(feedback).subscribe({
+    this.feedbackService.submitFeedback(feedback).subscribe({
       next: () => {
         this.dialogRef.close();
       },

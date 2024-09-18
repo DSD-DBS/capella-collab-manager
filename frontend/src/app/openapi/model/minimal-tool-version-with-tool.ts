@@ -9,17 +9,12 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { ToolSessionConfigurationInput } from './tool-session-configuration-input';
-import { ToolIntegrationsInput } from './tool-integrations-input';
+import { MinimalTool } from './minimal-tool';
 
 
-export interface ToolInput { 
-    /**
-     * Unique identifier of the resource.
-     */
+export interface MinimalToolVersionWithTool { 
     id: number;
     name?: string;
-    integrations?: ToolIntegrationsInput;
-    config?: ToolSessionConfigurationInput;
+    tool: MinimalTool;
 }
 

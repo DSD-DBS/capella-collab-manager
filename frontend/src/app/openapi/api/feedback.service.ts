@@ -97,14 +97,14 @@ export class FeedbackService {
     }
 
     /**
-     * Get Feedback
+     * Get Feedback Configuration
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getFeedback(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<FeedbackConfigurationOutput>;
-    public getFeedback(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FeedbackConfigurationOutput>>;
-    public getFeedback(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FeedbackConfigurationOutput>>;
-    public getFeedback(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getFeedbackConfiguration(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<FeedbackConfigurationOutput>;
+    public getFeedbackConfiguration(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<FeedbackConfigurationOutput>>;
+    public getFeedbackConfiguration(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<FeedbackConfigurationOutput>>;
+    public getFeedbackConfiguration(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -142,7 +142,7 @@ export class FeedbackService {
             }
         }
 
-        let localVarPath = `/api/v1/feedback`;
+        let localVarPath = `/api/v1/configurations/feedback`;
         return this.httpClient.request<FeedbackConfigurationOutput>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

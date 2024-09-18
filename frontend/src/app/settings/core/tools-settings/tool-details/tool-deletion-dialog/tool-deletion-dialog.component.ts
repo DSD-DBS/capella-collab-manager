@@ -5,7 +5,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToolOutput, ToolsService } from 'src/app/openapi';
+import { Tool, ToolsService } from 'src/app/openapi';
 
 @Component({
   selector: 'app-tool-deletion-dialog',
@@ -18,7 +18,7 @@ export class ToolDeletionDialogComponent {
   constructor(
     private toolsService: ToolsService,
     public dialogRef: MatDialogRef<ToolDeletionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public tool: ToolOutput,
+    @Inject(MAT_DIALOG_DATA) public tool: Tool,
   ) {}
 
   deleteTool(): void {

@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+{{ if .Values.mocks.smtp }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-smtp-mock
+  labels:
+    id: {{ .Release.Name }}-service-smtp-mock
+spec:
+  type: ClusterIP
+  selector:
+    id: {{ .Release.Name }}-deployment-smtp-mock
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 587
+      targetPort: smtp
+      protocol: TCP
+      name: smtp
+{{ end }}
