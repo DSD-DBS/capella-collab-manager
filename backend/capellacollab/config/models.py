@@ -108,27 +108,40 @@ class K8sPromtailConfig(BaseConfig):
         description="Whether to enable Loki monitoring.",
         examples=[True],
     )
-    loki_url: str = pydantic.Field(
+    loki_url: str | None = pydantic.Field(
         default="http://localhost:30001/loki/api/v1/push",
         alias="lokiURL",
         description="The URL of the Loki instance to which to push logs.",
         examples=["http://localhost:30001/loki/api/v1/push"],
     )
-    loki_username: str = pydantic.Field(
+    loki_username: str | None = pydantic.Field(
         default="localLokiUser",
         description="The username for the Loki instance.",
         examples=["localLokiUser"],
     )
-    loki_password: str = pydantic.Field(
+    loki_password: str | None = pydantic.Field(
         default="localLokiPassword",
         description="The password for the Loki instance.",
         examples=["localLokiPassword"],
     )
-    server_port: int = pydantic.Field(
+    server_port: int | None = pydantic.Field(
         default=3101,
         description="The port of the promtail server.",
         examples=[3101],
     )
+
+    @pydantic.model_validator(mode="after")
+    def check_fields_are_set_if_enabled(self) -> t.Self:
+        if self.loki_enabled and not (
+            self.loki_url
+            and self.loki_username
+            and self.loki_password
+            and self.server_port
+        ):
+            raise ValueError(
+                "Loki monitoring is enabled, but not all required fields are set."
+            )
+        return self
 
 
 class K8sConfig(BaseConfig):

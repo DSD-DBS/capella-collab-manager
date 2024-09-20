@@ -828,7 +828,13 @@ class KubernetesOperator:
         session_type: str,
         tool_name: str,
         version_name: str,
-    ) -> client.V1ConfigMap:
+    ) -> client.V1ConfigMap | None:
+        """Create the configuration for promtail.
+
+        Do not call if loki is disabled!
+        """
+
+        assert cfg.promtail.loki_url
         config_map: client.V1ConfigMap = client.V1ConfigMap(
             kind="ConfigMap",
             api_version="v1",

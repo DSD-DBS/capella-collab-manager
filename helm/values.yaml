@@ -100,7 +100,7 @@ database:
       ###### IF database.guacamole.deploy == True ######
 
       # Admin password of the database
-      password: secret
+      password: null
 
     external:
       ###### IF database.guacamole.deploy == False ######
@@ -135,7 +135,7 @@ database:
       ###### IF database.backend.deploy == True ######
 
       # Admin password of the database
-      password: secret
+      password: null
 
     external:
       ###### IF database.backend.deploy == False ######
@@ -144,7 +144,7 @@ database:
       uri: postgresql://user:password@url:port/db_name
 
 valkey:
-  password: secret
+  password: null
 
 backend:
   authentication:
@@ -258,16 +258,10 @@ promtail:
   storageAccessMode: ReadWriteOnce
   storageClassName: local-path
 
-definitions:
-  loki:
-    # Default username & password for Loki
-    username: &lokiUsername localLokiUser
-    password: &lokiPassword localLokiPassword
-
 # Default passwords for Grafana
 grafana:
   adminUser: admin
-  adminPassword: admin
+  adminPassword: null
 
 # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
 loki:
@@ -284,8 +278,8 @@ loki:
   gateway:
     basicAuth:
       enabled: True
-      username: *lokiUsername
-      password: *lokiPassword
+      username: localLokiUser
+      password: null
     resources: &resourcesLoki
       limits:
         cpu: '1'

@@ -112,6 +112,9 @@ jobs:
           --set mocks.oauth=True \
           --set development=True \
           --set general.port=8080 \
+          --set database.backend.internal.password="secret" \
+          --set database.guacamole.internal.password="secret" \
+          --set valkey.password="secret" \
           --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
           ./helm
       - name: Wait for all containers to be ready
