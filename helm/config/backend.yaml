@@ -66,6 +66,9 @@ database:
   url: "{{ .Values.database.backend.external.uri }}"
   {{ end }}
 
+valkey:
+  url: "valkey://default:{{ .Values.valkey.password }}@{{ .Release.Name }}-valkey:6379/0"
+
 pipelines:
   timeout: {{ .Values.pipelines.timeout }}
 

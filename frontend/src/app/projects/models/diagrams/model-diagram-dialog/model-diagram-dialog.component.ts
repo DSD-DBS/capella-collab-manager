@@ -30,11 +30,13 @@ import { MatInput } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { saveAs } from 'file-saver';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { Observable, switchMap, tap } from 'rxjs';
 import {
   DiagramCacheMetadata,
   DiagramMetadata,
   Project,
   ProjectsModelsDiagramsService,
+  ProjectsModelsGitService,
   ToolModel,
 } from 'src/app/openapi';
 import {
@@ -89,23 +91,39 @@ export class ModelDiagramDialogComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
+    private projectsModelsGitService: ProjectsModelsGitService,
     private projectsModelsDiagramsService: ProjectsModelsDiagramsService,
     @Inject(MAT_DIALOG_DATA)
     public data: { model: ToolModel; project: Project },
   ) {}
 
   ngOnInit(): void {
-    this.projectsModelsDiagramsService
+    this.loadDiagramCacheMetadata().subscribe();
+  }
+
+  loadDiagramCacheMetadata(): Observable<DiagramCacheMetadata> {
+    return this.projectsModelsDiagramsService
       .getDiagramMetadata(this.data.project.slug, this.data.model.slug)
-      .subscribe({
-        next: (diagramMetadata) => {
-          this.diagramMetadata = diagramMetadata;
-          this.observeVisibleDiagrams();
-        },
-        error: () => {
-          this.dialogRef.close();
-        },
-      });
+      .pipe(
+        tap({
+          next: (diagramMetadata) => {
+            this.diagramMetadata = diagramMetadata;
+            this.observeVisibleDiagrams();
+          },
+          error: () => {
+            this.dialogRef.close();
+          },
+        }),
+      );
+  }
+
+  clearCache() {
+    this.diagramMetadata = undefined;
+    this.diagrams = {};
+    this.projectsModelsGitService
+      .emptyCache(this.data.project.slug, this.data.model.slug)
+      .pipe(switchMap(() => this.loadDiagramCacheMetadata()))
+      .subscribe();
   }
 
   observeVisibleDiagrams() {
@@ -137,8 +155,14 @@ export class ModelDiagramDialogComponent implements OnInit {
   lazyLoadDiagram(uuid: string) {
     if (!this.diagrams[uuid]) {
       this.diagrams[uuid] = { loading: true, content: undefined };
+
       this.projectsModelsDiagramsService
-        .getDiagram(uuid, this.data.project.slug, this.data.model.slug)
+        .getDiagram(
+          uuid,
+          this.data.project.slug,
+          this.data.model.slug,
+          this.diagramMetadata?.job_id ?? undefined,
+        )
         .subscribe({
           next: (response: Blob) => {
             const reader = new FileReader();

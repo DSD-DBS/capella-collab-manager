@@ -11,7 +11,7 @@
 
 
 
-export interface PatchGitModel { 
+export interface PutGitModel { 
     path: string;
     entrypoint: string;
     revision: string;

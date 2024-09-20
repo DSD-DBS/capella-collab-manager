@@ -61,21 +61,31 @@ def make_git_model_primary(
 def update_git_model(
     db: orm.Session,
     git_model: models.DatabaseGitModel,
-    patch_model: models.PatchGitModel,
+    put_model: models.PutGitModel,
 ) -> models.DatabaseGitModel:
-    git_model.path = patch_model.path
-    git_model.entrypoint = patch_model.entrypoint
-    git_model.revision = patch_model.revision
+    git_model.path = put_model.path
+    git_model.entrypoint = put_model.entrypoint
+    git_model.revision = put_model.revision
+    git_model.repository_id = None
 
-    if patch_model.password:
-        git_model.username = patch_model.username
-        git_model.password = patch_model.password
-    elif not patch_model.username:
+    if put_model.password:
+        git_model.username = put_model.username
+        git_model.password = put_model.password
+    elif not put_model.username:
         git_model.username = ""
         git_model.password = ""
 
-    if patch_model.primary and not git_model.primary:
+    if put_model.primary and not git_model.primary:
         git_model = make_git_model_primary(db, git_model)
+
+    db.commit()
+    return git_model
+
+
+def update_git_model_repository_id(
+    db: orm.Session, git_model: models.DatabaseGitModel, repository_id: str
+) -> models.DatabaseGitModel:
+    git_model.repository_id = repository_id
 
     db.commit()
     return git_model

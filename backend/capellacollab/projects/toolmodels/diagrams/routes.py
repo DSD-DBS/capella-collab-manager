@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import pathlib
 from urllib import parse
@@ -41,24 +42,30 @@ async def get_diagram_metadata(
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     try:
-        (
-            last_updated,
-            diagram_metadata_entries,
-        ) = await handler.get_file_from_repository_or_artifacts_as_json(
-            "diagram_cache/index.json",
-            "update_capella_diagram_cache",
-            "diagram-cache/" + handler.git_model.revision,
+        job_id, last_updated, diagram_metadata_entries = (
+            await handler.get_file_or_artifact(
+                trusted_file_path="diagram_cache/index.json",
+                logger=logger,
+                job_name="update_capella_diagram_cache",
+                file_revision=f"diagram-cache/{handler.revision}",
+            )
         )
-    except requests.exceptions.HTTPError:
-        logger.info("Failed fetching diagram metadata", exc_info=True)
+    except requests.HTTPError:
+        logger.info(
+            "Failed fetching diagram metadata file or artifact for %s",
+            handler.path,
+            exc_info=True,
+        )
         raise exceptions.DiagramCacheNotConfiguredProperlyError()
 
+    diagram_metadata_entries = json.loads(diagram_metadata_entries)
     return models.DiagramCacheMetadata(
         diagrams=[
             models.DiagramMetadata.model_validate(diagram_metadata)
             for diagram_metadata in diagram_metadata_entries
         ],
         last_updated=last_updated,
+        job_id=job_id,
     )
 
 
@@ -69,6 +76,7 @@ async def get_diagram_metadata(
 )
 async def get_diagram(
     diagram_uuid_or_filename: str,
+    job_id: str | None = None,
     handler: git_handler.GitHandler = fastapi.Depends(
         git_injectables.get_git_handler
     ),
@@ -79,16 +87,23 @@ async def get_diagram(
         raise exceptions.FileExtensionNotSupportedError(fileextension)
 
     diagram_uuid = pathlib.PurePosixPath(diagram_uuid_or_filename).stem
-    try:
-        _, diagram = await handler.get_file_from_repository_or_artifacts(
-            f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg",
-            "update_capella_diagram_cache",
-            "diagram-cache/" + handler.git_model.revision,
-        )
-    except requests.exceptions.HTTPError:
-        logger.info("Failed fetching diagram", exc_info=True)
-        raise exceptions.DiagramCacheNotConfiguredProperlyError()
+    file_path = f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg"
 
-    return responses.SVGResponse(
-        content=diagram,
-    )
+    try:
+        file_or_artifact = await handler.get_file_or_artifact(
+            trusted_file_path=file_path,
+            logger=logger,
+            job_name="update_capella_diagram_cache",
+            job_id=job_id,
+            file_revision=f"diagram-cache/{handler.revision}",
+        )
+        return responses.SVGResponse(content=file_or_artifact[2])
+    except requests.HTTPError:
+        logger.info(
+            "Failed fetching diagram file or artifact %s for %s.",
+            diagram_uuid,
+            handler.path,
+            f"diagram-cache/{handler.revision}",
+            exc_info=True,
+        )
+        raise exceptions.DiagramCacheNotConfiguredProperlyError()

@@ -11,13 +11,13 @@ import {
 
 export const mockPrimaryGitModel: Readonly<GitModel> = {
   id: 1,
-  name: 'fakeGitModelName',
   primary: true,
   path: 'fakePath',
   revision: 'fakeRevision',
   entrypoint: 'fakeEntrypoint',
   password: false,
   username: 'fakeUsername',
+  repository_id: null,
 };
 
 export class MockGitModelService implements Partial<GitModelService> {

@@ -99,13 +99,14 @@ export class ProjectsModelsDiagramsService {
      * @param diagramUuidOrFilename 
      * @param projectSlug 
      * @param modelSlug 
+     * @param jobId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Blob>;
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Blob>>;
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Blob>>;
-    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, jobId?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Blob>;
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, jobId?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Blob>>;
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, jobId?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Blob>>;
+    public getDiagram(diagramUuidOrFilename: string, projectSlug: string, modelSlug: string, jobId?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'image/svg+xml' | 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (diagramUuidOrFilename === null || diagramUuidOrFilename === undefined) {
             throw new Error('Required parameter diagramUuidOrFilename was null or undefined when calling getDiagram.');
         }
@@ -114,6 +115,12 @@ export class ProjectsModelsDiagramsService {
         }
         if (modelSlug === null || modelSlug === undefined) {
             throw new Error('Required parameter modelSlug was null or undefined when calling getDiagram.');
+        }
+
+        let localVarQueryParameters = new HttpParams({encoder: this.encoder});
+        if (jobId !== undefined && jobId !== null) {
+          localVarQueryParameters = this.addToHttpParams(localVarQueryParameters,
+            <any>jobId, 'job_id');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -153,6 +160,7 @@ export class ProjectsModelsDiagramsService {
         return this.httpClient.request('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                params: localVarQueryParameters,
                 responseType: "blob",
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

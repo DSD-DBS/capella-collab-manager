@@ -5,9 +5,14 @@ DB_PORT = 5432
 DB_PASSWORD = dev
 DB_USER = dev
 DB_NAME = dev
+
+VALKEY_PASSWORD ?= password
+
 VENV = .venv
 
 HOST ?= 127.0.0.1
+
+VALKEY_PORT = 6379
 
 DATABASE_LOAD_FILE ?= ../local/load.sql
 DATABASE_SAVE_DIR ?= ../local
@@ -30,6 +35,18 @@ database:
 		-e POSTGRES_USER=$(DB_USER) \
 		-e POSTGRES_DB=$(DB_NAME) \
 		postgres
+
+valkey:
+	TMP_FILE=$$(mktemp)
+	echo "requirepass $(VALKEY_PASSWORD)" > $$TMP_FILE
+	docker start capella-collab-valkey || \
+	docker run -d \
+		--name capella-collab-valkey \
+		-p $(VALKEY_PORT):6379 \
+		-v $$TMP_FILE:/usr/local/etc/valkey/valkey.conf \
+		valkey/valkey:latest \
+		valkey-server \
+		/usr/local/etc/valkey/valkey.conf
 
 app:
 	if [ -d "$(VENV)/bin" ]; then
@@ -57,7 +74,7 @@ install:
 openapi:
 	CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES=1 $(VENV)/bin/python -m capellacollab.cli openapi generate /tmp/openapi.json
 
-dev: database app
+dev: database valkey app
 
 cleanup:
 	docker stop capella-collab-postgres

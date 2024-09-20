@@ -24,14 +24,14 @@ class PostGitModel(core_pydantic.BaseModel):
     password: str
 
 
-class PatchGitModel(PostGitModel):
+class PutGitModel(PostGitModel):
     primary: bool
 
 
 class GitModel(PostGitModel):
     id: int
-    name: str
     primary: bool
+    repository_id: str | None
 
     @pydantic.field_serializer("password")
     def transform_password(self, data: str) -> bool:
@@ -44,7 +44,6 @@ class DatabaseGitModel(database.Base):
     id: orm.Mapped[int] = orm.mapped_column(
         init=False, primary_key=True, index=True, autoincrement=True
     )
-    name: orm.Mapped[str]
     path: orm.Mapped[str]
     entrypoint: orm.Mapped[str]
     revision: orm.Mapped[str]
@@ -60,12 +59,13 @@ class DatabaseGitModel(database.Base):
     username: orm.Mapped[str]
     password: orm.Mapped[str]
 
+    repository_id: orm.Mapped[str | None] = orm.mapped_column(default=None)
+
     @classmethod
     def from_post_git_model(
         cls, model: "DatabaseToolModel", primary: bool, new_model: PostGitModel
     ):
         return cls(
-            name="",
             primary=primary,
             model=model,
             **new_model.model_dump(),

@@ -71,6 +71,9 @@ export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   project!: Project;
 
   @Input()
+  jobId: string | undefined;
+
+  @Input()
   expanded = false;
 
   ngAfterViewInit(): void {
@@ -103,7 +106,7 @@ model = capellambse.MelodyModel(
   diagram_cache={
     "path": "${basePath}/api/v1/projects/${this.project!.slug}/models/${
       this.model.slug
-    }/diagrams/%s",
+    }/diagrams/%s${this.jobId ? '?job_id=' + this.jobId : ''}",
     "username": "${this.userService.user?.name}",
     "password": "${this.passwordValue ? this.passwordValue : '**************'}",
   }

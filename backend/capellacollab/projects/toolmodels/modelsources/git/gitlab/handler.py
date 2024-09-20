@@ -16,17 +16,18 @@ from . import exceptions
 
 
 class GitlabHandler(handler.GitHandler):
-    async def get_project_id_by_git_url(self) -> str:
+    @classmethod
+    async def get_repository_id_by_git_url(
+        cls, path: str, password: str, api_url: str
+    ) -> str:
         project_name_encoded = parse.quote(
-            parse.urlparse(self.git_model.path)
-            .path.lstrip("/")
-            .removesuffix(".git"),
+            parse.urlparse(path).path.lstrip("/").removesuffix(".git"),
             safe="",
         )
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"{self.git_instance.api_url}/projects/{project_name_encoded}",
-                headers={"PRIVATE-TOKEN": self.git_model.password},
+                f"{api_url}/projects/{project_name_encoded}",
+                headers={"PRIVATE-TOKEN": password},
                 timeout=config.requests.timeout,
             ) as response:
                 if response.status == 403:
@@ -39,29 +40,25 @@ class GitlabHandler(handler.GitHandler):
                 response.raise_for_status()
                 return (await response.json())["id"]
 
-    async def get_last_job_run_id_for_git_model(
-        self, job_name: str, project_id: str | None = None
-    ) -> tuple[str, str]:
-        if not project_id:
-            project_id = await self.get_project_id_by_git_url()
-        for pipeline_id in await self.__get_last_pipeline_run_ids(project_id):
+    async def get_last_successful_job_run(
+        self, job_name: str
+    ) -> tuple[str, datetime.datetime]:
+        for pipeline_id in await self.__get_last_pipeline_run_ids():
             if job := await self.__get_job_id_for_job_name(
-                project_id,
-                pipeline_id,
-                job_name,
+                pipeline_id, job_name
             ):
-                return job
+                return (str(job[0]), job[1])
 
         raise git_exceptions.GitPipelineJobNotFoundError(
-            job_name=job_name, revision=self.git_model.revision
+            job_name=job_name, revision=self.revision
         )
 
-    def get_last_updated_for_file_path(
-        self, project_id: str, file_path: str, revision: str | None
-    ) -> datetime.datetime | None:
+    def get_last_updated_for_file(
+        self, file_path: str, revision: str | None = None
+    ) -> datetime.datetime:
         response = requests.get(
-            f"{self.git_instance.api_url}/projects/{project_id}/repository/commits?ref_name={revision or self.git_model.revision}&path={file_path}",
-            headers={"PRIVATE-TOKEN": self.git_model.password},
+            f"{self.api_url}/projects/{self.repository_id}/repository/commits?ref_name={revision or self.revision}&path={file_path}",
+            headers={"PRIVATE-TOKEN": self.password},
             timeout=config.requests.timeout,
         )
         response.raise_for_status()
@@ -69,16 +66,24 @@ class GitlabHandler(handler.GitHandler):
             raise git_exceptions.GitRepositoryFileNotFoundError(
                 filename=file_path
             )
-        return response.json()[0]["authored_date"]
+        return datetime.datetime.fromisoformat(
+            response.json()[0]["authored_date"]
+        )
 
-    async def __get_last_pipeline_run_ids(
-        self,
-        project_id: str,
-    ) -> list[str]:
+    def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
+        response = requests.get(
+            f"{self.api_url}/projects/{self.repository_id}/jobs/{job_id}",
+            headers={"PRIVATE-TOKEN": self.password},
+            timeout=config.requests.timeout,
+        )
+        response.raise_for_status()
+        return datetime.datetime.fromisoformat(response.json()["started_at"])
+
+    async def __get_last_pipeline_run_ids(self) -> list[str]:
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"{self.git_instance.api_url}/projects/{project_id}/pipelines?ref={parse.quote(self.git_model.revision, safe='')}&per_page=20",
-                headers={"PRIVATE-TOKEN": self.git_model.password},
+                f"{self.api_url}/projects/{self.repository_id}/pipelines?ref={parse.quote(self.revision, safe='')}&per_page=20",
+                headers={"PRIVATE-TOKEN": self.password},
                 timeout=config.requests.timeout,
             ) as response:
                 response.raise_for_status()
@@ -86,16 +91,13 @@ class GitlabHandler(handler.GitHandler):
                 return [pipeline["id"] for pipeline in await response.json()]
 
     async def __get_job_id_for_job_name(
-        self,
-        project_id: str,
-        pipeline_id: str,
-        job_name: str,
-    ) -> tuple[str, str] | None:
+        self, pipeline_id: str, job_name: str
+    ) -> tuple[str, datetime.datetime] | None:
         """Search for a job by name in a pipeline"""
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"{self.git_instance.api_url}/projects/{project_id}/pipelines/{pipeline_id}/jobs",
-                headers={"PRIVATE-TOKEN": self.git_model.password},
+                f"{self.api_url}/projects/{self.repository_id}/pipelines/{pipeline_id}/jobs",
+                headers={"PRIVATE-TOKEN": self.password},
                 timeout=config.requests.timeout,
             ) as response:
                 response.raise_for_status()
@@ -103,62 +105,36 @@ class GitlabHandler(handler.GitHandler):
                 for job in await response.json():
                     if job["name"] == job_name:
                         if job["status"] == "success":
-                            return job["id"], job["started_at"]
+                            started_at = datetime.datetime.fromisoformat(
+                                job["started_at"]
+                            )
+                            return job["id"], started_at
                         if job["status"] == "failed":
-                            raise git_exceptions.GitPipelineJobFailedError(
-                                job_name
+                            raise git_exceptions.GitPipelineJobUnsuccessfulError(
+                                job_name, "failed"
                             )
 
                 return None
 
-    def get_artifact_from_job_as_json(
-        self,
-        project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
-    ) -> dict:
-        return self.get_artifact_from_job(
-            project_id,
-            job_id,
-            trusted_path_to_artifact,
-        ).json()
-
-    def get_artifact_from_job_as_content(
-        self,
-        project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
-    ) -> bytes:
-        return self.get_artifact_from_job(
-            project_id,
-            job_id,
-            trusted_path_to_artifact,
-        ).content
-
     def get_artifact_from_job(
-        self,
-        project_id: str,
-        job_id: str,
-        trusted_path_to_artifact: str,
-    ) -> requests.Response:
+        self, job_id: str, trusted_path_to_artifact: str
+    ) -> bytes:
         response = requests.get(
-            f"{self.git_instance.api_url}/projects/{project_id}/jobs/{job_id}/artifacts/{trusted_path_to_artifact}",
-            headers={"PRIVATE-TOKEN": self.git_model.password},
+            f"{self.api_url}/projects/{self.repository_id}/jobs/{job_id}/artifacts/{trusted_path_to_artifact}",
+            headers={"PRIVATE-TOKEN": self.password},
             timeout=config.requests.timeout,
         )
         response.raise_for_status()
-        return response
 
-    async def get_file_from_repository(
-        self,
-        project_id: str,
-        trusted_file_path: str,
-        revision: str | None = None,
+        return response.content
+
+    def get_file_from_repository(
+        self, trusted_file_path: str, revision: str | None = None
     ) -> bytes:
-        branch = revision if revision else self.git_model.revision
+        branch = revision if revision else self.revision
         response = requests.get(
-            f"{self.git_instance.api_url}/projects/{project_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(branch, safe='')}",
-            headers={"PRIVATE-TOKEN": self.git_model.password},
+            f"{self.api_url}/projects/{self.repository_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(branch, safe='')}",
+            headers={"PRIVATE-TOKEN": self.password},
             timeout=config.requests.timeout,
         )
 

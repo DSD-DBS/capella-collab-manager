@@ -71,19 +71,6 @@ class GitRepositoryFileNotFoundError(core_exceptions.BaseError):
         )
 
 
-class GitInstanceAPIEndpointNotFoundError(core_exceptions.BaseError):
-    def __init__(self):
-        super().__init__(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            title="Git instance API endpoint not found",
-            reason=(
-                "The used Git instance has no API endpoint defined. "
-                "Please contact your administrator."
-            ),
-            err_code="GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
-        )
-
-
 class GitPipelineJobNotFoundError(core_exceptions.BaseError):
     def __init__(self, job_name: str, revision: str):
         super().__init__(
@@ -97,31 +84,18 @@ class GitPipelineJobNotFoundError(core_exceptions.BaseError):
         )
 
 
-class GitPipelineJobFailedError(core_exceptions.BaseError):
-    def __init__(self, job_name: str):
-        super().__init__(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            title="Failed job found",
-            reason=f"The last job with the name '{job_name}' has failed.",
-            err_code="FAILED_JOB_FOUND",
-        )
-
-
-class GitPipelineJobUnknownStateError(core_exceptions.BaseError):
-    job_name: str
-    state: str
-
+class GitPipelineJobUnsuccessfulError(core_exceptions.BaseError):
     def __init__(self, job_name: str, state: str):
         self.job_name = job_name
         self.state = state
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            title="Unknown job state",
+            title="Unsuccessful job",
             reason=(
-                f"Job '{job_name}' has an unhandled or unknown state: '{state}'. "
+                f"Job '{job_name}' has an unsuccessful state: {self.state}."
                 "Please contact your administrator."
             ),
-            err_code="UNKNOWN_STATE_ERROR",
+            err_code="UNSUCCESSFUL_JOB_STATE_ERROR",
         )
 
 

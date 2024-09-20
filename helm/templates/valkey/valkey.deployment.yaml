@@ -1,0 +1,64 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-valkey
+  labels:
+    id: {{ .Release.Name }}-deployment-valkey
+spec:
+  replicas: {{ .Values.replicaCount.valkey | default 1 }}
+  selector:
+    matchLabels:
+      id: {{ .Release.Name }}-deployment-valkey
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        id: {{ .Release.Name }}-deployment-valkey
+    spec:
+      automountServiceAccountToken: false
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: config
+          secret:
+            secretName: {{ .Release.Name }}-valkey
+      containers:
+        - name: {{ .Release.Name }}-valkey
+          {{ if .Values.docker.images.valkey }}
+          image: {{ .Values.docker.images.valkey }}
+          {{ else }}
+          image: {{ .Values.docker.registry.external }}/valkey/valkey:7.2.6
+          {{ end }}
+          args: ["valkey-server", "/usr/local/etc/valkey/valkey.conf"]
+          ports:
+            - name: valkey
+              containerPort: 6379
+              protocol: TCP
+          resources:
+            {{ if .Values.development }}
+            requests:
+              cpu: "0.005"
+              memory: 20Mi
+            limits:
+              cpu: "0.1"
+              memory: 250Mi
+              ephemeral-storage: "2Gi"
+            {{ else }}
+            requests:
+              cpu: "0.01"
+              memory: "500Mi"
+            limits:
+              cpu: "0.2"
+              memory: "3Gi"
+              ephemeral-storage: "5Gi"
+            {{ end }}
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            - mountPath: /usr/local/etc/valkey/valkey.conf
+              name: config
+              subPath: valkey.conf

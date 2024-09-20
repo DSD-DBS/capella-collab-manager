@@ -1,10 +1,12 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import functools
 import typing as t
 
 import pydantic
 import sqlalchemy as sa
+import valkey
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
 
@@ -33,6 +35,11 @@ from . import models  # isort:skip # pylint: disable=unused-import
 def get_db() -> t.Iterator[orm.Session]:
     with SessionLocal() as session:
         yield session
+
+
+@functools.lru_cache
+def get_valkey() -> valkey.Valkey:
+    return valkey.Valkey.from_url(config.valkey.url, decode_responses=True)
 
 
 def patch_database_with_pydantic_object(

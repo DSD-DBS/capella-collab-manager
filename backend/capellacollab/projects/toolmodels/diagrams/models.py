@@ -18,6 +18,7 @@ class DiagramMetadata(core_pydantic.BaseModel):
 class DiagramCacheMetadata(core_pydantic.BaseModel):
     diagrams: list[DiagramMetadata]
     last_updated: datetime.datetime
+    job_id: str | None = None
 
     _validate_last_updated = pydantic.field_serializer("last_updated")(
         core_pydantic.datetime_serializer

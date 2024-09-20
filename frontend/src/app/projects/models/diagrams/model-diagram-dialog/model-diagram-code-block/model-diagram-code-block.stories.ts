@@ -22,3 +22,21 @@ export const CodeBlock: Story = {
     expanded: true,
   },
 };
+
+export const CodeBlockWithToken: Story = {
+  args: {
+    model: mockModel,
+    project: mockProject,
+    expanded: true,
+    passwordValue: 'verysecretpassword',
+  },
+};
+
+export const CodeBlockWithJobID: Story = {
+  args: {
+    model: mockModel,
+    project: mockProject,
+    expanded: true,
+    jobId: '1234',
+  },
+};

@@ -17,3 +17,4 @@ certs/*
 /helm/charts/*
 /logs/*
 .env
+autoscaler

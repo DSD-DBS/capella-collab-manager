@@ -288,6 +288,12 @@ class DatabaseConfig(BaseConfig):
     )
 
 
+class ValkeyConfig(BaseConfig):
+    url: str = pydantic.Field(
+        default="valkey://default:password@localhost:6379/0"
+    )
+
+
 class InitialConfig(BaseConfig):
     admin: str = pydantic.Field(
         default="admin",
@@ -367,6 +373,7 @@ class AppConfig(BaseConfig):
     authentication: AuthenticationConfig = AuthenticationConfig()
     prometheus: PrometheusConfig = PrometheusConfig()
     database: DatabaseConfig = DatabaseConfig()
+    valkey: ValkeyConfig = ValkeyConfig()
     initial: InitialConfig = InitialConfig()
     logging: LoggingConfig = LoggingConfig()
     requests: RequestsConfig = RequestsConfig()

@@ -36,11 +36,13 @@ type Story = StoryObj<ModelDiagramDialogComponent>;
 const emptyDiagramCacheMetadata: DiagramCacheMetadata = {
   diagrams: [],
   last_updated: '2024-04-29T14:00:00Z',
+  job_id: null,
 };
 
 const loadedDiagramCacheMetadata: DiagramCacheMetadata = {
   diagrams: [{ name: 'fakeDiagram1', uuid: 'fakeUUID-Loaded', success: true }],
   last_updated: '2024-04-29T14:00:00Z',
+  job_id: null,
 };
 
 const notLoadedDiagramCacheMetadata: DiagramCacheMetadata = {
@@ -48,11 +50,13 @@ const notLoadedDiagramCacheMetadata: DiagramCacheMetadata = {
     { name: 'fakeDiagram2', uuid: 'fakeUUID-Not-Loaded', success: true },
   ],
   last_updated: '2024-04-29T14:00:00Z',
+  job_id: null,
 };
 
 const errorDiagramCacheMetadata: DiagramCacheMetadata = {
   diagrams: [{ name: 'fakeDiagram3', uuid: 'fakeUUID-Loaded', success: false }],
   last_updated: '2024-04-29T14:00:00Z',
+  job_id: null,
 };
 
 const combinedDiagramCacheMetadata: DiagramCacheMetadata = {
@@ -62,6 +66,7 @@ const combinedDiagramCacheMetadata: DiagramCacheMetadata = {
     { name: 'fakeDiagram3', uuid: 'fakeUUID-Loaded', success: false },
   ],
   last_updated: '2024-04-29T14:00:00Z',
+  job_id: null,
 };
 
 // prettier-ignore

@@ -25,9 +25,9 @@ import { GitModel } from '../model/git-model';
 // @ts-ignore
 import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
-import { PatchGitModel } from '../model/patch-git-model';
-// @ts-ignore
 import { PostGitModel } from '../model/post-git-model';
+// @ts-ignore
+import { PutGitModel } from '../model/put-git-model';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -255,6 +255,81 @@ export class ProjectsModelsGitService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/modelsources/git/${this.configuration.encodeParam({name: "gitModelId", value: gitModelId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        return this.httpClient.request<any>('delete', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Empty Cache
+     * @param projectSlug 
+     * @param modelSlug 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public emptyCache(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public emptyCache(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public emptyCache(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public emptyCache(projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (projectSlug === null || projectSlug === undefined) {
+            throw new Error('Required parameter projectSlug was null or undefined when calling emptyCache.');
+        }
+        if (modelSlug === null || modelSlug === undefined) {
+            throw new Error('Required parameter modelSlug was null or undefined when calling emptyCache.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (PersonalAccessToken) required
+        localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+        let localVarTransferCache: boolean | undefined = options && options.transferCache;
+        if (localVarTransferCache === undefined) {
+            localVarTransferCache = true;
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/modelsources/git/cache`;
         return this.httpClient.request<any>('delete', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -595,14 +670,14 @@ export class ProjectsModelsGitService {
      * @param projectSlug 
      * @param gitModelId 
      * @param modelSlug 
-     * @param patchGitModel 
+     * @param putGitModel 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, patchGitModel: PatchGitModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GitModel>;
-    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, patchGitModel: PatchGitModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GitModel>>;
-    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, patchGitModel: PatchGitModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GitModel>>;
-    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, patchGitModel: PatchGitModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, putGitModel: PutGitModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GitModel>;
+    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, putGitModel: PutGitModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GitModel>>;
+    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, putGitModel: PutGitModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GitModel>>;
+    public updateGitModelById(projectSlug: string, gitModelId: number, modelSlug: string, putGitModel: PutGitModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling updateGitModelById.');
         }
@@ -612,8 +687,8 @@ export class ProjectsModelsGitService {
         if (modelSlug === null || modelSlug === undefined) {
             throw new Error('Required parameter modelSlug was null or undefined when calling updateGitModelById.');
         }
-        if (patchGitModel === null || patchGitModel === undefined) {
-            throw new Error('Required parameter patchGitModel was null or undefined when calling updateGitModelById.');
+        if (putGitModel === null || putGitModel === undefined) {
+            throw new Error('Required parameter putGitModel was null or undefined when calling updateGitModelById.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -672,7 +747,7 @@ export class ProjectsModelsGitService {
         return this.httpClient.request<GitModel>('put', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: patchGitModel,
+                body: putGitModel,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

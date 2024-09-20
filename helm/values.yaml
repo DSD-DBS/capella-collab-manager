@@ -9,6 +9,7 @@
 replicaCount:
   backend: 1
   backendPostgres: 1
+  valkey: 1
   docs: 1
   frontend: 1
   grafana: 1
@@ -54,6 +55,7 @@ docker:
 
     promtail: null
     postgres: null
+    valkey: null
     grafana: null
     nginxUnprivileged: null
     mockOauth2Server: null
@@ -140,6 +142,9 @@ database:
 
       # Provide URI to the datebase in the format: postgresql://user:password@url:port/db_name
       uri: postgresql://user:password@url:port/db_name
+
+valkey:
+  password: secret
 
 backend:
   authentication:
@@ -237,6 +242,12 @@ cluster:
   dns:
     service: kube-dns # dns-default for OpenShift
     namespace: kube-system # openshift-dns for OpenShift
+
+  # Enable Vertical Pod Autoscaler for resource recommandations
+  # If you want to enable it locally, install VPA first:
+  # `make install-vpa`
+  vpa:
+    enabled: false
 
 # Specify the NO_PROXY environment for the backend
 # Leave it empty if not needed

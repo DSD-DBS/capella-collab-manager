@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-valkey
+  labels:
+    id: {{ .Release.Name }}-service-valkey
+spec:
+  type: ClusterIP
+  selector:
+    id: {{ .Release.Name }}-deployment-valkey
+  ports:
+    - port: 6379
+      targetPort: valkey
+      protocol: TCP
+      name: valkey
