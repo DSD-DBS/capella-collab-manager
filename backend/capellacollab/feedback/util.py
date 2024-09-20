@@ -67,10 +67,12 @@ def format_email(
     ]
     if feedback.trigger:
         message_list.append(f"Trigger: {feedback.trigger}")
-    message_list.append("Sessions:")
-    message_list += [
-        session.model_dump_json(indent=2) for session in feedback.sessions
-    ]
+
+    if feedback.sessions:
+        message_list.append("Sessions:")
+        message_list += [
+            session.model_dump_json(indent=2) for session in feedback.sessions
+        ]
 
     message_list.append("---")
     message_list.append(
