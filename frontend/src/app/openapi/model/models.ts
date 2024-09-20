@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+export * from './anonymized-session';
 export * from './authorization-response';
 export * from './backup';
 export * from './backup-pipeline-run';
@@ -33,6 +34,12 @@ export * from './diagram-metadata';
 export * from './environment-value';
 export * from './environment-value1';
 export * from './event-type';
+export * from './feedback';
+export * from './feedback-configuration-input';
+export * from './feedback-configuration-output';
+export * from './feedback-interval-configuration-input';
+export * from './feedback-interval-configuration-output';
+export * from './feedback-rating';
 export * from './file-tree';
 export * from './file-type';
 export * from './get-revision-model';
@@ -59,6 +66,9 @@ export * from './message';
 export * from './metadata';
 export * from './metadata-configuration-input';
 export * from './metadata-configuration-output';
+export * from './minimal-tool';
+export * from './minimal-tool-session-connection-method';
+export * from './minimal-tool-version-with-tool';
 export * from './model-artifact-status';
 export * from './navbar-configuration-input';
 export * from './navbar-configuration-input-external-links-inner';

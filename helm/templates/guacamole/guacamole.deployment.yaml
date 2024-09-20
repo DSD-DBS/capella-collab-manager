@@ -41,6 +41,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacamole
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
           {{ if .Values.docker.images.guacamole.guacamole }}
           image: {{ .Values.docker.images.guacamole.guacamole }}
           {{ else }}
@@ -100,6 +101,7 @@ spec:
             limits:
               cpu: "1"
               memory: 1Gi
+              ephemeral-storage: "2Gi"
             {{ else }}
             requests:
               memory: "1Gi"
@@ -107,6 +109,7 @@ spec:
             limits:
               memory: "2Gi"
               cpu: "2"
+              ephemeral-storage: "2Gi"
             {{ end }}
           {{ if .Values.cluster.containers }}
           {{- toYaml .Values.cluster.containers | nindent 10 }}

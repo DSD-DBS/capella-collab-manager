@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgIf, NgClass, AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import {
   MatSidenav,
   MatDrawerContainer,
@@ -18,6 +18,7 @@ import { HeaderComponent } from './general/header/header.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { PageLayoutService } from './page-layout/page-layout.service';
+import { FeedbackWrapperService } from './sessions/feedback/feedback.service';
 import { FullscreenService } from './sessions/service/fullscreen.service';
 
 @Component({
@@ -39,16 +40,26 @@ import { FullscreenService } from './sessions/service/fullscreen.service';
     AsyncPipe,
   ],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
   constructor(
     public pageLayoutService: PageLayoutService,
     public fullscreenService: FullscreenService,
     private navBarService: NavBarService,
+    private feedbackService: FeedbackWrapperService,
   ) {
     slugify.extend({ '.': '-' });
   }
 
   @ViewChild('sidenav') private sidenav?: MatSidenav;
+
+  async ngOnInit() {
+    this.feedbackService.loadFeedbackConfig().subscribe(() => {
+      if (this.feedbackService.shouldShowIntervalPrompt()) {
+        this.feedbackService.showDialog([], 'On interval');
+        this.feedbackService.saveFeedbackPromptDate();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     this.navBarService.sidenav = this.sidenav;

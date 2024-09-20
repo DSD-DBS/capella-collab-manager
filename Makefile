@@ -96,6 +96,7 @@ helm-deploy:
 		--set docker.registry.sessions=$(CAPELLACOLLAB_SESSIONS_REGISTRY) \
 		--set docker.tag=$(DOCKER_TAG) \
 		--set mocks.oauth=True \
+		--set mocks.smtp=True \
 		--set backend.authentication.claimMapping.username=sub \
 		--set backend.authentication.endpoints.authorization=https://localhost/default/authorize \
 		--set development=$(DEVELOPMENT_MODE) \
@@ -191,7 +192,7 @@ reach-registry:
 	fi
 
 dev:
-	$(MAKE) -j5 dev-frontend dev-backend dev-oauth-mock dev-docs dev-storybook
+	$(MAKE) -j6 dev-frontend dev-backend dev-oauth-mock dev-smtp-mock dev-docs dev-storybook
 
 dev-frontend:
 	$(MAKE) -C frontend dev
@@ -201,6 +202,9 @@ dev-backend:
 
 dev-oauth-mock:
 	$(MAKE) -C mocks/oauth start
+
+dev-smtp-mock:
+	$(MAKE) -C mocks/smtp start
 
 dev-docs:
 	$(MAKE) -C docs serve

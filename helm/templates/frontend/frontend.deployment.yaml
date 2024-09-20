@@ -39,6 +39,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-frontend
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
           {{ if .Values.docker.images.frontend }}
           image: {{ .Values.docker.images.frontend }}
           {{ else }}
@@ -57,6 +58,7 @@ spec:
             limits:
               cpu: "0.25"
               memory: 150Mi
+              ephemeral-storage: "2Gi"
             requests:
               cpu: "0.06"
               memory: 20Mi
@@ -64,6 +66,7 @@ spec:
             limits:
               cpu: "1"
               memory: 50Mi
+              ephemeral-storage: "2Gi"
             requests:
               cpu: "0.25"
               memory: 5Mi

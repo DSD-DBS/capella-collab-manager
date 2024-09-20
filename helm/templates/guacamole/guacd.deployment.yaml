@@ -39,6 +39,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-guacamole-guacd
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
           {{ if .Values.docker.images.guacamole.guacd }}
           image: {{ .Values.docker.images.guacamole.guacd }}
           {{ else }}
@@ -64,6 +65,7 @@ spec:
             limits:
               cpu: "0.2"
               memory: 100Mi
+              ephemeral-storage: "2Gi"
             requests:
               cpu: "0.06"
               memory: 10Mi
@@ -74,6 +76,7 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
+              ephemeral-storage: "2Gi"
             {{ end }}
           volumeMounts:
             {{ if .Values.loki.enabled }}

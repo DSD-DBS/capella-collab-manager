@@ -9,6 +9,7 @@ import fastapi
 from capellacollab.core import responses as auth_responses
 from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
+from capellacollab.feedback import routes as feedback_routes
 from capellacollab.health import routes as health_routes
 from capellacollab.metadata import routes as core_metadata
 from capellacollab.navbar import routes as navbar_routes
@@ -31,6 +32,7 @@ router.include_router(
 )
 router.include_router(core_metadata.router, tags=["Metadata"])
 router.include_router(navbar_routes.router, tags=["Navbar"])
+router.include_router(feedback_routes.router, tags=["Feedback"])
 router.include_router(
     sessions_routes.router,
     prefix="/sessions",

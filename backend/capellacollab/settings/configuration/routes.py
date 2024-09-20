@@ -8,6 +8,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.feedback import util as feedback_util
 from capellacollab.users import models as users_models
 
 from . import core, crud, models
@@ -33,7 +34,7 @@ schema_router = fastapi.APIRouter(dependencies=[], tags=["Configuration"])
 async def get_configuration(
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    return core.get_config(db, models.GlobalConfiguration._name)
+    return core.get_global_configuration(db)
 
 
 @router.put(
@@ -47,6 +48,10 @@ async def update_configuration(
     configuration = crud.get_configuration_by_name(
         db, models.GlobalConfiguration._name
     )
+
+    feedback_util.validate_global_configuration(body.feedback)
+    if body.feedback.enabled is False:
+        feedback_util.disable_feedback(body.feedback)
 
     if configuration:
         return crud.update_configuration(

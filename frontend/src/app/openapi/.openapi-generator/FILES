@@ -3,6 +3,7 @@ api/api.ts
 api/authentication.service.ts
 api/configuration.service.ts
 api/events.service.ts
+api/feedback.service.ts
 api/health.service.ts
 api/integrations-pure-variants.service.ts
 api/metadata.service.ts
@@ -28,6 +29,7 @@ api/users.service.ts
 configuration.ts
 encoder.ts
 index.ts
+model/anonymized-session.ts
 model/authorization-response.ts
 model/backup-pipeline-run.ts
 model/backup.ts
@@ -52,6 +54,12 @@ model/diagram-metadata.ts
 model/environment-value.ts
 model/environment-value1.ts
 model/event-type.ts
+model/feedback-configuration-input.ts
+model/feedback-configuration-output.ts
+model/feedback-interval-configuration-input.ts
+model/feedback-interval-configuration-output.ts
+model/feedback-rating.ts
+model/feedback.ts
 model/file-tree.ts
 model/file-type.ts
 model/get-revision-model.ts
@@ -78,6 +86,9 @@ model/message.ts
 model/metadata-configuration-input.ts
 model/metadata-configuration-output.ts
 model/metadata.ts
+model/minimal-tool-session-connection-method.ts
+model/minimal-tool-version-with-tool.ts
+model/minimal-tool.ts
 model/model-artifact-status.ts
 model/models.ts
 model/navbar-configuration-input-external-links-inner.ts

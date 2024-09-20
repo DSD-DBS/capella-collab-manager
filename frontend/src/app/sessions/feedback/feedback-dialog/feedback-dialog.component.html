@@ -1,0 +1,113 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<form class="dialog min-w-96" [formGroup]="feedbackForm" (submit)="submit()">
+  <h1 class="text-lg font-semibold">
+    @if (data.sessions.length === 0) {
+      How has your experience been?
+    } @else if (data.sessions.length === 1) {
+      How was your session?
+    } @else {
+      How were your sessions?
+    }
+  </h1>
+  <div class="space-y-4">
+    <div class="flex justify-center space-x-4">
+      @for (rating of ratings; track rating) {
+        <button
+          (click)="setRating(rating)"
+          [attr.data-testid]="'rating-' + rating"
+          mat-icon-button
+          type="button"
+          [class]="
+            [
+              '!flex',
+              getColorForRating(rating),
+              this.feedbackForm.get('rating')?.value === rating
+                ? '!bg-gray-200'
+                : '',
+            ].join(' ')
+          "
+        >
+          <mat-icon>
+            @switch (rating) {
+              @case ("bad") {
+                sentiment_dissatisfied
+              }
+              @case ("okay") {
+                sentiment_neutral
+              }
+              @case ("good") {
+                sentiment_satisfied
+              }
+            }
+          </mat-icon>
+        </button>
+      }
+    </div>
+
+    @if (feedbackForm.get("rating")?.value) {
+      <mat-form-field class="w-full">
+        @if (feedbackForm.get("rating")?.value === "good") {
+          <mat-label>What was good?</mat-label>
+        } @else {
+          <mat-label>What can we do better?</mat-label>
+        }
+        <textarea
+          matInput
+          formControlName="feedbackText"
+          data-testid="feedback-text"
+        ></textarea>
+        <mat-hint>Try to be as specific as possible.</mat-hint>
+      </mat-form-field>
+    }
+
+    <mat-checkbox formControlName="shareContact">
+      <span data-testid="share-user-information"> Share user information </span>
+    </mat-checkbox>
+
+    <div class="ml-2 flex max-w-80 flex-col gap-2 text-xs text-gray-500">
+      <div class="flex items-center gap-2">
+        @if (feedbackForm.get("shareContact")?.value) {
+          <mat-icon class="size-4 shrink-0">privacy_tip</mat-icon>
+          <span>
+            Your contact information will be shared with
+            <strong>{{
+              (metadataService.backendMetadata | async)?.provider ||
+                "Systems Engineering Toolchain team"
+            }}</strong
+            >. You may be contacted for further information.
+          </span>
+        } @else {
+          <mat-icon class="shrink-0">security</mat-icon>
+          <span>Your feedback will be anonymous.</span>
+        }
+      </div>
+      <div class="flex items-center gap-2">
+        @if (data.sessions.length > 0) {
+          <mat-icon class="size-4 shrink-0">storage</mat-icon>
+          @if (feedbackForm.get("shareContact")?.value) {
+            <span>Your feedback includes session details.</span>
+          } @else {
+            <span>Your feedback includes anonymized session details.</span>
+          }
+        }
+      </div>
+    </div>
+  </div>
+  <div class="mt-4 flex w-full flex-wrap justify-between space-x-2">
+    <button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="
+        feedbackForm.invalid || feedbackForm.untouched || submitButton.disabled
+      "
+    >
+      {{ submitButton.text }}
+    </button>
+  </div>
+</form>

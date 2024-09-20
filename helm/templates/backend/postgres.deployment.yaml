@@ -30,7 +30,8 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: {{ .Release.Name }}-backend-postgres
-        {{ if .Values.docker.images.postgres }}
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
+          {{ if .Values.docker.images.postgres }}
           image: {{ .Values.docker.images.postgres }}
           {{ else }}
           image: {{ .Values.docker.registry.external }}/postgres:14.1
@@ -63,6 +64,7 @@ spec:
             limits:
               cpu: "0.25"
               memory: 150Mi
+              ephemeral-storage: "2Gi"
             requests:
               cpu: "0.06"
               memory: 20Mi
@@ -73,6 +75,7 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
+              ephemeral-storage: "2Gi"
             {{ end }}
           {{ if not .Values.development }}
           volumeMounts:

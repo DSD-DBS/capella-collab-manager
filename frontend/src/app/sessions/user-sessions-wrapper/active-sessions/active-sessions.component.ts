@@ -4,11 +4,12 @@
  */
 import { NgClass, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton, MatIconButton } from '@angular/material/button';
 import { MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Session } from 'src/app/openapi';
@@ -17,6 +18,7 @@ import { UserWrapperService } from 'src/app/services/user/user.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/session-sharing-dialog/session-sharing-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
+import { FeedbackWrapperService } from '../../feedback/feedback.service';
 import {
   SessionService,
   isPersistentSession,
@@ -40,6 +42,8 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
     MatProgressBar,
     MatButton,
     AsyncPipe,
+    MatIconButton,
+    MatTooltip,
   ],
 })
 export class ActiveSessionsComponent {
@@ -50,6 +54,7 @@ export class ActiveSessionsComponent {
     public sessionService: SessionService,
     public beautifyService: BeautifyService,
     public userSessionService: UserSessionService,
+    public feedbackService: FeedbackWrapperService,
     private userWrapperService: UserWrapperService,
     private dialog: MatDialog,
   ) {}
@@ -59,8 +64,17 @@ export class ActiveSessionsComponent {
       data: sessions,
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.userSessionService.loadSessions();
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        if (this.feedbackService.shouldShowPostSessionPrompt()) {
+          this.feedbackService.showDialog(
+            sessions,
+            'After session termination',
+          );
+        }
+
+        this.userSessionService.loadSessions();
+      }
     });
   }
 

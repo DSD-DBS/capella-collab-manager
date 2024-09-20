@@ -113,22 +113,10 @@ def test_update_general_configuration_additional_properties_fails(
     assert response.json()["detail"][0]["type"] == "extra_forbidden"
 
 
+@pytest.mark.usefixtures("admin")
 def test_metadata_is_updated(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
 ):
-    admin = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
-    def get_mock_own_user():
-        return admin
-
-    app.dependency_overrides[users_injectables.get_own_user] = (
-        get_mock_own_user
-    )
-
     response = client.put(
         "/api/v1/settings/configurations/global",
         json={
@@ -144,29 +132,15 @@ def test_metadata_is_updated(
 
     assert response.status_code == 200
 
-    del app.dependency_overrides[users_injectables.get_own_user]
-
     response = client.get("/api/v1/metadata")
     assert response.status_code == 200
     assert response.json()["environment"] == "test"
 
 
+@pytest.mark.usefixtures("admin")
 def test_navbar_is_updated(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
 ):
-    admin = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
-    def get_mock_own_user():
-        return admin
-
-    app.dependency_overrides[users_injectables.get_own_user] = (
-        get_mock_own_user
-    )
-
     response = client.put(
         "/api/v1/settings/configurations/global",
         json={
@@ -183,8 +157,6 @@ def test_navbar_is_updated(
     )
 
     assert response.status_code == 200
-
-    del app.dependency_overrides[users_injectables.get_own_user]
 
     response = client.get("/api/v1/navbar")
     assert response.status_code == 200

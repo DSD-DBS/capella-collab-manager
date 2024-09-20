@@ -78,3 +78,19 @@ logging:
 
 requests:
   timeout: 5
+
+{{ if .Values.mocks.smtp }}
+smtp:
+  enabled: True
+  host: {{ .Release.Name }}-smtp-mock.{{ .Release.Namespace }}.svc.cluster.local:587
+  user: "unset"
+  password: "unset"
+  sender: "capella@example.com"
+{{ else if .Values.alerting.email.enabled }}
+smtp:
+  enabled: {{ .Values.alerting.email.enabled }}
+  host: "{{ .Values.alerting.email.host }}"
+  user: "{{ .Values.alerting.email.username }}"
+  password: "{{ .Values.alerting.email.password }}"
+  sender: "{{ .Values.alerting.email.sender }}"
+{{ end }}

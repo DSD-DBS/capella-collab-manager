@@ -10,4 +10,5 @@ export const environment = {
   docs_url: 'http://localhost:8081',
   prometheus_url: 'http://localhost:8080/prometheus/graph',
   grafana_url: 'http://localhost:8080/grafana/',
+  smtp_mock_url: 'http://localhost:5000',
 };

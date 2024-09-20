@@ -35,6 +35,7 @@ spec:
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
       containers:
         - name: grafana
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
           {{ if .Values.docker.images.grafana }}
           image: {{ .Values.docker.images.grafana }}
           {{ else }}
@@ -47,6 +48,7 @@ spec:
             limits:
               cpu: "0.5"
               memory: 500Mi
+              ephemeral-storage: "2Gi"
             requests:
               cpu: "0.1"
               memory: 50Mi
@@ -57,6 +59,7 @@ spec:
             limits:
               cpu: 1
               memory: 1Gi
+              ephemeral-storage: "2Gi"
             {{ end }}
           volumeMounts:
             - name: config

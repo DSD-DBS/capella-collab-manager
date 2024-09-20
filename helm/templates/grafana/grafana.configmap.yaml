@@ -35,14 +35,23 @@ data:
     header_property = username
     auto_sign_up = false
 
-    {{ if .Values.alerting.email.enabled }}
+    {{ if .Values.mocks.smtp }}
+    [smtp]
+    enabled = true
+    host = {{ .Release.Name }}-smtp-mock.{{ .Release.Namespace }}.svc.cluster.local:587
+    user = unset
+    password = unset
+    from_address = capella@example.com
+    from_name = Capella Collaboration Manager
+    skip_verify = true
+    {{ else if .Values.alerting.email.enabled }}
     [smtp]
     enabled = true
     host = {{ .Values.alerting.email.host }}
     user = {{ .Values.alerting.email.user }}
     password = {{ .Values.alerting.email.password }}
     from_address = {{ .Values.alerting.email.sender }}
-    from_name: Capella Collaboration Manager
+    from_name = Capella Collaboration Manager
     {{ end }}
 
   datasources.yaml: |

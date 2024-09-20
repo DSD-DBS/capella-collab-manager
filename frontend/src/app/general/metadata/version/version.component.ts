@@ -6,6 +6,7 @@ import { NgIf, AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
+import { environment } from 'src/environments/environment';
 import { MetadataService } from '../metadata.service';
 
 @Component({
@@ -19,4 +20,8 @@ export class VersionComponent {
     public metadataService: MetadataService,
     public dialog: MatDialog,
   ) {}
+
+  get docsURL() {
+    return environment.docs_url;
+  }
 }

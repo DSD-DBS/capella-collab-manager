@@ -38,13 +38,27 @@
 
     @for (session of userSessionService.sessions$ | async; track session.id) {
       <div class="collab-card">
-        <b>
-          @if (isPersistentSession(session)) {
-            <h2>Persistent workspace session</h2>
-          } @else if (isReadonlySession(session)) {
-            <h2>Read-only session</h2>
+        <div class="flex items-center justify-between">
+          <b class="text-lg">
+            @if (isPersistentSession(session)) {
+              <h2>Persistent workspace session</h2>
+            } @else if (isReadonlySession(session)) {
+              <h2>Read-only session</h2>
+            }
+          </b>
+          @if ((feedbackService.feedbackConfig$ | async)?.on_session_card) {
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="feedbackService.showDialog([session], 'On session card')"
+              matTooltip="Give feedback"
+              matTooltipPosition="above"
+            >
+              <mat-icon>feedback</mat-icon>
+            </button>
           }
-        </b>
+        </div>
+
         <div>
           <h3
             class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
@@ -116,6 +130,7 @@
           >
             Connect <mat-icon>open_in_browser</mat-icon>
           </button>
+
           @if (!isSessionShared(session)) {
             <button
               mat-button

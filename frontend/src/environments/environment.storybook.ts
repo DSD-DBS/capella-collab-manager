@@ -10,4 +10,5 @@ export const environment = {
   docs_url: 'https://dsd-dbs.github.io/capella-collab-manager',
   prometheus_url: 'about:blank',
   grafana_url: 'about:blank',
+  smtp_mock_url: 'about:blank',
 };

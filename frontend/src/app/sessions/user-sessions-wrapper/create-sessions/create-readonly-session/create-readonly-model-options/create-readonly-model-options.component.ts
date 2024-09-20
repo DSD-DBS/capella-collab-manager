@@ -21,7 +21,7 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { filter } from 'rxjs';
-import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
+import { ToolModel, ToolVersion, Tool } from 'src/app/openapi';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import {
   Revisions,
