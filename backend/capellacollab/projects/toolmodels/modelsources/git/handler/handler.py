@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import abc
 import datetime
+import logging
 
 import requests
 
@@ -118,7 +119,10 @@ class GitHandler:
         """
 
     async def get_file(
-        self, trusted_file_path: str, revision: str | None = None
+        self,
+        trusted_file_path: str,
+        logger: logging.LoggerAdapter,
+        revision: str | None = None,
     ) -> tuple[datetime.datetime, bytes]:
         if not revision:
             revision = self.revision
@@ -127,7 +131,9 @@ class GitHandler:
             trusted_file_path, revision
         )
 
-        if file_data := self.cache.get_file_data(trusted_file_path, revision):
+        if file_data := self.cache.get_file_data(
+            trusted_file_path, revision, logger
+        ):
             last_updated_cache, content_cache = file_data
 
             if last_updated == last_updated_cache:
@@ -135,7 +141,7 @@ class GitHandler:
 
         content = self.get_file_from_repository(trusted_file_path, revision)
         self.cache.put_file_data(
-            trusted_file_path, last_updated, content, revision
+            trusted_file_path, last_updated, content, revision, logger
         )
 
         return last_updated, content
@@ -144,6 +150,7 @@ class GitHandler:
         self,
         trusted_file_path: str,
         job_name: str,
+        logger: logging.LoggerAdapter,
         job_id: str | None = None,
     ) -> tuple[str, datetime.datetime, bytes]:
         if not job_id:
@@ -154,13 +161,13 @@ class GitHandler:
             started_at = self.get_started_at_for_job(job_id)
 
         if artifact_data := self.cache.get_artifact_data(
-            job_id, trusted_file_path
+            job_id, trusted_file_path, logger
         ):
             return job_id, artifact_data[0], artifact_data[1]
 
         content = self.get_artifact_from_job(job_id, trusted_file_path)
         self.cache.put_artifact_data(
-            job_id, trusted_file_path, started_at, content
+            job_id, trusted_file_path, started_at, content, logger
         )
 
         return job_id, started_at, content
@@ -169,12 +176,15 @@ class GitHandler:
         self,
         trusted_file_path: str,
         job_name: str,
+        logger: logging.LoggerAdapter,
         job_id: str | None = None,
         file_revision: str | None = None,
     ) -> tuple[str | None, datetime.datetime, bytes]:
         if not job_id:
             try:
-                file = await self.get_file(trusted_file_path, file_revision)
+                file = await self.get_file(
+                    trusted_file_path, logger, file_revision
+                )
                 return (None, file[0], file[1])
             except (
                 requests.HTTPError,
@@ -182,4 +192,6 @@ class GitHandler:
             ):
                 pass
 
-        return await self.get_artifact(trusted_file_path, job_name, job_id)
+        return await self.get_artifact(
+            trusted_file_path, job_name, logger, job_id
+        )

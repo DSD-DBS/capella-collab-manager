@@ -45,6 +45,7 @@ async def get_diagram_metadata(
         job_id, last_updated, diagram_metadata_entries = (
             await handler.get_file_or_artifact(
                 trusted_file_path="diagram_cache/index.json",
+                logger=logger,
                 job_name="update_capella_diagram_cache",
                 file_revision=f"diagram-cache/{handler.revision}",
             )
@@ -91,6 +92,7 @@ async def get_diagram(
     try:
         file_or_artifact = await handler.get_file_or_artifact(
             trusted_file_path=file_path,
+            logger=logger,
             job_name="update_capella_diagram_cache",
             job_id=job_id,
             file_revision=f"diagram-cache/{handler.revision}",

@@ -4,9 +4,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-backend-valkey
+  name: {{ .Release.Name }}-valkey
   labels:
-    id: {{ .Release.Name }}-service-backend-valkey
+    id: {{ .Release.Name }}-service-valkey
 spec:
   type: ClusterIP
   selector:

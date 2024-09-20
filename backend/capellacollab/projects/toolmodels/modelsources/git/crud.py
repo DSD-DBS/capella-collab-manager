@@ -63,12 +63,10 @@ def update_git_model(
     git_model: models.DatabaseGitModel,
     put_model: models.PutGitModel,
 ) -> models.DatabaseGitModel:
+    git_model.path = put_model.path
     git_model.entrypoint = put_model.entrypoint
     git_model.revision = put_model.revision
-
-    if put_model.path != git_model.path:
-        git_model.path = put_model.path
-        git_model.repository_id = None
+    git_model.repository_id = None
 
     if put_model.password:
         git_model.username = put_model.username

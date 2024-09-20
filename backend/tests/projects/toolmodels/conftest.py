@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import datetime
-import typing as t
+import logging
 
 import pytest
 import responses
@@ -25,12 +25,12 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
             super().__init__()
 
         def get_file_data(
-            self, file_path: str, revision: str
+            self, file_path: str, revision: str, logger: logging.LoggerAdapter
         ) -> tuple[datetime.datetime, bytes] | None:
             return MockGitValkeyCache.cache.get(f"f:{file_path}", None)
 
         def get_artifact_data(
-            self, job_id: str, file_path: str
+            self, job_id: str, file_path: str, logger: logging.LoggerAdapter
         ) -> tuple[datetime.datetime, bytes] | None:
             return MockGitValkeyCache.cache.get(f"a:{file_path}:{job_id}")
 
@@ -40,7 +40,7 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
             last_updated: datetime.datetime,
             content: bytes,
             revision: str,
-            ttl: int = 3600,
+            logger: logging.LoggerAdapter,
         ) -> None:
             MockGitValkeyCache.cache[f"f:{file_path}"] = (
                 last_updated,
@@ -53,7 +53,7 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
             file_path: str,
             started_at: datetime.datetime,
             content: bytes,
-            ttl: int = 3600,
+            logger: logging.LoggerAdapter,
         ) -> None:
             MockGitValkeyCache.cache[f"a:{file_path}:{job_id}"] = (
                 started_at,

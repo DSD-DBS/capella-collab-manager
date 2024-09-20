@@ -4,7 +4,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: {{ .Release.Name }}-backend-valkey
+  name: {{ .Release.Name }}-valkey
 spec:
   minAvailable: 1
   selector:

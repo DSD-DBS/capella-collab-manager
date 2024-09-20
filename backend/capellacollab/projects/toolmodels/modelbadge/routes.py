@@ -40,7 +40,9 @@ async def get_model_complexity_badge(
 ):
     try:
         file_or_artifact = await git_handler.get_file_or_artifact(
-            "model-complexity-badge.svg", "generate-model-badge"
+            trusted_file_path="model-complexity-badge.svg",
+            job_name="generate-model-badge",
+            logger=logger,
         )
         return responses.SVGResponse(content=file_or_artifact[2])
     except Exception:

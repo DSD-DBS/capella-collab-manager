@@ -7,9 +7,21 @@ from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.modelsources.git.crud as project_git_crud
 import capellacollab.projects.toolmodels.modelsources.git.models as project_git_models
+from capellacollab.projects.toolmodels.modelsources.git.handler import (
+    cache as git_handler_cache,
+)
 
 
-@pytest.mark.usefixtures("git_instance", "project_manager", "capella_model")
+@pytest.fixture(name="mock_valkey_clear")
+def fixture_mock_valkey_clear(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(
+        git_handler_cache.GitValkeyCache, "clear", lambda self: None
+    )
+
+
+@pytest.mark.usefixtures(
+    "git_instance", "project_manager", "capella_model", "mock_valkey_clear"
+)
 def test_reset_repository_id_on_git_model_path_change(
     db: orm.Session,
     git_model: project_git_models.DatabaseGitModel,
@@ -43,7 +55,9 @@ def test_reset_repository_id_on_git_model_path_change(
     assert response.json()["path"] == new_path
 
 
-@pytest.mark.usefixtures("project_manager", "capella_model")
+@pytest.mark.usefixtures(
+    "project_manager", "capella_model", "mock_valkey_clear"
+)
 def test_delete_git_model(
     git_model: project_git_models.DatabaseGitModel,
     client: testclient.TestClient,

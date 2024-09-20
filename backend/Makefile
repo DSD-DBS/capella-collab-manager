@@ -5,6 +5,9 @@ DB_PORT = 5432
 DB_PASSWORD = dev
 DB_USER = dev
 DB_NAME = dev
+
+VALKEY_PASSWORD ?= password
+
 VENV = .venv
 
 HOST ?= 127.0.0.1
@@ -34,11 +37,16 @@ database:
 		postgres
 
 valkey:
-	docker start valkey || \
+	TMP_FILE=$$(mktemp)
+	echo "requirepass $(VALKEY_PASSWORD)" > $$TMP_FILE
+	docker start capella-collab-valkey || \
 	docker run -d \
-		--name valkey \
+		--name capella-collab-valkey \
 		-p $(VALKEY_PORT):6379 \
-		valkey/valkey:latest
+		-v $$TMP_FILE:/usr/local/etc/valkey/valkey.conf \
+		valkey/valkey:latest \
+		valkey-server \
+		/usr/local/etc/valkey/valkey.conf
 
 app:
 	if [ -d "$(VENV)/bin" ]; then

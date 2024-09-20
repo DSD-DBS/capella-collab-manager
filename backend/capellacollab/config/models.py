@@ -289,7 +289,9 @@ class DatabaseConfig(BaseConfig):
 
 
 class ValkeyConfig(BaseConfig):
-    url: str = pydantic.Field(default="valkey://localhost:6379/0")
+    url: str = pydantic.Field(
+        default="valkey://default:password@localhost:6379/0"
+    )
 
 
 class InitialConfig(BaseConfig):

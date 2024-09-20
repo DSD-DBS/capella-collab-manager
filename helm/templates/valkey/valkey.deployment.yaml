@@ -4,7 +4,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-backend-valkey
+  name: {{ .Release.Name }}-valkey
   labels:
     id: {{ .Release.Name }}-deployment-valkey
 spec:
@@ -27,12 +27,13 @@ spec:
           secret:
             secretName: {{ .Release.Name }}-valkey
       containers:
-        - name: {{ .Release.Name }}-backend-valkey
+        - name: {{ .Release.Name }}-valkey
           {{ if .Values.docker.images.valkey }}
           image: {{ .Values.docker.images.valkey }}
           {{ else }}
           image: {{ .Values.docker.registry.external }}/valkey/valkey:7.2.6
           {{ end }}
+          args: ["valkey-server", "/usr/local/etc/valkey/valkey.conf"]
           ports:
             - name: valkey
               containerPort: 6379
@@ -40,23 +41,24 @@ spec:
           resources:
             {{ if .Values.development }}
             requests:
-              cpu: "0.06"
+              cpu: "0.005"
               memory: 20Mi
             limits:
-              cpu: "0.25"
+              cpu: "0.1"
               memory: 250Mi
               ephemeral-storage: "2Gi"
             {{ else }}
             requests:
-              cpu: "250m"
+              cpu: "0.01"
               memory: "500Mi"
             limits:
-              cpu: "1"
+              cpu: "0.2"
               memory: "3Gi"
               ephemeral-storage: "5Gi"
             {{ end }}
           volumeMounts:
-            - mountPath: /valkey-master-data
+            - mountPath: /data
               name: data
-            - mountPath: /valkey-master
+            - mountPath: /usr/local/etc/valkey/valkey.conf
               name: config
+              subPath: valkey.conf

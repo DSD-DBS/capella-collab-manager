@@ -152,6 +152,12 @@ create-cluster: registry
 	kubectl cluster-info
 	kubectl config set-context --current --namespace=$(NAMESPACE)
 
+install-vpa:
+	git clone https://github.com/kubernetes/autoscaler.git
+	cd autoscaler/vertical-pod-autoscaler
+	./hack/vpa-up.sh
+	kubectl --namespace=kube-system get pods | grep vpa
+
 delete-cluster:
 	k3d cluster list $(CLUSTER_NAME) 2>&- && k3d cluster delete $(CLUSTER_NAME)
 

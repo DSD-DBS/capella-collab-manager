@@ -144,6 +144,7 @@ def update_git_model_by_id(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseGitModel:
     git_util.verify_path_prefix(db, put_git_model.path)
+    cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
     return crud.update_git_model(db, db_git_model, put_git_model)
 
 
@@ -175,5 +176,5 @@ def delete_git_model_by_id(
 ):
     if backups_crud.get_pipelines_for_git_model(db, db_git_model):
         raise exceptions.GitRepositoryUsedInPipelines(db_git_model.id)
-
+    cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
     crud.delete_git_model(db, db_git_model)
