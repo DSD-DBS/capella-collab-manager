@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { AuthenticationService } from 'src/app/openapi';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-auth-redirect',
@@ -20,7 +20,7 @@ export class AuthRedirectComponent implements OnInit {
     private toastService: ToastService,
     private authService: AuthenticationWrapperService,
     private authenticationService: AuthenticationService,
-    private userService: UserWrapperService,
+    private userService: OwnUserWrapperService,
     private router: Router,
   ) {}
 

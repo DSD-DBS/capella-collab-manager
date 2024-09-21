@@ -47,7 +47,7 @@ export const Overview: Story = {
               {
                 role: 'user',
                 permission: 'read',
-                user: { ...mockUser, name: 'projectuser2' },
+                user: { ...mockUser, name: 'projectuserWithReallyLongName' },
               },
               {
                 role: 'manager',

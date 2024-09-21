@@ -15,7 +15,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Backup, ProjectsModelsBackupsService } from 'src/app/openapi';
 import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-pipeline-deletion-dialog',
@@ -41,7 +41,7 @@ export class PipelineDeletionDialogComponent {
   loading = new BehaviorSubject(false);
 
   constructor(
-    public userService: UserWrapperService,
+    public userService: OwnUserWrapperService,
     private dialogRef: DialogRef,
     private toastService: ToastService,
     private pipelinesService: ProjectsModelsBackupsService,

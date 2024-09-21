@@ -4,8 +4,8 @@
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { UserWrapperService } from 'src/app/services/user/user.service';
-import { mockUser, MockUserService } from 'src/storybook/user';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
+import { mockUser, MockOwnUserWrapperService } from 'src/storybook/user';
 import { NavBarItem, NavBarService } from '../nav-bar/nav-bar.service';
 import { HeaderComponent } from './header.component';
 
@@ -62,8 +62,8 @@ export const NormalUser: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: UserWrapperService,
-          useFactory: () => new MockUserService(mockUser),
+          provide: OwnUserWrapperService,
+          useFactory: () => new MockOwnUserWrapperService(mockUser),
         },
         {
           provide: NavBarService,
@@ -83,9 +83,12 @@ export const Administrator: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: UserWrapperService,
+          provide: OwnUserWrapperService,
           useFactory: () =>
-            new MockUserService({ ...mockUser, role: 'administrator' }),
+            new MockOwnUserWrapperService({
+              ...mockUser,
+              role: 'administrator',
+            }),
         },
         {
           provide: NavBarService,

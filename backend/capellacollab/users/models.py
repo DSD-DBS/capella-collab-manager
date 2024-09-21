@@ -21,8 +21,8 @@ if t.TYPE_CHECKING:
 
 
 class Role(str, enum.Enum):
-    USER = "user"
     ADMIN = "administrator"
+    USER = "user"
 
 
 class BaseUser(core_pydantic.BaseModel):

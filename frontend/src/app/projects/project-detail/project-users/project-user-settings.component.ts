@@ -29,12 +29,13 @@ import {
   Project,
   ProjectUser,
   ProjectUserPermission,
+  ProjectUserRole,
   User,
 } from 'src/app/openapi';
 import { AddUserToProjectDialogComponent } from 'src/app/projects/project-detail/project-users/add-user-to-project/add-user-to-project.component';
 import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
@@ -65,7 +66,7 @@ export class ProjectUserSettingsComponent implements OnInit {
 
   constructor(
     public projectUserService: ProjectUserService,
-    public userService: UserWrapperService,
+    public userService: OwnUserWrapperService,
     private toastService: ToastService,
     private projectService: ProjectWrapperService,
     private dialog: MatDialog,
@@ -86,6 +87,10 @@ export class ProjectUserSettingsComponent implements OnInit {
 
   get advanced_roles() {
     return ProjectUserService.ADVANCED_ROLES;
+  }
+
+  get projectUserRoles() {
+    return Object.values(ProjectUserRole);
   }
 
   removeUserFromProject(user: User): void {

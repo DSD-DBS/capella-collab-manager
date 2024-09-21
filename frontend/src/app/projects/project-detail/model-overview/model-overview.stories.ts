@@ -5,10 +5,10 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { mockModel, MockModelWrapperService } from 'src/storybook/model';
 import { MockProjectUserService } from 'src/storybook/project-users';
-import { mockUser, MockUserService } from 'src/storybook/user';
+import { mockUser, MockOwnUserWrapperService } from 'src/storybook/user';
 import { ModelOverviewComponent } from './model-overview.component';
 
 const meta: Meta<ModelOverviewComponent> = {
@@ -95,9 +95,12 @@ export const AsGlobalAdmin: Story = {
           useFactory: () => new MockProjectUserService('manager', 'write'),
         },
         {
-          provide: UserWrapperService,
+          provide: OwnUserWrapperService,
           useFactory: () =>
-            new MockUserService({ ...mockUser, role: 'administrator' }),
+            new MockOwnUserWrapperService({
+              ...mockUser,
+              role: 'administrator',
+            }),
         },
       ],
     }),

@@ -14,7 +14,6 @@ import { ProjectWrapperService } from '../service/project.service';
 @Component({
   selector: 'app-project-wrapper',
   templateUrl: './project-wrapper.component.html',
-  styleUrls: ['./project-wrapper.component.css'],
   standalone: true,
   imports: [RouterOutlet],
 })

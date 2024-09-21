@@ -14,7 +14,7 @@ import {
   of,
 } from 'rxjs';
 import { Session, UsersService } from 'src/app/openapi';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import {
   isPersistentSession,
   isReadonlySession,
@@ -26,7 +26,7 @@ import {
 export class UserSessionService {
   constructor(
     private usersService: UsersService,
-    private userWrapperService: UserWrapperService,
+    private userWrapperService: OwnUserWrapperService,
   ) {}
 
   private _sessions = new BehaviorSubject<Session[] | undefined>(undefined);

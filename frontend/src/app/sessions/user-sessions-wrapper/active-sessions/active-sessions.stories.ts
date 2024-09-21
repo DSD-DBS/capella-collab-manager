@@ -10,7 +10,7 @@ import {
 } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
 import { Session } from 'src/app/openapi';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.service';
 import {
   mockFeedbackConfig,
@@ -21,7 +21,7 @@ import {
   mockSuccessReadonlySession,
 } from 'src/storybook/session';
 import { mockHttpConnectionMethod } from 'src/storybook/tool';
-import { MockUserService, mockUser } from 'src/storybook/user';
+import { MockOwnUserWrapperService, mockUser } from 'src/storybook/user';
 import { UserSessionService } from '../../service/user-session.service';
 import { ActiveSessionsComponent } from './active-sessions.component';
 
@@ -44,8 +44,8 @@ const meta: Meta<ActiveSessionsComponent> = {
     moduleMetadata({
       providers: [
         {
-          provide: UserWrapperService,
-          useFactory: () => new MockUserService(mockUser),
+          provide: OwnUserWrapperService,
+          useFactory: () => new MockOwnUserWrapperService(mockUser),
         },
       ],
     }),
@@ -403,8 +403,9 @@ export const SharedSession: Story = {
             }),
         },
         {
-          provide: UserWrapperService,
-          useFactory: () => new MockUserService({ ...mockUser, id: 2 }),
+          provide: OwnUserWrapperService,
+          useFactory: () =>
+            new MockOwnUserWrapperService({ ...mockUser, id: 2 }),
         },
       ],
     }),

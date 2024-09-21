@@ -4,11 +4,11 @@
  */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { startedSession } from 'src/storybook/session';
 import { mockTool } from 'src/storybook/tool';
-import { MockUserService, mockUser } from 'src/storybook/user';
+import { MockOwnUserWrapperService, mockUser } from 'src/storybook/user';
 import { ConnectionDialogComponent } from './connection-dialog.component';
 
 const meta: Meta<ConnectionDialogComponent> = {
@@ -75,8 +75,8 @@ export const SharedSession: Story = {
           },
         },
         {
-          provide: UserWrapperService,
-          useFactory: () => new MockUserService(mockUser),
+          provide: OwnUserWrapperService,
+          useFactory: () => new MockOwnUserWrapperService(mockUser),
         },
       ],
     }),

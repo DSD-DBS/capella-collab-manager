@@ -37,9 +37,6 @@ uses flexbox on devices larger than `768px`.
     significant effort.
 -   **Leverage Flexboxes**: Ideally, utilize `class="flex flex-wrap"` to ensure
     content adjusts appropriately on various screens.
--   **Set Boundaries**: Implement `max-w-[90vw]` to avoid content spilling out
-    of view. You can change the `class="90vw"` to another value, depending on
-    your needs.
 -   **Centering Content**: When aesthetics and usability align, consider
     vertically centering elements via `class="flex justify-center"` on the
     parent element.

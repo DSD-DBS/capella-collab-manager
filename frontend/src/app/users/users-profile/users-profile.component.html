@@ -2,27 +2,33 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<div class="mb-5 flex items-center">
-  <div class="mx-10">
-    <img
-      src="/assets/profile.svg"
-      alt="Dummy profile picture"
-      class="max-h-28"
-    />
-  </div>
-  <div class="flex flex-col">
-    <h2 class="text-xl font-medium">Profile of {{ user?.name }}</h2>
-    @if (user?.created) {
-      <div>
-        Joined the Capella Collaboration Manager in
-        {{ user?.created | date: "y" }}
-      </div>
-    }
-  </div>
-</div>
 
+@if (userWrapperService.user$ | async; as user) {
+  <div class="mb-5 flex items-center">
+    <div class="mx-10">
+      <img
+        src="/assets/profile.svg"
+        alt="Dummy profile picture"
+        class="max-h-28"
+      />
+    </div>
+    <div class="flex flex-col">
+      <h2 class="text-xl font-medium">Profile of {{ user?.name }}</h2>
+      @if (user?.created) {
+        <div>
+          Joined the Capella Collaboration Manager in
+          {{ user?.created | date: "y" }}
+        </div>
+      }
+    </div>
+  </div>
+}
 <div class="flex flex-col gap-2">
-  <app-user-information [user]="user"></app-user-information>
-  <app-common-projects [user]="user"></app-common-projects>
-  <app-user-workspaces [user]="user"></app-user-workspaces>
+  @if (ownUserService.user?.role === "administrator") {
+    <app-user-information></app-user-information>
+  }
+  <app-common-projects></app-common-projects>
+  @if (ownUserService.user?.role === "administrator") {
+    <app-user-workspaces></app-user-workspaces>
+  }
 </div>

@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Session } from 'src/app/openapi';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/session-sharing-dialog/session-sharing-dialog.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
@@ -55,7 +55,7 @@ export class ActiveSessionsComponent {
     public beautifyService: BeautifyService,
     public userSessionService: UserSessionService,
     public feedbackService: FeedbackWrapperService,
-    private userWrapperService: UserWrapperService,
+    private userWrapperService: OwnUserWrapperService,
     private dialog: MatDialog,
   ) {}
 

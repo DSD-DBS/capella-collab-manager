@@ -210,12 +210,7 @@ Angular Material Card Styles
 }
 
 .mat-card-overview {
-  padding: 0 !important;
-  width: fit-content;
-  width: 400px;
-  max-width: 85vw;
-  height: 250px;
-  user-select: none;
+  @apply h-[250px] w-full select-none !p-0 sm:w-[400px];
 }
 
 .mat-card-overview.new {

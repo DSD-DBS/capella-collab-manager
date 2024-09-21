@@ -16,7 +16,7 @@
 </mat-form-field>
 
 <div class="flex flex-wrap gap-5">
-  <a routerLink="/projects/create">
+  <a routerLink="/projects/create" class="w-full sm:w-fit">
     <div matRipple class="mat-card-overview new collab-card !m-0">
       <div class="content flex flex-col items-center justify-center">
         Add New Project <br />
@@ -34,7 +34,7 @@
 
   @if (filteredProjects$ | async) {
     @for (project of (filteredProjects$ | async)!; track project.slug) {
-      <a [routerLink]="['/project', project.slug]">
+      <a [routerLink]="['/project', project.slug]" class="w-full sm:w-fit">
         <div
           [ngClass]="{ 'bg-archived': project.is_archived }"
           matRipple

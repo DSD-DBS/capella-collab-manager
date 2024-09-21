@@ -3,9 +3,28 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { UserWrapperService } from 'src/app/services/user/user.service';
-import { mockUser, MockUserService } from 'src/storybook/user';
+import { Observable, of } from 'rxjs';
+import { UsersService, Workspace } from 'src/app/openapi';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
+import {
+  mockUser,
+  MockOwnUserWrapperService,
+  MockUserWrapperService,
+} from 'src/storybook/user';
 import { UserWorkspacesComponent } from './user-workspaces.component';
+
+class MockUserService {
+  _workspaces: Workspace[] = [];
+
+  public getWorkspacesForUser(_userId: number): Observable<Workspace[]> {
+    return of(this._workspaces);
+  }
+
+  constructor(workspaces: Workspace[]) {
+    this._workspaces = workspaces;
+  }
+}
 
 const meta: Meta<UserWorkspacesComponent> = {
   title: 'Settings Components/Users Profile/User Workspaces',
@@ -14,16 +33,20 @@ const meta: Meta<UserWorkspacesComponent> = {
     moduleMetadata({
       providers: [
         {
-          provide: UserWrapperService,
+          provide: OwnUserWrapperService,
           useFactory: () =>
-            new MockUserService({ ...mockUser, role: 'administrator' }),
+            new MockOwnUserWrapperService({
+              ...mockUser,
+              role: 'administrator',
+            }),
+        },
+        {
+          provide: UserWrapperService,
+          useFactory: () => new MockUserWrapperService({ ...mockUser, id: 0 }),
         },
       ],
     }),
   ],
-  args: {
-    _user: { ...mockUser, id: 0 },
-  },
 };
 
 export default meta;
@@ -34,19 +57,35 @@ export const Loading: Story = {
 };
 
 export const NoWorkspaces: Story = {
-  args: {
-    workspaces: [],
-  },
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UsersService,
+          useFactory: () => new MockUserService([]),
+        },
+      ],
+    }),
+  ],
 };
 
-export const Workspace: Story = {
-  args: {
-    workspaces: [
-      {
-        id: 1,
-        pvc_name: 'persistent-volume-429d805a-6904-4217-b035-8e3def3506ce',
-        size: '20Gi',
-      },
-    ],
-  },
+export const WorkspaceOverview: Story = {
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UsersService,
+          useFactory: () =>
+            new MockUserService([
+              {
+                id: 1,
+                pvc_name:
+                  'persistent-volume-429d805a-6904-4217-b035-8e3def3506ce',
+                size: '20Gi',
+              },
+            ]),
+        },
+      ],
+    }),
+  ],
 };

@@ -4,7 +4,7 @@
  -->
 
 <article class="flex flex-wrap gap-2">
-  <a [routerLink]="['create']">
+  <a [routerLink]="['create']" class="w-full sm:w-fit">
     <div matRipple class="mat-card-overview new collab-card m-0">
       <div class="content flex flex-col items-center justify-center">
         Add an instance <br />
@@ -26,7 +26,7 @@
       instance of t4cInstanceService.t4cInstances$ | async;
       track instance.id
     ) {
-      <a [routerLink]="['instance', instance.id]">
+      <a [routerLink]="['instance', instance.id]" class="w-full sm:w-fit">
         <div
           matRipple
           class="mat-card-overview collab-card m-0"

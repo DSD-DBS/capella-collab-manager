@@ -7,7 +7,7 @@
   <h2 class="mb-2 mr-2.5 text-xl font-medium">Project Members</h2>
 }
 
-<div class="collab-card w-[312px] max-w-[350px] sm:min-w-[420px]">
+<div class="collab-card w-full !pb-0 sm:min-w-[420px] sm:max-w-[350px]">
   <div class="mb-2 flex flex-wrap gap-2">
     <button
       class="flex items-center justify-between"
@@ -39,7 +39,7 @@
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
   <div class="max-h-[50vh] overflow-y-scroll">
-    @for (role of ["manager", "user", "administrator"]; track role) {
+    @for (role of projectUserRoles; track role) {
       <div class="mt-2.5 pl-1 text-lg font-bold text-gray-400">
         @switch (role) {
           @case ("manager") {

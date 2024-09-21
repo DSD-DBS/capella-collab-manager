@@ -5,10 +5,10 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { BehaviorSubject } from 'rxjs';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { mockBackup } from 'src/storybook/backups';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { mockUser, MockUserService } from 'src/storybook/user';
+import { mockUser, MockOwnUserWrapperService } from 'src/storybook/user';
 import { PipelineDeletionDialogComponent } from './pipeline-deletion-dialog.component';
 
 const meta: Meta<PipelineDeletionDialogComponent> = {
@@ -48,9 +48,12 @@ export const AsAdmin: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: UserWrapperService,
+          provide: OwnUserWrapperService,
           useFactory: () =>
-            new MockUserService({ ...mockUser, role: 'administrator' }),
+            new MockOwnUserWrapperService({
+              ...mockUser,
+              role: 'administrator',
+            }),
         },
       ],
     }),
