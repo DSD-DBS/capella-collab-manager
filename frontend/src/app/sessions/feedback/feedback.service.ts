@@ -5,6 +5,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 import {
   FeedbackConfigurationOutput,
   FeedbackService as OpenAPIFeedbackService,
@@ -19,8 +20,9 @@ export class FeedbackWrapperService {
   constructor(
     private feedbackService: OpenAPIFeedbackService,
     public dialog: MatDialog,
+    private authService: AuthenticationWrapperService,
   ) {
-    this.loadFeedbackConfig().subscribe();
+    this.loadFeedbackConfig().subscribe(() => this.triggerFeedbackPrompt());
   }
 
   private _feedbackConfig = new BehaviorSubject<
@@ -33,6 +35,13 @@ export class FeedbackWrapperService {
     return this.feedbackService
       .getFeedbackConfiguration()
       .pipe(tap((feedbackConf) => this._feedbackConfig.next(feedbackConf)));
+  }
+
+  triggerFeedbackPrompt(): void {
+    if (this.shouldShowIntervalPrompt() && this.authService.isLoggedIn()) {
+      this.showDialog([], 'On interval');
+      this.saveFeedbackPromptDate();
+    }
   }
 
   public showDialog(sessions: Session[], trigger: string) {
