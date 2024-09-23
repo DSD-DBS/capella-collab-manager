@@ -18,6 +18,7 @@ import { HeaderComponent } from './general/header/header.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
 import { NoticeComponent } from './general/notice/notice.component';
 import { PageLayoutService } from './page-layout/page-layout.service';
+import { AuthenticationWrapperService } from './services/auth/auth.service';
 import { FeedbackWrapperService } from './sessions/feedback/feedback.service';
 import { FullscreenService } from './sessions/service/fullscreen.service';
 
@@ -46,6 +47,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     public fullscreenService: FullscreenService,
     private navBarService: NavBarService,
     private feedbackService: FeedbackWrapperService,
+    private authService: AuthenticationWrapperService,
   ) {
     slugify.extend({ '.': '-' });
   }
@@ -54,7 +56,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   async ngOnInit() {
     this.feedbackService.loadFeedbackConfig().subscribe(() => {
-      if (this.feedbackService.shouldShowIntervalPrompt()) {
+      if (
+        this.feedbackService.shouldShowIntervalPrompt() &&
+        this.authService.isLoggedIn()
+      ) {
         this.feedbackService.showDialog([], 'On interval');
         this.feedbackService.saveFeedbackPromptDate();
       }

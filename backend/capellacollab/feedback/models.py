@@ -13,9 +13,9 @@ from capellacollab.tools import models as tools_models
 
 
 class FeedbackRating(str, enum.Enum):
-    GOOD = "good"
-    OKAY = "okay"
     BAD = "bad"
+    OKAY = "okay"
+    GOOD = "good"
 
 
 class AnonymizedSession(core_pydantic.BaseModel):

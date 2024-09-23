@@ -11,11 +11,11 @@
 
 
 
-export type FeedbackRating = 'good' | 'okay' | 'bad';
+export type FeedbackRating = 'bad' | 'okay' | 'good';
 
 export const FeedbackRating = {
-    Good: 'good' as FeedbackRating,
+    Bad: 'bad' as FeedbackRating,
     Okay: 'okay' as FeedbackRating,
-    Bad: 'bad' as FeedbackRating
+    Good: 'good' as FeedbackRating
 };
 
