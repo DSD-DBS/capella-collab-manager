@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/openapi';
 import {
   UserRole,
-  UserWrapperService,
+  OwnUserWrapperService,
 } from 'src/app/services/user/user.service';
 
 export const mockUser: Readonly<User> = {
@@ -19,7 +19,9 @@ export const mockUser: Readonly<User> = {
   last_login: '2024-04-29T14:59:00Z',
 };
 
-export class MockUserService implements Partial<UserWrapperService> {
+export class MockOwnUserWrapperService
+  implements Partial<OwnUserWrapperService>
+{
   _user = new BehaviorSubject<User | undefined>(undefined);
   user$ = this._user.asObservable();
   user: User | undefined = mockUser;
@@ -33,4 +35,22 @@ export class MockUserService implements Partial<UserWrapperService> {
     const roles = ['user', 'administrator'];
     return roles.indexOf(requiredRole) <= roles.indexOf(this.user!.role);
   }
+}
+
+export class MockUserWrapperService implements Partial<OwnUserWrapperService> {
+  _user = new BehaviorSubject<User | undefined>(undefined);
+  user$ = this._user.asObservable();
+
+  _users = new BehaviorSubject<User[] | undefined>(undefined);
+  users$ = this._users.asObservable();
+
+  constructor(
+    user: User | undefined = undefined,
+    users: User[] | undefined = undefined,
+  ) {
+    this._user.next(user);
+    this._users.next(users);
+  }
+
+  loadUsers() {} // eslint-disable-line @typescript-eslint/no-empty-function
 }

@@ -10,7 +10,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthenticationWrapperService } from '../../services/auth/auth.service';
-import { UserWrapperService } from '../../services/user/user.service';
+import { OwnUserWrapperService } from '../../services/user/user.service';
 import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 
 @Component({
@@ -33,7 +33,7 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 export class HeaderComponent {
   constructor(
     public authService: AuthenticationWrapperService,
-    public userService: UserWrapperService,
+    public userService: OwnUserWrapperService,
     public navBarService: NavBarService,
   ) {}
 }

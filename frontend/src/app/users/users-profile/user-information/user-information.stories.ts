@@ -5,9 +5,14 @@
 import { MatTableDataSource } from '@angular/material/table';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { EventType, HistoryEvent } from 'src/app/openapi';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 import { mockProject } from 'src/storybook/project';
-import { mockUser, MockUserService } from 'src/storybook/user';
+import {
+  mockUser,
+  MockOwnUserWrapperService,
+  MockUserWrapperService,
+} from 'src/storybook/user';
 import { UserInformationComponent } from './user-information.component';
 
 const meta: Meta<UserInformationComponent> = {
@@ -17,19 +22,20 @@ const meta: Meta<UserInformationComponent> = {
     moduleMetadata({
       providers: [
         {
-          provide: UserWrapperService,
+          provide: OwnUserWrapperService,
           useFactory: () =>
-            new MockUserService({
+            new MockOwnUserWrapperService({
               ...mockUser,
               role: 'administrator',
             }),
         },
+        {
+          provide: UserWrapperService,
+          useFactory: () => new MockUserWrapperService({ ...mockUser, id: 0 }),
+        },
       ],
     }),
   ],
-  args: {
-    _user: { ...mockUser, id: 0 },
-  },
 };
 
 export default meta;
@@ -86,7 +92,6 @@ const events: HistoryEvent[] = [
 
 export const EventsAndLastLogin: Story = {
   args: {
-    user: mockUser,
     userEvents: events,
     historyEventDataSource: new MatTableDataSource<HistoryEvent>(events),
   },

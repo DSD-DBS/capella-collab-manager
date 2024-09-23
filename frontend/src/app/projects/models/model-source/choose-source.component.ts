@@ -8,7 +8,7 @@ import { MatAnchor } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { ProjectWrapperService } from '../../service/project.service';
 
 @Component({
@@ -24,6 +24,6 @@ export class ChooseSourceComponent {
   constructor(
     public projectService: ProjectWrapperService,
     public modelService: ModelWrapperService,
-    public userService: UserWrapperService,
+    public userService: OwnUserWrapperService,
   ) {}
 }

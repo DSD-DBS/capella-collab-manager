@@ -2,7 +2,8 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-@if (user && userService.user?.role === "administrator") {
+
+@if (userWrapperService.user$ | async; as user) {
   <div class="collab-card overflow-x-auto">
     <h2 class="text-xl font-medium">User information</h2>
     <div class="my-1">

@@ -10,7 +10,7 @@ import { AuthenticationWrapperService } from '../auth/auth.service';
 @Injectable({
   providedIn: 'root',
 })
-export class UserWrapperService {
+export class OwnUserWrapperService {
   _user = new BehaviorSubject<User | undefined>(undefined);
   user$ = this._user.asObservable();
 

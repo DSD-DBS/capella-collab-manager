@@ -11,7 +11,7 @@ import {
   SessionConnectionInformation,
   SessionsService,
 } from 'src/app/openapi';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import {
   SessionService,
   isPersistentSession,
@@ -31,7 +31,7 @@ export class ConnectionDialogComponent {
   connectionInfo?: SessionConnectionInformation = undefined;
 
   constructor(
-    public userService: UserWrapperService,
+    public userService: OwnUserWrapperService,
     private sessionService: SessionService,
     private sessionsService: SessionsService,
     @Inject(MAT_DIALOG_DATA) public session: Session,

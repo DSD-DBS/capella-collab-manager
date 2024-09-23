@@ -19,8 +19,8 @@ if t.TYPE_CHECKING:
 
 
 class ProjectUserRole(enum.Enum):
-    USER = "user"
     MANAGER = "manager"
+    USER = "user"
     ADMIN = "administrator"
 
 

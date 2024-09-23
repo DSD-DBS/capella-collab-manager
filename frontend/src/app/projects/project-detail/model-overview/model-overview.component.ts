@@ -26,7 +26,7 @@ import {
 import { MoveModelComponent } from 'src/app/projects/project-detail/model-overview/move-model/move-model.component';
 import { ReorderModelsDialogComponent } from 'src/app/projects/project-detail/model-overview/reorder-models-dialog/reorder-models-dialog.component';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ProjectWrapperService } from '../../service/project.service';
@@ -59,7 +59,7 @@ export class ModelOverviewComponent implements OnInit {
     public modelService: ModelWrapperService,
     public sessionService: SessionService,
     public projectUserService: ProjectUserService,
-    public userService: UserWrapperService,
+    public userService: OwnUserWrapperService,
     public projectService: ProjectWrapperService,
     private dialog: MatDialog,
   ) {}

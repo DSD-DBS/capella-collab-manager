@@ -17,6 +17,7 @@ import { ConfigurationSettingsComponent } from 'src/app/settings/core/configurat
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
+import { UserWrapperComponent } from 'src/app/users/user-wrapper/user-wrapper.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
 import { EventsComponent } from './events/events.component';
 import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
@@ -39,7 +40,6 @@ import { SessionsComponent } from './sessions/sessions.component';
 import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
-import { UserSettingsComponent } from './settings/core/user-settings/user-settings.component';
 import { PureVariantsComponent } from './settings/integrations/pure-variants/pure-variants.component';
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
@@ -47,6 +47,7 @@ import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/e
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
+import { UserSettingsComponent } from './users/user-settings/user-settings.component';
 
 export const routes: Routes = [
   {
@@ -455,18 +456,28 @@ export const routes: Routes = [
         component: EventsComponent,
       },
       {
+        path: 'users',
+        data: { breadcrumb: 'Users' },
+        component: UserSettingsComponent,
+      },
+      {
         path: 'user',
-        data: { breadcrumb: 'User' },
+        data: { breadcrumb: 'Users', redirect: '/users' },
         children: [
           {
-            path: '',
-            data: { breadcrumb: undefined },
-            component: UserSettingsComponent,
-          },
-          {
-            path: ':userId',
-            data: { breadcrumb: (data: Data) => data?.user?.name || 'User' },
-            component: UsersProfileComponent,
+            path: ':user',
+            data: {
+              breadcrumb: (data: Data) => data.user?.name,
+              redirect: (data: Data) => `/user/${data.user?.id}`,
+            },
+            component: UserWrapperComponent,
+            children: [
+              {
+                path: '',
+                data: { breadcrumb: undefined },
+                component: UsersProfileComponent,
+              },
+            ],
           },
         ],
       },

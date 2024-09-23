@@ -11,11 +11,11 @@
 
 
 
-export type ProjectUserRole = 'user' | 'manager' | 'administrator';
+export type ProjectUserRole = 'manager' | 'user' | 'administrator';
 
 export const ProjectUserRole = {
-    User: 'user' as ProjectUserRole,
     Manager: 'manager' as ProjectUserRole,
+    User: 'user' as ProjectUserRole,
     Administrator: 'administrator' as ProjectUserRole
 };
 

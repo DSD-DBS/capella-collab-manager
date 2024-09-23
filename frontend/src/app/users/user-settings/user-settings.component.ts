@@ -2,16 +2,17 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
   FormGroup,
   ValidationErrors,
-  ValidatorFn,
   Validators,
   FormsModule,
   ReactiveFormsModule,
+  AsyncValidatorFn,
 } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +27,8 @@ import { MatInput } from '@angular/material/input';
 import { MatListSubheaderCssMatStyler } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { map, Observable, take } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import {
   InputDialogComponent,
@@ -33,11 +36,11 @@ import {
 } from 'src/app/helpers/input-dialog/input-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Role, User, UsersService } from 'src/app/openapi';
-import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import {
   UserRole,
-  UserWrapperService,
+  OwnUserWrapperService,
 } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -57,34 +60,39 @@ import {
     ReactiveFormsModule,
     MatError,
     MatButton,
+    AsyncPipe,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class UserSettingsComponent implements OnInit {
-  users: User[] = [];
   search = '';
-  selectedUser?: User;
+
+  public readonly roleMapping = {
+    user: 'Global User',
+    administrator: 'Global Administrator',
+  };
 
   createUserFormGroup = new FormGroup({
-    username: new FormControl('', [
-      Validators.required,
-      this.userNameAlreadyExistsValidator(),
-    ]),
-    idpIdentifier: new FormControl('', [
-      Validators.required,
-      this.userIdPIdentifierAlreadyExistsValidator(),
-    ]),
+    username: new FormControl('', {
+      validators: Validators.required,
+      asyncValidators: this.asyncUserNameAlreadyExistsValidator(),
+    }),
+    idpIdentifier: new FormControl('', {
+      validators: Validators.required,
+      asyncValidators: this.asyncUserIdPIdentifierAlreadyExistsValidator(),
+    }),
   });
 
   constructor(
-    public userService: UserWrapperService,
-    public projectUserService: ProjectUserService,
+    public ownUserService: OwnUserWrapperService,
+    public userWrapperService: UserWrapperService,
     private toastService: ToastService,
     private dialog: MatDialog,
     private usersService: UsersService,
   ) {}
 
   ngOnInit(): void {
-    this.getUsers();
+    this.userWrapperService.loadUsers();
   }
 
   get username(): FormControl {
@@ -95,25 +103,33 @@ export class UserSettingsComponent implements OnInit {
     return this.createUserFormGroup.controls.idpIdentifier;
   }
 
-  get advanced_roles() {
-    return ProjectUserService.ADVANCED_ROLES;
+  get userRoles() {
+    return Object.values(Role);
   }
 
-  userNameAlreadyExistsValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (this.users.find((user) => user.name == control.value)) {
-        return { userAlreadyExists: true };
-      }
-      return null;
+  asyncUserNameAlreadyExistsValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.userWrapperService.users$.pipe(
+        take(1),
+        map((users) => {
+          return users?.find((user) => user.name == control.value)
+            ? { userAlreadyExists: true }
+            : null;
+        }),
+      );
     };
   }
 
-  userIdPIdentifierAlreadyExistsValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (this.users.find((user) => user.idp_identifier == control.value)) {
-        return { userAlreadyExists: true };
-      }
-      return null;
+  asyncUserIdPIdentifierAlreadyExistsValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.userWrapperService.users$.pipe(
+        take(1),
+        map((users) => {
+          return users?.find((user) => user.idp_identifier == control.value)
+            ? { userAlreadyExists: true }
+            : null;
+        }),
+      );
     };
   }
 
@@ -147,7 +163,7 @@ export class UserSettingsComponent implements OnInit {
                 'User created',
                 `The user ${username} has been created.`,
               );
-              this.getUsers();
+              this.userWrapperService.loadUsers();
             },
           });
       }
@@ -175,7 +191,7 @@ export class UserSettingsComponent implements OnInit {
                 'Role of user updated',
                 user.name + ' has now the role administrator',
               );
-              this.getUsers();
+              this.userWrapperService.loadUsers();
             },
           });
       }
@@ -200,7 +216,7 @@ export class UserSettingsComponent implements OnInit {
                 'Role of user updated',
                 user.name + ' has now the role user',
               );
-              this.getUsers();
+              this.userWrapperService.loadUsers();
             },
           });
       }
@@ -228,21 +244,18 @@ export class UserSettingsComponent implements OnInit {
               'User deleted',
               user.name + ' has been deleted',
             );
-            this.getUsers();
+            this.userWrapperService.loadUsers();
           },
         });
       }
     });
   }
 
-  getUsers() {
-    this.usersService.getUsers().subscribe((users: User[]) => {
-      this.users = users;
-    });
-  }
-
-  getUsersByRole(role: UserRole): User[] {
-    return this.users.filter(
+  getUsersByRole(
+    users: User[] | null | undefined,
+    role: UserRole,
+  ): User[] | undefined {
+    return users?.filter(
       (user) =>
         user.role == role &&
         user.name.toLowerCase().includes(this.search.toLowerCase()),

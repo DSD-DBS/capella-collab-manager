@@ -2,38 +2,40 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-@if (user && userService.user && user.id !== userService.user.id) {
-  <div class="collab-card">
-    <h2 class="text-xl font-medium">Common Projects</h2>
-    <div class="my-1">
-      <mat-divider></mat-divider>
-    </div>
-    @if ((commonProjects$ | async) === undefined) {
-      <span>Loading...</span>
-    } @else if ((commonProjects$ | async)?.length === 0) {
-      <span>You do not have any common projects.</span>
-    } @else {}
-    <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-      @for (project of commonProjects$ | async; track project.slug) {
-        <div
-          class="collab-card !ml-0 cursor-pointer"
-          [routerLink]="['/project', project.slug]"
-        >
-          <div>
-            <b class="line-clamp-1">{{ project.name }}</b
-            ><br />
-            @if (project.description) {
-              <span class="line-clamp-3 md:line-clamp-5">{{
-                project.description
-              }}</span>
-            } @else {
-              <i class="line-clamp-3 md:line-clamp-5"
-                >No description provided</i
-              >
-            }
+@if (userWrapperService.user$ | async; as user) {
+  @if (userService.user && user.id !== userService.user.id) {
+    <div class="collab-card">
+      <h2 class="text-xl font-medium">Common Projects</h2>
+      <div class="my-1">
+        <mat-divider></mat-divider>
+      </div>
+      @if ((commonProjects$ | async) === undefined) {
+        <span>Loading...</span>
+      } @else if ((commonProjects$ | async)?.length === 0) {
+        <span>You do not have any common projects.</span>
+      } @else {}
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+        @for (project of commonProjects$ | async; track project.slug) {
+          <div
+            class="collab-card !ml-0 cursor-pointer"
+            [routerLink]="['/project', project.slug]"
+          >
+            <div>
+              <b class="line-clamp-1">{{ project.name }}</b
+              ><br />
+              @if (project.description) {
+                <span class="line-clamp-3 md:line-clamp-5">{{
+                  project.description
+                }}</span>
+              } @else {
+                <i class="line-clamp-3 md:line-clamp-5"
+                  >No description provided</i
+                >
+              }
+            </div>
           </div>
-        </div>
-      }
+        }
+      </div>
     </div>
-  </div>
+  }
 }

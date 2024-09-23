@@ -4,9 +4,14 @@
  */
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { of } from 'rxjs';
-import { UserWrapperService } from 'src/app/services/user/user.service';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 import { mockProject } from 'src/storybook/project';
-import { MockUserService, mockUser } from 'src/storybook/user';
+import {
+  MockOwnUserWrapperService,
+  mockUser,
+  MockUserWrapperService,
+} from 'src/storybook/user';
 import { CommonProjectsComponent } from './common-projects.component';
 
 const meta: Meta<CommonProjectsComponent> = {
@@ -16,15 +21,16 @@ const meta: Meta<CommonProjectsComponent> = {
     moduleMetadata({
       providers: [
         {
+          provide: OwnUserWrapperService,
+          useFactory: () => new MockOwnUserWrapperService(mockUser),
+        },
+        {
           provide: UserWrapperService,
-          useFactory: () => new MockUserService(mockUser),
+          useFactory: () => new MockUserWrapperService({ ...mockUser, id: 0 }),
         },
       ],
     }),
   ],
-  args: {
-    _user: { ...mockUser, id: 0 },
-  },
 };
 
 export default meta;

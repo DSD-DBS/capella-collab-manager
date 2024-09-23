@@ -62,7 +62,7 @@
     }
     @for (model of modelService.models$ | async; track model.id) {
       <div
-        class="collab-card flex min-h-[200px] w-[500px] max-w-[85vw] select-none flex-col !p-0"
+        class="collab-card flex min-h-[200px] w-full select-none flex-col !p-0 sm:w-[500px]"
       >
         <div
           class="flex justify-between rounded-t bg-primary p-2.5 align-middle text-white"
