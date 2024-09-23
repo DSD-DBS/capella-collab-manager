@@ -71,6 +71,11 @@ https://github.com/DSD-DBS/capella-collab-manager/assets/23395732/01c5dc34-7792-
 
 ### Running Locally with k3d
 
+The following instructions are not suitable for a production deployment, but
+can be used to try out the features of the Collaboration Manager locally. You
+can find the installation guide for a production deployment in the
+[general documentation](https://dsd-dbs.github.io/capella-collab-manager/admin/installation/).
+
 #### Prerequisites
 
 To deploy the application you need:
@@ -181,11 +186,6 @@ Once the cluster is installed and all services are running
 (`kubectl get pods`), you can get started. Follow our
 [Getting started guide](https://dsd-dbs.github.io/capella-collab-manager/admin/getting_started/getting_started/)
 and be up and running in a few minutes.
-
-### Deployment
-
-You can find the installation guide for a production deployment in the
-[general documentation](https://dsd-dbs.github.io/capella-collab-manager/admin/installation/).
 
 ## How it Works
 

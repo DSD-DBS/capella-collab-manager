@@ -5,8 +5,8 @@
 clients:
   - url: http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
     basic_auth:
-      username: {{ .Values.definitions.loki.username }}
-      password: {{ .Values.definitions.loki.password }}
+      username: {{ .Values.loki.gateway.basicAuth.username }}
+      password: {{ .Values.loki.gateway.basicAuth.password }}
 server:
   http_listen_port: 3101
 {{- end }}

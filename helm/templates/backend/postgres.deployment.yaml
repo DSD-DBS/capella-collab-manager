@@ -42,7 +42,7 @@ spec:
             - name: POSTGRES_DB
               value: backend
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.database.backend.internal.password }}
+              value: {{ .Values.database.backend.internal.password | required ".Values.database.backend.internal.password is required. Please generate a random password and set it in the values.yaml." }}
             - name: POSTGRES_USER
               value: backend
           ports:

@@ -13,8 +13,7 @@ data:
   grafana.ini: |
     [security]
     admin_user = {{ .Values.grafana.adminUser }}
-    admin_password = {{ .Values.grafana.adminPassword }}
-
+    admin_password = {{ .Values.grafana.adminPassword | required ".Values.grafana.adminPassword is required. Please generate a random password and set it in the values.yaml." }}
     [paths]
     data = /var/lib/grafana/
     logs = /var/log/grafana
@@ -64,9 +63,9 @@ data:
         orgId: 1
         url: http://loki-gateway.{{ .Release.Namespace }}.svc.cluster.local
         basicAuth: true
-        basicAuthUser: {{ .Values.definitions.loki.username }}
+        basicAuthUser: {{ .Values.loki.gateway.basicAuth.username }}
         secureJsonData:
-          basicAuthPassword: {{ .Values.definitions.loki.password }}
+          basicAuthPassword: {{ .Values.loki.gateway.basicAuth.password | required ".Values.loki.gateway.basicAuth.password is required. Please generate a random password and set it in the values.yaml." }}
         version: 1
         editable: false
       {{ end }}

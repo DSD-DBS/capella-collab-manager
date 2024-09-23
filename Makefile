@@ -103,6 +103,11 @@ helm-deploy:
 		--set cluster.ingressClassName=traefik \
 		--set cluster.ingressNamespace=kube-system \
 		--set backend.k8sSessionNamespace="$(SESSION_NAMESPACE)" \
+		--set loki.gateway.basicAuth.password="localLokiPassword" \
+		--set grafana.adminPassword="admin" \
+		--set database.backend.internal.password="secret" \
+		--set database.guacamole.internal.password="secret" \
+		--set valkey.password="secret" \
 		$(RELEASE) $$HELM_PACKAGE_DIR/collab-manager-*.tgz
 	rm -rf "$$HELM_PACKAGE_DIR"
 	$(MAKE) provision-guacamole wait
