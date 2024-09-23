@@ -8,6 +8,7 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { AuthenticationService } from 'src/app/openapi';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
+import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.service';
 
 @Component({
   selector: 'app-auth-redirect',
@@ -22,6 +23,7 @@ export class AuthRedirectComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private userService: OwnUserWrapperService,
     private router: Router,
+    private feedbackService: FeedbackWrapperService,
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +80,7 @@ export class AuthRedirectComponent implements OnInit {
             next: () => {
               localStorage.setItem(this.authService.LOGGED_IN_KEY, 'true');
               this.userService.updateOwnUser();
+              this.feedbackService.triggerFeedbackPrompt();
               this.router.navigateByUrl(redirectTo);
             },
             error: () => this.redirectToLogin(),
