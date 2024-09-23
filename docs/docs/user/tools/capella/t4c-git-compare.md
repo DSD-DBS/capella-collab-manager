@@ -20,7 +20,7 @@
   </tr>
   <tr>
     <td><b>Concurrent working</b></td>
-    <td>Very challenging because of merge conflict potential.</td>
+    <td>Very challenging because of merge conflict potential, a possible workflow is described [here](./git/index.md).</td>
     <td>Is possible. Diagrams are locked, no risk of merge conflicts.</td>
   </tr>
   <tr>

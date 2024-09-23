@@ -55,6 +55,7 @@ nav:
           - Introduction: user/tools/capella/introduction.md
           - Update a Capella Model to a Newer Version: user/tools/capella/migration/index.md
           - Co-working Methods: user/tools/capella/t4c-git-compare.md
+          - Local Capella vs. Collaboration Manager: user/tools/capella/local-installation-vs-collab-mgr.md
           - TeamForCapella:
               - Connect to a TeamForCapella Repository: user/tools/capella/teamforcapella/connect/index.md
               - Import a Model from TeamForCapella: user/tools/capella/teamforcapella/import/index.md
