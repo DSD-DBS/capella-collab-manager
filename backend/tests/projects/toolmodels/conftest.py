@@ -11,8 +11,8 @@ from sqlalchemy import orm
 
 import capellacollab.settings.modelsources.git.crud as git_crud
 import capellacollab.settings.modelsources.git.models as git_models
-import capellacollab.settings.modelsources.t4c.models as t4c_models
-import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repositories_interface
+import capellacollab.settings.modelsources.t4c.instance.models as t4c_models
+import capellacollab.settings.modelsources.t4c.instance.repositories.interface as t4c_repositories_interface
 from capellacollab.core import credentials
 
 

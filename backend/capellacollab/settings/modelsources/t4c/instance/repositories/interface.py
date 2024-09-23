@@ -8,7 +8,9 @@ from requests import auth
 
 from capellacollab.config import config
 from capellacollab.core import credentials
-from capellacollab.settings.modelsources.t4c import models as t4c_models
+from capellacollab.settings.modelsources.t4c.instance import (
+    models as t4c_models,
+)
 
 
 def list_repositories(instance: t4c_models.DatabaseT4CInstance):

@@ -5,8 +5,11 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-
-from . import crud, exceptions, models
+from capellacollab.settings.modelsources.t4c.instance import (
+    crud,
+    exceptions,
+    models,
+)
 
 
 def get_existing_instance(

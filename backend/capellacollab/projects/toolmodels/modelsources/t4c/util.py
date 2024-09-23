@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-from capellacollab.settings.modelsources.t4c.repositories import (
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
     models as t4c_repository_models,
 )
 from capellacollab.tools import models as tools_models

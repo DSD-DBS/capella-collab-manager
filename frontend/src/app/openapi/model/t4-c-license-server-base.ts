@@ -11,8 +11,9 @@
 
 
 
-export interface GetSessionUsageResponse { 
-    free: number;
-    total: number;
+export interface T4CLicenseServerBase { 
+    name: string;
+    usage_api: string;
+    license_key: string;
 }
 

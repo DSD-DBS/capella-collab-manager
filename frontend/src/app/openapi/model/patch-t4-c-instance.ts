@@ -14,12 +14,11 @@ import { Protocol } from './protocol';
 
 export interface PatchT4CInstance { 
     name?: string | null;
-    license?: string | null;
+    license_server_id?: number | null;
     host?: string | null;
     port?: number | null;
     cdo_port?: number | null;
     http_port?: number | null;
-    usage_api?: string | null;
     rest_api?: string | null;
     username?: string | null;
     password?: string | null;

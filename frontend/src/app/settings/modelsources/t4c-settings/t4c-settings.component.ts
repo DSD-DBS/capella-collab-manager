@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { MatCardOverviewSkeletonLoaderComponent } from 'src/app/helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
+import { T4CLicenseServerWrapperService } from '../../../services/settings/t4c-license-server.service';
 
 @Component({
   selector: 'app-t4c-settings',
@@ -27,5 +28,8 @@ import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
   ],
 })
 export class T4CSettingsComponent {
-  constructor(public t4cInstanceService: T4CInstanceWrapperService) {}
+  constructor(
+    public t4cInstanceService: T4CInstanceWrapperService,
+    public t4cLicenseServerService: T4CLicenseServerWrapperService,
+  ) {}
 }

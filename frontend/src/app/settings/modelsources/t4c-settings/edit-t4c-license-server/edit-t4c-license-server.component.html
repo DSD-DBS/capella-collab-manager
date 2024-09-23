@@ -1,0 +1,164 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="flex flex-wrap gap-5">
+  <div class="collab-card h-fit">
+    <div class="mb-2">
+      <h2 class="text-xl font-medium">
+        {{ existing ? "Edit License Server" : "Create License Server" }}
+      </h2>
+    </div>
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      class="flex flex-col flex-wrap gap-2"
+    >
+      <fieldset class="flex flex-wrap items-start gap-2">
+        <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
+          @if (form.controls.name.errors?.required) {
+            <mat-error>The name is required.</mat-error>
+          }
+        </mat-form-field>
+      </fieldset>
+      <fieldset class="flex flex-wrap items-start gap-2">
+        <mat-form-field appearance="fill">
+          <mat-label>License Server API</mat-label>
+          <input matInput formControlName="usage_api" />
+          @if (form.controls.usage_api.errors?.required) {
+            <mat-error>The license server API is required.</mat-error>
+          } @else if (form.controls.usage_api.errors?.pattern) {
+            <mat-error>The URL should start with "http(s)://"</mat-error>
+          }
+        </mat-form-field>
+      </fieldset>
+      <fieldset class="flex flex-wrap items-start gap-2">
+        <mat-form-field appearance="fill">
+          <mat-label>License Key</mat-label>
+          <input matInput formControlName="license_key" />
+          @if (form.controls.license_key.errors?.required) {
+            <mat-error>The license key is required.</mat-error>
+          }
+        </mat-form-field>
+      </fieldset>
+      <div class="flex justify-between gap-2">
+        @if (!existing) {
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="!form.valid"
+          >
+            Create
+          </button>
+        } @else if (editing) {
+          <button
+            mat-flat-button
+            type="button"
+            color="primary"
+            (click)="cancelEditing()"
+          >
+            Cancel
+          </button>
+          <div
+            matTooltip="To delete this license server, disconnect it from all T4C instances"
+            [matTooltipDisabled]="
+              (t4cLicenseServerWrapperService.licenseServer$ | async)?.instances
+                ?.length === 0
+            "
+          >
+            <button
+              (click)="deleteLicenseServer()"
+              [disabled]="
+                (t4cLicenseServerWrapperService.licenseServer$ | async)
+                  ?.instances?.length !== 0
+              "
+              mat-flat-button
+              type="button"
+              color="warn"
+            >
+              <mat-icon>delete_forever</mat-icon>
+              <span>Delete</span>
+            </button>
+          </div>
+
+          <button mat-flat-button type="submit" color="primary">Submit</button>
+        } @else {
+          <button mat-flat-button color="primary" (click)="enableEditing()">
+            Edit
+          </button>
+        }
+      </div>
+    </form>
+  </div>
+
+  @if (existing) {
+    <div class="collab-card h-fit">
+      <h2 class="mb-2 text-xl font-medium">License Server Status</h2>
+
+      @if (
+        t4cLicenseServerWrapperService.licenseServer$ | async;
+        as licenseServer
+      ) {
+        @if (licenseServer.license_server_version) {
+          <div>
+            <mat-icon class="mat-icon-position top">tag</mat-icon>
+            <b>License Server Version</b>:
+            {{ licenseServer.license_server_version }}
+          </div>
+        } @else {
+          <div>
+            <mat-icon class="mat-icon-position top">error</mat-icon>
+            <b> License Server is Unreachable</b>
+          </div>
+        }
+
+        @if (licenseServer.usage) {
+          <div>
+            <mat-icon class="mat-icon-position top">123</mat-icon>
+            <b> Available licenses</b>: {{ licenseServer.usage.free }} /
+            {{ licenseServer.usage.total }}
+          </div>
+        } @else {
+          <div>
+            <mat-icon class="mat-icon-position top">123</mat-icon>
+            <b>Available licenses</b>: Unknown
+          </div>
+        }
+
+        @if (licenseServer.instances.length > 0) {
+          <div>
+            <mat-icon class="mat-icon-position top">link</mat-icon>
+            <b>
+              Used by {{ licenseServer.instances.length }} T4C
+              {{
+                licenseServer.instances.length > 1 ? "instances" : "instance"
+              }}</b
+            >
+            <ul class="list-inside list-disc">
+              @for (instance of licenseServer.instances; track instance.name) {
+                <li>
+                  <a
+                    [routerLink]="[
+                      '/settings',
+                      'modelsources',
+                      't4c',
+                      'instance',
+                      instance.id,
+                    ]"
+                  >
+                    {{ instance.name }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

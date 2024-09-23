@@ -7,7 +7,6 @@ import string
 
 import pytest
 import requests.exceptions
-import sqlalchemy.exc
 from fastapi import testclient
 from sqlalchemy import orm
 
@@ -18,8 +17,8 @@ import capellacollab.projects.toolmodels.models as toolmodels_models
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
 import capellacollab.sessions.operators
-import capellacollab.settings.modelsources.t4c.models as t4c_models
-import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repositories_interface
+import capellacollab.settings.modelsources.t4c.instance.models as t4c_models
+import capellacollab.settings.modelsources.t4c.instance.repositories.interface as t4c_repositories_interface
 from capellacollab.core import credentials
 
 

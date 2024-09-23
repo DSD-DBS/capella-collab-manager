@@ -14,7 +14,7 @@ from fastapi.middleware import cors
 
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 import capellacollab.sessions.metrics as sessions_metrics
-import capellacollab.settings.modelsources.t4c.metrics as t4c_metrics
+import capellacollab.settings.modelsources.t4c.license_server.metrics as t4c_metrics
 from capellacollab import core
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)

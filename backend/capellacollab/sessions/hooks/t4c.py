@@ -11,10 +11,10 @@ from sqlalchemy import orm
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.settings.modelsources.t4c.repositories import (
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
     crud as repo_crud,
 )
-from capellacollab.settings.modelsources.t4c.repositories import (
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as repo_interface,
 )
 from capellacollab.tools import models as tools_models
@@ -70,7 +70,9 @@ class T4CIntegration(interface.HookRegistration):
         )
 
         t4c_licence_secret = (
-            t4c_repositories[0].instance.license if t4c_repositories else ""
+            t4c_repositories[0].instance.license_server.license_key
+            if t4c_repositories
+            else ""
         )
 
         environment = T4CConfigEnvironment(

@@ -12,13 +12,11 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
     models as t4c_models,
 )
 from capellacollab.projects.users import models as projects_users_models
-from capellacollab.settings.modelsources.t4c import (
-    models as settings_t4c_models,
-)
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
+from .. import models as settings_t4c_models
 from . import models
 
 

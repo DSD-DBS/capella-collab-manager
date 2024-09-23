@@ -9,7 +9,7 @@ import capellacollab.projects.toolmodels.modelsources.git.crud as project_git_cr
 import capellacollab.projects.toolmodels.modelsources.git.models as project_git_models
 import capellacollab.projects.toolmodels.modelsources.t4c.crud as models_t4c_crud
 import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
-import capellacollab.settings.modelsources.t4c.repositories.models as settings_t4c_repositories_models
+import capellacollab.settings.modelsources.t4c.instance.repositories.models as settings_t4c_repositories_models
 
 
 @pytest.fixture(name="t4c_model")

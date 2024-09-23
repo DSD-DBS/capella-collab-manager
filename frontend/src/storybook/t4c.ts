@@ -11,6 +11,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
   SimpleT4CModel,
   T4CInstance,
+  T4CLicenseServer,
   T4CModel,
   T4CRepository,
   T4CRepositoryStatus,
@@ -23,6 +24,7 @@ import {
   T4CRepositoryWrapperService,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { mockToolVersion } from 'src/storybook/tool';
+import { T4CLicenseServerWrapperService } from '../app/services/settings/t4c-license-server.service';
 
 export const mockTeamForCapellaRepository: Readonly<SimpleT4CModel> = {
   project_name: 'project',
@@ -33,12 +35,11 @@ export const mockTeamForCapellaRepository: Readonly<SimpleT4CModel> = {
 export const mockT4CInstance: Readonly<T4CInstance> = {
   id: 1,
   name: 'test',
-  license: 'license',
   host: 'localhost',
   port: 2036,
   cdo_port: 12036,
   http_port: 8080,
-  usage_api: 'http://localhost:8086',
+  license_server_id: 1,
   rest_api: 'http://localhost:8081/api/v1.0',
   username: 'admin',
   protocol: 'ws',
@@ -92,6 +93,72 @@ export class MockT4CInstanceWrapperService
   }
 
   resetT4CInstance(): void {} // eslint-disable-line @typescript-eslint/no-empty-function
+}
+
+export const mockT4CLicenseServer: Readonly<T4CLicenseServer> = {
+  id: 1,
+  name: 'licenseServer',
+  license_key: 'licenseKey',
+  usage_api: 'http://example.com',
+  usage: {
+    free: 1,
+    total: 2,
+  },
+  license_server_version: '1.0.2324234',
+  instances: [mockT4CInstance],
+};
+
+export const mockT4CLicenseServerUnreachable: Readonly<T4CLicenseServer> = {
+  id: 1,
+  name: 'licenseServer',
+  license_key: 'licenseKey',
+  usage_api: 'http://example.com',
+  usage: null,
+  license_server_version: null,
+  instances: [mockT4CInstance],
+};
+
+export const mockT4CLicenseServerUnused: Readonly<T4CLicenseServer> = {
+  id: 1,
+  name: 'licenseServer',
+  license_key: 'licenseKey',
+  usage_api: 'http://example.com',
+  usage: {
+    free: 1,
+    total: 2,
+  },
+  license_server_version: '1.0.2324234',
+  instances: [],
+};
+
+export class MockT4CLicenseServerWrapperService
+  implements Partial<T4CLicenseServerWrapperService>
+{
+  private _licenseServer = new BehaviorSubject<T4CLicenseServer | undefined>(
+    undefined,
+  );
+  public readonly licenseServer$ = this._licenseServer.asObservable();
+
+  private _licenseServers = new BehaviorSubject<T4CLicenseServer[] | undefined>(
+    undefined,
+  );
+  public readonly licenseServers$ = this._licenseServers.asObservable();
+
+  constructor(
+    licenseServer: T4CLicenseServer,
+    licenseServers: T4CLicenseServer[],
+  ) {
+    this._licenseServer.next(licenseServer);
+    this._licenseServers.next(licenseServers);
+  }
+
+  asyncNameValidator(_ignoreServer?: T4CLicenseServer): AsyncValidatorFn {
+    return (_control: AbstractControl): Observable<ValidationError | null> => {
+      return of(null);
+    };
+  }
+
+  resetLicenseServer(): void {} // eslint-disable-line @typescript-eslint/no-empty-function
 }
 
 export class MockT4CRepositoryWrapperService

@@ -9,24 +9,17 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { Protocol } from './protocol';
+import { T4CLicenseServerUsage } from './t4-c-license-server-usage';
+import { T4CInstance } from './t4-c-instance';
 
 
-export interface CreateT4CInstance { 
-    host: string;
-    port: number;
-    cdo_port: number;
-    http_port?: number | null;
-    rest_api: string;
-    username: string;
-    protocol: Protocol;
+export interface T4CLicenseServer { 
     name: string;
-    version_id: number;
-    license_server_id: number;
-    is_archived?: boolean | null;
-    password: string;
+    usage_api: string;
+    license_key: string;
+    id: number;
+    license_server_version: string | null;
+    usage: T4CLicenseServerUsage | null;
+    instances: Array<T4CInstance>;
 }
-export namespace CreateT4CInstance {
-}
-
 

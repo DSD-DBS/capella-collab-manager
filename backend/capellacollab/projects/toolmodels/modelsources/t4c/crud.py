@@ -8,7 +8,7 @@ from sqlalchemy import orm
 
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.t4c import models
-from capellacollab.settings.modelsources.t4c.repositories import (
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
     models as repositories_models,
 )
 
