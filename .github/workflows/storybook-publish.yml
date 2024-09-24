@@ -5,23 +5,18 @@ name: 'Publish Storybook'
 on:
   pull_request:
     branches: ['**']
-    types: [opened, reopened, synchronize, ready_for_review]
     paths:
       - 'frontend/**'
-      - '.github/workflows/storybook.yml'
+      - '.github/workflows/storybook-publish.yml'
   push:
     branches: ['main']
     paths:
       - 'frontend/**'
-      - '.github/workflows/storybook.yml'
+      - '.github/workflows/storybook-publish.yml'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # prettier-ignore
-    if:
-      github.actor != 'dependabot[bot]' &&
-      (github.event.pull_request.draft == false || github.event_name == 'push')
     concurrency:
       # prettier-ignore
       group: chromatic-${{ github.event_name }}-${{ github.event.pull_request.number }}
@@ -38,19 +33,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: Storybook
-      - name: Create or update Storybook comment on PR
-        if: github.event_name == 'pull_request'
-        uses: peter-evans/create-or-update-comment@v4
-        id: cc
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            <hr>
-            A Storybook preview is currently being built for commit ${{ github.sha }}.
-            As soon as it becomes available, this comment will be updated.
-          edit-mode: append
+          body-includes: Chromatic
       - name: Install dependencies
         run: npm ci
         working-directory: ./frontend
@@ -64,51 +47,14 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: ./frontend
           storybookBuildDir: ./storybook-static
-      - name: Create Storybook comment (initial)
+      - name: Create Storybook comment
         if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v4
         with:
-          comment-id: ${{ steps.cc.outputs.comment-id }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             A Storybook preview is available for commit ${{ github.sha }}.
             ➡️ [View Storybook](${{ steps.chromatic.outputs.storybookUrl }})
             ➡️ [View Chromatic build](${{ steps.chromatic.outputs.buildUrl }})
-          edit-mode: replace
-      - name: Create Storybook comment (no changes)
-        if:
-          github.event_name == 'pull_request' &&
-          steps.chromatic.outputs.changeCount == 0
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          comment-id: ${{ steps.cc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ✅ Captured ${{ steps.chromatic.outputs.actualCaptureCount }} snapshots. No changes detected.
-          edit-mode: append
-      - name: Create Storybook comment (with changes)
-        if:
-          github.event_name == 'pull_request' &&
-          steps.chromatic.outputs.changeCount > 0
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          comment-id: ${{ steps.cc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          # prettier-ignore
-          body: >
-            🔍 ${{ steps.chromatic.outputs.changeCount }} out of
-            ${{ steps.chromatic.outputs.actualCaptureCount }} snapshots have changed.
-            Please review the changes before merging.
-          edit-mode: append
-      - name: Create Storybook comment (failure)
-        # prettier-ignore
-        if:
-          always() && github.event_name == 'pull_request' && steps.chromatic.outcome == 'failure'
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          comment-id: ${{ steps.cc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            The Storybook preview generation failed for commit ${{ github.sha }}.
-            Check the log output of the GitHub action for more information.
           edit-mode: replace
