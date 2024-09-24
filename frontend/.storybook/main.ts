@@ -5,7 +5,11 @@
 import type { StorybookConfig } from '@storybook/angular';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.ts'],
+  stories: [
+    '../src/storybook/index.mdx',
+    '../src/**/*.mdx',
+    '../src/**/*.stories.ts',
+  ],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
