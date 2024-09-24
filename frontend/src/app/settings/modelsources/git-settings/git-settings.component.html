@@ -2,97 +2,55 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
 
-<div class="wrapper">
-  <div *ngIf="(this.gitInstancesService.gitInstances$ | async)?.length">
-    <div class="title">Existing instances</div>
-    <div class="flex flex-wrap gap-5">
-      <div
-        class="collab-card mb-5 !p-0"
-        *ngFor="let instance of this.gitInstancesService.gitInstances$ | async"
-      >
-        <div class="mat-title">
-          <div class="instance-head">
-            {{ instance.name }}
-            <span class="mat-subtitle">{{ instance.type }}</span>
-          </div>
-          <div>
-            <a
-              mat-icon-button
-              [routerLink]="['instances/', instance.id.toString()]"
-            >
-              <mat-icon aria-label="Edit the source">settings</mat-icon>
-            </a>
-            <button mat-icon-button (click)="deleteGitInstance(instance)">
-              <mat-icon aria-label="Delete the source">delete</mat-icon>
-            </button>
-          </div>
-        </div>
-        <div class="content">
-          Instance base URL:
-          <a href="{{ instance.url }}">{{ instance.url }}</a> <br />
-          <span *ngIf="instance.apiURL">API URL: {{ instance.apiURL }}</span>
+<article class="flex flex-wrap gap-5">
+  <a [routerLink]="['create']" class="w-full sm:w-fit">
+    <div matRipple class="mat-card-overview new collab-card m-0">
+      <div class="content">
+        Link a new Git Instance <br />
+        <div class="icon">
+          <app-mat-icon size="70px">link</app-mat-icon>
         </div>
       </div>
     </div>
-  </div>
-  <br />
-  <div class="title">Add new integration</div>
-  <br />
-  <form [formGroup]="gitInstancesForm" id="add-instance-form">
-    Supported instances: <br />
-    <mat-form-field class="form-field-default" appearance="fill">
-      <mat-label>Git Type</mat-label>
-      <mat-select matInput formControlName="type">
-        <mat-option value="General" selected>General Git (limited)</mat-option>
-        <mat-option value="GitLab">Gitlab</mat-option>
-        <mat-option value="GitHub">GitHub</mat-option>
-        <mat-option value="AzureDevOps" disabled
-          >Azure DevOps (unsupported)</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
-    <br />
-    <mat-form-field class="form-field-default" appearance="fill">
-      <mat-label>Name</mat-label>
-      <input matInput formControlName="name" />
-      <mat-error *ngIf="gitInstancesForm.controls.name.errors?.uniqueName"
-        >A instance with the name "{{
-          gitInstancesForm.controls.name.errors?.uniqueName.value
-        }}" already exists</mat-error
+  </a>
+
+  @if ((this.gitInstancesService.gitInstances$ | async) === undefined) {
+    <app-mat-card-overview-skeleton-loader
+      class="contents"
+      [rows]="2"
+      [reservedCards]="1"
+    ></app-mat-card-overview-skeleton-loader>
+  } @else {
+    @for (
+      instance of this.gitInstancesService.gitInstances$ | async;
+      track instance.id
+    ) {
+      <a
+        [routerLink]="['..', 'git-instance', instance.id]"
+        class="w-full sm:w-fit"
       >
-      <mat-error *ngIf="gitInstancesForm.controls.name.errors?.required"
-        >A instance name is required</mat-error
-      >
-    </mat-form-field>
-    <br />
-    <mat-form-field class="form-field-default" appearance="fill">
-      <mat-label>Instance base URL</mat-label>
-      <input matInput formControlName="url" />
-      <mat-error *ngIf="gitInstancesForm.controls.url.errors?.required"
-        >A base URL is required</mat-error
-      >
-      <mat-error *ngIf="gitInstancesForm.controls.url.errors?.urlSchemeError">
-        Base url must start with http(s)://
-      </mat-error> </mat-form-field
-    ><br />
-    <mat-form-field
-      *ngIf="gitInstancesForm.controls.type.value !== 'General'"
-      class="form-field-default"
-      appearance="fill"
-    >
-      <mat-label>API Base URL</mat-label>
-      <input matInput formControlName="apiURL" />
-      <mat-error *ngIf="gitInstancesForm.controls.url.errors?.urlSchemeError">
-        API URLs have to start with 'http(s)://'
-      </mat-error>
-    </mat-form-field>
-  </form>
-  <button
-    mat-raised-button
-    [disabled]="!gitInstancesForm.valid"
-    (click)="createGitInstance()"
-  >
-    Create Integration
-  </button>
-</div>
+        <div matRipple class="mat-card-overview collab-card m-0">
+          <div class="header">{{ instance.name }}</div>
+          <div class="content">
+            <span class="line-clamp-1 break-all"
+              ><b>Instance Type: </b> {{ instance.type }}</span
+            >
+            <span class="line-clamp-1 break-all"
+              ><b>URL: </b> {{ instance.url }}</span
+            >
+            @if (instance.api_url) {
+              <span class="line-clamp-1 break-all"
+                ><b>API URL: </b> {{ instance.api_url }}</span
+              >
+            }
+          </div>
+        </div>
+      </a>
+    }
+  }
+</article>

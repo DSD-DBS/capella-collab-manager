@@ -3,12 +3,11 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  <div class="title">Edit Instance</div>
-  <br />
-  <div class="collab-card">
+@if (this.gitInstancesService.gitInstance$ | async; as gitInstance) {
+  <div class="collab-card h-fit w-full sm:w-[500px]">
+    <h2 class="mb-2 text-xl font-medium">Edit Git Server Instance</h2>
     <form [formGroup]="gitInstanceForm" id="add-instance-form">
-      <mat-form-field class="form-field-default" appearance="fill">
+      <mat-form-field class="w-full" appearance="fill">
         <mat-label>Git Type</mat-label>
         <mat-select matInput formControlName="type">
           <mat-option value="General" selected
@@ -22,40 +21,50 @@
         </mat-select>
       </mat-form-field>
       <br />
-      <mat-form-field class="form-field-default" appearance="fill">
+      <mat-form-field class="w-full" appearance="fill">
         <mat-label>Name</mat-label>
         <input matInput formControlName="name" />
-        <mat-error *ngIf="gitInstanceForm.controls.name.errors?.uniqueName"
-          >A instance with the name "{{
-            gitInstanceForm.controls.name.errors?.uniqueName.value
-          }}" already exists</mat-error
-        >
+        @if (gitInstanceForm.controls.name.errors?.uniqueName) {
+          <mat-error
+            >A instance with the name "{{
+              gitInstanceForm.controls.name.errors?.uniqueName.value
+            }}" already exists</mat-error
+          >
+        }
       </mat-form-field>
       <br />
-      <mat-form-field class="form-field-default" appearance="fill">
+      <mat-form-field class="w-full" appearance="fill">
         <mat-label>Instance base URL</mat-label>
         <input matInput formControlName="url" />
       </mat-form-field>
       <br />
-      <mat-form-field
-        *ngIf="gitInstanceForm.controls.type.value !== 'General'"
-        class="form-field-default"
-        appearance="fill"
-      >
-        <mat-label>API URL</mat-label>
-        <input matInput formControlName="apiURL" />
-      </mat-form-field>
+      @if (gitInstanceForm.controls.type.value !== "General") {
+        <mat-form-field class="w-full" appearance="fill">
+          <mat-label>API URL</mat-label>
+          <input matInput formControlName="api_url" />
+        </mat-form-field>
+      }
     </form>
+
     <div class="flex justify-between">
       <button
-        [class]="'right-button'"
+        (click)="deleteGitInstance(gitInstance)"
+        mat-flat-button
+        type="button"
+        color="warn"
+      >
+        <mat-icon>delete_forever</mat-icon>
+        <span>Delete</span>
+      </button>
+      <button
         mat-flat-button
         color="primary"
-        (click)="editGitInstance()"
+        (click)="editGitInstance(gitInstance.id)"
         [disabled]="!gitInstanceForm.valid"
       >
+        <mat-icon>save</mat-icon>
         Save changes
       </button>
     </div>
   </div>
-</div>
+}

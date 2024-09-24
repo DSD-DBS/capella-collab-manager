@@ -39,16 +39,10 @@
 
 <div class="m-2.5 text-2xl">Model sources</div>
 <div class="flex flex-wrap">
-  <a class="m-2.5 flex" [routerLink]="['/settings/modelsources/git']">
+  <a class="m-2.5" [routerLink]="['/settings/modelsources/git-instances']">
     <div class="option-card collab-card mx-0" matRipple>
-      <div>Git</div>
-      <div class="flex justify-center">
-        <img
-          id="git"
-          class="mt-1 max-w-[50%]"
-          src="https://git-scm.com/images/logos/downloads/Git-Logo-1788C.png"
-        />
-      </div>
+      <div>Git Server Instances</div>
+      <app-mat-icon size="50px">code</app-mat-icon>
     </div>
   </a>
   <a class="m-2.5" [routerLink]="['/settings/modelsources/t4c']">

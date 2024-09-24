@@ -91,7 +91,7 @@ def edit_git_instance(
         )
     ],
 )
-def delete_git_instances(
+def delete_git_instance(
     git_instance: models.DatabaseGitInstance = fastapi.Depends(
         injectables.get_existing_git_instance
     ),

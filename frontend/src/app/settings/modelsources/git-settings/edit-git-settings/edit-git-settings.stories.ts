@@ -8,31 +8,16 @@ import {
   mockGitHubInstance,
   mockGitInstance,
   MockGitInstancesService,
-  mockGitLabInstance,
 } from 'src/storybook/git';
-import { GitSettingsComponent } from './git-settings.component';
+import { EditGitSettingsComponent } from './edit-git-settings.component';
 
-const meta: Meta<GitSettingsComponent> = {
-  title: 'Settings Components/Modelsources/Git/Instances',
-  component: GitSettingsComponent,
+const meta: Meta<EditGitSettingsComponent> = {
+  title: 'Settings Components/Modelsources/Git/Edit Instance',
+  component: EditGitSettingsComponent,
 };
 
 export default meta;
-type Story = StoryObj<GitSettingsComponent>;
-
-export const Loading: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: GitInstancesWrapperService,
-          useFactory: () => new MockGitInstancesService(),
-        },
-      ],
-    }),
-  ],
-};
+type Story = StoryObj<EditGitSettingsComponent>;
 
 export const General: Story = {
   args: {},
@@ -41,12 +26,21 @@ export const General: Story = {
       providers: [
         {
           provide: GitInstancesWrapperService,
-          useFactory: () =>
-            new MockGitInstancesService(undefined, [
-              mockGitLabInstance,
-              mockGitHubInstance,
-              mockGitInstance,
-            ]),
+          useFactory: () => new MockGitInstancesService(mockGitInstance),
+        },
+      ],
+    }),
+  ],
+};
+
+export const Github: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: GitInstancesWrapperService,
+          useFactory: () => new MockGitInstancesService(mockGitHubInstance),
         },
       ],
     }),

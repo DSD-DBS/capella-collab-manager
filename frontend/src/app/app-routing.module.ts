@@ -16,6 +16,7 @@ import { SessionComponent } from 'src/app/sessions/session/session.component';
 import { ConfigurationSettingsComponent } from 'src/app/settings/core/configuration-settings/configuration-settings.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
+import { AddGitInstanceComponent } from 'src/app/settings/modelsources/git-settings/add-git-instance/add-git-instance.component';
 import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
 import { UserWrapperComponent } from 'src/app/users/user-wrapper/user-wrapper.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
@@ -394,16 +395,30 @@ export const routes: Routes = [
             data: { breadcrumb: undefined },
             children: [
               {
-                path: 'git',
+                path: 'git-instances',
                 data: { breadcrumb: 'Git Instances' },
                 children: [
                   {
                     path: '',
                     data: { breadcrumb: undefined },
-                    component: GitSettingsComponent,
+                    children: [{ path: '', component: GitSettingsComponent }],
                   },
                   {
-                    path: 'instances/:id',
+                    path: 'create',
+                    data: { breadcrumb: 'new' },
+                    component: AddGitInstanceComponent,
+                  },
+                ],
+              },
+              {
+                path: 'git-instance',
+                data: {
+                  breadcrumb: 'Git Instances',
+                  redirect: '/settings/modelsources/git-instances',
+                },
+                children: [
+                  {
+                    path: ':id',
                     data: {
                       breadcrumb: (data: Data) => data.gitInstance?.name,
                     },

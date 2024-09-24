@@ -2,11 +2,11 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { ActivatedRoute, convertToParamMap, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { BehaviorSubject } from 'rxjs';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { mockMetadata, MockMetadataService } from 'src/storybook/metadata';
+import { MockActivedRoute } from 'src/storybook/routes';
 import { AuthComponent } from './auth.component';
 
 const meta: Meta<AuthComponent> = {
@@ -32,19 +32,6 @@ const meta: Meta<AuthComponent> = {
 
 export default meta;
 type Story = StoryObj<AuthComponent>;
-
-export class MockActivedRoute {
-  _queryParams = new BehaviorSubject<Params>({});
-  queryParams = this._queryParams.asObservable();
-
-  _queryParamMap = new BehaviorSubject(convertToParamMap({}));
-  queryParamMap = this._queryParamMap.asObservable();
-
-  constructor(params: Params) {
-    this._queryParams.next(params);
-    this._queryParamMap.next(convertToParamMap(params));
-  }
-}
 
 export const IdentityProviderError: Story = {
   decorators: [

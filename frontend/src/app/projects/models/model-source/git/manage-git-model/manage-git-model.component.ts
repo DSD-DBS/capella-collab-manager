@@ -13,9 +13,6 @@ import {
 } from '@angular/core';
 import {
   Validators,
-  ValidationErrors,
-  AbstractControl,
-  AsyncValidatorFn,
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
@@ -39,7 +36,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map, Observable, of } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -49,7 +46,7 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
-import { SettingsModelsourcesGitService } from 'src/app/openapi';
+import { GitInstance, SettingsModelsourcesGitService } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import {
   CreateGitModel,
@@ -63,16 +60,12 @@ import {
   GitService,
   Revisions,
 } from 'src/app/services/git/git.service';
-import {
-  GitInstance,
-  GitInstancesService,
-} from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
+import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-manage-git-model',
   templateUrl: './manage-git-model.component.html',
-  styleUrls: ['./manage-git-model.component.css'],
   standalone: true,
   imports: [
     NgIf,
@@ -119,7 +112,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   constructor(
     public projectService: ProjectWrapperService,
     public modelService: ModelWrapperService,
-    private gitInstancesService: GitInstancesService,
+    private gitInstancesService: GitInstancesWrapperService,
     private settingsModelsourcesGitService: SettingsModelsourcesGitService,
     private gitService: GitService,
     private gitModelService: GitModelService,
@@ -177,9 +170,6 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         if (gitInstances?.length) {
           this.urls.baseUrl.setValidators([Validators.required]);
           this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
-          this.form.controls.urls.setAsyncValidators([
-            this.resultUrlPrefixAsyncValidator(),
-          ]);
         } else {
           this.urls.inputUrl.addValidators([Validators.required]);
         }
@@ -450,31 +440,6 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     this.form.controls.credentials.enable();
     this.form.controls.entrypoint.enable();
     this.form.controls.revision.enable();
-  }
-
-  private resultUrlPrefixAsyncValidator(): AsyncValidatorFn {
-    return (_: AbstractControl): Observable<ValidationErrors | null> => {
-      this.updateResultUrl();
-
-      if (!this.resultUrl) return of({ required: 'Resulting URL is required' });
-
-      return this.settingsModelsourcesGitService
-        .validatePath({ url: this.resultUrl })
-        .pipe(
-          map((prefixExists: boolean) => {
-            if (prefixExists) {
-              this.enableAllExceptUrls();
-              return null;
-            }
-
-            this.disableAllExpectUrls();
-            return {
-              urlPrefixError:
-                "The resolved URL doesn't match with one of the allowed git instances",
-            };
-          }),
-        );
-    };
   }
 
   private updateResultUrl() {
