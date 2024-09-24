@@ -10,15 +10,16 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import {
+  GitInstance,
+  PostGitInstance,
+  SettingsModelsourcesGitService,
+} from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GitInstancesService {
-  private BACKEND_URL_PREFIX =
-    environment.backend_url + '/settings/modelsources/git';
-
+export class GitInstancesWrapperService {
   private _gitInstances = new BehaviorSubject<GitInstance[] | undefined>(
     undefined,
   );
@@ -29,61 +30,41 @@ export class GitInstancesService {
   public readonly gitInstances$ = this._gitInstances.asObservable();
   public readonly gitInstance$ = this._gitInstance.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private gitInstancesService: SettingsModelsourcesGitService,
+  ) {}
 
   loadGitInstances(): void {
-    this.http
-      .get<BackendBasicGitInstance[]>(this.BACKEND_URL_PREFIX)
-      .pipe(
-        map((backendGitInstances) => {
-          return backendGitInstances.map((backendGitInstance) =>
-            this.transformGitInstance(backendGitInstance),
-          );
-        }),
-      )
+    this.gitInstancesService
+      .listGitInstances()
       .subscribe((gitInstance) => this._gitInstances.next(gitInstance));
   }
 
-  transformGitInstance(
-    backendGitInstance: BackendBasicGitInstance,
-  ): GitInstance {
-    const gitInstance = JSON.parse(JSON.stringify(backendGitInstance));
-
-    gitInstance.apiURL = gitInstance.api_url;
-    return gitInstance;
-  }
-
   loadGitInstanceById(id: number): void {
-    this.http
-      .get<GitInstance>(this.BACKEND_URL_PREFIX + '/' + id)
+    this.gitInstancesService
+      .getGitInstance(id)
       .subscribe((gitInstance) => this._gitInstance.next(gitInstance));
   }
 
-  createGitInstance(gitInstance: BasicGitInstance): Observable<GitInstance> {
-    return this.http
-      .post<GitInstance>(this.BACKEND_URL_PREFIX, {
-        name: gitInstance.name,
-        url: gitInstance.url,
-        type: gitInstance.type,
-        api_url: gitInstance.apiURL,
-      })
+  createGitInstance(gitInstance: PostGitInstance): Observable<GitInstance> {
+    return this.gitInstancesService
+      .createGitInstance(gitInstance)
       .pipe(tap(() => this.loadGitInstances()));
   }
 
-  editGitInstance(gitInstance: GitInstance): Observable<GitInstance> {
-    return this.http
-      .patch<GitInstance>(this.BACKEND_URL_PREFIX + '/' + gitInstance.id, {
-        type: gitInstance.type,
-        name: gitInstance.name,
-        url: gitInstance.url,
-        api_url: gitInstance.apiURL,
-      })
+  editGitInstance(
+    id: number,
+    gitInstance: PostGitInstance,
+  ): Observable<GitInstance> {
+    return this.gitInstancesService
+      .editGitInstance(id, gitInstance)
       .pipe(tap(() => this.loadGitInstances()));
   }
 
   deleteGitInstance(id: number) {
-    return this.http
-      .delete(this.BACKEND_URL_PREFIX + '/' + id)
+    return this.gitInstancesService
+      .deleteGitInstance(id)
       .pipe(tap(() => this.loadGitInstances()));
   }
 
@@ -103,26 +84,6 @@ export class GitInstancesService {
     };
   }
 }
-
-export interface BackendBasicGitInstance {
-  id: number;
-  name: string;
-  url: string;
-  api_url?: string;
-  type: GitType;
-}
-
-export type BasicGitInstance = Omit<GitInstance, 'id'>;
-
-export interface GitInstance {
-  id: number;
-  name: string;
-  url: string;
-  apiURL?: string;
-  type: GitType;
-}
-
-export type GitType = 'general' | 'gitlab' | 'github' | 'azuredevops';
 
 export type EditingMode = 't4c' | 'git';
 export type ProjectType = 'project' | 'library';

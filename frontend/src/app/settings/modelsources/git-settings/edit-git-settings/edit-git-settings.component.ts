@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -12,63 +12,59 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import {
-  GitInstance,
-  GitInstancesService,
-} from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
+import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
+import { ToastService } from 'src/app/helpers/toast/toast.service';
+import { GitInstance, PostGitInstance } from 'src/app/openapi';
+import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-edit-git-settings',
   templateUrl: './edit-git-settings.component.html',
-  styleUrls: ['./edit-git-settings.component.css'],
   standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatFormField,
-    MatLabel,
+    MatFormFieldModule,
     MatSelect,
     MatOption,
     MatInput,
-    NgIf,
-    MatError,
     MatButton,
+    AsyncPipe,
+    MatIconModule,
   ],
 })
 export class EditGitSettingsComponent implements OnInit, OnDestroy {
-  id = -1;
-
   gitInstanceForm = this.fb.group({
     type: ['', Validators.required],
     name: ['', Validators.required],
     url: ['', Validators.required],
-    apiURL: [''],
+    api_url: [''],
   });
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private gitInstancesService: GitInstancesService,
+    public gitInstancesService: GitInstancesWrapperService,
     private breadcrumbsService: BreadcrumbsService,
     private fb: FormBuilder,
+    private dialog: MatDialog,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
     this.gitInstancesService.gitInstance$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((instance: GitInstance & { api_url?: string }) => {
-        if (instance.api_url) {
-          instance.apiURL = instance.api_url;
-        }
-
+      .subscribe((instance: GitInstance) => {
         this.gitInstanceForm.controls.name.addAsyncValidators(
           this.gitInstancesService.asyncNameValidator(instance),
         );
@@ -84,7 +80,6 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
       )
       .subscribe((instanceId) => {
         this.gitInstancesService.loadGitInstanceById(instanceId);
-        this.id = instanceId;
       });
 
     this.gitInstancesService.loadGitInstances();
@@ -94,14 +89,45 @@ export class EditGitSettingsComponent implements OnInit, OnDestroy {
     this.breadcrumbsService.updatePlaceholder({ gitInstance: undefined });
   }
 
-  editGitInstance() {
+  editGitInstance(gitInstanceID: number): void {
     this.gitInstancesService
-      .editGitInstance({
-        ...this.gitInstanceForm.value,
-        id: this.id,
-      } as GitInstance)
-      .subscribe(() =>
-        this.router.navigate(['../..'], { relativeTo: this.route }),
-      );
+      .editGitInstance(
+        gitInstanceID,
+        this.gitInstanceForm.value as PostGitInstance,
+      )
+      .subscribe(() => {
+        this.router.navigate(['../../git-instances'], {
+          relativeTo: this.route,
+        });
+        this.toastService.showSuccess(
+          '',
+          'Git Server Instance updated successfully',
+        );
+      });
+  }
+
+  deleteGitInstance(gitInstance: GitInstance): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Delete Git Instance',
+        text: `Do you really want to delete the Git instance '${gitInstance.name}' with ID '${gitInstance.id}'?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((response) => {
+      if (response) {
+        this.gitInstancesService
+          .deleteGitInstance(gitInstance.id)
+          .subscribe(() => {
+            this.router.navigate(['../../git-instances'], {
+              relativeTo: this.route,
+            });
+            this.toastService.showSuccess(
+              '',
+              `Git Server Instance '${gitInstance.name}' remoted successfully`,
+            );
+          });
+      }
+    });
   }
 }

@@ -1,0 +1,60 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="collab-card h-fit w-full sm:w-[500px]">
+  <h2 class="mb-2 text-xl font-medium">Link a Git Server Instance</h2>
+  <form [formGroup]="gitInstancesForm">
+    <mat-form-field class="w-full" appearance="fill">
+      <mat-label>Git Type</mat-label>
+      <mat-select matInput formControlName="type" data-testid="git-type">
+        <mat-option value="General" selected>General Git (limited)</mat-option>
+        <mat-option value="GitLab">Gitlab</mat-option>
+        <mat-option value="GitHub">GitHub</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="w-full" appearance="fill">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" data-testid="name" />
+      @if (gitInstancesForm.controls.name.errors?.required) {
+        <mat-error>A instance name is required</mat-error>
+      } @else if (gitInstancesForm.controls.name.errors?.uniqueName) {
+        <mat-error
+          >A instance with the name "{{
+            gitInstancesForm.controls.name.errors?.uniqueName.value
+          }}" already exists</mat-error
+        >
+      }
+    </mat-form-field>
+    <mat-form-field class="form-field-default" appearance="fill">
+      <mat-label>Instance base URL</mat-label>
+      <input matInput formControlName="url" data-testid="url" />
+      @if (gitInstancesForm.controls.url.errors?.required) {
+        <mat-error>A base URL is required</mat-error>
+      } @else if (gitInstancesForm.controls.url.errors?.urlSchemeError) {
+        <mat-error> Base url must start with http(s):// </mat-error>
+      }
+    </mat-form-field>
+    @if (gitInstancesForm.controls.type.value !== "General") {
+      <mat-form-field class="form-field-default" appearance="fill">
+        <mat-label>API Base URL</mat-label>
+        <input matInput formControlName="api_url" data-testid="api_url" />
+        @if (gitInstancesForm.controls.url.errors?.urlSchemeError) {
+          <mat-error> API URLs have to start with 'http(s)://' </mat-error>
+        }
+      </mat-form-field>
+    }
+    <div class="flex w-full justify-end">
+      <button
+        type="submit"
+        mat-raised-button
+        [disabled]="!gitInstancesForm.valid"
+        (click)="createGitInstance()"
+        color="primary"
+      >
+        Create
+      </button>
+    </div>
+  </form>
+</div>

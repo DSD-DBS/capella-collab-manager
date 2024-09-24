@@ -4,7 +4,7 @@
  -->
 
 <h2 class="mb-2 text-xl font-medium">Git repositories</h2>
-<div class="flex flex-wrap gap-2">
+<div class="flex flex-wrap gap-5">
   <a [routerLink]="['..', 'git-model', 'create']" class="w-full sm:w-fit">
     <div matRipple class="mat-card-overview new collab-card">
       <div class="content">
@@ -61,7 +61,7 @@
   userService.user?.role === "administrator"
 ) {
   <h2 class="mb-2 mt-5 text-xl font-medium">TeamForCapella repositories</h2>
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-5">
     <a
       [routerLink]="['..', 't4c-model', 'create-existing']"
       class="w-full sm:w-fit"
