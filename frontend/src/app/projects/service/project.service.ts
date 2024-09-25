@@ -79,7 +79,7 @@ export class ProjectWrapperService {
   }
 
   deleteProject(projectSlug: string): Observable<void> {
-    return this.deleteProject(projectSlug).pipe(
+    return this.projectsService.deleteProject(projectSlug).pipe(
       tap(() => {
         this.loadProjects();
         this._project.next(undefined);
