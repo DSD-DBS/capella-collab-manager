@@ -44,7 +44,11 @@ export default meta;
 type Story = StoryObj<ManageGitModelComponent>;
 
 export const InvalidURL: Story = {
-  args: {},
+  parameters: {
+    screenshot: {
+      delay: 300,
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const absoluteURL = canvas.getByTestId('absolute-url');
