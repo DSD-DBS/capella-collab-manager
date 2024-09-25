@@ -39,7 +39,12 @@
     @if (gitInstancesForm.controls.type.value !== "General") {
       <mat-form-field class="form-field-default" appearance="fill">
         <mat-label>API Base URL</mat-label>
-        <input matInput formControlName="api_url" data-testid="api_url" />
+        <input
+          matInput
+          spellcheck="false"
+          formControlName="api_url"
+          data-testid="api_url"
+        />
         @if (gitInstancesForm.controls.url.errors?.urlSchemeError) {
           <mat-error> API URLs have to start with 'http(s)://' </mat-error>
         }
