@@ -115,6 +115,11 @@ async def handle_exceptions(request: fastapi.Request, exc: Exception):
     in the case of exceptions.
     https://github.com/encode/starlette/issues/1175
     """
+    origin = request.headers.get("origin")
+    response = responses.JSONResponse(
+        status_code=500, content={"body": "Internal Server Error"}
+    )
+
     cors_middleware = cors.CORSMiddleware(
         app=app,
         allow_origins=ALLOW_ORIGINS,
@@ -122,11 +127,11 @@ async def handle_exceptions(request: fastapi.Request, exc: Exception):
         allow_methods=["POST", "GET", "OPTIONS", "DELETE", "PUT", "PATCH"],
         allow_headers=["*"],
     )
-
-    response = responses.JSONResponse(
-        status_code=500, content={"body": "Internal Server Error"}
-    )
     response.headers.update(cors_middleware.simple_headers)
+
+    if origin and cors_middleware.is_allowed_origin(origin=origin):
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers.add_vary_header("Origin")
 
     return response
 
