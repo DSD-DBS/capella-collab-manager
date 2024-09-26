@@ -55,7 +55,8 @@ jobs:
         run: |
           npm i -g @angular/cli
           npm ci
-          export CHROME_BIN=$(which chromium)
+          CHROME_BIN="$(which chromium)"
+          export CHROME_BIN
       - name: Run tests
         working-directory: frontend
         run: |
