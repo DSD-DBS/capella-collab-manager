@@ -20,10 +20,10 @@ test:
 	fi
 
 storybook:
-	ng run capellacollab:storybook
+	npm run storybook
 
 build-storybook:
-	ng run capellacollab:build-storybook
+	npm run build-storybook
 
 snapshots:
 	rm -rf __screenshots__
