@@ -24,7 +24,6 @@ export interface PatchT4CInstance {
     username?: string | null;
     password?: string | null;
     protocol?: Protocol | null;
-    version_id?: number | null;
     is_archived?: boolean | null;
 }
 export namespace PatchT4CInstance {

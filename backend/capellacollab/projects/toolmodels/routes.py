@@ -5,13 +5,14 @@ import uuid
 
 import fastapi
 import slugify
-from sqlalchemy import exc, orm
+from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.toolmodels.modelsources.t4c import util as t4c_util
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.users import injectables as users_injectables
@@ -85,14 +86,13 @@ def create_new_tool_model(
     if tool.integrations.jupyter:
         configuration["workspace"] = str(uuid.uuid4())
 
-    try:
-        model = crud.create_model(
-            db, project, new_model, tool, configuration=configuration
-        )
-    except exc.IntegrityError:
-        raise exceptions.ToolModelAlreadyExistsError(
-            project.slug, slugify.slugify(new_model.name)
-        )
+    slug = slugify.slugify(new_model.name)
+    if crud.get_model_by_slugs(db, project.slug, slug):
+        raise exceptions.ToolModelAlreadyExistsError(project.slug, slug)
+
+    model = crud.create_model(
+        db, project, new_model, tool, configuration=configuration
+    )
 
     if tool.integrations.jupyter:
         workspace.create_shared_workspace(
@@ -152,6 +152,11 @@ def patch_tool_model(
         if body.nature_id
         else model.nature
     )
+
+    for t4c_model in model.t4c_models:
+        t4c_util.verify_compatibility_of_model_and_server(
+            model.name, version, t4c_model.repository
+        )
 
     if body.project_slug:
         new_project = determine_new_project_to_move_model(

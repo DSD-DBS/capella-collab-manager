@@ -129,7 +129,6 @@ class PatchT4CInstance(core_pydantic.BaseModel):
     username: str | None = None
     password: str | None = None
     protocol: Protocol | None = None
-    version_id: int | None = None
     is_archived: bool | None = None
 
     _validate_rest_api_url = pydantic.field_validator("rest_api")(

@@ -13,15 +13,14 @@ import { mockProject, MockProjectWrapperService } from 'src/storybook/project';
 import {
   mockExtendedT4CRepository,
   mockT4CInstance,
-  mockT4CModel,
   MockT4CModelService,
   MockT4CRepositoryWrapperService,
 } from 'src/storybook/t4c';
-import { ManageT4CModelComponent } from './manage-t4c-model.component';
+import { CreateT4cModelNewRepositoryComponent } from './create-t4c-model-new-repository.component';
 
-const meta: Meta<ManageT4CModelComponent> = {
-  title: 'Model Components/Model Sources/Update T4C Model',
-  component: ManageT4CModelComponent,
+const meta: Meta<CreateT4cModelNewRepositoryComponent> = {
+  title: 'Model Components/Model Sources/Create T4C Model',
+  component: CreateT4cModelNewRepositoryComponent,
   decorators: [
     moduleMetadata({
       providers: [
@@ -40,7 +39,7 @@ const meta: Meta<ManageT4CModelComponent> = {
 };
 
 export default meta;
-type Story = StoryObj<ManageT4CModelComponent>;
+type Story = StoryObj<CreateT4cModelNewRepositoryComponent>;
 
 export const Loading: Story = {
   args: {},
@@ -66,7 +65,21 @@ export const General: Story = {
   ],
 };
 
-export const NoRepository: Story = {
+export const NoInstances: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: T4CModelService,
+          useFactory: () => new MockT4CModelService(undefined, undefined, []),
+        },
+      ],
+    }),
+  ],
+};
+
+export const InstanceSelected: Story = {
   args: {},
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByTestId('t4c-instance'));
@@ -86,41 +99,6 @@ export const NoRepository: Story = {
           provide: T4CModelService,
           useFactory: () =>
             new MockT4CModelService(undefined, undefined, [mockT4CInstance]),
-        },
-        {
-          provide: T4CRepositoryWrapperService,
-          useFactory: () => new MockT4CRepositoryWrapperService([]),
-        },
-      ],
-    }),
-  ],
-};
-
-export const NoInstances: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: T4CModelService,
-          useFactory: () => new MockT4CModelService(undefined, undefined, []),
-        },
-      ],
-    }),
-  ],
-};
-
-export const Modify: Story = {
-  args: {
-    t4cModel: mockT4CModel,
-  },
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: T4CModelService,
-          useFactory: () =>
-            new MockT4CModelService(mockT4CModel, undefined, [mockT4CInstance]),
         },
         {
           provide: T4CRepositoryWrapperService,

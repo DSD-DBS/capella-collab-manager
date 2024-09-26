@@ -14,7 +14,7 @@ from capellacollab.tools import models as tools_models
 @pytest.fixture(name="t4c_instance")
 def fixture_t4c_instance(
     db: orm.Session,
-    tool_version: tools_models.DatabaseVersion,
+    capella_tool_version: tools_models.DatabaseVersion,
 ) -> t4c_models.DatabaseT4CInstance:
     server = t4c_models.DatabaseT4CInstance(
         name="test server",
@@ -25,7 +25,7 @@ def fixture_t4c_instance(
         username="user",
         password="pass",
         protocol=t4c_models.Protocol.tcp,
-        version=tool_version,
+        version=capella_tool_version,
     )
 
     return t4c_crud.create_t4c_instance(db, server)

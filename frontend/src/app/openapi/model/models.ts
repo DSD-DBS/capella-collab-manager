@@ -80,6 +80,7 @@ export * from './page-pipeline-run';
 export * from './patch-project';
 export * from './patch-project-user';
 export * from './patch-t4-c-instance';
+export * from './patch-t4-c-model';
 export * from './patch-tool-model';
 export * from './patch-user';
 export * from './path-validation';

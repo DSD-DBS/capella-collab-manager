@@ -115,7 +115,7 @@
         class="!h-[56px]"
         mat-stroked-button
         color="primary"
-        [disabled]="!form.valid"
+        [disabled]="!form.valid || repositoryCreationInProgress"
         (click)="createRepository()"
       >
         <div class="flex items-center">

@@ -18,17 +18,13 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import {
-  MatAutocompleteTrigger,
-  MatAutocomplete,
-} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButton } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
-import { MatSelect } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -36,11 +32,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import {
-  SubmitT4CModel,
-  T4CModel,
-  T4CModelService,
-} from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
+import { SubmitT4CModel, T4CModel } from 'src/app/openapi';
+import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
@@ -60,14 +53,10 @@ import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleto
     ReactiveFormsModule,
     FormFieldSkeletonLoaderComponent,
     MatFormField,
-    MatLabel,
-    MatSelect,
-    MatOption,
+    MatSelectModule,
     MatTooltip,
-    MatError,
-    MatInput,
-    MatAutocompleteTrigger,
-    MatAutocomplete,
+    MatInputModule,
+    MatAutocompleteModule,
     MatButton,
     MatIcon,
     AsyncPipe,
@@ -216,7 +205,7 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
           if (this.asStepper) {
             this.create.emit(true);
           } else {
-            this.router.navigate(['../../modelsources'], {
+            this.router.navigate(['../..'], {
               relativeTo: this.route,
             });
           }

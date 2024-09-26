@@ -54,6 +54,12 @@ class SubmitT4CModel(core_pydantic.BaseModel):
     t4c_repository_id: int
 
 
+class PatchT4CModel(core_pydantic.BaseModel):
+    name: str | None = None
+    t4c_instance_id: int | None = None
+    t4c_repository_id: int | None = None
+
+
 class SimpleT4CModel(core_pydantic.BaseModel):
     project_name: str
     repository_name: str

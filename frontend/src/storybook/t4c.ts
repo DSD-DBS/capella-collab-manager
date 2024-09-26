@@ -9,16 +9,14 @@ import {
 } from '@angular/forms';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
+  SimpleT4CModel,
   T4CInstance,
   T4CModel,
   T4CRepository,
   T4CRepositoryStatus,
   ValidationError,
 } from 'src/app/openapi';
-import {
-  SimpleT4CModel,
-  T4CModelService,
-} from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
+import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 import {
   ExtendedT4CRepository,
@@ -110,6 +108,7 @@ export class MockT4CRepositoryWrapperService
   }
 
   reset() {} // eslint-disable-line @typescript-eslint/no-empty-function
+  loadRepositories() {} // eslint-disable-line @typescript-eslint/no-empty-function
 
   asyncNameValidator(): AsyncValidatorFn {
     return (_control: AbstractControl): Observable<ValidationErrors | null> => {
@@ -125,10 +124,18 @@ export class MockT4CModelService implements Partial<T4CModelService> {
   private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
   public readonly t4cModels$ = this._t4cModels.asObservable();
 
+  compatibleT4CInstances$: Observable<T4CInstance[] | undefined> =
+    of(undefined);
+
   reset() {} // eslint-disable-line @typescript-eslint/no-empty-function
 
-  constructor(t4cModel: T4CModel, t4cModels: T4CModel[]) {
+  constructor(
+    t4cModel: T4CModel | undefined,
+    t4cModels: T4CModel[] | undefined,
+    t4cInstances: T4CInstance[] | undefined = undefined,
+  ) {
     this._t4cModel.next(t4cModel);
     this._t4cModels.next(t4cModels);
+    this.compatibleT4CInstances$ = of(t4cInstances);
   }
 }

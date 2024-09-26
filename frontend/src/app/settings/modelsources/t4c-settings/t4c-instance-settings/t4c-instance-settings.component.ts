@@ -65,6 +65,8 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
 
   search = '';
 
+  repositoryCreationInProgress = false;
+
   constructor(
     public t4cRepoService: T4CRepositoryWrapperService,
     private dialog: MatDialog,
@@ -102,13 +104,20 @@ export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
   }
 
   createRepository(): void {
+    this.repositoryCreationInProgress = true;
     if (this.form.valid) {
       this.t4cRepoService
         .createRepository(
           this.instance!.id,
           this.form.value as CreateT4CRepository,
         )
-        .subscribe(() => this.form.reset());
+        .subscribe({
+          next: () => {
+            this.form.reset();
+            this.repositoryCreationInProgress = false;
+          },
+          error: () => (this.repositoryCreationInProgress = false),
+        });
     }
   }
 

@@ -145,7 +145,91 @@ export const routes: Routes = [
                           redirect: (data: Data) =>
                             `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources`,
                         },
-                        component: ModelDetailComponent,
+                        children: [
+                          {
+                            path: '',
+                            data: {
+                              breadcrumb: undefined,
+                            },
+                            component: ModelDetailComponent,
+                          },
+                          {
+                            path: 'git-model',
+                            data: {
+                              breadcrumb: 'Git Repositories',
+                            },
+                            children: [
+                              {
+                                path: 'create',
+                                data: {
+                                  breadcrumb: 'Add',
+                                  redirect: (data: Data) =>
+                                    `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources/git-model/create`,
+                                },
+                                component: ManageGitModelComponent,
+                              },
+                              {
+                                path: ':git-model',
+                                data: {
+                                  breadcrumb: (data: Data) =>
+                                    data.gitModel?.id || '...',
+                                  redirect: (data: Data) =>
+                                    data.gitModel?.id
+                                      ? `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources/git-model/${data.gitModel?.id}`
+                                      : undefined,
+                                },
+                                component: ManageGitModelComponent,
+                              },
+                            ],
+                          },
+                          {
+                            path: 't4c-model',
+                            data: {
+                              breadcrumb: 'T4C Repositories',
+                            },
+                            children: [
+                              {
+                                path: 'create-existing',
+                                data: {
+                                  breadcrumb: 'Link Existing Repository',
+                                  redirect: (data: Data) =>
+                                    `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources/t4c-model/create-existing`,
+                                },
+                                component: ManageT4CModelComponent,
+                              },
+                              {
+                                path: 'create-new',
+                                data: {
+                                  breadcrumb: 'Create New Repository',
+                                  redirect: (data: Data) =>
+                                    `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources/t4c-model/create-new`,
+                                },
+                                component: CreateT4cModelNewRepositoryComponent,
+                              },
+                              {
+                                path: ':t4c_model_id',
+                                data: {
+                                  breadcrumb: (data: Data) =>
+                                    data.t4cModel?.id || '...',
+                                  redirect: (data: Data) =>
+                                    data.t4cModel?.id
+                                      ? `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources/t4c-model/${data.t4cModel?.id}`
+                                      : undefined,
+                                },
+                                component: T4CModelWrapperComponent,
+                                children: [
+                                  {
+                                    path: '',
+                                    data: {
+                                      breadcrumb: undefined,
+                                    },
+                                    component: ManageT4CModelComponent,
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
                       },
                       {
                         path: 'metadata',
@@ -215,83 +299,6 @@ export const routes: Routes = [
                                     ],
                                   },
                                 ],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                      {
-                        path: 'git-model',
-                        data: {
-                          breadcrumb: 'Model Sources',
-                          redirect: (data: Data) =>
-                            `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources`,
-                        },
-                        children: [
-                          {
-                            path: 'create',
-                            data: {
-                              breadcrumb: 'Create Git Model',
-                              redirect: (data: Data) =>
-                                `/project/${data.project?.slug}/model/${data.model?.slug}/git-model/create`,
-                            },
-                            component: ManageGitModelComponent,
-                          },
-                          {
-                            path: ':git-model',
-                            data: {
-                              breadcrumb: (data: Data) =>
-                                data.gitModel?.id || '...',
-                              redirect: (data: Data) =>
-                                data.gitModel?.id
-                                  ? `/project/${data.project?.slug}/model/${data.model?.slug}/git-model/${data.gitModel?.id}`
-                                  : undefined,
-                            },
-                            component: ManageGitModelComponent,
-                          },
-                        ],
-                      },
-                      {
-                        path: 't4c-model',
-                        data: {
-                          breadcrumb: 'Model Sources',
-                          redirect: (data: Data) =>
-                            `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources`,
-                        },
-                        children: [
-                          {
-                            path: 'create-existing',
-                            data: {
-                              breadcrumb: 'Create T4C Model',
-                              redirect: (data: Data) =>
-                                `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/create-existing`,
-                            },
-                            component: ManageT4CModelComponent,
-                          },
-                          {
-                            path: 'create-new',
-                            data: {
-                              breadcrumb: 'Create T4C Model',
-                              redirect: (data: Data) =>
-                                `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/create-new`,
-                            },
-                            component: CreateT4cModelNewRepositoryComponent,
-                          },
-                          {
-                            path: ':t4c_model_id',
-                            data: {
-                              breadcrumb: (data: Data) =>
-                                data.t4cModel?.id || '...',
-                              redirect: (data: Data) =>
-                                data.t4cModel?.id
-                                  ? `/project/${data.project?.slug}/model/${data.model?.slug}/t4c-model/${data.t4cModel?.id}`
-                                  : undefined,
-                            },
-                            component: T4CModelWrapperComponent,
-                            children: [
-                              {
-                                path: '',
-                                component: ManageT4CModelComponent,
                               },
                             ],
                           },

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormControl,
@@ -15,7 +15,7 @@ import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatInput } from '@angular/material/input';
+import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -32,23 +32,21 @@ import { T4CModelService } from '../service/t4c-model.service';
 @Component({
   selector: 'app-create-t4c-model-new-repository',
   templateUrl: './create-t4c-model-new-repository.component.html',
-  styleUrls: ['./create-t4c-model-new-repository.component.css'],
   standalone: true,
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     FormFieldSkeletonLoaderComponent,
     MatFormField,
     MatLabel,
     MatSelect,
-    NgFor,
     MatOption,
     MatInput,
     MatError,
     MatButton,
     MatIcon,
     AsyncPipe,
+    MatInputModule,
   ],
 })
 export class CreateT4cModelNewRepositoryComponent implements OnInit {
@@ -153,7 +151,7 @@ export class CreateT4cModelNewRepositoryComponent implements OnInit {
           if (this.asStepper) {
             this.create.emit(true);
           } else {
-            this.router.navigate(['../../modelsources'], {
+            this.router.navigate(['../..'], {
               relativeTo: this.route,
             });
           }
