@@ -23,14 +23,14 @@ jobs:
       - name: Package helm chart
         id: helm
         run: |
-          HELM_PACKAGE_DIR=$(mktemp -d)
+          HELM_PACKAGE_DIR="$(mktemp -d)"
           helm dependency update ./helm
           helm package \
               --app-version="${{ github.event.release.tag_name }}" \
               --version="${{ github.event.release.tag_name }}" \
-              -d $HELM_PACKAGE_DIR \
+              -d "$HELM_PACKAGE_DIR" \
               helm
-          echo "package_dir=$HELM_PACKAGE_DIR" >> $GITHUB_OUTPUT
+          echo "package_dir=$HELM_PACKAGE_DIR" >> "$GITHUB_OUTPUT"
       - name: Upload attachment to GH release
         run: |
           gh release upload ${{ github.event.release.tag_name }} ${{ steps.helm.outputs.package_dir }}/collab-manager-*.tgz

@@ -50,6 +50,10 @@ repos:
       - id: isort
         entry: bash -c "cd backend && isort ."
         types: [python]
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.2
+    hooks:
+      - id: actionlint-docker
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.2
     hooks:

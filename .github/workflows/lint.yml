@@ -23,7 +23,7 @@ jobs:
       - name: Install kubeconform
         run: |
           go install github.com/yannh/kubeconform/cmd/kubeconform@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
+          echo "$HOME/go/bin" >> "$GITHUB_PATH"
       - name: Run helm dependency update
         run: |
           helm dependency update ./helm
