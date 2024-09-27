@@ -53,7 +53,7 @@ class UnknownScheme(core_exceptions.BaseError):
             title="Invalid scheme detected",
             reason=(
                 f"The scheme '{scheme}' is not supported. "
-                "Use 'basic' or 'bearer' instead"
+                "Authentication is only supported via cookies or basic authentication."
             ),
             err_code="UNKNOWN_SCHEME",
         )
