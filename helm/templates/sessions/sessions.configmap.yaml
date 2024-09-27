@@ -27,6 +27,7 @@ data:
 
             root /usr/share/nginx/html;
             error_page 502 /502.html;
+            error_page 504 /502.html;
             error_page 401 /401.html;
 
             resolver {{ .Values.cluster.dns.service }}.{{ .Values.cluster.dns.namespace }}.svc.cluster.local;
@@ -56,7 +57,7 @@ data:
                 proxy_pass_request_body off;
                 proxy_pass_request_headers off;
                 proxy_set_header Cookie $http_cookie;
-                proxy_pass http://{{ .Release.Name }}-backend.{{ .Release.Namespace }}.svc.cluster.local:80/api/v1/sessions/$ccm_session_id/tokens/validate?token=$cookie_session_token;
+                proxy_pass http://{{ .Release.Name }}-backend.{{ .Release.Namespace }}.svc.cluster.local:80/api/v1/sessions/$ccm_session_id/tokens/validate;
             }
         }
     }
@@ -66,20 +67,73 @@ data:
       <head>
         <style>
           body {
-            font-family: Arial, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+              Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+              sans-serif;
+            display: grid;
+            place-items: center;
+            background-color: #000;
+            color: white;
+            margin: 0;
+            height: 100vh;
+          }
+
+          .container {
+            text-align: center;
+            max-width: 400px;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+          }
+
+          div {
+            margin: 10px 0;
           }
         </style>
-      </head>
-      <body>
-        <h2>Session is not reachable - 502 Bad Gateway</h2>
+        <script>
+          let counter = 5
 
-        <div>Please wait a few seconds and try to reconnect.</div>
-        <div>
-          If it doesn't work, check the status of the session in the Capella
-          Collaboration Manager.
-        </div>
-        <div>
-          If this error is persistent, please contact your system administrator.
+          function startCountdown() {
+            const countdownElement = document.getElementById('countdown')
+
+            function updateCountdown() {
+              countdownElement.textContent = counter
+              if (counter > 0) {
+                counter--
+              } else {
+                location.reload()
+              }
+            }
+
+            updateCountdown()
+            setInterval(updateCountdown, 1000)
+          }
+        </script>
+      </head>
+      <body onload="startCountdown()">
+        <div class="container">
+          <h2 style="color: #63ca63; margin-top: 2px">
+            Session is starting up...
+          </h2>
+          <div style="text-align: center">
+            <div>
+              It might take some time until the session is started up. <br />
+              The page will try to connect to the session automatically.
+            </div>
+            <div>
+              If it doesn't work, check the status of the session in the Capella
+              Collaboration Manager.
+            </div>
+            <div>
+              If this page does not disappear after a few minutes and you expect
+              your session to run, please contact your system administrator.
+            </div>
+            <div style="font-style: italic">
+              Refreshing in <span id="countdown">5</span> seconds...
+            </div>
+          </div>
         </div>
       </body>
     </html>
@@ -89,21 +143,53 @@ data:
       <head>
         <style>
           body {
-            font-family: Arial, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+              Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+              sans-serif;
+            display: grid;
+            place-items: center;
+            background-color: #000;
+            color: white;
+            margin: 0;
+            height: 100vh;
+          }
+
+          .container {
+            text-align: center;
+            max-width: 400px;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+          }
+
+          div {
+            margin: 10px 0;
           }
         </style>
       </head>
-      <body>
-        <h2>Not authenticated against session - 401 Authorization Required</h2>
+      <body onload="startCountdown()">
+        <div class="container">
+          <h2 style="margin-top: 2px">Not authenticated <br />against session</h2>
+          <div style="text-align: center">
+            <div>
+              The message can occur for various reasons:
 
-        <div>
-          The error can occur for various reasons:
-          <ul>
-            <li>The session has been terminated in the Capella Collaboration Manager.</li>
-            <li>You've tried to connect to a session directly. You have to connect via the Capella Collaboration Manager.</li>
-        </div>
-        <div>
-          If you think this error shouldn't appear, please contact your system administrator.
+              <div>The session has been terminated</div>
+
+              OR
+
+              <div>
+                You've tried to connect to a session directly. You have to connect
+                via the Capella Collaboration Manager
+              </div>
+            </div>
+            <div>
+              If you think this message shouldn't appear, please contact your
+              system administrator.
+            </div>
+          </div>
         </div>
       </body>
     </html>

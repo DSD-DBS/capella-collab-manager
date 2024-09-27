@@ -406,13 +406,13 @@ def get_session_connection_information(
 )
 def validate_session_token(
     session_id: str,
-    ccm_session_token: t.Annotated[str, fastapi.Cookie()],
+    ccm_session_token: t.Annotated[str | None, fastapi.Cookie()] = None,
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
     """Validate that the passed session token is valid for the given session."""
     session = crud.get_session_by_id(db, session_id)
 
-    if session is None:
+    if not session or not ccm_session_token:
         return fastapi.Response(status_code=status.HTTP_401_UNAUTHORIZED)
 
     if hmac.compare_digest(
