@@ -193,6 +193,17 @@ def test_validate_session_token_with_invalid_session(
     assert response.status_code == 401
 
 
+def test_validate_session_token_without_token_cookie(
+    client: testclient.TestClient,
+    session: sessions_models.DatabaseSession,
+):
+    """Test that an request without cookie is declined during validation"""
+
+    response = client.post(f"/api/v1/sessions/{session.id}/tokens/validate")
+
+    assert response.status_code == 401
+
+
 def test_validate_session_token_with_invalid_token(
     client: testclient.TestClient,
     session: sessions_models.DatabaseSession,
