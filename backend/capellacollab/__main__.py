@@ -21,6 +21,7 @@ from capellacollab import core
 from capellacollab.config import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
+from capellacollab.feedback import metrics as feedback_metrics
 from capellacollab.routes import router
 from capellacollab.sessions import idletimeout, operators
 
@@ -73,6 +74,7 @@ app = fastapi.FastAPI(
         idletimeout.terminate_idle_sessions_in_background,
         sessions_metrics.register,
         t4c_metrics.register,
+        feedback_metrics.register,
         pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
     ],
     middleware=[

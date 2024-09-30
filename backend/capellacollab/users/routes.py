@@ -10,6 +10,7 @@ from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
 from capellacollab.events import models as events_models
+from capellacollab.feedback import crud as feedback_crud
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
@@ -163,6 +164,7 @@ def delete_user(
     projects_users_crud.delete_projects_for_user(db, user.id)
     events_crud.delete_all_events_user_involved_in(db, user.id)
     workspaces_util.delete_all_workspaces_of_user(db, user)
+    feedback_crud.anonymize_feedback_of_user(db, user)
     crud.delete_user(db, user)
 
 

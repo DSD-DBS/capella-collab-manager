@@ -206,9 +206,7 @@ def fixture_override_get_existing_pipeline_run_dependency(
 
     yield
 
-    app.dependency_overrides.pop(
-        runs_injectables.get_existing_pipeline_run, None
-    )
+    del app.dependency_overrides[runs_injectables.get_existing_pipeline_run]
 
 
 @mock.patch("capellacollab.core.logging.loki.fetch_logs_from_loki")

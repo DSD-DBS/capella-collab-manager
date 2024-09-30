@@ -84,9 +84,12 @@ def fixture_db(
             session.flush()
             session.expire_all()
 
+        monkeypatch.setattr(database, "SessionLocal", lambda: session)
         monkeypatch.setattr(session, "commit", commit)
 
         yield session
+
+        del app.dependency_overrides[database.get_db]
 
 
 @pytest.fixture(name="client")

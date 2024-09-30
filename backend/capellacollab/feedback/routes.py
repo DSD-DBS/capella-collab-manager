@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import datetime
 import logging
 import typing as t
 
@@ -17,7 +18,7 @@ from capellacollab.settings.configuration import models as config_models
 from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as users_models
 
-from . import models, util
+from . import crud, models, util
 
 router = fastapi.APIRouter()
 
@@ -57,7 +58,22 @@ def submit_feedback(
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     util.check_if_feedback_is_allowed(db)
+    feedback_user = user if feedback.share_contact else None
+
+    crud.save_feedback(
+        db,
+        feedback.rating,
+        feedback_user,
+        feedback.feedback_text,
+        datetime.datetime.now(),
+        feedback.trigger,
+    )
 
     background_tasks.add_task(
-        util.send_feedback_email, db, feedback, user, user_agent, logger
+        util.send_feedback_email,
+        db,
+        feedback,
+        feedback_user,
+        user_agent,
+        logger,
     )
