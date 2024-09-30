@@ -114,7 +114,6 @@ nav:
           - Technology Overview: development/backend/technology.md
           - Extension Modules: development/backend/extensions.md
           - Exception Handling: development/backend/exception.md
-          - API Authentication: development/backend/authentication.md
           - Database Migration: development/backend/database-migration.md
       - Frontend:
           - Code Style: development/frontend/code-style.md
