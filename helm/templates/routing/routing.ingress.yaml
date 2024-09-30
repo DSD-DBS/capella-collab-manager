@@ -11,11 +11,8 @@ metadata:
     nginx.ingress.kubernetes.io/fastcgi_buffer_size: 16k
     nginx.ingress.kubernetes.io/fastcgi_buffers: 16 16k
     nginx.ingress.kubernetes.io/fastcgi_busy_buffers_size: 16k
-    nginx.ingress.kubernetes.io/proxy-body-size: "0"
     nginx.ingress.kubernetes.io/proxy-buffer-size: 16k
-    nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
-    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
     {{- if eq .Values.cluster.kind "OpenShift" }}
     route.openshift.io/insecureEdgeTerminationPolicy: Redirect
     route.openshift.io/termination: edge
@@ -74,13 +71,6 @@ spec:
                 name: {{ .Release.Name }}-grafana-nginx
                 port:
                   name: grafui
-          - path: /session
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-session-nginx
-                port:
-                  name: http
           {{ if .Values.mocks.oauth }}
           - path: /default
             pathType: Prefix

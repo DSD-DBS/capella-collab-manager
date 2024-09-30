@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-nginx-sessions
+  labels:
+    id: {{ .Release.Name }}-nginx-sessions
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '70'
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '70'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '70'
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    {{- if eq .Values.cluster.kind "OpenShift" }}
+    route.openshift.io/insecureEdgeTerminationPolicy: Redirect
+    route.openshift.io/termination: edge
+    haproxy.router.openshift.io/timeout: 70s
+    {{ end }}
+spec:
+  ingressClassName: {{ .Values.cluster.ingressClassName }}
+  rules:
+    - http:
+        paths:
+          - path: /session
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-session-nginx
+                port:
+                  name: http
+      {{ if not .Values.general.wildcardHost }}
+      host: {{ .Values.general.host }}
+      {{ end }}
