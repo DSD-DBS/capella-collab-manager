@@ -100,6 +100,7 @@ class K8sClusterConfig(BaseConfig):
     pod_security_context: K8sPodSecurityContext | None = (
         K8sPodSecurityContext()
     )
+    node_selector: dict[str, str] | None = None
 
 
 class K8sPromtailConfig(BaseConfig):

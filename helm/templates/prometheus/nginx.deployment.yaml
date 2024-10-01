@@ -60,6 +60,3 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-prometheus-nginx
               mountPath: /etc/nginx
-          {{ if .Values.cluster.containers }}
-          {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}

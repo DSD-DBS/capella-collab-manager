@@ -230,11 +230,14 @@ cluster:
 
   ingressClassName: nginx
 
+  nodeSelector:
+
   namespaces:
     sessions:
       podSecurityContext: *podSecurityContext
       imagePullPolicy: Always
       # ingressClassName: nginx
+      nodeSelector:
 
   pvc:
     storageClassName: local-path

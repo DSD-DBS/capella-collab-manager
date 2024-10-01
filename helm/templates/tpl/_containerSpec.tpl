@@ -3,4 +3,7 @@
 
 {{- define "capellacollab.container.spec" }}
 imagePullPolicy: {{ .Values.cluster.imagePullPolicy }}
+{{ if .Values.cluster.containers }}
+{{- toYaml .Values.cluster.containers }}
+{{ end }}
 {{- end }}

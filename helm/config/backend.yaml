@@ -20,6 +20,8 @@ k8s:
     podSecurityContext:
       {{- toYaml .Values.cluster.namespaces.sessions.podSecurityContext | nindent 6 }}
     imagePullPolicy: {{ .Values.cluster.namespaces.sessions.imagePullPolicy }}
+    nodeSelector:
+      {{- toYaml .Values.cluster.namespaces.sessions.nodeSelector | nindent 6 }}
 
   promtail:
     lokiEnabled: {{ .Values.loki.enabled }}
