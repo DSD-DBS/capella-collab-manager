@@ -20,10 +20,11 @@
     TeamForCapella into your local workspace:
     [Import a model from TeamForCapella](../../user/tools/capella/teamforcapella/import/index.md)
 1.  If you're still connected to the old Capella repository (`*.team` project
-    in the workspace), delete the `*.team` project.
+    in the workspace), delete the `*.team` project. Do not delete the
+    previously imported project!
 1.  Terminate the session.
 1.  Remove existing TeamForCapella to Git backup pipelines in the Collaboration
-    Manager and note down if the commit history is included:
+    Manager:
     [Remove a (nightly) backup](../../user/projects/models/backups/remove.md)
 1.  Add a new repository in the TeamForCapella server with the new Capella
     version via the Capella Collaboration Manager:
@@ -31,10 +32,10 @@
 1.  Unlink the old TeamForCapella repository (old Capella version) from your
     model:
     [Unlink a TeamForCapella repository](./project-integration/index.md#unlink-a-teamforcapella-repository-from-a-project-model)
-1.  Link the new TeamForCapella repository (new Capella version) to your model:
-    [Link a TeamForCapella repository](./project-integration/index.md#link-a-teamforcapella-repository-to-a-project-model)
 1.  Update the model version to the newer Capella version:
     [Change model metadata](../../user/projects/models/metadata.md)
+1.  Link the new TeamForCapella repository (new Capella version) to your model:
+    [Link a TeamForCapella repository](./project-integration/index.md#link-a-teamforcapella-repository-to-a-project-model)
 1.  Create a new session with the new Capella version.
 1.  In your persistent workspace, execute the following steps:
 
