@@ -336,8 +336,12 @@ class KubernetesOperator:
             self.v1_batch.delete_namespaced_cron_job(
                 namespace=namespace, name=_id
             )
-        except exceptions.ApiException:
-            log.exception("Error deleting cronjob with name: %s", _id)
+        except exceptions.ApiException as e:
+            # Cronjob doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return
+            raise
 
     def delete_job(self, name: str):
         log.info("Deleting job '%s' in cluster", name)
@@ -345,8 +349,12 @@ class KubernetesOperator:
             self.v1_batch.delete_namespaced_job(
                 namespace=namespace, name=name, propagation_policy="Background"
             )
-        except exceptions.ApiException:
-            log.error("Error deleting job with name: %s", name)
+        except exceptions.ApiException as e:
+            # Job doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return
+            raise
 
     def get_pod_name_from_job_name(self, job_name: str) -> str | None:
         return self._get_pod_id(label_selector=f"job-name={job_name}")
@@ -893,30 +901,42 @@ class KubernetesOperator:
     def _delete_deployment(self, name: str) -> client.V1Status | None:
         try:
             return self.v1_apps.delete_namespaced_deployment(name, namespace)
-        except exceptions.ApiException:
-            log.exception("Error deleting deployment with name: %s", name)
-            return None
+        except exceptions.ApiException as e:
+            # Deployment doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return None
+            raise
 
     def delete_secret(self, name: str) -> kubernetes.client.V1Status | None:
         try:
             return self.v1_core.delete_namespaced_secret(name, namespace)
-        except client.exceptions.ApiException:
-            log.exception("Error deleting secret with name: %s", name)
-            return None
+        except exceptions.ApiException as e:
+            # Secret doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return None
+            raise
 
     def _delete_config_map(self, name: str) -> client.V1Status | None:
         try:
             return self.v1_core.delete_namespaced_config_map(name, namespace)
-        except exceptions.ApiException:
-            log.exception("Error deleting config map with name: %s", name)
-            return None
+        except exceptions.ApiException as e:
+            # Config map doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return None
+            raise
 
     def _delete_service(self, name: str) -> client.V1Status | None:
         try:
             return self.v1_core.delete_namespaced_service(name, namespace)
-        except exceptions.ApiException:
-            log.exception("Error deleting service with name: %s", name)
-            return None
+        except exceptions.ApiException as e:
+            # Service doesn't exist or was already deleted
+            # Nothing to do
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return None
+            raise
 
     def _delete_disruptionbudget(self, name: str) -> client.V1Status | None:
         try:
@@ -924,14 +944,11 @@ class KubernetesOperator:
                 name, namespace
             )
         except exceptions.ApiException as e:
-            # Pod disruption budge doesn't exist or was already deleted
+            # Pod disruption budget doesn't exist or was already deleted
             # Nothing to do
-            if not e.status == http.HTTPStatus.NOT_FOUND:
-                log.exception(
-                    "Error deleting discruptionbudget with name: %s", name
-                )
-
-            return None
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return None
+            raise
 
     def _get_pod_name(self, _id: str) -> str:
         return self.get_pods(label_selector=f"app={_id}")[0].metadata.name
