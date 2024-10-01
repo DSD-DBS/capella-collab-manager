@@ -42,6 +42,7 @@ valkey:
 	docker start capella-collab-valkey || \
 	docker run -d \
 		--name capella-collab-valkey \
+		--rm \
 		-p $(VALKEY_PORT):6379 \
 		-v $$TMP_FILE:/usr/local/etc/valkey/valkey.conf \
 		valkey/valkey:latest \

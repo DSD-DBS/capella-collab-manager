@@ -23,7 +23,6 @@ import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile
 import { EventsComponent } from './events/events.component';
 import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
-import { LogoutRedirectComponent } from './general/auth/logout-redirect/logout-redirect.component';
 import { CreateProjectComponent } from './projects/create-project/create-project.component';
 import { CreateModelComponent } from './projects/models/create-model/create-model.component';
 import { ModelDescriptionComponent } from './projects/models/model-description/model-description.component';
@@ -515,10 +514,6 @@ export const routes: Routes = [
     component: AuthComponent,
   },
   { path: 'oauth2/callback', component: AuthRedirectComponent },
-  {
-    path: 'logout/redirect',
-    component: LogoutRedirectComponent,
-  },
   {
     path: 'logout',
     component: AuthComponent,
