@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
 from unittest import mock
 
 import pytest
@@ -9,7 +10,12 @@ from sqlalchemy import orm
 
 from capellacollab.config import config
 from capellacollab.config import models as config_models
+from capellacollab.feedback import crud as feedback_crud
+from capellacollab.feedback import metrics as feedback_metrics
+from capellacollab.feedback import models as feedback_models
 from capellacollab.settings.configuration import crud as configuration_crud
+from capellacollab.users import models as users_models
+from capellacollab.users import routes as users_routes
 
 
 @pytest.fixture(name="smtp_config_set")
@@ -257,3 +263,52 @@ def test_feedback_is_disabled_without_smtp(client: testclient.TestClient):
     response = client.get("/api/v1/configurations/feedback")
     assert response.status_code == 200
     assert response.json()["enabled"] is False
+
+
+def test_feedback_metric(db: orm.Session):
+    feedback_crud.save_feedback(
+        db,
+        feedback_models.FeedbackRating.GOOD,
+        None,
+        None,
+        datetime.datetime.now(),
+        None,
+    )
+
+    collector = feedback_metrics.FeedbackCollector()
+    data = list(collector.collect())
+
+    assert len(data[0].samples) == 3
+
+    bad_sample = data[0].samples[0]
+    good_sample = data[0].samples[2]
+
+    assert bad_sample.labels["rating"] == "bad"
+    assert bad_sample.name == "feedback_count"
+    assert bad_sample.value == 0
+
+    assert good_sample.labels["rating"] == "good"
+    assert good_sample.name == "feedback_count"
+    assert good_sample.value == 1
+
+
+def test_anonymize_feedback_during_deletion(
+    db: orm.Session, user: users_models.DatabaseUser
+):
+    """When a user is deleted, all feedback of the user should be anonymized."""
+
+    feedback_crud.save_feedback(
+        db,
+        feedback_models.FeedbackRating.GOOD,
+        user,
+        "test123",
+        datetime.datetime.now(),
+        None,
+    )
+
+    users_routes.delete_user(user, db)
+
+    feedback = db.query(feedback_models.DatabaseFeedback).first()
+    assert feedback
+    assert feedback.user is None
+    assert feedback.feedback_text == "test123"

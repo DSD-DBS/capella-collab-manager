@@ -105,7 +105,7 @@ def format_email(
 def send_feedback_email(
     db: orm.Session,
     feedback: models.Feedback,
-    user: users_models.DatabaseUser,
+    user: users_models.DatabaseUser | None,
     user_agent: str | None,
     logger: logging.LoggerAdapter,
 ):
@@ -113,8 +113,6 @@ def send_feedback_email(
     assert config.smtp  # Already checked in previous function
     cfg = config_core.get_global_configuration(db)
 
-    email_text = format_email(
-        feedback, user if feedback.share_contact else None, user_agent
-    )
+    email_text = format_email(feedback, user, user_agent)
 
     email_send.send_email(cfg.feedback.recipients, email_text, logger)

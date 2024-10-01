@@ -5,13 +5,14 @@ import typing as t
 
 import prometheus_client
 import prometheus_client.core
+from prometheus_client import registry as prometheus_registry
 
 from capellacollab.core import database
 
 from . import crud, interface
 
 
-class UsedT4CLicensesCollector:
+class UsedT4CLicensesCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
         metric = prometheus_client.core.GaugeMetricFamily(
             "used_t4c_licenses",
@@ -36,7 +37,7 @@ class UsedT4CLicensesCollector:
         yield metric
 
 
-class TotalT4CLicensesCollector:
+class TotalT4CLicensesCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
         metric = prometheus_client.core.GaugeMetricFamily(
             "total_t4c_licenses",
