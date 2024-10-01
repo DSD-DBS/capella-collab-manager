@@ -43,6 +43,7 @@ spec:
             requests:
               cpu: "0.005"
               memory: 20Mi
+              ephemeral-storage: '1Gi'
             limits:
               cpu: "0.1"
               memory: 250Mi
@@ -51,6 +52,7 @@ spec:
             requests:
               cpu: "0.01"
               memory: "500Mi"
+              ephemeral-storage: '1Gi'
             limits:
               cpu: "0.2"
               memory: "3Gi"

@@ -52,14 +52,16 @@ spec:
             requests:
               cpu: "0.1"
               memory: 50Mi
+              ephemeral-storage: "1Gi"
             {{ else }}
-            requests:
-              cpu: 500m
-              memory: 500M
             limits:
               cpu: 1
               memory: 1Gi
               ephemeral-storage: "2Gi"
+            requests:
+              cpu: 500m
+              memory: 500M
+              ephemeral-storage: "1Gi"
             {{ end }}
           volumeMounts:
             - name: config
