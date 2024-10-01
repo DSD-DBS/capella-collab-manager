@@ -46,7 +46,7 @@ type Story = StoryObj<ManageGitModelComponent>;
 export const InvalidURL: Story = {
   parameters: {
     screenshot: {
-      delay: 300,
+      delay: 500,
     },
   },
   play: async ({ canvasElement }) => {
