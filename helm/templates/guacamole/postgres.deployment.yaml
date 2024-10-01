@@ -77,14 +77,16 @@ spec:
             requests:
               cpu: "0.05"
               memory: 5Mi
+              ephemeral-storage: '1Gi'
             {{ else }}
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
             limits:
               memory: "1Gi"
               cpu: "1"
               ephemeral-storage: "2Gi"
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+              ephemeral-storage: '1Gi'
             {{ end }}
           volumeMounts:
             - name: {{ .Release.Name }}-data

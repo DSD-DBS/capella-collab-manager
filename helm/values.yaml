@@ -287,9 +287,11 @@ loki:
       limits:
         cpu: '1'
         memory: 500Mi
+        ephemeral-storage: '2Gi'
       requests:
         cpu: '0.03'
         memory: 5Mi
+        ephemeral-storage: '1Gi'
     affinity: ''
     podSecurityContext: *podSecurityContext
   read:
@@ -351,9 +353,11 @@ loki:
       limits:
         cpu: '0.5'
         memory: 500Mi
+        ephemeral-storage: '2Gi'
       requests:
         cpu: '0.03'
         memory: 5Mi
+        ephemeral-storage: '1Gi'
     makePolicyJob: &minioJob
       resources: *resourcesMinio
       securityContext:
@@ -389,9 +393,11 @@ kube-state-metrics:
     limits:
       cpu: 200m
       memory: 256Mi
+      ephemeral-storage: '2Gi'
     requests:
       cpu: 10m
       memory: 40Mi
+      ephemeral-storage: '1Gi'
   namespaces: *sessionNamespace
   extraArgs:
     - '--metric-annotations-allowlist=pods=[*]'
