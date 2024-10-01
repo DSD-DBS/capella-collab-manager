@@ -468,10 +468,7 @@ def get_sessions_for_user(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-    if (
-        user != current_user
-        and not current_user.role != users_models.Role.ADMIN
-    ):
+    if user != current_user and current_user.role != users_models.Role.ADMIN:
         raise exceptions.SessionForbiddenError()
 
     return user.sessions + list(

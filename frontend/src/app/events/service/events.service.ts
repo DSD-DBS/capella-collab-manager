@@ -36,7 +36,7 @@ export class EventsService {
       case 'projectName':
         return data.project ? data.project.name : '';
       case 'reason':
-        return data.reason || '';
+        return data.reason ?? '';
       default:
         return '';
     }
