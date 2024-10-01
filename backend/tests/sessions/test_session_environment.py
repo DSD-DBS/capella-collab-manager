@@ -17,11 +17,6 @@ from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
 
-@pytest.fixture(name="mock_session_methods")
-def fixture_mock_session_methods():
-    pass
-
-
 class MockOperator:
     environment = {}
 

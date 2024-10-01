@@ -13,14 +13,14 @@ RUN apt-get update && \
     apt-get upgrade --yes && \
     apt-get install --yes \
     ca-certificates \
-    unzip \
-    libpq-dev \
     curl \
+    git-lfs \
+    gnupg \
+    libpq-dev \
     python3 \
     python3-pip \
     python3-venv \
-    gnupg \
-    git-lfs \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 ARG KUBECTL_APT_REMOTE=https://pkgs.k8s.io/core:/stable:/v1.29/deb/
@@ -38,15 +38,15 @@ COPY .git_archival.txt /tmp/.git_archival.txt
 COPY startup.sh /opt/.startup.sh
 
 # Activate venv
-RUN ln -s $(which python3.11) /usr/bin/python && \
-    ln -sf $(which python3.11) /usr/bin/python3 && \
+RUN ln -s "$(which python3.11)" /usr/bin/python && \
+    ln -sf "$(which python3.11)" /usr/bin/python3 && \
     python -m venv /opt/.venv
 ENV _OLD_VIRTUAL_PATH="$PATH"
 ENV VIRTUAL_ENV=/opt/.venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 WORKDIR /tmp/backend
-RUN pip install . && chmod +x $VIRTUAL_ENV/lib/python3.11/site-packages/capellacollab/settings/modelsources/git/askpass.py
+RUN pip install . && chmod +x "$VIRTUAL_ENV/lib/python3.11/site-packages/capellacollab/settings/modelsources/git/askpass.py"
 
 RUN mkdir -p /var/log/backend && \
     chmod -R 777 /var/log/backend

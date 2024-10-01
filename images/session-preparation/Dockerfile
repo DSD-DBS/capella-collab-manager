@@ -7,7 +7,11 @@ FROM ${ALPINE_BASE_IMAGE}
 USER root
 
 COPY clone_repositories.py /opt/clone_repositories.py
-RUN apk add --no-cache git git-lfs python3 py3-pip
+RUN apk add --no-cache \
+    git \
+    git-lfs \
+    py3-pip \
+    python3
 
 COPY git_askpass.py /etc/git_askpass.py
 RUN chmod 555 /etc/git_askpass.py
