@@ -31,7 +31,7 @@ def get_last_seen(sid: str) -> str:
             if sid == session["metric"]["session_id"]:
                 return _get_last_seen(float(session["value"][1]))
 
-        log.error("No session was found.")
+        log.debug("Couldn't find Prometheus metrics for session %s.", sid)
     except Exception:
         log.exception("Exception during fetching of last seen.")
     return "UNKNOWN"
