@@ -89,7 +89,7 @@ repos:
         exclude: '^frontend/src/app/openapi'
         additional_dependencies:
           - 'prettier@3.3.3'
-          - 'prettier-plugin-tailwindcss@^0.6.6'
+          - 'prettier-plugin-tailwindcss@^0.6.8'
           - '@trivago/prettier-plugin-sort-imports@^4.3.0'
           - 'tailwindcss@^3.4.12'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
@@ -167,7 +167,7 @@ repos:
           - '@eslint/js@^9.11.1'
           - 'angular-eslint@18.3.1'
           - 'eslint-config-prettier@^9.1.0'
-          - 'typescript-eslint@8.6.0'
+          - 'typescript-eslint@8.8.0'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.17.4'
           - 'eslint-plugin-storybook@0.9.0--canary.156.ed236ca.0'
