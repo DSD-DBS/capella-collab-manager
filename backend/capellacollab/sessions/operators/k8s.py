@@ -595,6 +595,7 @@ class KubernetesOperator:
                     spec=client.V1PodSpec(
                         automount_service_account_token=False,
                         security_context=pod_security_context,
+                        node_selector=cfg.cluster.node_selector,
                         containers=containers,
                         init_containers=[
                             client.V1Container(
@@ -803,6 +804,7 @@ class KubernetesOperator:
                 metadata=client.V1ObjectMeta(labels=job_labels),
                 spec=client.V1PodSpec(
                     security_context=pod_security_context,
+                    node_selector=cfg.cluster.node_selector,
                     containers=containers,
                     restart_policy="Never",
                 ),

@@ -82,7 +82,4 @@ spec:
             - name: {{ .Release.Name }}-data
               mountPath: /var/lib/postgresql/data
           {{ end }}
-          {{ if .Values.cluster.containers }}
-          {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}
 {{ end }}

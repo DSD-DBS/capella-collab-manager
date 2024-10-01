@@ -54,7 +54,4 @@ spec:
             requests:
               cpu: "0.05"
               memory: 50Mi
-          {{ if .Values.cluster.containers }}
-          {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}
 {{ end }}

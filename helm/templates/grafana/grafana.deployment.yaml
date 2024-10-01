@@ -80,9 +80,6 @@ spec:
               mountPath: /etc/ssl/certs/{{ $key | base }}
               subPath: {{ $key | base }}
             {{- end }}
-          {{ if .Values.cluster.containers }}
-          {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}
       volumes:
         - name: config
           configMap:

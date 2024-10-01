@@ -111,11 +111,9 @@ spec:
               cpu: "2"
               ephemeral-storage: "2Gi"
             {{ end }}
-          {{ if .Values.cluster.containers }}
-          {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}
         {{ if .Values.loki.enabled }}
         - name: promtail
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
           {{ if .Values.docker.images.promtail }}
           image: {{ .Values.docker.images.promtail }}
           {{ else }}
@@ -151,7 +149,4 @@ spec:
               mountPath: /var/log/promtail
             - name: logs
               mountPath: /var/log/guacamole
-          {{ if .Values.cluster.containers }}
-          {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}
         {{ end }}

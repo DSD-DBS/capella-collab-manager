@@ -61,7 +61,4 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-grafana-nginx
               mountPath: /etc/nginx
-          {{ if .Values.cluster.containers }}
-          {{- toYaml .Values.cluster.containers | nindent 10 }}
-          {{ end }}
 {{ end }}
