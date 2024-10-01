@@ -5,8 +5,9 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
@@ -33,8 +34,14 @@ export class AuthComponent implements OnInit {
     public authService: AuthenticationWrapperService,
     private pageLayoutService: PageLayoutService,
     private route: ActivatedRoute,
+    private router: Router,
+    private dialog: MatDialog,
   ) {
     this.pageLayoutService.hideNavbar();
+    if (this.router.url.startsWith('/logout')) {
+      this.authService.logOut();
+      this.dialog.closeAll();
+    }
   }
 
   ngOnInit(): void {
