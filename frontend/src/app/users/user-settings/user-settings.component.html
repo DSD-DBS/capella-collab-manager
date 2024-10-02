@@ -5,15 +5,20 @@
 
 <div class="flex flex-wrap gap-5">
   <div class="collab-card mb-[10px] w-full !pb-0 sm:w-card sm:max-w-[85vw]">
-    <h2 class="text-xl font-medium">Manage Users</h2>
+    <div class="flex items-center justify-between">
+      <h2 class="text-xl font-medium">Manage Users</h2>
+      @if (userWrapperService.users$ | async; as users) {
+        <span class="text-sm">{{ users.length }} registered users</span>
+      }
+    </div>
 
-    <mat-form-field class="mt-[5px] w-full pb-0" appearance="outline">
+    <mat-form-field class="mb-[-20px] mt-[10px] w-full" appearance="outline">
       <mat-label>Search</mat-label>
       <input
         [(ngModel)]="search"
-        autocomplete="off"
         matInput
         placeholder="Username"
+        class="mr-2"
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
@@ -21,7 +26,8 @@
     <div [class]="'max-h-[50vh] overflow-y-scroll'">
       @for (role of userRoles; track role) {
         <div class="mt-2.5 pl-1 text-lg font-bold text-gray-400">
-          {{ roleMapping[role] }}
+          {{ getUsersByRole(userWrapperService.users$ | async, role)?.length }}
+          {{ roleMapping[role] + "(s)" }}
         </div>
         @for (
           user of getUsersByRole(userWrapperService.users$ | async, role);
