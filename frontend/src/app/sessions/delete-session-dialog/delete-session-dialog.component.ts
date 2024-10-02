@@ -6,8 +6,7 @@ import { Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
-import { Session } from 'src/app/openapi';
-import { SessionService } from '../service/session.service';
+import { Session, SessionsService } from 'src/app/openapi';
 
 @Component({
   templateUrl: './delete-session-dialog.component.html',
@@ -16,7 +15,7 @@ import { SessionService } from '../service/session.service';
 })
 export class DeleteSessionDialogComponent {
   constructor(
-    private sessionService: SessionService,
+    private sessionsService: SessionsService,
     public dialogRef: MatDialogRef<DeleteSessionDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public sessions: Session[],
   ) {}
@@ -31,7 +30,7 @@ export class DeleteSessionDialogComponent {
     this.deleteButton.text = 'Please wait...';
     const requests = [];
     for (const session of this.sessions) {
-      requests.push(this.sessionService.deleteSession(session.id));
+      requests.push(this.sessionsService.terminateSession(session.id));
     }
 
     forkJoin(requests).subscribe({

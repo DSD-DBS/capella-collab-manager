@@ -25,9 +25,9 @@ import {
   MatRowDef,
   MatRow,
 } from '@angular/material/table';
-import { Session } from 'src/app/openapi';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { Session, SessionsService } from 'src/app/openapi';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
-import { SessionService } from '../service/session.service';
 
 @Component({
   selector: 'app-session-overview',
@@ -49,17 +49,18 @@ import { SessionService } from '../service/session.service';
     MatRow,
     MatButton,
     DatePipe,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class SessionOverviewComponent implements OnInit {
   constructor(
-    private sessionService: SessionService,
+    private sessionsService: SessionsService,
     private dialog: MatDialog,
   ) {}
 
   deletionFormGroup = new FormGroup({});
 
-  sessions: Session[] = [];
+  sessions: Session[] | undefined = undefined;
   displayedColumns = [
     'checkbox',
     'id',
@@ -77,7 +78,7 @@ export class SessionOverviewComponent implements OnInit {
   }
 
   refreshSessions() {
-    this.sessionService.getCurrentSessions().subscribe((res: Session[]) => {
+    this.sessionsService.getAllSessions().subscribe((res: Session[]) => {
       this.sessions = res;
       for (const id in this.deletionFormGroup.controls) {
         this.deletionFormGroup.removeControl(id);
@@ -89,7 +90,7 @@ export class SessionOverviewComponent implements OnInit {
   }
 
   openDeletionDialog(): void {
-    const sessions: Session[] = this.sessions.filter(
+    const sessions = this.sessions?.filter(
       (session: Session) => this.deletionFormGroup.get(session.id)?.value,
     );
 

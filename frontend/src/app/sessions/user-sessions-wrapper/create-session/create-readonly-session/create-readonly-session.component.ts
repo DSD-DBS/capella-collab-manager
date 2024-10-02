@@ -5,10 +5,7 @@
 import { NgIf, NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
-  AbstractControl,
-  AsyncValidatorFn,
   FormBuilder,
-  ValidationErrors,
   Validators,
   FormsModule,
   ReactiveFormsModule,
@@ -22,7 +19,7 @@ import { MatSelect } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { combineLatest, filter, map, Observable, take, tap } from 'rxjs';
+import { combineLatest, filter, Observable, tap } from 'rxjs';
 import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
@@ -61,16 +58,13 @@ export class CreateReadonlySessionComponent implements OnInit {
   relevantToolVersions?: ToolVersion[];
   allToolVersions?: ToolVersionWithTool[];
 
-  public toolSelectionForm = this.fb.group(
-    {
-      tool: this.fb.control<Tool | null>(null, Validators.required),
-      version: this.fb.control<ToolVersion | null>(
-        { value: null, disabled: true },
-        Validators.required,
-      ),
-    },
-    { asyncValidators: this.asyncReadonlyValidator() },
-  );
+  public toolSelectionForm = this.fb.group({
+    tool: this.fb.control<Tool | null>(null, Validators.required),
+    version: this.fb.control<ToolVersion | null>(
+      { value: null, disabled: true },
+      Validators.required,
+    ),
+  });
 
   constructor(
     private toolWrapperService: ToolWrapperService,
@@ -206,29 +200,6 @@ export class CreateReadonlySessionComponent implements OnInit {
       (value, index, self) =>
         index === self.findIndex((version) => version.id === value.id),
     );
-  }
-
-  asyncReadonlyValidator(): AsyncValidatorFn {
-    return (_: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.userSessionService.readonlySessions$.pipe(
-        take(1),
-        map((readOnlySessions) => {
-          return readOnlySessions?.find(
-            (session) =>
-              session.project?.slug === this.projectSlug &&
-              session.version?.id ===
-                this.toolSelectionForm.value.version!.id &&
-              session.version?.tool.id ===
-                this.toolSelectionForm.value.tool!.id,
-          )
-            ? {
-                uniqueReadonlySession:
-                  'Readonly session with these settings already exists',
-              }
-            : null;
-        }),
-      );
-    };
   }
 }
 

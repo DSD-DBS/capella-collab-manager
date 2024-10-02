@@ -434,7 +434,7 @@ def validate_session_token(
         ]
     ),
 )
-def end_session(
+def terminate_session(
     db: orm.Session = fastapi.Depends(database.get_db),
     session: models.DatabaseSession = fastapi.Depends(
         injectables.get_existing_session
