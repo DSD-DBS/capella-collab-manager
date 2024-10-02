@@ -48,16 +48,12 @@ export class AuthComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
       if (params.reason && params.reason === 'session-expired') {
-        this.login();
+        this.authService.login();
       }
     });
   }
 
   getDocsURL(): string {
     return environment.docs_url + '/';
-  }
-
-  login(): void {
-    this.authService.login('/');
   }
 }

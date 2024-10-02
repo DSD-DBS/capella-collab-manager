@@ -42,7 +42,7 @@
         mat-flat-button
         color="primary"
         class="mt-2 !h-[50px]"
-        (click)="login()"
+        (click)="authService.login()"
       >
         Login with
         {{ (metadataService.backendMetadata | async)?.authentication_provider }}

@@ -13,6 +13,8 @@ export class AuthenticationWrapperService {
   SESSION_STORAGE_CODE_VERIFIER_KEY = 'CCM_CODE_VERIFIER';
   LOGGED_IN_KEY = 'CCM_LOGGED_IN';
 
+  redirectURL: string | undefined = undefined;
+
   constructor(private authenticationService: AuthenticationService) {}
 
   isLoggedIn(): boolean {
@@ -20,9 +22,9 @@ export class AuthenticationWrapperService {
     return loggedIn !== null && loggedIn === 'true';
   }
 
-  login(redirectTo: string) {
+  login() {
     this.authenticationService.getAuthorizationUrl().subscribe((res) => {
-      sessionStorage.setItem(res.state, redirectTo);
+      sessionStorage.setItem(res.state, this.redirectURL ?? '/');
       sessionStorage.setItem(this.SESSION_STORAGE_NONCE_KEY, res.nonce);
       sessionStorage.setItem(
         this.SESSION_STORAGE_CODE_VERIFIER_KEY,

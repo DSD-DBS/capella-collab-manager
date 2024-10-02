@@ -28,7 +28,10 @@ export class AuthRedirectComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
+      const redirectTo = sessionStorage.getItem(params.state);
+
       if (params.error) {
+        this.authService.redirectURL = redirectTo ?? undefined;
         const redirect_url =
           '/auth?' +
           Object.keys(params)
@@ -43,7 +46,6 @@ export class AuthRedirectComponent implements OnInit {
         return;
       }
 
-      const redirectTo = sessionStorage.getItem(params.state);
       const nonce = sessionStorage.getItem(
         this.authService.SESSION_STORAGE_NONCE_KEY,
       );
@@ -52,12 +54,14 @@ export class AuthRedirectComponent implements OnInit {
       );
 
       if (nonce === null || codeVerifier === null) {
+        this.authService.redirectURL = redirectTo ?? undefined;
         this.toastService.showError(
           'Missing nonce or code verifier value',
           'The nonce or code verifier value is missing in the session storage. If you initiated the login yourself, please retry, and if the error persists or you did not initiate the login, please contact your system administrator',
         );
         this.redirectToLogin();
       } else if (redirectTo === null) {
+        this.authService.redirectURL = redirectTo ?? undefined;
         this.toastService.showError(
           'State mismatch error',
           'The state returned by the authentication server does not match the local state. If you initiated the login yourself, please retry, and if the error persists or you did not initiate the login, please contact your system administrator.',
@@ -83,7 +87,10 @@ export class AuthRedirectComponent implements OnInit {
               this.feedbackService.triggerFeedbackPrompt();
               this.router.navigateByUrl(redirectTo);
             },
-            error: () => this.redirectToLogin(),
+            error: () => {
+              this.authService.redirectURL = redirectTo ?? undefined;
+              this.redirectToLogin();
+            },
           });
       }
     });
