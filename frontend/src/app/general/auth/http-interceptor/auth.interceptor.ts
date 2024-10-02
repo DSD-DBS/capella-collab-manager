@@ -42,6 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler,
   ) {
     if (err.status === 401) {
+      this.authService.redirectURL = this.router.url;
       localStorage.setItem(this.authService.LOGGED_IN_KEY, 'false');
       if (err.error.detail.err_code == 'TOKEN_SIGNATURE_EXPIRED') {
         return this.authenticationService.refreshIdentityToken().pipe(
