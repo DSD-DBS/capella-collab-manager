@@ -3,117 +3,162 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="dialog">
+<div class="dialog sm:min-w-[500px]">
   <h1 class="text-lg font-bold">Session File Browser</h1>
 
-  <mat-progress-bar mode="indeterminate" *ngIf="loadingFiles">
-  </mat-progress-bar>
-  <div class="progress" *ngIf="uploadProgress">
-    <div>
-      <mat-progress-bar
-        [mode]="uploadProgress === 100 ? 'indeterminate' : 'determinate'"
-        [value]="uploadProgress"
-      >
-      </mat-progress-bar>
-    </div>
-    <button class="flex items-center" mat-button (click)="reset()">
-      <mat-icon *ngIf="uploadProgress">cancel </mat-icon>
-    </button>
-  </div>
+  @if (loadingFiles) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  } @else {
+    @if (uploadProgress) {
+      <div class="collab-card mb-2">
+        <p>Your upload is in progress…</p>
+        <div class="flex items-center justify-around">
+          <mat-progress-bar
+            class="flex-1"
+            [mode]="uploadProgress === 100 ? 'indeterminate' : 'determinate'"
+            [value]="uploadProgress"
+          >
+          </mat-progress-bar>
+          <button
+            class="flex items-center justify-center"
+            mat-button
+            (click)="cancelUpload()"
+          >
+            <mat-icon class="!mr-0">cancel</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
 
-  <div *ngIf="session.download_in_progress" class="collab-card">
-    <div>
-      <p>Your download is being prepared…</p>
-    </div>
-    <div>
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
-  </div>
+    @if (session.download_in_progress) {
+      <div class="collab-card mb-2">
+        <p>Your download is being prepared…</p>
+        <mat-progress-bar class="mt-2" mode="indeterminate"></mat-progress-bar>
+      </div>
+    }
 
-  <mat-checkbox
-    *ngIf="!loadingFiles"
-    [formControl]="showHiddenFiles"
-    (change)="loadFiles()"
-    id="hidden-files"
-    >Show hidden files</mat-checkbox
-  >
+    <mat-checkbox
+      class="ml-1"
+      [formControl]="showHiddenFiles"
+      (change)="loadFiles()"
+      >Show hidden files</mat-checkbox
+    >
+    <hr />
+  }
 
   <mat-tree
     [dataSource]="dataSource"
-    [treeControl]="treeControl"
-    class="file-tree"
+    [childrenAccessor]="childrenAccessor"
+    class="max-h-[50vh] overflow-y-auto py-2"
   >
     <mat-tree-node
       *matTreeNodeDef="let node"
-      matTreeNodeToggle
       matTreeNodePadding
+      class="!h-8 !min-h-8 !items-end"
     >
-      <mat-icon class="file-icon"> insert_drive_file </mat-icon>
+      <mat-icon class="mx-3 text-amber-500">
+        @if (node.isNew) {
+          note_add
+        } @else if (node.isModified) {
+          edit_document
+        } @else {
+          insert_drive_file
+        }
+      </mat-icon>
 
-      <p style="margin: 0px" [ngClass]="node.isNew ? 'new-file' : ''">
+      <p
+        [ngClass]="{
+          'text-green-700': node.isNew,
+          'text-amber-700': node.isModified,
+        }"
+        class="mb-0.5"
+      >
         {{ node.name }}
       </p>
-      <div *ngIf="node.isNew">
-        <button mat-icon-button (click)="removeFile(node.path, node.name)">
+      @if (node.isNew || node.isModified) {
+        <button
+          matRipple
+          class="ml-1 flex !scale-90 rounded p-[2px] text-blue-900"
+          (click)="removeFile(node)"
+          [disabled]="session.download_in_progress"
+        >
           <mat-icon>cancel</mat-icon>
         </button>
-      </div>
-    </mat-tree-node>
-
-    <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-      <div class="mat-tree-node">
-        <div>
-          <button
-            mat-icon-button
-            matTreeNodeToggle
-            [attr.aria-label]="'Expand ' + node.name"
-          >
-            <mat-icon class="dir-icon"> folder </mat-icon>
-          </button>
-          {{ node.name }}
-        </div>
+      } @else {
         <button
-          mat-icon-button
-          color="primary"
+          matRipple
+          class="ml-1 flex rounded p-1 text-blue-900"
           (click)="download(node.path)"
           [disabled]="session.download_in_progress"
         >
           <mat-icon>download_file</mat-icon>
         </button>
-        <div>
-          <input
-            hidden
-            type="file"
-            #fileInput
-            (change)="addFiles(fileInput.files, node.path, node)"
-            multiple
-          />
+      }
+    </mat-tree-node>
 
-          <button mat-icon-button color="primary" (click)="fileInput.click()">
-            <mat-icon>upload_file</mat-icon>
-          </button>
-        </div>
-      </div>
-      <div
-        [class.file-tree-invisible]="!treeControl.isExpanded(node)"
-        role="group"
+    <mat-tree-node
+      *matTreeNodeDef="let node; when: hasChild"
+      matTreeNodePadding
+      [isExpanded]="node.isExpanded"
+      [isExpandable]="true"
+      class="!h-8 !min-h-8"
+    >
+      <button
+        mat-icon-button
+        (click)="node.isExpanded = !node.isExpanded"
+        [attr.aria-label]="'Expand ' + node.name"
+        data-testid="folder-button"
       >
-        <ng-container matTreeNodeOutlet></ng-container>
+        <mat-icon class="text-blue-900">
+          @if (node.isExpanded) {
+            folder_open
+          } @else {
+            folder
+          }
+        </mat-icon>
+      </button>
+      <div class="mt-1">
+        {{ node.name }}
       </div>
-    </mat-nested-tree-node>
+      <button
+        matRipple
+        class="ml-1 flex rounded p-1 text-blue-900"
+        (click)="download(node.path)"
+        [disabled]="session.download_in_progress"
+      >
+        <mat-icon>download_file</mat-icon>
+      </button>
+      <div>
+        <input
+          hidden
+          type="file"
+          #fileInput
+          (change)="addFiles(fileInput.files, node)"
+          multiple
+        />
+
+        <button
+          matRipple
+          class="flex rounded p-1 text-blue-900"
+          (click)="fileInput.click()"
+          [disabled]="session.download_in_progress"
+        >
+          <mat-icon>upload_file</mat-icon>
+        </button>
+      </div>
+    </mat-tree-node>
   </mat-tree>
   <br />
 
   <div class="flex justify-between">
-    <button mat-button (click)="this.dialogRef.close()">Close</button>
+    <button mat-stroked-button (click)="this.dialogRef.close()">Close</button>
 
     <button
-      [disabled]="!files.length"
+      [disabled]="!filesToUpload.length"
       type="submit"
       mat-raised-button
       color="primary"
       (click)="submit()"
-      style="margin-left: 30px"
     >
       Submit
     </button>

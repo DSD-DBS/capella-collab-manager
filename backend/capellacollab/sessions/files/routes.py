@@ -9,6 +9,7 @@ import tarfile
 import fastapi
 from fastapi import responses
 
+from capellacollab.core import responses as core_responses
 from capellacollab.sessions import injectables as sessions_injectables
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions import operators
@@ -35,7 +36,7 @@ def list_files(
         raise exceptions.SessionFileLoadingFailedError()
 
 
-@router.post("")
+@router.post("", status_code=204)
 def upload_files(
     files: list[fastapi.UploadFile],
     session: sessions_models.DatabaseSession = fastapi.Depends(
@@ -55,7 +56,6 @@ def upload_files(
             file.file.seek(0)
 
             assert file.filename
-            file.filename = file.filename.replace(" ", "_")
             tar.addfile(
                 tar.gettarinfo(arcname=file.filename, fileobj=file.file),
                 fileobj=file.file,
@@ -66,20 +66,18 @@ def upload_files(
 
     operators.get_operator().upload_files(session.id, tar_bytes)
 
-    return {"message": "Upload successful"}
 
-
-@router.get("/download", response_class=responses.StreamingResponse)
+@router.get(
+    "/download",
+    response_class=responses.StreamingResponse,
+    responses=core_responses.ZIPFileResponse.responses,
+)
 def download_file(
-    filename: str,
+    path: str,
     session: sessions_models.DatabaseSession = fastapi.Depends(
         sessions_injectables.get_existing_session
     ),
-) -> responses.StreamingResponse:
-    return responses.StreamingResponse(
-        operators.get_operator().download_file(session.id, filename),
-        headers={
-            "content-disposition": 'attachment; filename=f"{filename}.zip"',
-            "content-type": "application/zip",
-        },
+) -> core_responses.ZIPFileResponse:
+    return core_responses.ZIPFileResponse(
+        operators.get_operator().download_file(session.id, path),
     )

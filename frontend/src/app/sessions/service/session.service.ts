@@ -9,6 +9,7 @@ import {
   SessionProvisioningRequest,
   SessionsService,
   SessionConnectionInformation,
+  FileTree,
 } from 'src/app/openapi';
 import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 
@@ -223,10 +224,9 @@ export interface SessionState {
   success: boolean;
 }
 
-export interface PathNode {
-  path: string;
-  name: string;
-  type: 'file' | 'directory';
-  isNew: boolean;
+export type PathNode = Omit<FileTree, 'children'> & {
+  isNew?: boolean;
+  isModified?: boolean;
+  isExpanded?: boolean;
   children: PathNode[] | null;
-}
+};
