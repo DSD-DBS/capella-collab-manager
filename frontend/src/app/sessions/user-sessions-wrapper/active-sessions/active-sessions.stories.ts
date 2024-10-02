@@ -18,7 +18,7 @@ import {
 } from 'src/storybook/feedback';
 import {
   createPersistentSessionWithState,
-  mockSuccessReadonlySession,
+  mockReadonlySession,
 } from 'src/storybook/session';
 import { mockHttpConnectionMethod } from 'src/storybook/tool';
 import { MockOwnUserWrapperService, mockUser } from 'src/storybook/user';
@@ -318,8 +318,7 @@ export const ReadonlySessionSuccessStateStory: Story = {
       providers: [
         {
           provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(mockSuccessReadonlySession),
+          useFactory: () => new MockUserSessionService(mockReadonlySession),
         },
       ],
     }),

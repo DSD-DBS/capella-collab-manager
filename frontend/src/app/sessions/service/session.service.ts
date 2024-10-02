@@ -2,59 +2,32 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {
   Session,
-  Project,
   SessionProvisioningRequest,
   SessionsService,
   SessionConnectionInformation,
 } from 'src/app/openapi';
 import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
-import { environment } from 'src/environments/environment';
 
-export type LocalStorage = Record<string, string>;
-
-export type Cookies = Record<string, string>;
-
-export interface ReadonlySession extends Session {
-  project: Project;
-}
-
-export const isReadonlySession = (
-  session: Session,
-): session is ReadonlySession => {
+export const isReadonlySession = (session: Session): boolean => {
   return session.type === 'readonly';
 };
 
-export const isPersistentSession = (session: Session): session is Session => {
+export const isPersistentSession = (session: Session): boolean => {
   return session.type === 'persistent';
 };
-
-export interface PathNode {
-  path: string;
-  name: string;
-  type: 'file' | 'directory';
-  isNew: boolean;
-  children: PathNode[] | null;
-}
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
   constructor(
-    private http: HttpClient,
     private sessionHistoryService: SessionHistoryService,
     private sessionsService: SessionsService,
   ) {}
-  BACKEND_URL_PREFIX = environment.backend_url + '/sessions';
-
-  getCurrentSessions(): Observable<Session[]> {
-    return this.http.get<Session[]>(this.BACKEND_URL_PREFIX);
-  }
 
   createSession(
     toolId: number,
@@ -83,10 +56,6 @@ export class SessionService {
           }
         }),
       );
-  }
-
-  deleteSession(id: string): Observable<null> {
-    return this.http.delete<null>(`${this.BACKEND_URL_PREFIX}/${id}`);
   }
 
   setConnectionInformation(connectionInfo: SessionConnectionInformation): void {
@@ -252,4 +221,12 @@ export interface SessionState {
   css: string;
   icon: string;
   success: boolean;
+}
+
+export interface PathNode {
+  path: string;
+  name: string;
+  type: 'file' | 'directory';
+  isNew: boolean;
+  children: PathNode[] | null;
 }

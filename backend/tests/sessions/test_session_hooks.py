@@ -193,7 +193,7 @@ def test_hook_calls_during_session_termination(
         lambda *args, **kwargs: None,
     )
 
-    sessions_routes.end_session(
+    sessions_routes.terminate_session(
         db,
         session,
         mockoperator,  # type: ignore
