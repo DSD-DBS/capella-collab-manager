@@ -30,10 +30,7 @@
   </div>
 
   <mat-divider></mat-divider>
-  <mat-form-field
-    class="mb-[-20px] mt-[10px] w-full pl-1 pr-4"
-    appearance="outline"
-  >
+  <mat-form-field class="mb-[-20px] mt-[10px] w-full" appearance="outline">
     <mat-label>Search</mat-label>
     <input [(ngModel)]="search" matInput placeholder="Username" class="mr-2" />
     <mat-icon matSuffix>search</mat-icon>
@@ -41,15 +38,19 @@
   <div class="max-h-[50vh] overflow-y-scroll">
     @for (role of projectUserRoles; track role) {
       <div class="mt-2.5 pl-1 text-lg font-bold text-gray-400">
+        {{
+          getProjectUsersByRole(projectUserService.projectUsers$ | async, role)
+            ?.length
+        }}
         @switch (role) {
           @case ("manager") {
-            Project Administrator
+            Project Administrator(s)
           }
           @case ("administrator") {
-            Global Administrator
+            Global Administrator(s)
           }
           @case ("user") {
-            Project User
+            Project User(s)
           }
         }
       </div>
