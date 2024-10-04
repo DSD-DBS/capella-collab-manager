@@ -199,6 +199,11 @@ export class SessionService {
         success = true;
         icon = 'check';
         break;
+      case 'NOT_FOUND':
+        text = 'Session container not found';
+        css = 'error';
+        icon = 'error';
+        break;
       case 'unknown':
       case 'Unknown':
         text = 'Unknown State';
