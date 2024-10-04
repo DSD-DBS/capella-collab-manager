@@ -1088,13 +1088,13 @@ class KubernetesOperator:
             )
             raise
 
-    def download_file(self, _id: str, filename: str) -> t.Iterable[bytes]:
+    def download_file(self, _id: str, path: str) -> t.Iterable[bytes]:
         pod_name = self._get_pod_name(_id)
         try:
             exec_command = [
                 "bash",
                 "-c",
-                f"zip -qr /tmp/archive.zip '{shlex.quote(filename)}' && base64 /tmp/archive.zip && rm -f /tmp/archive.zip",
+                f"zip -qr - {shlex.quote(path)} | base64",
             ]
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,

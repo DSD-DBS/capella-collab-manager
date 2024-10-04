@@ -178,3 +178,39 @@ class SVGResponse(fastapi.responses.Response):
             }
         }
     }
+
+
+class ZIPFileResponse(fastapi.responses.StreamingResponse):
+    """Custom error class for zip-file responses.
+
+    To use the class as response class, pass the following parameters
+    to the fastapi route definition.
+
+    ```python
+    response_class=fastapi.responses.Response
+    responses=responses.ZIPFileResponse.responses
+    ```
+
+    Don't use ZIPFileResponse as response_class as this will also change the
+    media type for all error responses, see:
+    https://github.com/tiangolo/fastapi/discussions/6799
+
+    To return an ZIP-file response in the route, use:
+
+    ```python
+    return responses.ZIPFileResponse(
+        file_generator(),
+    )
+    ```
+    """
+
+    media_type = "application/zip"
+    responses: dict[int | str, dict[str, t.Any]] | None = {
+        200: {
+            "content": {
+                "application/zip": {
+                    "schema": {"type": "string", "format": "binary"}
+                }
+            }
+        }
+    }

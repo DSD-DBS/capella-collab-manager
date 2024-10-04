@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { BehaviorSubject } from 'rxjs';
+import { userEvent, within } from '@storybook/test';
 import { PathNode } from 'src/app/sessions/service/session.service';
 import { FileBrowserDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-browser-dialog.component';
 import { dialogWrapper } from 'src/storybook/decorators';
@@ -38,7 +39,7 @@ export const LoadingFiles: Story = {
 export const Files: Story = {
   args: {
     loadingFiles: false,
-    dataSource: new BehaviorSubject<PathNode[]>([
+    dataSource: new MatTableDataSource<PathNode>([
       {
         path: '/workspace',
         name: 'workspace',
@@ -49,26 +50,62 @@ export const Files: Story = {
             path: '/workspace/file1',
             name: 'file1',
             type: 'file',
-            isNew: false,
             children: null,
           },
           {
             path: '/workspace/file2',
             name: 'file2',
             type: 'file',
-            isNew: false,
             children: null,
+          },
+          {
+            path: '/workspace/directory1',
+            name: 'directory1',
+            type: 'directory',
+            children: [
+              {
+                path: '/workspace/directory1/file1',
+                name: 'file1',
+                type: 'file',
+                children: null,
+              },
+              {
+                path: '/workspace/directory1/file2',
+                name: 'file2',
+                type: 'file',
+                children: null,
+              },
+            ],
+          },
+          {
+            path: '/workspace/directory2',
+            name: 'directory2',
+            type: 'directory',
+            children: [],
+          },
+          {
+            path: '/workspace/directory3',
+            name: 'directory3',
+            type: 'directory',
+            children: [],
           },
         ],
       },
     ]),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    let folderButtons = canvas.getAllByTestId('folder-button');
+    await userEvent.click(folderButtons[0]);
+    folderButtons = canvas.getAllByTestId('folder-button');
+    await userEvent.click(folderButtons[1]);
   },
 };
 
 export const UploadNewFile: Story = {
   args: {
     loadingFiles: false,
-    dataSource: new BehaviorSubject<PathNode[]>([
+    dataSource: new MatTableDataSource<PathNode>([
       {
         path: '/workspace',
         name: 'workspace',
@@ -86,12 +123,23 @@ export const UploadNewFile: Story = {
             path: '/workspace/file2',
             name: 'file2',
             type: 'file',
-            isNew: false,
+            isModified: true,
+            children: null,
+          },
+          {
+            path: '/workspace/file3',
+            name: 'file3',
+            type: 'file',
             children: null,
           },
         ],
       },
     ]),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const folderButton = canvas.getByTestId('folder-button');
+    await userEvent.click(folderButton);
   },
 };
 
