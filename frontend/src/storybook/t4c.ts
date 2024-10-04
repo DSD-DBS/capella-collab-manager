@@ -39,11 +39,15 @@ export const mockT4CInstance: Readonly<T4CInstance> = {
   port: 2036,
   cdo_port: 12036,
   http_port: 8080,
-  license_server_id: 1,
+  license_server: {
+    id: 1,
+    name: 'licenseServer',
+    license_key: 'licenseKey',
+    usage_api: 'http://example.com',
+  },
   rest_api: 'http://localhost:8081/api/v1.0',
   username: 'admin',
   protocol: 'ws',
-  version_id: 1,
   version: mockToolVersion,
   is_archived: false,
 };
@@ -106,28 +110,17 @@ export const mockT4CLicenseServer: Readonly<T4CLicenseServer> = {
   },
   license_server_version: '1.0.2324234',
   instances: [mockT4CInstance],
+  warnings: [],
 };
 
 export const mockT4CLicenseServerUnreachable: Readonly<T4CLicenseServer> = {
-  id: 1,
-  name: 'licenseServer',
-  license_key: 'licenseKey',
-  usage_api: 'http://example.com',
+  ...mockT4CLicenseServer,
   usage: null,
   license_server_version: null,
-  instances: [mockT4CInstance],
 };
 
 export const mockT4CLicenseServerUnused: Readonly<T4CLicenseServer> = {
-  id: 1,
-  name: 'licenseServer',
-  license_key: 'licenseKey',
-  usage_api: 'http://example.com',
-  usage: {
-    free: 1,
-    total: 2,
-  },
-  license_server_version: '1.0.2324234',
+  ...mockT4CLicenseServer,
   instances: [],
 };
 

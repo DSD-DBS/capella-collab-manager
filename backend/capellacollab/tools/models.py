@@ -374,7 +374,7 @@ class SessionToolConfiguration(core_pydantic.BaseModel):
     )
 
 
-class ToolVersionConfiguration(core_pydantic.BaseModel):
+class ToolVersionConfiguration(core_pydantic.BaseModelStrict):
     is_recommended: bool = pydantic.Field(
         default=False,
         description="Version will be displayed as recommended.",
@@ -515,6 +515,11 @@ class ToolVersion(CreateToolVersion, decorator.PydanticDatabaseModel):
     id: int = pydantic.Field(
         description="Unique identifier of the resource.", ge=1
     )
+
+
+class SimpleToolVersion(core_pydantic.BaseModel):
+    name: str
+    id: int
 
 
 class ToolVersionWithTool(ToolVersion):

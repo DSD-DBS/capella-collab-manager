@@ -4,7 +4,7 @@
  -->
 
 <div class="flex flex-wrap gap-5">
-  <div class="collab-card h-fit">
+  <div class="collab-card h-fit w-full sm:w-[432px]">
     <div class="mb-2">
       <h2 class="text-xl font-medium">
         {{ existing ? "Edit License Server" : "Create License Server" }}
@@ -14,9 +14,9 @@
     <form
       [formGroup]="form"
       (ngSubmit)="submit()"
-      class="flex flex-col flex-wrap gap-2"
+      class="flex flex-col flex-wrap"
     >
-      <fieldset class="flex flex-wrap items-start gap-2">
+      <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>Name</mat-label>
           <input matInput formControlName="name" />
@@ -25,7 +25,7 @@
           }
         </mat-form-field>
       </fieldset>
-      <fieldset class="flex flex-wrap items-start gap-2">
+      <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>License Server API</mat-label>
           <input matInput formControlName="usage_api" />
@@ -36,7 +36,7 @@
           }
         </mat-form-field>
       </fieldset>
-      <fieldset class="flex flex-wrap items-start gap-2">
+      <fieldset>
         <mat-form-field appearance="fill">
           <mat-label>License Key</mat-label>
           <input matInput formControlName="license_key" />
@@ -56,12 +56,7 @@
             Create
           </button>
         } @else if (editing) {
-          <button
-            mat-flat-button
-            type="button"
-            color="primary"
-            (click)="cancelEditing()"
-          >
+          <button mat-stroked-button type="button" (click)="cancelEditing()">
             Cancel
           </button>
           <div
@@ -97,52 +92,50 @@
   </div>
 
   @if (existing) {
-    <div class="collab-card h-fit">
+    <div class="collab-card w-full sm:w-fit">
       <h2 class="mb-2 text-xl font-medium">License Server Status</h2>
 
       @if (
         t4cLicenseServerWrapperService.licenseServer$ | async;
         as licenseServer
       ) {
-        @if (licenseServer.license_server_version) {
-          <div>
-            <mat-icon class="mat-icon-position top">tag</mat-icon>
-            <b>License Server Version</b>:
-            {{ licenseServer.license_server_version }}
+        <div>
+          <div class="flex items-center gap-2">
+            <mat-icon>tag</mat-icon>
+            <span>
+              <b>License Server Version:</b>
+              {{ licenseServer.license_server_version || "Unknown" }}
+            </span>
           </div>
-        } @else {
-          <div>
-            <mat-icon class="mat-icon-position top">error</mat-icon>
-            <b> License Server is Unreachable</b>
-          </div>
-        }
 
-        @if (licenseServer.usage) {
-          <div>
-            <mat-icon class="mat-icon-position top">123</mat-icon>
-            <b> Available licenses</b>: {{ licenseServer.usage.free }} /
-            {{ licenseServer.usage.total }}
+          <div class="flex items-center gap-2">
+            <mat-icon>123</mat-icon>
+            <div>
+              <b>Available licenses</b>:
+              @if (licenseServer.usage) {
+                {{ licenseServer.usage.free }} /
+                {{ licenseServer.usage.total }}
+              } @else {
+                Unknown
+              }
+            </div>
           </div>
-        } @else {
-          <div>
-            <mat-icon class="mat-icon-position top">123</mat-icon>
-            <b>Available licenses</b>: Unknown
-          </div>
-        }
 
-        @if (licenseServer.instances.length > 0) {
-          <div>
-            <mat-icon class="mat-icon-position top">link</mat-icon>
-            <b>
-              Used by {{ licenseServer.instances.length }} T4C
+          <div class="flex items-start gap-2">
+            <mat-icon>link</mat-icon>
+            <div>
+              <b>Used by</b> {{ licenseServer.instances.length }} T4C
+
               {{
-                licenseServer.instances.length > 1 ? "instances" : "instance"
-              }}</b
-            >
-            <ul class="list-inside list-disc">
-              @for (instance of licenseServer.instances; track instance.name) {
-                <li>
+                licenseServer.instances.length === 1 ? "Instance" : "Instances"
+              }}
+              @if (licenseServer.instances.length > 0) {
+                @for (
+                  instance of licenseServer.instances;
+                  track instance.name
+                ) {
                   <a
+                    class="flex w-fit items-center gap-2 text-primary"
                     [routerLink]="[
                       '/settings',
                       'modelsources',
@@ -151,13 +144,14 @@
                       instance.id,
                     ]"
                   >
-                    {{ instance.name }}
+                    <span>{{ instance.name }}</span>
+                    <mat-icon [inline]="true">open_in_browser</mat-icon>
                   </a>
-                </li>
+                }
               }
-            </ul>
+            </div>
           </div>
-        }
+        </div>
       }
     </div>
   }

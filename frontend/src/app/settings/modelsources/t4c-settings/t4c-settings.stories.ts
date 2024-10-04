@@ -4,9 +4,12 @@
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
+import { T4CLicenseServerWrapperService } from 'src/app/services/settings/t4c-license-server.service';
 import {
   mockT4CInstance,
   MockT4CInstanceWrapperService,
+  mockT4CLicenseServer,
+  MockT4CLicenseServerWrapperService,
 } from 'src/storybook/t4c';
 import { T4CSettingsComponent } from './t4c-settings.component';
 
@@ -33,6 +36,13 @@ export const Overview: Story = {
             new MockT4CInstanceWrapperService(mockT4CInstance, [
               mockT4CInstance,
               { ...mockT4CInstance, is_archived: true },
+            ]),
+        },
+        {
+          provide: T4CLicenseServerWrapperService,
+          useFactory: () =>
+            new MockT4CLicenseServerWrapperService(mockT4CLicenseServer, [
+              mockT4CLicenseServer,
             ]),
         },
       ],

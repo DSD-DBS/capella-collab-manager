@@ -77,7 +77,7 @@ def test_update_tools_version(
             "config": {
                 "is_recommended": False,
                 "is_deprecated": False,
-                "configuration": {
+                "sessions": {
                     "persistent": {"image": "docker.io/hello-world:latest"},
                     "read_only": {"image": "docker.io/hello-world:latest"},
                 },
@@ -86,8 +86,8 @@ def test_update_tools_version(
         },
     )
 
-    assert "id" in response.json()
     assert response.is_success
+    assert "id" in response.json()
 
 
 @pytest.mark.usefixtures("user")

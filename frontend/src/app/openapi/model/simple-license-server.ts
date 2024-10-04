@@ -9,19 +9,12 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { SimpleT4CInstace } from './simple-t4-c-instace';
-import { T4CLicenseServerUsage } from './t4-c-license-server-usage';
-import { Message } from './message';
 
 
-export interface T4CLicenseServer { 
+export interface SimpleLicenseServer { 
     name: string;
     usage_api: string;
     license_key: string;
     id: number;
-    license_server_version: string | null;
-    usage: T4CLicenseServerUsage | null;
-    warnings: Array<Message>;
-    instances: Array<SimpleT4CInstace>;
 }
 

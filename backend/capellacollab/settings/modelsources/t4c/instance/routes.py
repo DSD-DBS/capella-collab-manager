@@ -8,12 +8,6 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.settings.modelsources.t4c.instance import (
-    crud,
-    exceptions,
-    injectables,
-    models,
-)
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     routes as settings_t4c_repositories_routes,
 )
@@ -26,6 +20,8 @@ from capellacollab.settings.modelsources.t4c.license_server import (
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.users import models as users_models
+
+from . import crud, exceptions, injectables, models
 
 router = fastapi.APIRouter(
     dependencies=[

@@ -9,8 +9,9 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { ToolVersion } from './tool-version';
+import { SimpleLicenseServer } from './simple-license-server';
 import { Protocol } from './protocol';
+import { SimpleToolVersion } from './simple-tool-version';
 
 
 export interface T4CInstance { 
@@ -21,11 +22,10 @@ export interface T4CInstance {
     rest_api: string;
     username: string;
     protocol: Protocol;
-    name: string;
-    version_id: number;
-    license_server_id: number;
     id: number;
-    version: ToolVersion;
+    name: string;
+    version: SimpleToolVersion;
+    license_server: SimpleLicenseServer;
     is_archived: boolean;
 }
 export namespace T4CInstance {

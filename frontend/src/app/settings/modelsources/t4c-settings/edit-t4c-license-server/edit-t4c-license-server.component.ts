@@ -180,8 +180,10 @@ export class EditT4cLicenseServerComponent implements OnInit, OnDestroy {
         }
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
           data: {
-            title: 'Delete TeamForCapella License Server',
-            text: 'TODO Write this text',
+            title: 'Disconnect TeamForCapella License Server',
+            text:
+              'Do you want to disconnect the TeamForCapella license server? ' +
+              'This will not delete the license server itself.',
           },
         });
 

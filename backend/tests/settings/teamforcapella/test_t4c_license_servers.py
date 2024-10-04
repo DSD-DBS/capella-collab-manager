@@ -16,7 +16,7 @@ from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
 
-@pytest.mark.usefixtures("admin", "mock_license_server")
+@pytest.mark.usefixtures("admin")
 def test_create_t4c_license_server(
     client: testclient.TestClient,
     db: orm.Session,
@@ -29,8 +29,6 @@ def test_create_t4c_license_server(
             "license_key": "test_license_key",
         },
     )
-
-    print(response.read())
 
     assert response.status_code == 200
     assert response.json()["name"] == "test"
@@ -59,13 +57,9 @@ def test_create_t4c_license_server_already_existing_name(
 
     assert response.status_code == 409
 
-    detail = response.json()["detail"]
-
     assert (
-        "A T4C License Server with a similar name already exists."
-        in detail["reason"]
+        response.json()["detail"]["err_code"] == "RESOURCE_NAME_ALREADY_IN_USE"
     )
-    assert "name already used" in detail["title"]
 
 
 @pytest.mark.usefixtures("t4c_license_server")
@@ -161,13 +155,9 @@ def test_patch_t4c_license_server_already_existing_name(
 
     assert response.status_code == 409
 
-    detail = response.json()["detail"]
-
     assert (
-        "A T4C License Server with a similar name already exists."
-        in detail["reason"]
+        response.json()["detail"]["err_code"] == "RESOURCE_NAME_ALREADY_IN_USE"
     )
-    assert "name already used" in detail["title"]
 
 
 @pytest.mark.usefixtures("admin")

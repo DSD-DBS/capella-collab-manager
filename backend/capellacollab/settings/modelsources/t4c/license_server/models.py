@@ -10,10 +10,8 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
+from capellacollab.core import models as core_models
 from capellacollab.core import pydantic as core_pydantic
-from capellacollab.settings.modelsources.t4c.instance import (
-    models as instance_models,
-)
 
 from . import interface
 
@@ -54,11 +52,22 @@ class PatchT4CLicenseServer(core_pydantic.BaseModel):
     license_key: str | None = None
 
 
+class SimpleLicenseServer(T4CLicenseServerBase):
+    id: int
+
+
+class SimpleT4CInstace(core_pydantic.BaseModel):
+    # Class has to be in this module to avoid circular imports
+    id: int
+    name: str
+
+
 class T4CLicenseServer(T4CLicenseServerBase):
     id: int
     license_server_version: str | None = None
     usage: interface.T4CLicenseServerUsage | None = None
-    instances: list[instance_models.T4CInstance] = []
+    warnings: list[core_models.Message] = []
+    instances: list[SimpleT4CInstace] = []
 
     @pydantic.model_validator(mode="after")
     def add_from_api(self) -> t.Any:
@@ -67,7 +76,11 @@ class T4CLicenseServer(T4CLicenseServerBase):
         )
         try:
             self.usage = interface.get_t4c_license_server_usage(self.usage_api)
-        except core_exceptions.BaseError:
-            pass
+        except core_exceptions.BaseError as exc:
+            self.warnings.append(
+                core_models.Message(
+                    err_code=exc.err_code, title=exc.title, reason=exc.reason
+                )
+            )
 
         return self

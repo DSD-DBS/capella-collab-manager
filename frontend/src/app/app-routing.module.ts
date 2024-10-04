@@ -449,11 +449,20 @@ export const routes: Routes = [
                     component: EditT4CInstanceComponent,
                   },
                   {
-                    path: 'instance/:instance',
+                    path: 'instance',
                     data: {
-                      breadcrumb: (data: Data) => data.t4cInstance?.name,
+                      breadcrumb: 'Instances',
+                      redirect: '/settings/modelsources/t4c',
                     },
-                    component: EditT4CInstanceComponent,
+                    children: [
+                      {
+                        path: ':instance',
+                        data: {
+                          breadcrumb: (data: Data) => data.t4cInstance?.name,
+                        },
+                        component: EditT4CInstanceComponent,
+                      },
+                    ],
                   },
                   {
                     path: 'create-license-server',
@@ -461,11 +470,20 @@ export const routes: Routes = [
                     component: EditT4cLicenseServerComponent,
                   },
                   {
-                    path: 'license-server/:licenseServer',
+                    path: 'license-server',
                     data: {
-                      breadcrumb: (data: Data) => data.licenseServer?.name,
+                      breadcrumb: 'License Servers',
+                      redirect: '/settings/modelsources/t4c',
                     },
-                    component: EditT4cLicenseServerComponent,
+                    children: [
+                      {
+                        path: ':licenseServer',
+                        data: {
+                          breadcrumb: (data: Data) => data.licenseServer?.name,
+                        },
+                        component: EditT4cLicenseServerComponent,
+                      },
+                    ],
                   },
                 ],
               },

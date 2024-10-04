@@ -151,7 +151,10 @@ model/session-tool-configuration-output.ts
 model/session-type.ts
 model/session.ts
 model/share-session-request.ts
+model/simple-license-server.ts
+model/simple-t4-c-instace.ts
 model/simple-t4-c-model.ts
+model/simple-tool-version.ts
 model/status-response.ts
 model/submit-t4-c-model.ts
 model/t4-c-instance.ts

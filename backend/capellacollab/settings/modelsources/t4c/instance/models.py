@@ -13,6 +13,9 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.settings.modelsources.t4c.license_server import (
+    models as license_server_models,
+)
 from capellacollab.tools import models as tools_models
 
 if t.TYPE_CHECKING:
@@ -123,18 +126,17 @@ class PatchT4CInstance(core_pydantic.BaseModel):
     _validate_http_port = pydantic.field_validator("http_port")(port_validator)
 
 
-class T4CInstanceComplete(T4CInstanceBase):
+class T4CInstance(T4CInstanceBase):
+    id: int
+    name: str
+    version: tools_models.SimpleToolVersion
+    license_server: license_server_models.SimpleLicenseServer
+    is_archived: bool
+
+
+class CreateT4CInstance(T4CInstanceBase):
     name: str
     version_id: int
     license_server_id: int
-
-
-class CreateT4CInstance(T4CInstanceComplete):
     is_archived: bool | None = None
     password: str
-
-
-class T4CInstance(T4CInstanceComplete):
-    id: int
-    version: tools_models.ToolVersion
-    is_archived: bool
