@@ -156,6 +156,7 @@ create-cluster: registry
 		-p "30000-30005:30000-30005@server:0"
 	kubectl cluster-info
 	kubectl config set-context --current --namespace=$(NAMESPACE)
+	kubectl create namespace $(SESSION_NAMESPACE)
 
 install-vpa:
 	git clone https://github.com/kubernetes/autoscaler.git
