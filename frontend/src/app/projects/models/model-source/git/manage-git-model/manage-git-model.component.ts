@@ -16,6 +16,9 @@ import {
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
+  AsyncValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import {
   MatAutocompleteTrigger,
@@ -36,7 +39,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map } from 'rxjs';
+import { filter, map, Observable, of } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -170,6 +173,9 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
         if (gitInstances?.length) {
           this.urls.baseUrl.setValidators([Validators.required]);
           this.urls.inputUrl.setValidators([absoluteOrRelativeValidators()]);
+          this.form.controls.urls.setAsyncValidators([
+            this.resultUrlPrefixAsyncValidator(),
+          ]);
         } else {
           this.urls.inputUrl.addValidators([Validators.required]);
         }
@@ -469,5 +475,29 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     });
 
     return longestMatchingGitInstance;
+  }
+
+  private resultUrlPrefixAsyncValidator(): AsyncValidatorFn {
+    return (_: AbstractControl): Observable<ValidationErrors | null> => {
+      this.updateResultUrl();
+
+      if (!this.resultUrl) return of({ required: true });
+
+      return this.settingsModelsourcesGitService
+        .validatePath({ url: this.resultUrl })
+        .pipe(
+          map((prefixExists: boolean) => {
+            if (prefixExists) {
+              this.enableAllExceptUrls();
+              return null;
+            }
+
+            this.disableAllExpectUrls();
+            return {
+              urlPrefixError: true,
+            };
+          }),
+        );
+    };
   }
 }
