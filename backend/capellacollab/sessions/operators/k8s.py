@@ -186,9 +186,12 @@ class KubernetesOperator:
     def get_session_state(self, _id: str) -> str:
         return self._get_pod_state(label_selector=f"app={_id}")
 
-    def _get_pod_state(self, label_selector: str):
+    def _get_pod_state(self, label_selector: str) -> str:
         try:
-            pod = self.get_pods(label_selector=label_selector)[0]
+            pods = self.get_pods(label_selector=label_selector)
+            if not pods:
+                return "NOT_FOUND"
+            pod = pods[0]
             pod_name = pod.metadata.name
 
             log.debug("Received k8s pod: %s", pod_name)
