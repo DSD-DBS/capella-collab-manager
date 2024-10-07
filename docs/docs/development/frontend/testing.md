@@ -101,5 +101,5 @@ performed.
 [karma]: https://karma-runner.github.io
 [istanbul]: https://istanbul.js.org/
 [playwright]: https://playwright.dev
-[official angular testing guide]: https://angular.io/guide/testing
+[official angular testing guide]: https://angular.dev/guide/testing
 [detailed angular testing guide]: https://testing-angular.com/
