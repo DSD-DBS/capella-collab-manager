@@ -106,8 +106,11 @@
       <button
         mat-icon-button
         (click)="node.isExpanded = !node.isExpanded"
-        [attr.aria-label]="'Expand ' + node.name"
-        data-testid="folder-button"
+        [attr.aria-label]="
+          (node.isExpanded ? 'Collapse ' : 'Expand ') + node.name
+        "
+        [attr.data-testid]="'folder-button-' + node.name"
+        [attr.data-expanded]="node.isExpanded ? 'true' : 'false'"
       >
         <mat-icon class="text-blue-900">
           @if (node.isExpanded) {
