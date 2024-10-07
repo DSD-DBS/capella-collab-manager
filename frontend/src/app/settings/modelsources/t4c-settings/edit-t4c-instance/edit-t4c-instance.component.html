@@ -151,10 +151,10 @@
         </mat-form-field>
       </fieldset>
       <mat-form-field subscriptSizing="dynamic" appearance="fill">
-        <mat-label>Experimental REST API</mat-label>
+        <mat-label>REST API</mat-label>
         <input matInput formControlName="rest_api" />
         @if (form.controls.rest_api.errors?.required) {
-          <mat-error>The REST server URL is required.</mat-error>
+          <mat-error>The REST API server URL is required.</mat-error>
         } @else if (form.controls.rest_api.errors?.pattern) {
           <mat-error>The URL should start with "http(s)://"</mat-error>
         }
@@ -207,7 +207,12 @@
           (t4cInstanceWrapperService.t4cInstance$ | async) !== undefined
         ) {
           @if (!isArchived) {
-            <button mat-flat-button color="primary" (click)="enableEditing()">
+            <button
+              mat-flat-button
+              color="primary"
+              (click)="enableEditing()"
+              data-testid="edit-button"
+            >
               Edit
             </button>
           } @else {
