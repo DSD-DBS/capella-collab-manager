@@ -23,8 +23,6 @@ import { CreateT4CInstance } from '../model/create-t4-c-instance';
 // @ts-ignore
 import { CreateT4CRepository } from '../model/create-t4-c-repository';
 // @ts-ignore
-import { GetSessionUsageResponse } from '../model/get-session-usage-response';
-// @ts-ignore
 import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
 import { PatchT4CInstance } from '../model/patch-t4-c-instance';
@@ -46,7 +44,7 @@ import { Configuration }                                     from '../configurat
 @Injectable({
   providedIn: 'root'
 })
-export class SettingsModelsourcesT4CService {
+export class SettingsModelsourcesT4CInstancesService {
 
     protected basePath = 'http://localhost';
     public defaultHeaders = new HttpHeaders();
@@ -174,7 +172,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances`;
         return this.httpClient.request<T4CInstance>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -259,7 +257,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories`;
         return this.httpClient.request<T4CRepository>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -331,7 +329,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<any>('delete', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -406,7 +404,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<ResponseModel>('delete', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -490,82 +488,11 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<T4CInstance>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: patchT4CInstance,
-                responseType: <any>responseType_,
-                withCredentials: this.configuration.withCredentials,
-                headers: localVarHeaders,
-                observe: observe,
-                transferCache: localVarTransferCache,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Fetch T4C Licenses
-     * @param t4cInstanceId 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public fetchT4cLicenses(t4cInstanceId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GetSessionUsageResponse>;
-    public fetchT4cLicenses(t4cInstanceId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GetSessionUsageResponse>>;
-    public fetchT4cLicenses(t4cInstanceId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GetSessionUsageResponse>>;
-    public fetchT4cLicenses(t4cInstanceId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
-        if (t4cInstanceId === null || t4cInstanceId === undefined) {
-            throw new Error('Required parameter t4cInstanceId was null or undefined when calling fetchT4cLicenses.');
-        }
-
-        let localVarHeaders = this.defaultHeaders;
-
-        let localVarCredential: string | undefined;
-        // authentication (PersonalAccessToken) required
-        localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
-
-        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
-        if (localVarHttpHeaderAcceptSelected === undefined) {
-            // to determine the Accept header
-            const httpHeaderAccepts: string[] = [
-                'application/json'
-            ];
-            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        }
-        if (localVarHttpHeaderAcceptSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
-        }
-
-        let localVarHttpContext: HttpContext | undefined = options && options.context;
-        if (localVarHttpContext === undefined) {
-            localVarHttpContext = new HttpContext();
-        }
-
-        let localVarTransferCache: boolean | undefined = options && options.transferCache;
-        if (localVarTransferCache === undefined) {
-            localVarTransferCache = true;
-        }
-
-
-        let responseType_: 'text' | 'json' | 'blob' = 'json';
-        if (localVarHttpHeaderAcceptSelected) {
-            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
-                responseType_ = 'text';
-            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
-                responseType_ = 'json';
-            } else {
-                responseType_ = 'blob';
-            }
-        }
-
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/licenses`;
-        return this.httpClient.request<GetSessionUsageResponse>('get', `${this.configuration.basePath}${localVarPath}`,
-            {
-                context: localVarHttpContext,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
@@ -633,7 +560,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
         return this.httpClient.request<T4CInstance>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -700,7 +627,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances`;
         return this.httpClient.request<Array<T4CInstance>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -771,7 +698,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories`;
         return this.httpClient.request<PayloadResponseModelListT4CRepository>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -846,7 +773,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/recreate`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/recreate`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -921,7 +848,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/start`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/start`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -996,7 +923,7 @@ export class SettingsModelsourcesT4CService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/modelsources/t4c/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/stop`;
+        let localVarPath = `/api/v1/settings/modelsources/t4c/instances/${this.configuration.encodeParam({name: "t4cInstanceId", value: t4cInstanceId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/repositories/${this.configuration.encodeParam({name: "t4cRepositoryId", value: t4cRepositoryId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/stop`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

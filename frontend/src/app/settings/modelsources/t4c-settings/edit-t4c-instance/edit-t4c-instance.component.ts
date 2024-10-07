@@ -33,12 +33,12 @@ import {
   CreateT4CInstance,
   PatchT4CInstance,
   Protocol,
-  SettingsModelsourcesT4CService,
+  SettingsModelsourcesT4CInstancesService,
   ToolVersion,
 } from 'src/app/openapi';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
 import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
-import { LicencesComponent } from '../licences/licences.component';
+import { T4CLicenseServerWrapperService } from '../../../../services/settings/t4c-license-server.service';
 import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-instance-settings.component';
 
 @UntilDestroy()
@@ -58,7 +58,6 @@ import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-insta
     MatHint,
     MatButton,
     MatIcon,
-    LicencesComponent,
     T4CInstanceSettingsComponent,
     AsyncPipe,
   ],
@@ -84,7 +83,10 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       asyncValidators: this.t4cInstanceWrapperService.asyncNameValidator(),
     }),
     version_id: new FormControl(-1, [Validators.required, Validators.min(0)]),
-    license: new FormControl('', Validators.required),
+    license_server_id: new FormControl(-1, [
+      Validators.required,
+      Validators.min(0),
+    ]),
     protocol: new FormControl<Protocol>('ws', Validators.required),
     host: new FormControl('', Validators.required),
     port: new FormControl(2036, [Validators.required, ...this.portValidators]),
@@ -93,10 +95,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
       ...this.portValidators,
     ]),
     http_port: new FormControl(8080, this.portValidators),
-    usage_api: new FormControl('', [
-      Validators.required,
-      Validators.pattern(/^https?:\/\//),
-    ]),
     rest_api: new FormControl('', [
       Validators.required,
       Validators.pattern(/^https?:\/\//),
@@ -111,7 +109,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
 
   constructor(
     public t4cInstanceWrapperService: T4CInstanceWrapperService,
-    private t4cInstanceService: SettingsModelsourcesT4CService,
+    public t4cLicenseServerWrapperService: T4CLicenseServerWrapperService,
+    private t4cInstanceService: SettingsModelsourcesT4CInstancesService,
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,

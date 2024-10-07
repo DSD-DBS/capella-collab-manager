@@ -6,8 +6,10 @@ import responses
 from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab.settings.modelsources.t4c import models as t4c_models
-from capellacollab.settings.modelsources.t4c.repositories import (
+from capellacollab.settings.modelsources.t4c.instance import (
+    models as t4c_models,
+)
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
     crud as t4c_repositories_crud,
 )
 
@@ -38,7 +40,7 @@ def test_list_t4c_repositories(
     t4c_repositories_crud.create_t4c_repository(db, "test4", t4c_instance)
     t4c_repositories_crud.create_t4c_repository(db, "test5", t4c_instance)
     response = client.get(
-        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/repositories",
+        f"/api/v1/settings/modelsources/t4c/instances/{t4c_instance.id}/repositories",
     )
 
     assert response.status_code == 200
@@ -68,7 +70,7 @@ def test_list_t4c_repositories_instance_unreachable_exception(
 
     t4c_repositories_crud.create_t4c_repository(db, "test4", t4c_instance)
     response = client.get(
-        f"/api/v1/settings/modelsources/t4c/{t4c_instance.id}/repositories",
+        f"/api/v1/settings/modelsources/t4c/instances/{t4c_instance.id}/repositories",
     )
 
     assert response.status_code == 200

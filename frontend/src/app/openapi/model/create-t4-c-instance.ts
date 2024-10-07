@@ -13,17 +13,16 @@ import { Protocol } from './protocol';
 
 
 export interface CreateT4CInstance { 
-    license: string;
     host: string;
     port: number;
     cdo_port: number;
     http_port?: number | null;
-    usage_api: string;
     rest_api: string;
     username: string;
     protocol: Protocol;
     name: string;
     version_id: number;
+    license_server_id: number;
     is_archived?: boolean | null;
     password: string;
 }

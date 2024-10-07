@@ -7,20 +7,26 @@ from fastapi import testclient
 from sqlalchemy import orm
 
 import capellacollab.projects.models as projects_models
-import capellacollab.settings.modelsources.t4c.repositories.crud as t4c_repositories_crud
-import capellacollab.settings.modelsources.t4c.repositories.models as t4c_repositories_models
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.t4c import crud as t4c_crud
 from capellacollab.projects.toolmodels.modelsources.t4c import (
     models as t4c_models,
 )
-from capellacollab.settings.modelsources.t4c import crud as t4c_servers_crud
-from capellacollab.settings.modelsources.t4c import (
+from capellacollab.settings.modelsources.t4c.instance import (
+    crud as t4c_servers_crud,
+)
+from capellacollab.settings.modelsources.t4c.instance import (
     models as t4c_servers_models,
 )
-from capellacollab.settings.modelsources.t4c.repositories import (
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
+    crud as t4c_repositories_crud,
+)
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
     models as t4c_repositories_models,
+)
+from capellacollab.settings.modelsources.t4c.license_server import (
+    models as license_server_models,
 )
 from capellacollab.tools import models as tools_models
 
@@ -181,12 +187,12 @@ def test_change_server_of_t4c_model(
     capella_model: toolmodels_models.DatabaseToolModel,
     t4c_model: t4c_models.DatabaseT4CModel,
     capella_tool_version: tools_models.DatabaseVersion,
+    t4c_license_server: license_server_models.DatabaseT4CLicenseServer,
 ):
     server = t4c_servers_models.DatabaseT4CInstance(
         name="test server 2",
-        license="lic",
         host="localhost",
-        usage_api="http://localhost:8086",
+        license_server=t4c_license_server,
         rest_api="http://localhost:8080/api/v1.0",
         username="user",
         password="pass",

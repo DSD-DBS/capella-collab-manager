@@ -7,7 +7,7 @@ import fastapi
 from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.crud as projects_models_crud
-import capellacollab.settings.modelsources.t4c.crud as settings_t4c_crud
+import capellacollab.settings.modelsources.t4c.instance.crud as settings_t4c_crud
 from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables

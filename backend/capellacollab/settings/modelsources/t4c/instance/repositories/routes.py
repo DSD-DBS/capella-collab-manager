@@ -11,13 +11,9 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import models as core_models
-from capellacollab.settings.modelsources.t4c import (
-    injectables as settings_t4c_injectables,
-)
-from capellacollab.settings.modelsources.t4c import (
-    models as settings_t4c_models,
-)
 
+from .. import injectables as settings_t4c_injectables
+from .. import models as settings_t4c_models
 from . import crud, exceptions, injectables, interface, models
 
 router = fastapi.APIRouter()

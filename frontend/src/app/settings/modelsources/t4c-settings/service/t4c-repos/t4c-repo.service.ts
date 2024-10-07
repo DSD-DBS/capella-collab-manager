@@ -12,7 +12,7 @@ import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
 import {
   CreateT4CRepository,
   ResponseModel,
-  SettingsModelsourcesT4CService,
+  SettingsModelsourcesT4CInstancesService,
   T4CInstance,
   T4CRepository,
   T4CRepositoryStatus,
@@ -22,7 +22,9 @@ import {
   providedIn: 'root',
 })
 export class T4CRepositoryWrapperService {
-  constructor(private t4cInstanceService: SettingsModelsourcesT4CService) {}
+  constructor(
+    private t4cInstanceService: SettingsModelsourcesT4CInstancesService,
+  ) {}
 
   private _repositories = new BehaviorSubject<
     ExtendedT4CRepository[] | undefined

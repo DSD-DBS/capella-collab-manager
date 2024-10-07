@@ -3,7 +3,7 @@
 
 import pytest
 
-from capellacollab.settings.modelsources.t4c import metrics
+from capellacollab.settings.modelsources.t4c.license_server import metrics
 
 
 @pytest.mark.usefixtures("mock_license_server", "t4c_instance")

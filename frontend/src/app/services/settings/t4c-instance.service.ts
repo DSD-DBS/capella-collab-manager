@@ -8,12 +8,11 @@ import {
   AsyncValidatorFn,
   ValidationErrors,
 } from '@angular/forms';
-import { BehaviorSubject, Observable, map, take, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
 import {
   CreateT4CInstance,
-  GetSessionUsageResponse,
   PatchT4CInstance,
-  SettingsModelsourcesT4CService,
+  SettingsModelsourcesT4CInstancesService,
   T4CInstance,
 } from 'src/app/openapi';
 
@@ -21,7 +20,9 @@ import {
   providedIn: 'root',
 })
 export class T4CInstanceWrapperService {
-  constructor(private t4cInstanceService: SettingsModelsourcesT4CService) {}
+  constructor(
+    private t4cInstanceService: SettingsModelsourcesT4CInstancesService,
+  ) {}
 
   private _t4cInstances = new BehaviorSubject<T4CInstance[] | undefined>(
     undefined,
@@ -82,10 +83,6 @@ export class T4CInstanceWrapperService {
   reset(): void {
     this.resetT4CInstance();
     this._t4cInstances.next(undefined);
-  }
-
-  getLicenses(instanceId: number): Observable<GetSessionUsageResponse> {
-    return this.t4cInstanceService.fetchT4cLicenses(instanceId);
   }
 
   asyncNameValidator(ignoreInstance?: T4CInstance): AsyncValidatorFn {

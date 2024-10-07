@@ -28,12 +28,20 @@ from capellacollab.settings.modelsources.git import crud as modelssources_crud
 from capellacollab.settings.modelsources.git import (
     models as modelssources_models,
 )
-from capellacollab.settings.modelsources.t4c import crud as settings_t4c_crud
-from capellacollab.settings.modelsources.t4c import (
-    models as settings_t4c_models,
+from capellacollab.settings.modelsources.t4c.instance import (
+    crud as t4c_instance_crud,
 )
-from capellacollab.settings.modelsources.t4c.repositories import (
+from capellacollab.settings.modelsources.t4c.instance import (
+    models as t4c_instance_models,
+)
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
     crud as repositories_crud,
+)
+from capellacollab.settings.modelsources.t4c.license_server import (
+    crud as t4c_license_server_crud,
+)
+from capellacollab.settings.modelsources.t4c.license_server import (
+    models as t4c_license_server_models,
 )
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
@@ -352,20 +360,31 @@ def create_t4c_instance_and_repositories(db):
         db, tool.id, "5.2.0"
     )
     assert version
-    default_instance = settings_t4c_models.DatabaseT4CInstance(
+
+    default_license_server = (
+        t4c_license_server_models.DatabaseT4CLicenseServer(
+            name="default",
+            usage_api="http://localhost:8086",
+            license_key="placeholder",
+        )
+    )
+    t4c_license_server_crud.create_t4c_license_server(
+        db, default_license_server
+    )
+
+    default_instance = t4c_instance_models.DatabaseT4CInstance(
         name="default",
-        license="placeholder",
-        protocol=settings_t4c_models.Protocol.tcp,
+        protocol=t4c_instance_models.Protocol.tcp,
         host="localhost",
         port=2036,
         cdo_port=12036,
-        usage_api="http://localhost:8086",
+        license_server=default_license_server,
         rest_api="http://localhost:8081/api/v1.0",
         username="admin",
         password="password",
         version=version,
     )
-    settings_t4c_crud.create_t4c_instance(db, default_instance)
+    t4c_instance_crud.create_t4c_instance(db, default_instance)
     for t4c_model in t4c_crud.get_t4c_models(db):
         t4c_model.repository = repositories_crud.create_t4c_repository(
             db=db, repo_name=t4c_model.name, instance=default_instance

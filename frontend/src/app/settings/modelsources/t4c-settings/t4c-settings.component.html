@@ -2,12 +2,12 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-
+<h2 class="mb-2 text-xl font-medium">TeamForCapella servers</h2>
 <article class="flex flex-wrap gap-5">
-  <a [routerLink]="['create']" class="w-full sm:w-fit">
+  <a [routerLink]="['create-instance']" class="w-full sm:w-fit">
     <div matRipple class="mat-card-overview new collab-card m-0">
       <div class="content flex flex-col items-center justify-center">
-        Add an instance <br />
+        Link a server <br />
         <div class="icon">
           <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
         </div>
@@ -18,7 +18,7 @@
   @if ((t4cInstanceService.t4cInstances$ | async) === undefined) {
     <app-mat-card-overview-skeleton-loader
       class="contents"
-      [rows]="2"
+      [rows]="1"
       [reservedCards]="1"
     ></app-mat-card-overview-skeleton-loader>
   } @else {
@@ -46,6 +46,56 @@
               Archived
             </div>
           }
+        </div>
+      </a>
+    }
+  }
+</article>
+
+<h2 class="mb-2 mt-5 text-xl font-medium">TeamForCapella license servers</h2>
+<article class="flex flex-wrap gap-5">
+  <a [routerLink]="['create-license-server']" class="w-full sm:w-fit">
+    <div matRipple class="mat-card-overview new collab-card m-0">
+      <div class="content flex flex-col items-center justify-center">
+        Link a license server <br />
+        <div class="icon">
+          <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
+        </div>
+      </div>
+    </div>
+  </a>
+
+  @if ((t4cLicenseServerService.licenseServers$ | async) === undefined) {
+    <app-mat-card-overview-skeleton-loader
+      class="contents"
+      [rows]="1"
+      [reservedCards]="1"
+    ></app-mat-card-overview-skeleton-loader>
+  } @else {
+    @for (
+      licenseServer of t4cLicenseServerService.licenseServers$ | async;
+      track licenseServer.id
+    ) {
+      <a
+        [routerLink]="['license-server', licenseServer.id]"
+        class="w-full sm:w-fit"
+      >
+        <div matRipple class="mat-card-overview collab-card m-0">
+          <div class="header">{{ licenseServer.name }}</div>
+
+          <div class="content">
+            @if (licenseServer.license_server_version) {
+              <mat-icon class="aligned">tag</mat-icon>
+              <b> License Server Version:</b>
+              {{ licenseServer.license_server_version }}
+            } @else {
+              <mat-icon class="aligned">error</mat-icon>
+              <b> License Server Unreachable</b>
+            }
+            <br />
+            <mat-icon class="aligned">link</mat-icon> <b> Host:</b>
+            {{ licenseServer.usage_api }}
+          </div>
         </div>
       </a>
     }

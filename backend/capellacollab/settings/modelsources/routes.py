@@ -17,8 +17,4 @@ router.include_router(
     prefix="/git",
     tags=["Settings - Modelsources - Git"],
 )
-router.include_router(
-    settings_t4c_routes.router,
-    prefix="/t4c",
-    tags=["Settings - Modelsources - T4C"],
-)
+router.include_router(settings_t4c_routes.router, prefix="/t4c")

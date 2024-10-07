@@ -58,9 +58,20 @@
       </fieldset>
       <fieldset>
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
-          <mat-label>License configuration</mat-label>
-          <input matInput formControlName="license" />
-          @if (form.controls.license.errors?.required) {
+          <mat-label>License Server</mat-label>
+          <mat-select formControlName="license_server_id">
+            @for (
+              licenseServer of t4cLicenseServerWrapperService.licenseServers$
+                | async;
+              track licenseServer.id
+            ) {
+              <mat-option [value]="licenseServer.id">{{
+                licenseServer.name
+              }}</mat-option>
+            }
+          </mat-select>
+
+          @if (form.controls.license_server_id.errors?.required) {
             <mat-error>The license configuration is required.</mat-error>
           }
         </mat-form-field>
@@ -139,26 +150,15 @@
           }
         </mat-form-field>
       </fieldset>
-      <fieldset class="flex flex-wrap items-start gap-2">
-        <mat-form-field subscriptSizing="dynamic" appearance="fill">
-          <mat-label>License server API</mat-label>
-          <input matInput formControlName="usage_api" />
-          @if (form.controls.usage_api.errors?.required) {
-            <mat-error>The license server API is required.</mat-error>
-          } @else if (form.controls.usage_api.errors?.pattern) {
-            <mat-error>The URL should start with "http(s)://"</mat-error>
-          }
-        </mat-form-field>
-        <mat-form-field subscriptSizing="dynamic" appearance="fill">
-          <mat-label>Experimental REST API</mat-label>
-          <input matInput formControlName="rest_api" />
-          @if (form.controls.rest_api.errors?.required) {
-            <mat-error>The REST server URL is required.</mat-error>
-          } @else if (form.controls.rest_api.errors?.pattern) {
-            <mat-error>The URL should start with "http(s)://"</mat-error>
-          }
-        </mat-form-field>
-      </fieldset>
+      <mat-form-field subscriptSizing="dynamic" appearance="fill">
+        <mat-label>Experimental REST API</mat-label>
+        <input matInput formControlName="rest_api" />
+        @if (form.controls.rest_api.errors?.required) {
+          <mat-error>The REST server URL is required.</mat-error>
+        } @else if (form.controls.rest_api.errors?.pattern) {
+          <mat-error>The URL should start with "http(s)://"</mat-error>
+        }
+      </mat-form-field>
       <fieldset class="flex flex-wrap items-start gap-2">
         <mat-form-field subscriptSizing="dynamic" appearance="fill">
           <mat-label>Username</mat-label>
@@ -238,8 +238,5 @@
     <app-t4c-instance-settings
       [instance]="(t4cInstanceWrapperService.t4cInstance$ | async)!"
     ></app-t4c-instance-settings>
-    <app-licences
-      [instance]="(t4cInstanceWrapperService.t4cInstance$ | async)!"
-    ></app-licences>
   }
 </div>

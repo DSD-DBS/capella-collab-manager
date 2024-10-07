@@ -7,7 +7,7 @@ import pytest
 import responses
 from sqlalchemy import orm
 
-import capellacollab.settings.modelsources.t4c.repositories.models as settings_t4c_repositories_models
+import capellacollab.settings.modelsources.t4c.instance.repositories.models as settings_t4c_repositories_models
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
 from capellacollab.projects.toolmodels import models as toolmodels_models
@@ -18,7 +18,9 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import interface as sessions_hooks_interface
 from capellacollab.sessions.hooks import t4c
-from capellacollab.settings.modelsources.t4c import models as t4c_models
+from capellacollab.settings.modelsources.t4c.instance import (
+    models as t4c_models,
+)
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import crud as users_crud

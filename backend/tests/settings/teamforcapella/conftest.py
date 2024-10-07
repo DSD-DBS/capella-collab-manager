@@ -12,6 +12,9 @@ def fixture_mock_license_server():
         rsps.get(
             "http://localhost:8086/status/json",
             status=status.HTTP_200_OK,
-            json={"status": {"used": 1, "free": 19, "total": 20}},
+            json={
+                "status": {"used": 1, "free": 19, "total": 20},
+                "version": "1.0.0",
+            },
         )
         yield rsps

@@ -9,7 +9,6 @@ import fastapi
 import requests
 from sqlalchemy import orm
 
-import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
 from capellacollab.core import credentials, database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels import (
@@ -24,6 +23,9 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 )
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
+    interface as t4c_repository_interface,
+)
 from capellacollab.tools import crud as tools_crud
 
 from .. import exceptions as toolmodels_exceptions

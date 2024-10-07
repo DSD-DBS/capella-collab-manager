@@ -44,6 +44,7 @@ import { PureVariantsComponent } from './settings/integrations/pure-variants/pur
 import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
 import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
+import { EditT4cLicenseServerComponent } from './settings/modelsources/t4c-settings/edit-t4c-license-server/edit-t4c-license-server.component';
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -434,7 +435,7 @@ export const routes: Routes = [
               },
               {
                 path: 't4c',
-                data: { breadcrumb: 'T4C Instances' },
+                data: { breadcrumb: 'T4C' },
                 component: T4CSettingsWrapperComponent,
                 children: [
                   {
@@ -443,16 +444,46 @@ export const routes: Routes = [
                     component: T4CSettingsComponent,
                   },
                   {
-                    path: 'create',
-                    data: { breadcrumb: 'new' },
+                    path: 'create-instance',
+                    data: { breadcrumb: 'New Instance' },
                     component: EditT4CInstanceComponent,
                   },
                   {
-                    path: 'instance/:instance',
+                    path: 'instance',
                     data: {
-                      breadcrumb: (data: Data) => data.t4cInstance?.name,
+                      breadcrumb: 'Instances',
+                      redirect: '/settings/modelsources/t4c',
                     },
-                    component: EditT4CInstanceComponent,
+                    children: [
+                      {
+                        path: ':instance',
+                        data: {
+                          breadcrumb: (data: Data) => data.t4cInstance?.name,
+                        },
+                        component: EditT4CInstanceComponent,
+                      },
+                    ],
+                  },
+                  {
+                    path: 'create-license-server',
+                    data: { breadcrumb: 'New License Server' },
+                    component: EditT4cLicenseServerComponent,
+                  },
+                  {
+                    path: 'license-server',
+                    data: {
+                      breadcrumb: 'License Servers',
+                      redirect: '/settings/modelsources/t4c',
+                    },
+                    children: [
+                      {
+                        path: ':licenseServer',
+                        data: {
+                          breadcrumb: (data: Data) => data.licenseServer?.name,
+                        },
+                        component: EditT4cLicenseServerComponent,
+                      },
+                    ],
                   },
                 ],
               },

@@ -22,6 +22,21 @@
   "liveNow": false,
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 7,
+      "panels": [],
+      "repeat": "license_server_id",
+      "repeatDirection": "h",
+      "title": "License Server \"${license_server_id}\"",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus_ccm"
@@ -52,9 +67,9 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
+        "w": 3,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 4,
       "options": {
@@ -79,23 +94,33 @@
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(used_t4c_licenses)",
+          "expr": "used_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Used T4C Licenses",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(total_t4c_licenses)",
+          "expr": "total_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
           "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Total T4C Licenses",
           "range": true,
-          "refId": "B"
+          "refId": "B",
+          "useBackend": false
         }
       ],
       "title": "Min",
@@ -106,7 +131,7 @@
             "configRefId": "B",
             "mappings": [
               {
-                "fieldName": "max(total_t4c_licenses)",
+                "fieldName": "Max Total T4C Licenses",
                 "handlerKey": "max"
               }
             ]
@@ -123,7 +148,7 @@
                     "value": 0
                   }
                 },
-                "fieldName": "max(used_t4c_licenses)"
+                "fieldName": "Max Used T4C Licenses"
               }
             ],
             "match": "any",
@@ -164,9 +189,9 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 2,
-        "y": 0
+        "w": 3,
+        "x": 3,
+        "y": 1
       },
       "id": 3,
       "options": {
@@ -191,23 +216,33 @@
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(used_t4c_licenses)",
+          "expr": "used_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Used T4C Licenses",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
-          "editorMode": "code",
-          "expr": "max(total_t4c_licenses)",
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "total_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
           "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Total T4C Licenses",
           "range": true,
-          "refId": "B"
+          "refId": "B",
+          "useBackend": false
         }
       ],
       "title": "Mean",
@@ -218,7 +253,7 @@
             "configRefId": "B",
             "mappings": [
               {
-                "fieldName": "max(total_t4c_licenses)",
+                "fieldName": "Max Total T4C Licenses",
                 "handlerKey": "max"
               }
             ]
@@ -235,7 +270,7 @@
                     "value": 0
                   }
                 },
-                "fieldName": "max(used_t4c_licenses)"
+                "fieldName": "Max Used T4C Licenses"
               }
             ],
             "match": "any",
@@ -275,9 +310,9 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 4,
-        "y": 0
+        "w": 3,
+        "x": 6,
+        "y": 1
       },
       "id": 2,
       "options": {
@@ -302,23 +337,33 @@
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(used_t4c_licenses)",
+          "expr": "used_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Used T4C Licenses",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(total_t4c_licenses)",
+          "expr": "total_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
           "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Total T4C Licenses",
           "range": true,
-          "refId": "B"
+          "refId": "B",
+          "useBackend": false
         }
       ],
       "title": "Max / peak",
@@ -329,7 +374,7 @@
             "configRefId": "B",
             "mappings": [
               {
-                "fieldName": "max(total_t4c_licenses)",
+                "fieldName": "Max Total T4C Licenses",
                 "handlerKey": "max"
               }
             ]
@@ -346,7 +391,7 @@
                     "value": 0
                   }
                 },
-                "fieldName": "max(used_t4c_licenses)"
+                "fieldName": "Max Used T4C Licenses"
               }
             ],
             "match": "any",
@@ -385,9 +430,9 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2,
-        "x": 6,
-        "y": 0
+        "w": 3,
+        "x": 9,
+        "y": 1
       },
       "id": 6,
       "options": {
@@ -412,23 +457,33 @@
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(total_t4c_licenses)",
+          "expr": "total_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Total T4C Licenses",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(total_t4c_licenses)",
+          "expr": "total_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
           "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Total T4C Licenses",
           "range": true,
-          "refId": "B"
+          "refId": "B",
+          "useBackend": false
         }
       ],
       "title": "Total",
@@ -439,7 +494,7 @@
             "configRefId": "B",
             "mappings": [
               {
-                "fieldName": "max(total_t4c_licenses)",
+                "fieldName": "Max Total T4C Licenses",
                 "handlerKey": "max"
               }
             ]
@@ -456,7 +511,7 @@
                     "value": 0
                   }
                 },
-                "fieldName": "max(total_t4c_licenses)"
+                "fieldName": "Max Total T4C Licenses"
               }
             ],
             "match": "any",
@@ -546,9 +601,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
+        "w": 12,
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "id": 5,
       "options": {
@@ -569,42 +624,55 @@
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(used_t4c_licenses)",
+          "expr": "used_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
           "instant": false,
           "interval": "",
           "key": "Q-8bc03509-7dfd-494b-aff5-80226d6556e0-0",
           "legendFormat": "Used licenses",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "max(total_t4c_licenses)",
+          "expr": "total_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
           "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
           "interval": "",
           "key": "Q-72b237ac-0b5b-419e-8c44-f946ad349ea3-1",
           "legendFormat": "Total licenses",
           "range": true,
-          "refId": "B"
+          "refId": "B",
+          "useBackend": false
         },
         {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus_ccm"
           },
+          "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "max(total_t4c_licenses)",
+          "expr": "total_t4c_licenses{license_server_id=\"$license_server_id\"}",
+          "fullMetaSearch": false,
           "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
+          "legendFormat": "Max Total T4C Licenses",
           "range": true,
-          "refId": "C"
+          "refId": "C",
+          "useBackend": false
         }
       ],
       "title": "Used TeamForCapella licenses",
@@ -615,7 +683,7 @@
             "configRefId": "C",
             "mappings": [
               {
-                "fieldName": "max(total_t4c_licenses)",
+                "fieldName": "Max Total T4C Licenses",
                 "handlerKey": "max"
               }
             ]
@@ -656,7 +724,37 @@
   "schemaVersion": 39,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": "",
+        "current": {
+          "selected": true,
+          "text": ["All"],
+          "value": ["$__all"]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus_ccm"
+        },
+        "definition": "total_t4c_licenses",
+        "hide": 0,
+        "includeAll": true,
+        "label": "License Server",
+        "multi": true,
+        "name": "license_server_id",
+        "options": [],
+        "query": {
+          "qryType": 4,
+          "query": "total_t4c_licenses",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "/license_server_name=\"(?<text>[^\"]+)|license_server_id=\"(?<value>[^\"]+)/g",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-6h",
@@ -666,6 +764,6 @@
   "timezone": "",
   "title": "TeamForCapella",
   "uid": "a63682e2-2f98-4dde-a7fe-c3658b9dc0e9",
-  "version": 3,
+  "version": 57,
   "weekStart": ""
 }

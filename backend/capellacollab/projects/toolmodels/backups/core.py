@@ -8,7 +8,6 @@ import logging
 import requests
 from sqlalchemy import orm
 
-import capellacollab.settings.modelsources.t4c.repositories.interface as t4c_repository_interface
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
@@ -18,6 +17,9 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
     models as t4c_models,
 )
 from capellacollab.sessions import operators
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
+    interface as t4c_repository_interface,
+)
 from capellacollab.users import models as users_models
 
 from . import crud, exceptions, models

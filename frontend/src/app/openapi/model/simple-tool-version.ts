@@ -11,8 +11,8 @@
 
 
 
-export interface GetSessionUsageResponse { 
-    free: number;
-    total: number;
+export interface SimpleToolVersion { 
+    name: string;
+    id: number;
 }
 

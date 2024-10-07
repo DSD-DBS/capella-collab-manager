@@ -5,13 +5,9 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.settings.modelsources.t4c import (
-    injectables as settings_t4c_injectables,
-)
-from capellacollab.settings.modelsources.t4c import (
-    models as settings_t4c_models,
-)
 
+from .. import injectables as settings_t4c_injectables
+from .. import models as settings_t4c_models
 from . import crud, exceptions, models
 
 

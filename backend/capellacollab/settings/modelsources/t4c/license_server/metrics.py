@@ -16,24 +16,28 @@ class UsedT4CLicensesCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
         metric = prometheus_client.core.GaugeMetricFamily(
             "used_t4c_licenses",
-            "Currently used T4C licenses per registered TeamForCapella instance.",
-            labels=["instance_name"],
+            "Currently used T4C licenses per registered TeamForCapella license server.",
+            labels=["license_server_name", "license_server_id"],
         )
 
         with database.SessionLocal() as db:
-            instances = crud.get_t4c_instances(db)
+            license_servers = crud.get_t4c_license_servers(db)
 
-        if not instances:
+        if not license_servers:
             return
 
-        for instance in instances:
+        for license_server in license_servers:
             try:
-                t4c_status = interface.get_t4c_status(instance)
+                t4c_status = interface.get_t4c_license_server_usage(
+                    license_server.usage_api
+                )
                 used_licenses = t4c_status.total - t4c_status.free
             except Exception:
                 used_licenses = -1
 
-            metric.add_metric([instance.name], used_licenses)
+            metric.add_metric(
+                [license_server.name, str(license_server.id)], used_licenses
+            )
         yield metric
 
 
@@ -41,24 +45,28 @@ class TotalT4CLicensesCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
         metric = prometheus_client.core.GaugeMetricFamily(
             "total_t4c_licenses",
-            "Available licenses per registerd TeamForCapella instance.",
-            labels=["instance_name"],
+            "Available licenses per registered TeamForCapella license server.",
+            labels=["license_server_name", "license_server_id"],
         )
 
         with database.SessionLocal() as db:
-            instances = crud.get_t4c_instances(db)
+            license_servers = crud.get_t4c_license_servers(db)
 
-        if not instances:
+        if not license_servers:
             return
 
-        for instance in instances:
+        for license_server in license_servers:
             try:
-                t4c_status = interface.get_t4c_status(instance)
+                t4c_status = interface.get_t4c_license_server_usage(
+                    license_server.usage_api
+                )
                 total_licenses = t4c_status.total
             except Exception:
                 total_licenses = -1
 
-            metric.add_metric([instance.name], total_licenses)
+            metric.add_metric(
+                [license_server.name, str(license_server.id)], total_licenses
+            )
         yield metric
 
 

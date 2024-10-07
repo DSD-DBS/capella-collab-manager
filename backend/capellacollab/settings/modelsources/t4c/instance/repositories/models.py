@@ -12,13 +12,15 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
-from capellacollab.settings.modelsources.t4c import models as t4c_models
+from capellacollab.settings.modelsources.t4c.instance import (
+    models as t4c_models,
+)
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.modelsources.t4c.models import (
         DatabaseT4CModel,
     )
-    from capellacollab.settings.modelsources.t4c.models import (
+    from capellacollab.settings.modelsources.t4c.instance.models import (
         DatabaseT4CInstance,
     )
 
