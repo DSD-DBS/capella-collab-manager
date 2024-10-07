@@ -378,6 +378,7 @@ def create_t4c_instance_and_repositories(db):
         host="localhost",
         port=2036,
         cdo_port=12036,
+        http_port=8080,
         license_server=default_license_server,
         rest_api="http://localhost:8081/api/v1.0",
         username="admin",

@@ -139,6 +139,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
         const t4cInstance = {
           ...initialT4CInstance,
           password: '***********',
+          version_id: initialT4CInstance.version.id,
+          license_server_id: initialT4CInstance.license_server.id,
         };
         this.isArchived = t4cInstance.is_archived;
         this.form.patchValue(t4cInstance);
