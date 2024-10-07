@@ -737,7 +737,7 @@
           "uid": "prometheus_ccm"
         },
         "definition": "total_t4c_licenses",
-        "hide": 0,
+        "hide": 2,
         "includeAll": true,
         "label": "License Server",
         "multi": true,
@@ -764,6 +764,6 @@
   "timezone": "",
   "title": "TeamForCapella",
   "uid": "a63682e2-2f98-4dde-a7fe-c3658b9dc0e9",
-  "version": 57,
+  "version": 58,
   "weekStart": ""
 }
