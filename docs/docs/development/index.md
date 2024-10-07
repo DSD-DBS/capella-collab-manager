@@ -40,7 +40,7 @@ The k3d cluster is required for the development environment.
 -   [`GNU Make`](https://www.gnu.org/software/make/)
 -   [`Node.js`](https://nodejs.org/en) >= v20.8.0
 -   [`npm`](https://www.npmjs.com/) package manager
--   [`Angular CLI`](https://angular.io/cli#installing-angular-cli)
+-   [`Angular CLI`](https://angular.dev/tools/cli/setup-local#install-the-angular-cli)
 
 ### Backend Configuration
 
