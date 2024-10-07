@@ -45,6 +45,7 @@ export const Files: Story = {
         name: 'workspace',
         type: 'directory',
         isNew: false,
+        isExpanded: true,
         children: [
           {
             path: '/workspace/file1',
@@ -62,6 +63,7 @@ export const Files: Story = {
             path: '/workspace/directory1',
             name: 'directory1',
             type: 'directory',
+            isExpanded: true,
             children: [
               {
                 path: '/workspace/directory1/file1',
@@ -95,10 +97,11 @@ export const Files: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    let folderButtons = canvas.getAllByTestId('folder-button');
-    await userEvent.click(folderButtons[0]);
-    folderButtons = canvas.getAllByTestId('folder-button');
-    await userEvent.click(folderButtons[1]);
+    const folderButton = canvas.getByTestId('folder-button-directory2');
+
+    // Needed to trigger Angular change detection
+    await userEvent.click(folderButton);
+    await userEvent.click(folderButton);
   },
 };
 
@@ -110,7 +113,7 @@ export const UploadNewFile: Story = {
         path: '/workspace',
         name: 'workspace',
         type: 'directory',
-        isNew: false,
+        isExpanded: true,
         children: [
           {
             path: '/workspace/file1',
@@ -135,11 +138,6 @@ export const UploadNewFile: Story = {
         ],
       },
     ]),
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const folderButton = canvas.getByTestId('folder-button');
-    await userEvent.click(folderButton);
   },
 };
 
