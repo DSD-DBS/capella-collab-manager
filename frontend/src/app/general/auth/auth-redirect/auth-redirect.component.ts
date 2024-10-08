@@ -28,8 +28,11 @@ export class AuthRedirectComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      const redirectTo = sessionStorage.getItem(params.state);
+      // After removal of the query params there is nothing to do.
+      if (Object.keys(params).length === 0) return;
+      this.router.navigate([], { queryParams: {} });
 
+      const redirectTo = sessionStorage.getItem(params.state);
       if (params.error) {
         this.authService.redirectURL = redirectTo ?? undefined;
         const redirect_url =
@@ -85,7 +88,15 @@ export class AuthRedirectComponent implements OnInit {
               localStorage.setItem(this.authService.LOGGED_IN_KEY, 'true');
               this.userService.updateOwnUser();
               this.feedbackService.triggerFeedbackPrompt();
-              this.router.navigateByUrl(redirectTo);
+
+              if (
+                redirectTo.startsWith('/auth') ||
+                redirectTo.startsWith('/logout')
+              ) {
+                this.router.navigateByUrl('/');
+              } else {
+                this.router.navigateByUrl(redirectTo);
+              }
             },
             error: () => {
               this.authService.redirectURL = redirectTo ?? undefined;
