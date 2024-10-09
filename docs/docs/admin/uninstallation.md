@@ -8,7 +8,7 @@
 We're sorry to see you go :sob: <br /> If you have any suggestions for us to
 improve, please share them with us. Either privately via <set@deutschebahn.com>
 or via a
-[Github issue](https://github.com/DSD-DBS/capella-collab-manager/issues).
+[GitHub issue](https://github.com/DSD-DBS/capella-collab-manager/issues).
 
 1.  If you want to uninstall the management portal, you can run the following
     comment:

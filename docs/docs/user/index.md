@@ -128,6 +128,6 @@ sections:
 
 If you don't find answer to your question on this documentation site please
 consider opening an
-[issue on Github](https://github.com/DSD-DBS/capella-collab-manager/issues) or
+[issue on GitHub](https://github.com/DSD-DBS/capella-collab-manager/issues) or
 extending the documentation with your own contribution via a
 [pull request](https://github.com/DSD-DBS/capella-collab-manager/pulls).

@@ -198,7 +198,7 @@ alerting:
 ########################################
 
 # Activate the development mode.
-# The deployment resources are reduced in the the development mode.
+# The deployment resources are reduced in the development mode.
 development: false
 
 # Specify if you'd like to use the oauth or smtp mocks

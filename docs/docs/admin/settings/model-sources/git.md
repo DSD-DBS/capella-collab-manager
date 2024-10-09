@@ -30,8 +30,8 @@ Gitlab, are not available.
         - **Gitlab**: Only works with [Gitlab](https://about.gitlab.com/)
           instances (self-hosted / SaaS). With Gitlab, the diagram cache
           integration can be used.
-        - **Github**: Works with the public [Github](https://github.com/)
-          instance. With Github, the diagram cache integration can be used.
+        - **GitHub**: Works with the public [GitHub](https://github.com/)
+          instance. With GitHub, the diagram cache integration can be used.
     1. **Name**: Any name to identify the instance
     1. **Instance base URL**: The base URL of the instance, e.g.,
        `https://gitlab.com`. For more information, see
@@ -40,8 +40,8 @@ Gitlab, are not available.
         - **Gitlab**: The API URL to the
           [Gitlab REST API](https://docs.gitlab.com/ee/api/rest/). In most of
           the cases: `{base_url}/api/v4`, e.g., `https://gitlab.com/api/v4`.
-        - **Github**: The API URL to the
-          [Github REST API](https://docs.github.com/en/rest?apiVersion=2022-11-28).
+        - **GitHub**: The API URL to the
+          [GitHub REST API](https://docs.github.com/en/rest?apiVersion=2022-11-28).
           The url is `https://api.github.com`.
 
 !!! warning

@@ -39,7 +39,7 @@ model lead (usually this role is allocated to lead architects / area owners).
 
     ![Connect to remote model](screenshots/step_2.png)
 
-1.  In the drop down select the repository you like to work on. In most cases
+1.  In the drop-down select the repository you like to work on. In most cases
     the repository and project name should match.
 1.  Click on `Test connection` and enter you username and the session token you
     received in the first step.

@@ -110,7 +110,7 @@ options can be changed at any time later:
 > Currently, we only provide amd64 images. If you want to run the
 > application on arm64, you need to build the images yourself (option 3 or 4).
 
-1. Fetch management portal and session images from Github (without
+1. Fetch management portal and session images from GitHub (without
    TeamForCapella support). This option is recommended for the first
    deployment.
 
@@ -120,7 +120,7 @@ options can be changed at any time later:
    DEVELOPMENT_MODE=1 make helm-deploy open
    ```
 
-1. Build management portal images and fetch session images from Github (without
+1. Build management portal images and fetch session images from GitHub (without
    initial TeamForCapella support)
 
    ```zsh
@@ -171,7 +171,7 @@ dashboard, you can run the following command:
 make dashboard
 ```
 
-If something goes wrong, please open an issue on Github.
+If something goes wrong, please open an issue on GitHub.
 
 To clean up the environment, run:
 

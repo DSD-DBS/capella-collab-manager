@@ -103,7 +103,7 @@ Another example is working with the diagram cache of py-capellambse. The
 implementation of the Capella modelling tool `capellambse` uses Python and lets
 you read and write models. For more information have a look at the
 [documentation](https://dsd-dbs.github.io/py-capellambse/) or the
-[Github repository](https://github.com/DSD-DBS/py-capellambse).
+[GitHub repository](https://github.com/DSD-DBS/py-capellambse).
 
 ```python
 import capellambse

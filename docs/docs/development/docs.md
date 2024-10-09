@@ -5,7 +5,7 @@
 
 # Documentation
 
-It's important to have a good and up to date documentation for the
+It's important to have a good and up-to-date documentation for the
 Collaboration Manager. Documentation is an accessible way to share knowledge
 for developers, administrators and users. It can also be used by support teams
 to resolve issues more efficiently.
@@ -24,7 +24,7 @@ source files until the `make serve` process is terminated.
 
 When writing the documentation we are using title case in the
 [`Chicago Manual of Style`](https://en.wikipedia.org/wiki/Title_case#Chicago_Manual_of_Style).
-In addition personal names/ names of packages are written according to their
+In addition, personal names/ names of packages are written according to their
 documentation.
 
 ### Cross-linking between pages

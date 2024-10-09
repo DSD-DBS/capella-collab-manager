@@ -23,7 +23,7 @@ class SecretReferenceVolume(Volume):
 
 @dataclasses.dataclass
 class PersistentVolume(Volume):
-    """An persistent volume that is mounted into the container."""
+    """A persistent volume that is mounted into the container."""
 
     volume_name: str
 

@@ -102,8 +102,8 @@ the log level **INFO** and the HTTP method **POST**.
 ![Operations Example](./operations_example.png){:style="width:500px"}
 
 Theoretically, you could achieve the same result by changing two line contains
-operations, but it's inefficient and you have to use the exact format as in the
-log message.
+operations, but it's inefficient, and you have to use the exact format as in
+the log message.
 
 ![Operations Example without Logfmt](./operations_example_bad.png){:style="width:400px"}
 

@@ -30,5 +30,5 @@ can skip this step. Users can be added later at any time.
 
 ## Step 3: Add Models
 
-Please follow the model creation instructions to setup a model:
+Please follow the model creation instructions to set up a model:
 [Create a model](../models/create.md)
