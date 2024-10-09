@@ -96,10 +96,32 @@ def delete_t4c_license_server(
 
 
 @router.get(
+    "/usage",
+    response_model=list[models.PublicLicenseServerWithUsage],
+)
+def get_t4c_license_servers_usage(
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> list[models.PublicLicenseServerWithUsage]:
+    usages = []
+    for license_server in crud.get_t4c_license_servers(db):
+        usage = interface.get_t4c_license_server_usage(
+            license_server.usage_api
+        )
+        usages.append(
+            models.PublicLicenseServerWithUsage(
+                id=license_server.id,
+                name=license_server.name,
+                usage=usage,
+            )
+        )
+    return usages
+
+
+@router.get(
     "/{t4c_license_server_id}/usage",
     response_model=interface.T4CLicenseServerUsage,
 )
-def fetch_t4c_license_server_licenses(
+def get_t4c_license_server_usage(
     license_server: models.DatabaseT4CLicenseServer = fastapi.Depends(
         injectables.get_existing_license_server
     ),

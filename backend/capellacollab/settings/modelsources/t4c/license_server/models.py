@@ -59,6 +59,11 @@ class SimpleLicenseServer(T4CLicenseServerBase):
     id: int
 
 
+class PublicLicenseServerWithUsage(core_pydantic.BaseModel):
+    id: int
+    name: str
+    usage: interface.T4CLicenseServerUsage
+
 class T4CLicenseServer(T4CLicenseServerBase):
     id: int
     license_server_version: str | None = None

@@ -1,0 +1,35 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+@if ((licenseUsageWrapperService.licenseServerUsage$ | async) !== undefined) {
+  @for (
+    licenseServer of licenseUsageWrapperService.licenseServerUsage$ | async;
+    track licenseServer.id
+  ) {
+    @if (licenseServer.usage.free === 0) {
+      <div
+        class="my-1 flex items-center gap-1.5 rounded border bg-red-500 p-1 text-sm text-white shadow"
+      >
+        <mat-icon class="shrink-0">error</mat-icon>
+        <span
+          >All TeamForCapella licenses are currently in use. You can start new
+          sessions, but may encounter the error "Invalid license" when trying to
+          use TeamForCapella. Please make sure to terminate your sessions after
+          use.
+        </span>
+      </div>
+    } @else if (licenseServer.usage.free / licenseServer.usage.total < 0.25) {
+      <div
+        class="my-1 flex items-center gap-1.5 rounded border bg-yellow-300 p-1 text-sm shadow"
+      >
+        <mat-icon class="shrink-0">warning</mat-icon>
+        <span
+          >Most TeamForCapella licenses are currently in use. Please make sure
+          to terminate your sessions after use.
+        </span>
+      </div>
+    }
+  }
+}
