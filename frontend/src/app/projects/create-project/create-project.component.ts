@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NgFor, AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormControl,
@@ -32,7 +32,6 @@ import { ProjectWrapperService } from '../service/project.service';
 @Component({
   selector: 'app-create-project',
   templateUrl: './create-project.component.html',
-  styleUrls: ['./create-project.component.css'],
   standalone: true,
   imports: [
     MatStepper,
@@ -43,7 +42,6 @@ import { ProjectWrapperService } from '../service/project.service';
     MatFormField,
     MatLabel,
     MatInput,
-    NgIf,
     MatError,
     MatRadioGroup,
     NgFor,

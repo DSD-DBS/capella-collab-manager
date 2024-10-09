@@ -4,53 +4,56 @@
  -->
 
 <div class="wrapper flex justify-center">
-  <div
-    class="collab-card w-[350px] sm:min-w-[420px]"
-    *ngIf="modelService.model$ | async"
-  >
-    <form [formGroup]="form">
-      <mat-form-field class="w-full" appearance="fill">
-        <mat-label>Modelling tool</mat-label>
-        <input
-          matInput
-          [value]="(modelService.model$ | async)!.tool.name"
-          disabled
-        />
-      </mat-form-field>
-      <mat-form-field class="w-full" appearance="fill">
-        <mat-label>Version</mat-label>
-        <mat-select formControlName="version" id="version-selector">
-          <mat-option
-            *ngFor="let version of this.toolVersions"
-            [value]="version.id"
-          >
-            {{ version.name }}
-            <span *ngIf="version.config.is_recommended"> (recommended)</span>
-            <span *ngIf="version.config.is_deprecated"> (deprecated)</span>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="w-full" appearance="fill">
-        <mat-label>Model nature</mat-label>
-        <mat-select formControlName="nature">
-          <mat-option
-            *ngFor="let nature of this.toolNatures"
-            [value]="nature.id"
-          >
-            {{ nature.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </form>
-    <div class="flex justify-end">
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!form.valid || buttonDisabled"
-        (click)="onSubmit()"
-      >
-        Save model
-      </button>
+  @if (modelService.model$ | async) {
+    <div class="collab-card w-[350px] sm:min-w-[420px]">
+      <form [formGroup]="form">
+        <mat-form-field class="w-full" appearance="fill">
+          <mat-label>Modelling tool</mat-label>
+          <input
+            matInput
+            [value]="(modelService.model$ | async)!.tool.name"
+            disabled
+          />
+        </mat-form-field>
+        <mat-form-field class="w-full" appearance="fill">
+          <mat-label>Version</mat-label>
+          <mat-select formControlName="version" id="version-selector">
+            <mat-option
+              *ngFor="let version of this.toolVersions"
+              [value]="version.id"
+            >
+              {{ version.name }}
+              @if (version.config.is_recommended) {
+                <span> (recommended)</span>
+              }
+              @if (version.config.is_deprecated) {
+                <span> (deprecated)</span>
+              }
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-full" appearance="fill">
+          <mat-label>Model nature</mat-label>
+          <mat-select formControlName="nature">
+            <mat-option
+              *ngFor="let nature of this.toolNatures"
+              [value]="nature.id"
+            >
+              {{ nature.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+      <div class="flex justify-end">
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="!form.valid || buttonDisabled"
+          (click)="onSubmit()"
+        >
+          Save model
+        </button>
+      </div>
     </div>
-  </div>
+  }
 </div>

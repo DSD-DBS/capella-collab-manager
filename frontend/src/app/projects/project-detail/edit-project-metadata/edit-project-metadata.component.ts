@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {
   FormControl,
@@ -34,7 +34,6 @@ import { ProjectWrapperService } from '../../service/project.service';
 @Component({
   selector: 'app-edit-project-metadata',
   templateUrl: './edit-project-metadata.component.html',
-  styleUrls: ['./edit-project-metadata.component.css'],
   standalone: true,
   imports: [
     FormsModule,
@@ -42,7 +41,6 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatFormField,
     MatLabel,
     MatInput,
-    NgIf,
     MatError,
     MatHint,
     MatRadioGroup,

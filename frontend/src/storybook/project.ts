@@ -2,9 +2,13 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { BehaviorSubject } from 'rxjs';
-import { Project } from 'src/app/openapi';
-import { ProjectWrapperService } from 'src/app/projects/service/project.service';
+import { AsyncValidatorFn, ValidationErrors } from '@angular/forms';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Project, Visibility } from 'src/app/openapi';
+import {
+  ProjectVisibilityDescriptions,
+  ProjectWrapperService,
+} from 'src/app/projects/service/project.service';
 
 export const mockProject: Readonly<Project> = {
   name: 'mockProject',
@@ -33,5 +37,23 @@ export class MockProjectWrapperService
   constructor(project: Project | undefined, projects: Project[] | undefined) {
     this._project.next(project);
     this._projects.next(projects);
+  }
+  asyncSlugValidator(): AsyncValidatorFn {
+    return (): Observable<ValidationErrors | null> => {
+      return of(null);
+    };
+  }
+  getProjectVisibilityDescription(visibility: Visibility): string {
+    return ProjectVisibilityDescriptions[visibility];
+  }
+
+  getAvailableVisibilities(): Visibility[] {
+    return Object.keys(ProjectVisibilityDescriptions) as Visibility[];
+  }
+  createProject(project: Project): Observable<Project> {
+    return of(project);
+  }
+  clearProject(): void {
+    return;
   }
 }
