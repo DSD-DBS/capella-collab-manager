@@ -175,7 +175,7 @@ variables can be used by the tool:
 In addition, the following variables are mounted if the TeamForCapella
 integration is enabled for the tool and the session type is `persistent`.
 
-For a explanation of those variables, refer to the
+For an explanation of those variables, refer to the
 [Capella Docker images documentation](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#run-the-container).
 
 <table markdown="span" style=width:100%>
@@ -315,8 +315,7 @@ session tokens.
 
 ## Configuration examples
 
-To help you configuring your tools, we provide some examples for the tools,
-which we provide as part of our
+To help you configure your tools, we provide some examples as part of our
 [Capella Docker images repository](https://github.com/DSD-DBS/capella-dockerimages)
 
 === "Capella/Papyrus/Eclipse"

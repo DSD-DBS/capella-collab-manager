@@ -6,7 +6,7 @@
 # Working with Git
 
 In this guide we explain how to use Git via Eclipse. When using Git we make
-changes _locally_ and push them to a _remote_ (Gitlab or Github mainly)
+changes _locally_ and push them to a _remote_ (Gitlab or GitHub mainly)
 repository. Here we explain how to get made changes to the remote repository so
 that collegues can see and review them.
 
@@ -41,21 +41,21 @@ locally.
 ## Switch Branches
 
 To collaborate it might be useful to work on different branches. Therefore,
-there are two ways to switch branches (to checkout existing ones or to create a
-new one).
+there are two ways to switch branches (to check out existing ones or to create
+a new one).
 
-Either you right click on the project name in the lower right corner, go to
+Either you right-click on the project name in the lower right corner, go to
 "Switch to" and then e.g. "New Branch"
 
 ![Step 4: Search for View](screenshots/switch-branch-v1.png)
 
-or you can right click on the project name in the project tree and then click
+or you can right-click on the project name in the project tree and then click
 "Team"> "Switch to" > "New Branch".
 
 ![Step 5: Search for View](screenshots/switch-branch-v2.png)
 
 In order to make the changes visible in your project tree and to see on which
-branch you are currently working on right click on the project name > "Close
+branch you are currently working on right-click on the project name > "Close
 Project" and then open the project again.
 
 ## Prepare to Commit - Stage Changes
@@ -97,7 +97,7 @@ changes (2).
 
 ![Step 7: Search for View](screenshots/staged-changes.png)
 
-If you already committed your changes you can right click on the Project >
+If you already committed your changes you can right-click on the Project >
 "Team" > "Push to Origin" in order to push your changes to the remote.
 
 If you have not commited yet and want to publish your changes and to share them
@@ -179,7 +179,7 @@ as they can not be merged in the seperate layers.
 In the synthesis view you can see the number of changes that happened. If you
 click on a specific change you can see in the Details (1) and also marked in
 blue on both models what changed and possibly how the current status in both
-models is. Then you can right click on the change in the synthesis view and
+models is. Then you can right-click on the change in the synthesis view and
 click "Apply change(s)" (2) and you can click "Ok" then. Afterwards make sure
 to Ctrl+S or File > Save to save the change made.
 
@@ -260,8 +260,8 @@ option.
 ![Step 10: Git Create Intermediate Branch](screenshots/create-merge-branch.png)
 
 After pushing your changes to the remote Git repository, open the remote
-project on Gitlab or Github. Then open a Merge request (Gitlab) or Pull request
-(Github) respectively and try merging your "merge-branch-name" branch into main
+project on Gitlab or GitHub. Then open a Merge request (Gitlab) or Pull request
+(GitHub) respectively and try merging your "merge-branch-name" branch into main
 (or the branch you wanted to push on before).
 
 You will now see whether the Merge request/ Pull request can be merged

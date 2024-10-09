@@ -23,7 +23,7 @@
     [Change model metadata](../../../projects/models/metadata.md).
 1.  Create a new session with the new Capella version.
 1.  In your persistent workspace loaded, execute the following steps:
-    1.  Right click on the model in your workspace.
+    1.  Right-click on the model in your workspace.
     1.  Select `Migration` and `Migrate Project toward current version`
         ![Migrate Capella model](./migrate-capella-model.png)
     1.  A backup is recommended.

@@ -9,7 +9,7 @@ To reduce the burden on our maintainers, all PRs must meet the following
 criteria before we start the review process. If the acceptance criteria are not
 met, please mark the PR as a draft.
 
--   All Github Action pipelines have to be green. If in individual cases the
+-   All GitHub Action pipelines have to be green. If in individual cases the
     pipeline cannot be fixed independently or the pipeline failure is unrelated
     to the PR, then this should be justified in a comment in the pull request.
 -   The adapted code was sensibly covered with tests. Codecov will indicate the

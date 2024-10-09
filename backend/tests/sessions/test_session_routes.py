@@ -197,7 +197,7 @@ def test_validate_session_token_without_token_cookie(
     client: testclient.TestClient,
     session: sessions_models.DatabaseSession,
 ):
-    """Test that an request without cookie is declined during validation"""
+    """Test that a request without a cookie is declined during validation"""
 
     response = client.post(f"/api/v1/sessions/{session.id}/tokens/validate")
 

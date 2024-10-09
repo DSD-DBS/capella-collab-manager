@@ -7,7 +7,7 @@ In order to make the whole backend more consistent, it is divided into
 different modules. This is to ensure that these can be outsourced without major
 impacts and that other modules can be added as "plugins".
 
-A extension has the following structure: <br>
+An extension has the following structure: <br>
 
 ```bash
 extension

@@ -6,7 +6,7 @@
 The Collaboration Manager repository contains a few tools that may come in
 handy when you're an administrator of a Collaboration Manager setup.
 
-The CLI (Command Line Interface) tool allows you to backup and restore user's
+The CLI (Command Line Interface) tool allows you to back up and restore user's
 workspaces.
 
 For the tools to work you'll need access to the Kubernetes cluster the

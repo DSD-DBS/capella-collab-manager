@@ -40,7 +40,7 @@
 1. Click on `Create`
 1. Enable the `pure::variants` integration and additional integrations if
    applicable.
-1. Add tool versions (if using `Capella + pure::variants`, please use the the
+1. Add tool versions (if using `Capella + pure::variants`, please use the
    Capella version for a proper matching with the TeamForCapella server
    version.)
 1. Add tool natures if applicable. If not tool nature is applicable, use a

@@ -24,7 +24,7 @@
     - One pipeline in the linked Git repository should not contain more than 20 jobs.
 
 1.  To set up the diagram cache, your administrator needs to add the Git API
-    URL of your Gitlab or Github instance to the collab manager. More
+    URL of your Gitlab or GitHub instance to the collab manager. More
     information [here](../../../../admin/settings/model-sources/git.md).
 1.  Link a Git repository to the model, for which you'd like to see the diagram
     cache.

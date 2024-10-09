@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-To find out which resources are used in the cluster, you can install a the tool
+To find out which resources are used in the cluster, you can install the tool
 [`kube-capacity`](https://github.com/robscott/kube-capacity):
 
 ```zsh

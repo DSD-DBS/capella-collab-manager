@@ -44,7 +44,7 @@ following options:
 
 If you chose option 1 or 2 in the last step, please read the
 `Link existing Git repository` part of this step. If you chose option 3 or 4,
-you can should read the `Link existing T4C repository` part.
+you should read the `Link existing T4C repository` part.
 
 ### Step 3.1 Link Existing Git Repository
 
@@ -105,7 +105,7 @@ This is an important step.
 
 Here, you can select the version and the model nature of your tool. If you
 don't select any version, the functionality will be restricted. You will not be
-able to setup backups or create read-only sessions.
+able to set up backups or create read-only sessions.
 
 If suitable for your project, select one of the latest versions of Capella.
 Older versions may be removed in the future. Make sure your model is up to date

@@ -91,7 +91,7 @@ The commit messages have to follow the
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#specification)
 specification.
 
-In general, we use pre-commit hooks to enforce coding standards. To setup the
+In general, we use pre-commit hooks to enforce coding standards. To set up the
 pre-commit hooks, please run the following commands:
 
 ```zsh

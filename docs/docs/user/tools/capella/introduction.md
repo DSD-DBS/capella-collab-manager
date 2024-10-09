@@ -21,7 +21,7 @@ A very nice set of videos, highly recommended to watch:
 You may find more Capella - related videos on the official channel:
 [EclipseCapella](https://www.youtube.com/c/EclipseCapella/videos)
 
-Also you can try out this
+Also, you can try out this
 [Capella Tutorial](https://esd.sutd.edu.sg/40014-capella-tutorial/index.html)
 
 ## More Advanced Topics

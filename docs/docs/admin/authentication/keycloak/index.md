@@ -35,7 +35,7 @@ required for the following steps.
 
     ![Create client - Step 1](./create-client-1.png)
 
-1.  In **Capability config** modify the the default values as follows:
+1.  In **Capability config** modify the default values as follows:
 
     1. Enable **Client Authentication**
     1. Disable **Direct access grants**

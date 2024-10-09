@@ -97,8 +97,8 @@ future.
 The minimum required resources are 3
 [Kubernetes CPU cores](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu)
 and around 2,5GiB of memory for the management platform. Depending on the load,
-the instance can scale up and is limited to 10 Kubernetes CPU cores cores and
-~8GiB of memory.
+the instance can scale up and is limited to 10 Kubernetes CPU cores and ~8GiB
+of memory.
 
 Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of
 memory. A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi
@@ -155,10 +155,10 @@ Verify that `helm` is working by executing the command:
 helm version
 ```
 
-## Step 5: Clone the Github Repository
+## Step 5: Clone the GitHub Repository
 
 Navigate to a persistent location on your server, e.g. `/opt`. Then clone the
-Github repository by running:
+GitHub repository by running:
 
 ```zsh
 git clone https://github.com/DSD-DBS/capella-collab-manager.git
@@ -214,7 +214,7 @@ have to change it to a more secure password:
 
 1. Open <http://localhost:8080/guacamole/> and login with `guacadmin` /
    `guacadmin`.
-1. Click on the `guacadmin` user at the top-right corner of the screen, then
+1. Click on the `guacadmin` user in the top-right corner of the screen, then
    select "Settings".
 1. Select the tab "Preferences"
 1. In the "Change password" section, enter `guacadmin` as current password.
