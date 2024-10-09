@@ -131,6 +131,7 @@ model/project.ts
 model/prometheus-configuration-input.ts
 model/prometheus-configuration-output.ts
 model/protocol.ts
+model/public-license-server-with-usage.ts
 model/pure-variants-licenses-input.ts
 model/pure-variants-licenses-output.ts
 model/put-git-model.ts

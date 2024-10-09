@@ -1,0 +1,38 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+@if ((licenseUsageWrapperService.licenseServerUsage$ | async) !== undefined) {
+  @for (
+    licenseServer of licenseUsageWrapperService.licenseServerUsage$ | async;
+    track licenseServer.id
+  ) {
+    @if (licenseServer.usage.free === 0) {
+      <div
+        class="flex items-center gap-1 rounded border bg-red-500 p-1 text-sm text-white shadow"
+      >
+        <mat-icon class="shrink-0">error</mat-icon>
+        <span
+          >All {{ licenseServer.usage.total }} TeamForCapella licenses are
+          currently in use. You will not be able to start a new session until a
+          license is available. Please make sure to terminate your sessions
+          after use.
+        </span>
+      </div>
+    } @else if (licenseServer.usage.free / licenseServer.usage.total < 0.4) {
+      <div
+        class="flex items-center gap-1 rounded border bg-yellow-300 p-1 text-sm shadow"
+      >
+        <mat-icon class="shrink-0">warning</mat-icon>
+        <span
+          >{{ licenseServer.usage.total - licenseServer.usage.free }}/{{
+            licenseServer.usage.total
+          }}
+          TeamForCapella licenses are currently in use. Please make sure to
+          terminate your sessions after use.
+        </span>
+      </div>
+    }
+  }
+}

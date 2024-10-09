@@ -56,6 +56,12 @@ class SimpleLicenseServer(T4CLicenseServerBase):
     id: int
 
 
+class PublicLicenseServerWithUsage(core_pydantic.BaseModel):
+    id: int
+    name: str
+    usage: interface.T4CLicenseServerUsage
+
+
 class SimpleT4CInstace(core_pydantic.BaseModel):
     # Class has to be in this module to avoid circular imports
     id: int

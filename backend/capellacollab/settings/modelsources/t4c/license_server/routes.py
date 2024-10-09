@@ -9,7 +9,6 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.users import models as users_models
-
 from . import crud, exceptions, injectables, interface, models
 
 admin_router = fastapi.APIRouter(
@@ -30,6 +29,27 @@ def get_t4c_license_servers(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseT4CLicenseServer]:
     return crud.get_t4c_license_servers(db)
+
+
+@admin_router.get(
+    "/usage",
+    response_model=list[models.PublicLicenseServerWithUsage],
+)
+def get_t4c_license_servers_usage(
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> list[models.PublicLicenseServerWithUsage]:
+    usages = []
+    for license_server in crud.get_t4c_license_servers(db):
+        usage = interface.get_t4c_license_server_usage(
+            license_server.usage_api
+        )
+        usages.append(
+            models.PublicLicenseServerWithUsage(
+                **license_server.model_dump(),
+                usage=usage,
+            )
+        )
+    return usages
 
 
 @admin_router.get(
@@ -99,7 +119,7 @@ def delete_t4c_license_server(
     "/{t4c_license_server_id}/usage",
     response_model=interface.T4CLicenseServerUsage,
 )
-def fetch_t4c_license_server_licenses(
+def get_t4c_license_server_usage(
     license_server: models.DatabaseT4CLicenseServer = fastapi.Depends(
         injectables.get_existing_license_server
     ),
