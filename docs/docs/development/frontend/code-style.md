@@ -12,10 +12,10 @@
 For creating a resource one should use `create` as a prefix followed by the
 resource one wants to create (e.g., `createProject(...): Observable<Project>`)
 
-#### Retriving Resources
+#### Retrieving Resources
 
 In general, one should use `get` as prefix for a function that retrieves and
-returns resources. In case, one wants to get a list of alls resources use
+returns resources. In case, one wants to get a list of all resources use
 `get + <resource type> + s` as function name (e.g., `getProjects`). In case,
 one wants to get a specific resource use
 `get + <resource type> + By + <property>` as function name (e.g.,

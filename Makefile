@@ -192,7 +192,7 @@ provision-guacamole:
 	fi
 	@kubectl exec --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) --container $(RELEASE)-guacamole-guacamole deployment/$(RELEASE)-guacamole-guacamole -- /opt/guacamole/bin/initdb.sh --postgresql | \
 	kubectl exec -i --context k3d-$(CLUSTER_NAME) --namespace $(NAMESPACE) deployment/$(RELEASE)-guacamole-postgres -- psql -U guacamole guacamole
-	@echo "Guacamole database initialized sucessfully.";
+	@echo "Guacamole database initialized successfully.";
 
 reach-registry:
 	@r=0;

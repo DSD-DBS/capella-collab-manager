@@ -88,7 +88,7 @@ export class MoveModelComponent {
           .subscribe(() => {
             this.toastService.showSuccess(
               'Model moved',
-              `The model “${this.data.model.name}” was successfuly moved to project "${project.slug}".`,
+              `The model “${this.data.model.name}” was successfully moved to project "${project.slug}".`,
             );
             this.dialogRef.close();
           });

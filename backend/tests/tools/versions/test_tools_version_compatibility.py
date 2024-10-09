@@ -18,7 +18,7 @@ def test_delete_tool_version_with_references(
 ):
     """Test deleting a tool version which is registered as compatible in another version
 
-    The tool version is registed as config.compatible_versions
+    The tool version is registered as config.compatible_versions
     """
 
     tool_version2 = tools_models.CreateToolVersion(
@@ -41,7 +41,7 @@ def test_delete_tool_version_with_references(
 
     assert response.is_success
 
-    # Check that tool_version id was removed from tool_version3 compatible versons
+    # Check that tool_version id was removed from tool_version3 compatible versions
     db.refresh(created_tool_version3)
     assert created_tool_version3.config.compatible_versions == [
         created_tool_version2.id
@@ -57,7 +57,7 @@ def test_delete_tool_with_version_references(
 ):
     """Test deleting a tool which has a version which is registered as compatible in another version
 
-    The tool version is registed as config.compatible_versions
+    The tool version is registered as config.compatible_versions
     """
     test_tool = tools_models.CreateTool(name="test")
     created_test_tool = tools_crud.create_tool(db, test_tool)

@@ -153,11 +153,11 @@ def _determine_end_time_from_pipeline_run(
 
 
 def _transform_unix_nanoseconds_to_human_readable_format(
-    nanoseonds: int,
+    nanoseconds: int,
 ) -> str:
-    return datetime.datetime.fromtimestamp(int(nanoseonds) / 10**9).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+    return datetime.datetime.fromtimestamp(
+        int(nanoseconds) / 10**9
+    ).strftime("%Y-%m-%d %H:%M:%S")
 
 
 @router.get(

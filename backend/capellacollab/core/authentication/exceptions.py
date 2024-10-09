@@ -12,7 +12,7 @@ class RequiredRoleNotMetError(core_exceptions.BaseError):
     def __init__(self, required_role: users_models.Role):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
-            title="Minumum role not met",
+            title="Minimum role not met",
             reason=f"The role {required_role.value} is required for this transaction.",
             err_code="REQUIRED_ROLE_NOT_MET",
         )
@@ -26,7 +26,7 @@ class RequiredProjectRoleNotMetError(core_exceptions.BaseError):
     ):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
-            title="Minumum project role not met",
+            title="Minimum project role not met",
             reason=f"The role {required_role.value} in the project '{project_slug}' is required for this transaction.",
             err_code="REQUIRED_PROJECT_ROLE_NOT_MET",
         )
@@ -40,7 +40,7 @@ class RequiredProjectPermissionNotMetError(core_exceptions.BaseError):
     ):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
-            title="Minumum project permission not met",
+            title="Minimum project permission not met",
             reason=f"The permission {required_permission.value} in the project '{project_slug}' is required for this transaction.",
             err_code="REQUIRED_PROJECT_PERMISSION_NOT_MET",
         )

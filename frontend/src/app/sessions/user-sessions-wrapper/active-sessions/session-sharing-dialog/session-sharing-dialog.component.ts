@@ -109,7 +109,7 @@ export class SessionSharingDialogComponent {
           tap({
             next: () => {
               this.toastService.showSuccess(
-                'Session sucessfully shared',
+                'Session successfully shared',
                 `The session has been shared with user ${username}. ` +
                   'The user should be able to see the session in their personal list of sessions.',
               );

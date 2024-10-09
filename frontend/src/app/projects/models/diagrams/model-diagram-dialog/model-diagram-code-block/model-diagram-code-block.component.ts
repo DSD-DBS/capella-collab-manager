@@ -138,7 +138,7 @@ model = capellambse.MelodyModel(
 }
 
 @Pipe({
-  name: 'hightlight',
+  name: 'highlight',
   standalone: true,
 })
 export class HighlightPipeTransform implements PipeTransform {

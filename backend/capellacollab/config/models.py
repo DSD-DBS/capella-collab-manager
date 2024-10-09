@@ -45,7 +45,7 @@ class DockerConfig(BaseConfig):
         default="docker.io",
         description=(
             "The external registry from which to pull Docker images from Docker Hub, "
-            "used to enabe Loki monitoring."
+            "used to enable Loki monitoring."
         ),
         examples=["docker.io"],
     )
@@ -77,7 +77,7 @@ class K8sPodSecurityContext(BaseConfig):
     fs_group: int = pydantic.Field(
         default=1004370000,
         description=(
-            "The GID fo rthe volumes that support ownership management, "
+            "The GID for the volumes that support ownership management, "
             "used when setting the ownership of volume filesystems, "
             "when determining access for volume filesystems, and for other purposes."
         ),
@@ -311,7 +311,7 @@ class ValkeyConfig(BaseConfig):
 class InitialConfig(BaseConfig):
     admin: str = pydantic.Field(
         default="admin",
-        description="The username given to the admin user at database intitialization and for testing.",
+        description="The username given to the admin user at database initialization and for testing.",
         examples=["admin"],
     )
 

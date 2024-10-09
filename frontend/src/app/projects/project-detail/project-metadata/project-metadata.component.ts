@@ -94,7 +94,7 @@ export class ProjectMetadataComponent implements OnInit {
         const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
           data: {
             title: 'Archive Project',
-            text: 'Do you really want to archive the project? All pipelines of the existing project models wil be deleted.',
+            text: 'Do you really want to archive the project? All pipelines of the existing project models will be deleted.',
             requiredInput: projectSlug,
           },
         });

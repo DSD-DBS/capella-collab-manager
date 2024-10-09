@@ -246,7 +246,7 @@ cluster:
     service: kube-dns # dns-default for OpenShift
     namespace: kube-system # openshift-dns for OpenShift
 
-  # Enable Vertical Pod Autoscaler for resource recommandations
+  # Enable Vertical Pod Autoscaler for resource recommendations
   # If you want to enable it locally, install VPA first:
   # `make install-vpa`
   vpa:

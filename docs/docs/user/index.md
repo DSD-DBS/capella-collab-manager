@@ -58,7 +58,7 @@ stream that connection to your browser. We call instances of those containers
 **Sessions**. To make this platform scalable and allow people co-work
 comfortably we use [Kubernetes](https://kubernetes.io/) to run the **Session**
 containers - which in Kubernetes terms are called **Pod**s. Kubernetes is able
-to scale the cluster to accomodate the active sessions, making it run at
+to scale the cluster to accommodate the active sessions, making it run at
 reasonable costs in both public and private cloud environments (but of course
 one could run it in a VM).
 

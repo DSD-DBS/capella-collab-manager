@@ -31,7 +31,7 @@ multiple organizations. Here are some of the key features:
   models
 - Single sign-on (SSO) via [OAuth2](https://oauth.net/2/)
 - No need to install or maintain local Capella clients - clients are made on
-  demand in an underlaying [Kubernetes](https://kubernetes.io/) cluster
+  demand in an underlying [Kubernetes](https://kubernetes.io/) cluster
 - Access to projects and models is self-managed by project admins, model owners
   or delegates
 - Within a project a user could have read or read & write access. Read-only
@@ -130,7 +130,7 @@ options can be changed at any time later:
 
 1. Build management portal and session images locally (without initial
    TeamForCapella support) \
-   To reduce the build time, the default configutation only builds images for
+   To reduce the build time, the default configuration only builds images for
    Capella 6.0.0. If you want to build more images for different versions, set
    the environment variable `CAPELLA_VERSIONS` with a space-separated list of
    semantic Capella versions.
