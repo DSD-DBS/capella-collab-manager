@@ -17,7 +17,7 @@ import { ProjectWrapperService } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 
 const meta: Meta<CreateProjectComponent> = {
-  title: 'Project Components / Create Project',
+  title: 'Project Components/Create Project',
   component: CreateProjectComponent,
 };
 

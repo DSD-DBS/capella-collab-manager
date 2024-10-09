@@ -14,59 +14,59 @@ import { ProjectAuditLogComponent } from './project-audit-log.component';
 import { ProjectAuditLogService } from './service/project-audit-log.service';
 
 const meta: Meta<ProjectAuditLogComponent> = {
-  title: 'Project Components / Audit Log',
+  title: 'Project Components/Audit Log',
   component: ProjectAuditLogComponent,
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: [],
+        },
+      ],
+    }),
+    dialogWrapper,
+  ],
 };
 
 export default meta;
 type Story = StoryObj<ProjectAuditLogComponent>;
 
+const mockHistoryEventBase = {
+  execution_time: new Date(2024, 1, 1).toISOString(),
+  user: mockUser,
+  executor: mockUser,
+  project: mockProject,
+  reason: 'Test Reason',
+};
+
 const mockHistoryEvents: Page<HistoryEvent> = {
   items: [
     {
+      ...mockHistoryEventBase,
       id: 1,
-      execution_time: new Date(2024, 1, 1).toISOString(),
       event_type: EventType.CreatedUser,
-      user: mockUser,
-      executor: mockUser,
-      project: mockProject,
       reason: 'Another Test Reason',
     },
     {
+      ...mockHistoryEventBase,
       id: 2,
-      execution_time: new Date(2024, 1, 1).toISOString(),
       event_type: EventType.AssignedProjectPermissionReadOnly,
-      user: mockUser,
-      executor: mockUser,
-      project: mockProject,
-      reason: 'Test Reason',
     },
     {
+      ...mockHistoryEventBase,
       id: 3,
-      execution_time: new Date(2024, 1, 1).toISOString(),
       event_type: EventType.CreatedUser,
-      user: mockUser,
-      executor: mockUser,
-      project: mockProject,
-      reason: 'Test Reason',
     },
     {
+      ...mockHistoryEventBase,
       id: 4,
-      execution_time: new Date(2024, 1, 1).toISOString(),
       event_type: EventType.RemovedFromProject,
-      user: mockUser,
-      executor: mockUser,
-      project: mockProject,
-      reason: 'Test Reason',
     },
     {
+      ...mockHistoryEventBase,
       id: 5,
-      execution_time: new Date(2024, 1, 1).toISOString(),
       event_type: EventType.AddedToProject,
-      user: mockUser,
-      executor: mockUser,
-      project: mockProject,
-      reason: 'Test Reason',
     },
   ],
   total: 5,
@@ -95,17 +95,6 @@ class MockProjectAuditLogService implements Partial<ProjectAuditLogService> {
 
 export const Loading: Story = {
   args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: MAT_DIALOG_DATA,
-          useValue: [],
-        },
-      ],
-    }),
-    dialogWrapper,
-  ],
 };
 
 export const General: Story = {
@@ -114,15 +103,10 @@ export const General: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
-          useValue: [],
-        },
-        {
           provide: ProjectAuditLogService,
           useFactory: () => new MockProjectAuditLogService(mockHistoryEvents),
         },
       ],
     }),
-    dialogWrapper,
   ],
 };
