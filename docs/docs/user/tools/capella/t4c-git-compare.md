@@ -5,7 +5,7 @@
 
 # Ways of Co-working on a Capella Project
 
-## Quick Comparision
+## Quick Comparison
 
 <table markdown="span">
   <tr>

@@ -200,12 +200,12 @@ def delete_tool_model(
 
     if model.git_models:
         dependencies.append(
-            f"{len(model.git_models)} linked Git repositor{'y' if len(model.git_models) == 1 else 'ies'}"
+            f"{len(model.git_models)} linked Git repositor{'y' if len(model.git_models) == 1 else 'ies'}"  # codespell:ignore
         )
 
     if model.t4c_models:
         dependencies.append(
-            f"{len(model.t4c_models)} linked T4C repositor{'y' if len(model.t4c_models) == 1 else 'ies'}"
+            f"{len(model.t4c_models)} linked T4C repositor{'y' if len(model.t4c_models) == 1 else 'ies'}"  # codespell:ignore
         )
 
     if dependencies:

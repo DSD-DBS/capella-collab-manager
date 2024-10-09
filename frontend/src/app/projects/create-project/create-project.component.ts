@@ -95,7 +95,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         })
         .subscribe((project) => {
           this.toastService.showSuccess(
-            `The project “${project.name}” was successfuly created.`,
+            `The project “${project.name}” was successfully created.`,
             'Project created',
           );
           stepper.steps.get(0)!.completed = true;

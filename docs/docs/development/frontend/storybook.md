@@ -23,7 +23,7 @@ make -C frontend storybook
 
 Before you can write a story for a component, you need to prepare the
 component. Storybook can only recognize all imports when the component is
-defined as standalone and all required modules are specified explictly.
+defined as standalone and all required modules are specified explicitly.
 
 ```ts
 @Component({

@@ -36,7 +36,7 @@ only increases robustness, but also makes it very easy to query elements. The
 value assigned to the test id should clearly describe the usage of the element
 and should not be too long. For example, one can use the schema
 `data-testId=<type>-<description>` where the prefix usually describes the
-general contex (e.g., whether it is an input, button, textfield, etc.) and the
+general context (e.g., whether it is an input, button, textfield, etc.) and the
 following description specifies the usage of it (e.g., createProject).
 
 #### Element Helper Functions

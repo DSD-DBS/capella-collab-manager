@@ -18,7 +18,7 @@
         [here](https://github.com/eclipse/capella/releases). <br>
         **TeamForCapella** release notes are available
         [here](https://www.obeosoft.com/en/team-for-capella-releases).
-    -   **Papyrus** release notes are avilable
+    -   **Papyrus** release notes are available
         [here](https://eclipse.dev/papyrus/news.php).
     -   **pure::variants** release notes are available
         [here](https://www.pure-systems.com/pv-update/additions/doc/ChangeLog.txt).

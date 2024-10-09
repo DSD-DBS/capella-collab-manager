@@ -14,7 +14,7 @@
          When a user clicks the `Terminate session` button, a `SIGTERM` is sent
          to the container. The container reacts to the signal and terminates the
          tool as well as other used programs (e.g. the `xrdp` server). After a
-         grace period of 60 seconds, the container recevies a `SIGKILL`,
+         grace period of 60 seconds, the container receives a `SIGKILL`,
          which results in a force-kill.
 
 !!! danger

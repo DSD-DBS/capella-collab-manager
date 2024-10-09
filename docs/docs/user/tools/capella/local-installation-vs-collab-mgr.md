@@ -17,7 +17,7 @@ so here is a decision help:
   </tr>
   <tr>
     <td><b>Differences between operating systems</b></td>
-    <td>When the team uses different operating systems or dependencies, there may be small differences in the Capella behaviour. Bugs have to be collected and reported for each OS individully. In addition, it's important that all users use the same font, otherwise diagrams will change on each save when a new font is applied. Diagrams might look different on different devices.</td>
+    <td>When the team uses different operating systems or dependencies, there may be small differences in the Capella behaviour. Bugs have to be collected and reported for each OS individually. In addition, it's important that all users use the same font, otherwise diagrams will change on each save when a new font is applied. Diagrams might look different on different devices.</td>
     <td>All sessions run on Linux in a Docker container with exactly the same dependencies. Bugs are easier to reproduce.</td>
   </tr>
   <tr>

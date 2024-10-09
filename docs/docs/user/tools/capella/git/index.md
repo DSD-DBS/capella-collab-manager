@@ -8,7 +8,7 @@
 In this guide we explain how to use Git via Eclipse. When using Git we make
 changes _locally_ and push them to a _remote_ (Gitlab or GitHub mainly)
 repository. Here we explain how to get made changes to the remote repository so
-that collegues can see and review them.
+that colleagues can see and review them.
 
 ## Clone a Repository
 
@@ -88,7 +88,7 @@ Change #1
 Change #2
 ```
 
-Thus you and your collegues know what happened in the commit. Then commit the
+Thus you and your colleagues know what happened in the commit. Then commit the
 changes (2).
 
 !!! info
@@ -100,15 +100,15 @@ changes (2).
 If you already committed your changes you can right-click on the Project >
 "Team" > "Push to Origin" in order to push your changes to the remote.
 
-If you have not commited yet and want to publish your changes and to share them
-with your team rather click: "Commit and Push" (1). If you have not configured
-that before you are now asked to "Configure upstream for push and pull" and the
-selected default of "Merge" can just be kept. You might now be asked to enter a
-user and a password for the remote repository in order to push your changes
-there. Having done that you can click "Push".
+If you have not committed yet and want to publish your changes and to share
+them with your team rather click: "Commit and Push" (1). If you have not
+configured that before you are now asked to "Configure upstream for push and
+pull" and the selected default of "Merge" can just be kept. You might now be
+asked to enter a user and a password for the remote repository in order to push
+your changes there. Having done that you can click "Push".
 
 Now your changes are saved at the remote repository where they are not lost and
-your collegues can see them.
+your colleagues can see them.
 
 ## Diff and Merge Models
 
@@ -171,8 +171,8 @@ gets modified.
 The colors highlight what change was made and will be applied to the target if
 you apply the change: _blue: create, red: delete, purple: modify_.
 
-If there are any objects that are overarching you have to merge them seperately
-as they can not be merged in the seperate layers.
+If there are any objects that are overarching you have to merge them separately
+as they can not be merged in the separate layers.
 
 ### Merge Model Elements
 
@@ -221,7 +221,7 @@ model.
 
 ![Decide Side of Change](screenshots/merge-decide-side.png)
 
-With the butttons above the details of the made changes enable us to decide the
+With the buttons above the details of the made changes enable us to decide the
 change from which model to take and which change to discard.
 
 If the number of changes is overwhelming you can filter them by different
@@ -229,7 +229,7 @@ criteria (2). In the category "Three-way" you can tick "filtered" for the
 changes that for the moment you prefer not to see and to tackle to apply the
 changes one after another.
 
-Make sure to resolve all conflicts before commiting! After merging reopen the
+Make sure to resolve all conflicts before committing! After merging reopen the
 model and look especially into layouting as capella might be a bit
 opportunistic in merging layouts.
 
@@ -282,4 +282,4 @@ remote repository in order to push your changes there. Having done that you can
 click "Push".
 
 Now your changes are saved at the remote repository where they are not lost and
-your collegues can see them.
+your colleagues can see them.

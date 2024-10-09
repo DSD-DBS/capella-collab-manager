@@ -195,7 +195,7 @@ def test_guacamole_hook_not_executed_for_http_method(
 ):
     """Skip if connection method is not Guacamole
 
-    If the connnection method is not Guacamole, the hook should skip the preparation.
+    If the connection method is not Guacamole, the hook should skip the preparation.
     """
 
     response = guacamole.GuacamoleIntegration().post_session_creation_hook(

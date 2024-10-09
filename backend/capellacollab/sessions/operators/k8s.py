@@ -655,7 +655,7 @@ class KubernetesOperator:
         name: str,
         deployment_name: str,
     ) -> client.V1PodDisruptionBudget:
-        """Disallow any pod discription for the deployment
+        """Disallow any pod description for the deployment
 
         If the deployment uses the recreate strategy together with
         this budget, the cluster operator shall consult the administrator before
