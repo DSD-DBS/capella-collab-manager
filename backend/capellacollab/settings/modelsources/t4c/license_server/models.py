@@ -65,9 +65,18 @@ class T4CLicenseServer(T4CLicenseServerBase):
     usage: interface.T4CLicenseServerUsage | None = None
     warnings: list[core_models.Message] = []
     instances: list[t4c_instance_models2.SimpleT4CInstance] = []
+    anonymized: bool = pydantic.Field(default=False, exclude=True)
+
+    def anonymize(self):
+        self.usage_api = ""
+        self.license_key = ""
+        self.anonymized = True
 
     @pydantic.model_validator(mode="after")
     def add_from_api(self) -> t.Any:
+        if self.anonymized:
+            return self
+
         self.license_server_version = interface.get_t4c_license_server_version(
             self.usage_api
         )

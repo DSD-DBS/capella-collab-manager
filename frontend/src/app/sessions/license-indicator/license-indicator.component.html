@@ -1,0 +1,32 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div
+  class="max-h-0 overflow-hidden transition-all duration-700"
+  [ngClass]="{
+    'max-h-[100vh]':
+      ((licenseUsageWrapperService.licenseServerUsage$ | async)?.length ?? -1) >
+      0,
+  }"
+>
+  @if ((licenseUsageWrapperService.licenseServerUsage$ | async) !== undefined) {
+    @for (
+      licenseServer of licenseUsageWrapperService.licenseServerUsage$ | async;
+      track licenseServer.id
+    ) {
+      @if (licenseServer.usage) {
+        <div
+          class="mt-2 flex items-center gap-2 rounded border p-2 text-sm shadow"
+          [class]="getLevel(licenseServer.usage)?.classes"
+        >
+          <mat-icon class="shrink-0">{{
+            getLevel(licenseServer.usage)?.icon
+          }}</mat-icon>
+          <span>{{ getLevel(licenseServer.usage)?.text }}</span>
+        </div>
+      }
+    }
+  }
+</div>
