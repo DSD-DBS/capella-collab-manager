@@ -118,22 +118,6 @@
             "buildTarget": "capellacollab:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "fileReplacements": [
-              {
-                "replace": "src/environments/environment.ts",
-                "with": "src/environments/environment.dev.ts"
-              }
-            ],
-            "codeCoverage": true
-          }
-        },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
