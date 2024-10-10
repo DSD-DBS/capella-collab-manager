@@ -278,10 +278,10 @@ def test_feedback_metric(db: orm.Session):
     collector = feedback_metrics.FeedbackCollector()
     data = list(collector.collect())
 
-    assert len(data[0].samples) == 3
+    assert len(data[0].samples) == 6
 
     bad_sample = data[0].samples[0]
-    good_sample = data[0].samples[2]
+    good_sample = data[0].samples[4]
 
     assert bad_sample.labels["rating"] == "bad"
     assert bad_sample.name == "feedback_count"

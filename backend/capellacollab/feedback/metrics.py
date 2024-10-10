@@ -17,14 +17,19 @@ class FeedbackCollector(prometheus_registry.Collector):
         metric = prometheus_client.core.GaugeMetricFamily(
             "feedback_count",
             "Submitted feedback",
-            labels=["rating"],
+            labels=["rating", "anonymous"],
         )
 
         with database.SessionLocal() as db:
             feedback = crud.count_feedback_by_rating(db)
 
         for rating in models.FeedbackRating:
-            metric.add_metric([str(rating.value)], feedback.get(rating, 0))
+            metric.add_metric(
+                [str(rating.value), "true"], feedback.get((rating, True), 0)
+            )
+            metric.add_metric(
+                [str(rating.value), "false"], feedback.get((rating, False), 0)
+            )
 
         yield metric
 

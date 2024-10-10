@@ -151,7 +151,9 @@
       "id": 13,
       "options": {
         "legend": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": false
@@ -168,7 +170,7 @@
             "uid": "prometheus_ccm"
           },
           "editorMode": "code",
-          "expr": "round(increase(feedback_count[$__range]))",
+          "expr": "round(sum by (rating) (increase(feedback_count[$__range])))",
           "instant": false,
           "legendFormat": "{{rating}}",
           "range": true,
@@ -259,13 +261,15 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
+        "w": 4,
         "x": 0,
         "y": 8
       },
       "id": 8,
       "options": {
-        "displayLabels": ["percent"],
+        "displayLabels": [
+          "percent"
+        ],
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
@@ -274,7 +278,9 @@
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -290,7 +296,7 @@
             "uid": "prometheus_ccm"
           },
           "editorMode": "code",
-          "expr": "round(increase(feedback_count[$__range]))",
+          "expr": "round(sum by (rating) (increase(feedback_count[$__range])))",
           "instant": false,
           "legendFormat": "{{rating}}",
           "range": true,
@@ -333,8 +339,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 5,
-        "x": 5,
+        "w": 3,
+        "x": 4,
         "y": 8
       },
       "id": 12,
@@ -343,7 +349,9 @@
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -376,6 +384,79 @@
           }
         }
       ],
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_ccm"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 7,
+        "y": 8
+      },
+      "id": 15,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_ccm"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "round((sum(increase(feedback_count{anonymous=\"true\"}[$__range])) / sum(increase(feedback_count[$__range]))) * 100)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Share of anonymous feedback",
       "type": "gauge"
     },
     {
@@ -490,6 +571,6 @@
   "timezone": "",
   "title": "Feedback",
   "uid": "edzhg6sv97lz4c",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
