@@ -23,9 +23,9 @@ import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
 import { PatchT4CModel } from '../model/patch-t4-c-model';
 // @ts-ignore
-import { SubmitT4CModel } from '../model/submit-t4-c-model';
+import { SimpleT4CModelWithRepository } from '../model/simple-t4-c-model-with-repository';
 // @ts-ignore
-import { T4CModel } from '../model/t4-c-model';
+import { SubmitT4CModel } from '../model/submit-t4-c-model';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -106,9 +106,9 @@ export class ProjectsModelsT4CService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createT4cModel(projectSlug: string, modelSlug: string, submitT4CModel: SubmitT4CModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<T4CModel>;
-    public createT4cModel(projectSlug: string, modelSlug: string, submitT4CModel: SubmitT4CModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<T4CModel>>;
-    public createT4cModel(projectSlug: string, modelSlug: string, submitT4CModel: SubmitT4CModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<T4CModel>>;
+    public createT4cModel(projectSlug: string, modelSlug: string, submitT4CModel: SubmitT4CModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SimpleT4CModelWithRepository>;
+    public createT4cModel(projectSlug: string, modelSlug: string, submitT4CModel: SubmitT4CModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SimpleT4CModelWithRepository>>;
+    public createT4cModel(projectSlug: string, modelSlug: string, submitT4CModel: SubmitT4CModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SimpleT4CModelWithRepository>>;
     public createT4cModel(projectSlug: string, modelSlug: string, submitT4CModel: SubmitT4CModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling createT4cModel.');
@@ -173,7 +173,7 @@ export class ProjectsModelsT4CService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/modelsources/t4c`;
-        return this.httpClient.request<T4CModel>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<SimpleT4CModelWithRepository>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: submitT4CModel,
@@ -274,9 +274,9 @@ export class ProjectsModelsT4CService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<T4CModel>;
-    public getT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<T4CModel>>;
-    public getT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<T4CModel>>;
+    public getT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SimpleT4CModelWithRepository>;
+    public getT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SimpleT4CModelWithRepository>>;
+    public getT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SimpleT4CModelWithRepository>>;
     public getT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getT4cModel.');
@@ -332,7 +332,7 @@ export class ProjectsModelsT4CService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/modelsources/t4c/${this.configuration.encodeParam({name: "t4cModelId", value: t4cModelId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
-        return this.httpClient.request<T4CModel>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<SimpleT4CModelWithRepository>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -352,9 +352,9 @@ export class ProjectsModelsT4CService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public listT4cModels(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<T4CModel>>;
-    public listT4cModels(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<T4CModel>>>;
-    public listT4cModels(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<T4CModel>>>;
+    public listT4cModels(projectSlug: string, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<SimpleT4CModelWithRepository>>;
+    public listT4cModels(projectSlug: string, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<SimpleT4CModelWithRepository>>>;
+    public listT4cModels(projectSlug: string, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<SimpleT4CModelWithRepository>>>;
     public listT4cModels(projectSlug: string, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling listT4cModels.');
@@ -407,7 +407,7 @@ export class ProjectsModelsT4CService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/modelsources/t4c`;
-        return this.httpClient.request<Array<T4CModel>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<Array<SimpleT4CModelWithRepository>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -429,9 +429,9 @@ export class ProjectsModelsT4CService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public updateT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, patchT4CModel: PatchT4CModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<T4CModel>;
-    public updateT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, patchT4CModel: PatchT4CModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<T4CModel>>;
-    public updateT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, patchT4CModel: PatchT4CModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<T4CModel>>;
+    public updateT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, patchT4CModel: PatchT4CModel, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SimpleT4CModelWithRepository>;
+    public updateT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, patchT4CModel: PatchT4CModel, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SimpleT4CModelWithRepository>>;
+    public updateT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, patchT4CModel: PatchT4CModel, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SimpleT4CModelWithRepository>>;
     public updateT4cModel(projectSlug: string, t4cModelId: number, modelSlug: string, patchT4CModel: PatchT4CModel, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling updateT4cModel.');
@@ -499,7 +499,7 @@ export class ProjectsModelsT4CService {
         }
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/modelsources/t4c/${this.configuration.encodeParam({name: "t4cModelId", value: t4cModelId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}`;
-        return this.httpClient.request<T4CModel>('patch', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<SimpleT4CModelWithRepository>('patch', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: patchT4CModel,

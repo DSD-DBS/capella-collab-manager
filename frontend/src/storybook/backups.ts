@@ -4,11 +4,11 @@
  */
 import { Backup } from 'src/app/openapi';
 import { mockPrimaryGitModel } from 'src/storybook/git';
-import { mockTeamForCapellaRepository } from 'src/storybook/t4c';
+import { mockT4CModel } from 'src/storybook/t4c';
 
 export const mockBackup: Backup = {
   id: 1,
-  t4c_model: mockTeamForCapellaRepository,
+  t4c_model: mockT4CModel,
   git_model: mockPrimaryGitModel,
   run_nightly: false,
   include_commit_history: false,

@@ -9,10 +9,13 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { SimpleToolVersion } from './simple-tool-version';
 
 
-export interface SimpleT4CInstace { 
+export interface SimpleT4CInstance { 
     id: number;
     name: string;
+    version: SimpleToolVersion;
+    is_archived: boolean;
 }
 

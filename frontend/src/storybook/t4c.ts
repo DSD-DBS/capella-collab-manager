@@ -9,10 +9,9 @@ import {
 } from '@angular/forms';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
-  SimpleT4CModel,
+  SimpleT4CModelWithRepository,
   T4CInstance,
   T4CLicenseServer,
-  T4CModel,
   T4CRepository,
   T4CRepositoryStatus,
   ValidationError,
@@ -25,12 +24,6 @@ import {
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { mockToolVersion } from 'src/storybook/tool';
 import { T4CLicenseServerWrapperService } from '../app/services/settings/t4c-license-server.service';
-
-export const mockTeamForCapellaRepository: Readonly<SimpleT4CModel> = {
-  project_name: 'project',
-  repository_name: 'repository',
-  instance_name: 'instance',
-};
 
 export const mockT4CInstance: Readonly<T4CInstance> = {
   id: 1,
@@ -64,9 +57,10 @@ export const mockExtendedT4CRepository: Readonly<ExtendedT4CRepository> = {
   name: 'repository',
   instance: mockT4CInstance,
   status: 'LOADING',
+  integrations: [],
 };
 
-export const mockT4CModel: Readonly<T4CModel> = {
+export const mockT4CModel: Readonly<SimpleT4CModelWithRepository> = {
   id: 1,
   name: 'project',
   repository: mockT4CRepository,
@@ -178,10 +172,14 @@ export class MockT4CRepositoryWrapperService
 }
 
 export class MockT4CModelService implements Partial<T4CModelService> {
-  private _t4cModel = new BehaviorSubject<T4CModel | undefined>(undefined);
+  private _t4cModel = new BehaviorSubject<
+    SimpleT4CModelWithRepository | undefined
+  >(undefined);
   public readonly t4cModel$ = this._t4cModel.asObservable();
 
-  private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
+  private _t4cModels = new BehaviorSubject<
+    SimpleT4CModelWithRepository[] | undefined
+  >(undefined);
   public readonly t4cModels$ = this._t4cModels.asObservable();
 
   compatibleT4CInstances$: Observable<T4CInstance[] | undefined> =
@@ -190,8 +188,8 @@ export class MockT4CModelService implements Partial<T4CModelService> {
   reset() {} // eslint-disable-line @typescript-eslint/no-empty-function
 
   constructor(
-    t4cModel: T4CModel | undefined,
-    t4cModels: T4CModel[] | undefined,
+    t4cModel: SimpleT4CModelWithRepository | undefined,
+    t4cModels: SimpleT4CModelWithRepository[] | undefined,
     t4cInstances: T4CInstance[] | undefined = undefined,
   ) {
     this._t4cModel.next(t4cModel);

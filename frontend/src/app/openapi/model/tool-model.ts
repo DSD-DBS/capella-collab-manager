@@ -10,7 +10,7 @@
  */
 
 import { GitModel } from './git-model';
-import { T4CModel } from './t4-c-model';
+import { SimpleT4CModelWithRepository } from './simple-t4-c-model-with-repository';
 import { ToolVersion } from './tool-version';
 import { ToolModelRestrictions } from './tool-model-restrictions';
 import { Tool } from './tool';
@@ -27,7 +27,7 @@ export interface ToolModel {
     version: ToolVersion | null;
     nature: ToolNature | null;
     git_models: Array<GitModel> | null;
-    t4c_models: Array<T4CModel> | null;
+    t4c_models: Array<SimpleT4CModelWithRepository> | null;
     restrictions: ToolModelRestrictions | null;
 }
 

@@ -84,7 +84,8 @@ jobs:
             echo 'changelog<<EOF'
             docker run --rm -v /tmp:/tmp:ro tufin/oasdiff changelog \
               --format markup \
-              /tmp/openapi.json /tmp/openapi2.json
+              /tmp/openapi.json /tmp/openapi2.json \
+              | sed 's/\/anyOf\[subschema #[0-9]\+\(: [a-zA-Z]\+\)\?\]//g'
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
       - name: Find existing comment on PR

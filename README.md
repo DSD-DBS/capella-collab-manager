@@ -202,7 +202,7 @@ The Capella Collaboration Manager consists of a couple of components:
 External software can also be linked. These parts can be installed separately:
 
 - Optional: A Git server (used for read-only sessions and Git backups)
-- Optional: A Team4Capella server
+- Optional: A Team for Capella server
 - Optional: A pure::variants server
 
 ## Contributing

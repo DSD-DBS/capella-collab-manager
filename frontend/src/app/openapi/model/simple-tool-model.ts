@@ -9,11 +9,13 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { SimpleProject } from './simple-project';
 
 
-export interface SimpleT4CModel { 
-    project_name: string;
-    repository_name: string;
-    instance_name: string;
+export interface SimpleToolModel { 
+    id: number;
+    slug: string;
+    name: string;
+    project: SimpleProject;
 }
 

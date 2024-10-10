@@ -13,7 +13,7 @@ import {
   CreateT4CRepository,
   ResponseModel,
   SettingsModelsourcesT4CInstancesService,
-  T4CInstance,
+  SimpleT4CRepositoryWithIntegrations,
   T4CRepository,
   T4CRepositoryStatus,
 } from 'src/app/openapi';
@@ -125,9 +125,9 @@ export class T4CRepositoryWrapperService {
 
 export type ExtendedT4CRepositoryStatus = T4CRepositoryStatus | 'LOADING';
 
-export interface ExtendedT4CRepository {
-  name: string;
-  id: number;
-  instance: T4CInstance;
+export type ExtendedT4CRepository = Omit<
+  SimpleT4CRepositoryWithIntegrations,
+  'status'
+> & {
   status: ExtendedT4CRepositoryStatus | null;
-}
+};

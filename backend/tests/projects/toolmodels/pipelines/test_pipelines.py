@@ -55,8 +55,6 @@ def test_get_all_pipelines_of_capellamodel(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    run_nightly: bool,
-    include_commit_history: bool,
 ):
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines"
@@ -73,7 +71,7 @@ def test_get_all_pipelines_of_capellamodel(
 def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    t4c_model: models_t4c_models.T4CModel,
+    t4c_model: models_t4c_models.SimpleT4CModelWithRepository,
     client: testclient.TestClient,
 ):
     response = client.post(
@@ -99,7 +97,7 @@ def test_create_pipeline(
     db: orm.Session,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    t4c_model: models_t4c_models.T4CModel,
+    t4c_model: models_t4c_models.SimpleT4CModelWithRepository,
     git_model: git_models.GitModel,
     client: testclient.TestClient,
     run_nightly: bool,
@@ -129,7 +127,7 @@ def test_create_pipeline(
 def test_pipeline_creation_fails_if_t4c_server_not_available(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    t4c_model: models_t4c_models.T4CModel,
+    t4c_model: models_t4c_models.SimpleT4CModelWithRepository,
     git_model: git_models.GitModel,
     client: testclient.TestClient,
     monkeypatch: pytest.MonkeyPatch,

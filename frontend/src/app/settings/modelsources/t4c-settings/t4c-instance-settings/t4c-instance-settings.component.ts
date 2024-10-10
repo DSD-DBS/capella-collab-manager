@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   OnDestroy,
@@ -30,6 +30,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelectionList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
+import { RouterModule } from '@angular/router';
 import { CreateT4CRepository, T4CInstance } from 'src/app/openapi';
 import {
   ExtendedT4CRepository,
@@ -51,13 +52,12 @@ import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-r
     MatInput,
     FormsModule,
     MatSuffix,
-    NgFor,
-    NgIf,
     MatIconButton,
     MatTooltip,
     ReactiveFormsModule,
     MatError,
     AsyncPipe,
+    RouterModule,
   ],
 })
 export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {

@@ -18,8 +18,8 @@ import {
 } from 'rxjs';
 import {
   ProjectsModelsT4CService,
+  SimpleT4CModelWithRepository,
   SubmitT4CModel,
-  T4CModel,
 } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
@@ -34,10 +34,14 @@ export class T4CModelService {
     private t4cModelService: ProjectsModelsT4CService,
   ) {}
 
-  private _t4cModel = new BehaviorSubject<T4CModel | undefined>(undefined);
+  private _t4cModel = new BehaviorSubject<
+    SimpleT4CModelWithRepository | undefined
+  >(undefined);
   public readonly t4cModel$ = this._t4cModel.asObservable();
 
-  private _t4cModels = new BehaviorSubject<T4CModel[] | undefined>(undefined);
+  private _t4cModels = new BehaviorSubject<
+    SimpleT4CModelWithRepository[] | undefined
+  >(undefined);
   public readonly t4cModels$ = this._t4cModels.asObservable();
 
   compatibleT4CInstances$ = combineLatest([
@@ -72,7 +76,7 @@ export class T4CModelService {
     projectSlug: string,
     modelSlug: string,
     body: SubmitT4CModel,
-  ): Observable<T4CModel> {
+  ): Observable<SimpleT4CModelWithRepository> {
     return this.t4cModelService
       .createT4cModel(projectSlug, modelSlug, body)
       .pipe(
@@ -88,7 +92,7 @@ export class T4CModelService {
     modelSlug: string,
     t4cModelID: number,
     body: SubmitT4CModel,
-  ): Observable<T4CModel> {
+  ): Observable<SimpleT4CModelWithRepository> {
     return this.t4cModelService
       .updateT4cModel(projectSlug, t4cModelID, modelSlug, body)
       .pipe(

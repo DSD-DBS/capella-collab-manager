@@ -9,16 +9,12 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { GitModel } from './git-model';
-import { SimpleT4CModelWithRepository } from './simple-t4-c-model-with-repository';
+import { SimpleToolModel } from './simple-tool-model';
 
 
-export interface Backup { 
+export interface SimpleT4CModelWithToolModel { 
     id: number;
-    k8s_cronjob_id: string | null;
-    t4c_model: SimpleT4CModelWithRepository;
-    git_model: GitModel;
-    run_nightly: boolean;
-    include_commit_history: boolean;
+    name: string;
+    model: SimpleToolModel;
 }
 

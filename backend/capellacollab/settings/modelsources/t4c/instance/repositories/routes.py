@@ -14,13 +14,13 @@ from capellacollab.core import models as core_models
 
 from .. import injectables as settings_t4c_injectables
 from .. import models as settings_t4c_models
-from . import crud, exceptions, injectables, interface, models
+from . import crud, exceptions, injectables, interface, models, models2
 
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 T4CRepositoriesResponseModel: t.TypeAlias = core_models.PayloadResponseModel[
-    list[models.T4CRepository]
+    list[models2.SimpleT4CRepositoryWithIntegrations]
 ]
 
 
@@ -31,10 +31,10 @@ def list_t4c_repositories(
         settings_t4c_injectables.get_existing_instance
     ),
 ) -> T4CRepositoriesResponseModel:
-    repositories = models.T4CInstanceWithRepositories.model_validate(
-        instance
-    ).repositories
-
+    repositories = [
+        models2.SimpleT4CRepositoryWithIntegrations.model_validate(repository)
+        for repository in instance.repositories
+    ]
     try:
         server_repositories = interface.list_repositories(instance)
     except requests.RequestException:
@@ -184,10 +184,10 @@ def recreate_t4c_repository(
 
 def sync_db_with_server_repositories(
     db: orm.Session,
-    db_repos: list[models.T4CRepository],
+    db_repos: list[models2.SimpleT4CRepositoryWithIntegrations],
     server_repos: dict,
     instance: settings_t4c_models.DatabaseT4CInstance,
-) -> list[models.T4CRepository]:
+) -> list[models2.SimpleT4CRepositoryWithIntegrations]:
     """
     Synchronize the repository list in the database with the repository list from a server.
 
@@ -231,7 +231,7 @@ def sync_db_with_server_repositories(
 
     server_not_db_repo_names = server_repos_names - db_repos_names
     for repo_name in server_not_db_repo_names:
-        repo = models.T4CRepository.model_validate(
+        repo = models2.SimpleT4CRepositoryWithIntegrations.model_validate(
             crud.create_t4c_repository(
                 db=db, repo_name=repo_name, instance=instance
             )

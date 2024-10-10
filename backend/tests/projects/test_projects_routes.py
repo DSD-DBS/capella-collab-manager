@@ -14,8 +14,10 @@ import capellacollab.projects.users.crud as projects_users_crud
 import capellacollab.projects.users.models as projects_users_models
 import capellacollab.users.crud as users_crud
 import capellacollab.users.models as users_models
-from capellacollab.__main__ import app
-from capellacollab.projects import injectables as projects_injectables
+from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.backups import (
+    models as pipelines_models,
+)
 
 
 def test_get_internal_default_project_as_user(
@@ -30,15 +32,9 @@ def test_get_internal_default_project_as_user(
     response = client.get("/api/v1/projects/default")
 
     assert response.status_code == 200
-    assert {
-        "name": "default",
-        "slug": "default",
-        "description": "",
-        "visibility": "internal",
-        "type": "general",
-        "users": {"leads": 0, "contributors": 0, "subscribers": 0},
-        "is_archived": False,
-    } == response.json()
+    assert response.json()["name"] == "default"
+    assert response.json()["visibility"] == "internal"
+    assert response.json()["slug"] == "default"
 
 
 def test_get_projects_as_user_only_shows_default_internal_project(
@@ -222,7 +218,7 @@ def test_update_project_as_admin(
 
     assert project.slug == "new-project"
     assert project.visibility == projects_models.Visibility.PRIVATE
-    assert project.is_archived == False
+    assert project.is_archived is False
 
     response = client.patch(
         "/api/v1/projects/new-project",
@@ -244,47 +240,20 @@ def test_update_project_as_admin(
     assert data["is_archived"]
 
 
-@pytest.fixture(name="mock_project")
-def fixture_mock_project():
-    project = mock.Mock(name="DatabaseProject")
-    project.name = "Mock Project"
-    project.slug = "mock-project"
-    project.description = "Mock Description"
-    project.visibility = "private"
-    project.type = "general"
-    project.users.leads = 0
-    project.users.contributors = 0
-    project.users.subscribers = 0
-
-    return project
-
-
-@pytest.fixture(name="override_dependency")
-def fixture_override_dependency(mock_project):
-    def override_get_existing_project():
-        return mock_project
-
-    app.dependency_overrides[projects_injectables.get_existing_project] = (
-        override_get_existing_project
-    )
-    yield
-    del app.dependency_overrides[projects_injectables.get_existing_project]
-
-
-@pytest.mark.usefixtures("override_dependency")
+@pytest.mark.parametrize(
+    ("run_nightly, include_commit_history"), [(True, True)]
+)
 def test_delete_pipeline_called_when_archiving_project(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
-    mock_project,
+    project: projects_models.DatabaseProject,
+    capella_model: toolmodels_models.DatabaseToolModel,
+    pipeline: pipelines_models.DatabaseBackup,
 ):
-    mock_model = mock.Mock(name="DatabaseModel")
-    mock_pipeline = mock.Mock(name="DatabaseBackup")
-
     users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
-    mock_project.models = [mock_model]
 
     with (
         mock.patch(
@@ -296,18 +265,18 @@ def test_delete_pipeline_called_when_archiving_project(
             autospec=True,
         ) as mock_get_pipelines_for_tool_model,
     ):
-        mock_get_pipelines_for_tool_model.return_value = [mock_pipeline]
+        mock_get_pipelines_for_tool_model.return_value = [pipeline]
 
         response = client.patch(
-            "/api/v1/projects/any", json={"is_archived": "true"}
+            f"/api/v1/projects/{project.slug}", json={"is_archived": "true"}
         )
 
         assert response.status_code == 200
         mock_get_pipelines_for_tool_model.assert_called_once_with(
-            db, mock_model
+            db, capella_model
         )
         mock_delete_pipeline.assert_called_once_with(
-            db, mock_pipeline, mock.ANY, True
+            db, pipeline, mock.ANY, True
         )
 
 

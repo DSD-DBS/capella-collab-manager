@@ -34,9 +34,9 @@ def fixture_include_commit_history(
 @pytest.fixture(name="pipeline")
 def fixture_pipeline(
     db: orm.Session,
-    capella_model: toolmodels_models.ToolModel,
+    capella_model: toolmodels_models.DatabaseToolModel,
     git_model: git_models.DatabaseGitModel,
-    t4c_model: t4c_models.T4CModel,
+    t4c_model: t4c_models.DatabaseT4CModel,
     executor_name: str,
     run_nightly: bool,
     include_commit_history: bool,
