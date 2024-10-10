@@ -30,7 +30,6 @@ snapshots:
 	npx storycap http://localhost:6006 --serverCmd "npm run storybook" --flat
 
 openapi:
-	python postprocess_openapi_schema.py
 	OPENAPI_DIR=$$(mktemp -d)
 	docker run --rm \
   		-v /tmp/openapi.json:/tmp/openapi.json \

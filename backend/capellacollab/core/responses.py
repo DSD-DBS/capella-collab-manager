@@ -47,11 +47,7 @@ def api_exceptions(
         projects_users_models.ProjectUserPermission | None
     ) = None,
 ):
-    if os.getenv("CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES", "").lower() in (
-        "1",
-        "true",
-        "t",
-    ):
+    if os.getenv("CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES", "0") == "1":
         return {}
 
     if excs is None:
