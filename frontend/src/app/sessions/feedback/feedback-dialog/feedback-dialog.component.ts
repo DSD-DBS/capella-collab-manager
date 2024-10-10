@@ -65,7 +65,7 @@ export class FeedbackDialogComponent {
       Validators.required,
     ),
     feedbackText: new FormControl<string>(''),
-    shareContact: new FormControl<boolean>(false),
+    shareContact: new FormControl<boolean>(true),
   });
 
   constructor(
