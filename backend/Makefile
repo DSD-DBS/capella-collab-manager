@@ -73,7 +73,12 @@ install:
 	$(VENV)/bin/pip install -e ".[dev]"
 
 openapi:
-	CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES=1 $(VENV)/bin/python -m capellacollab.cli openapi generate /tmp/openapi.json
+	$(VENV)/bin/python \
+		-m capellacollab.cli openapi generate \
+		--remove-default-keys \
+		--remove-min-max-keys \
+		--skip-error-responses \
+		/tmp/openapi.json
 
 dev: database valkey app
 
