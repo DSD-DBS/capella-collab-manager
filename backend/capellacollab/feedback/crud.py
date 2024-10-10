@@ -13,13 +13,24 @@ from . import models
 
 def count_feedback_by_rating(
     db: orm.Session,
-) -> dict[models.FeedbackRating, int]:
+) -> dict[tuple[models.FeedbackRating, bool], int]:
+    anonymity_case = sa.case(
+        (models.DatabaseFeedback.user_id.is_(None), True),
+        else_=False,
+    )
+
     return {
-        value[0]: value[1]
+        (value[0], value[1]): value[2]
         for value in db.execute(
             sa.select(
-                models.DatabaseFeedback.rating, sa.func.count()
-            ).group_by(models.DatabaseFeedback.rating)
+                models.DatabaseFeedback.rating,
+                anonymity_case.label("anonymous"),
+                # pylint: disable=not-callable
+                sa.func.count(),
+            ).group_by(
+                models.DatabaseFeedback.rating,
+                anonymity_case,
+            )
         ).all()
     }
 
