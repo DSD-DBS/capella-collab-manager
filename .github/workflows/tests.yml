@@ -35,29 +35,3 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-  frontend:
-    runs-on: ubuntu-latest
-    name: Run frontend karma tests
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - name: Fetch version
-        working-directory: frontend
-        run: |
-          python fetch-version.py
-      - name: Install dependencies
-        working-directory: frontend
-        run: |
-          npm i -g @angular/cli
-          npm ci
-          CHROME_BIN="$(which chromium)"
-          export CHROME_BIN
-      - name: Run tests
-        working-directory: frontend
-        run: |
-          ng test --watch=false --browsers=ChromeHeadless

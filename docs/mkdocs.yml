@@ -119,7 +119,6 @@ nav:
           - Code Style: development/frontend/code-style.md
           - Responsive Design: development/frontend/responsive-design/mobile-view.md
           - Routes: development/frontend/routes.md
-          - Testing: development/frontend/testing.md
           - Customization: development/frontend/customize.md
           - Storybook: development/frontend/storybook.md
       - Kubernetes:
