@@ -1,0 +1,103 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: CC0-1.0
+
+name: 'OpenAPI Schema'
+
+on:
+  pull_request:
+    branches: ['**']
+    paths:
+      - 'backend/**'
+      - 'Makefile'
+      - '.github/workflows/openapi.yml'
+
+jobs:
+  generate-frontend-client:
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          cache: pip
+          cache-dependency-path: ./backend/pyproject.toml
+          python-version: '3.11'
+      - name: Install dependencies
+        working-directory: ./backend
+        run: python -m venv .venv && .venv/bin/pip install -e ".[dev]"
+      - name: Run openapi-generator
+        run: make openapi
+      - name: Compare against HEAD
+        id: git-diff
+        run: git add . && git diff --cached --exit-code
+      - name: Find existing comment on PR
+        uses: peter-evans/find-comment@v3
+        if: always() && steps.git-diff.outcome == 'failure'
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: The generated OpenAPI client is not up to date
+      - name: Post comment if client is outdated
+        uses: peter-evans/create-or-update-comment@v4
+        if: always() && steps.git-diff.outcome == 'failure'
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            The generated OpenAPI client is not up to date with the latest changes in the OpenAPI specification.
+            Please run `make openapi` locally and commit the changes.
+          edit-mode: replace
+  changelog:
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          cache: pip
+          cache-dependency-path: ./backend/pyproject.toml
+          python-version: '3.11'
+      - name: Install dependencies
+        working-directory: ./backend
+        run: python -m venv .venv && .venv/bin/pip install -e ".[dev]"
+      - name: Run openapi-generator for target
+        working-directory: ./backend
+        run: make openapi
+      - name: Move openapi schema file
+        run: mv /tmp/openapi.json /tmp/openapi2.json
+      - name: Checkout base
+        run: git checkout "${{ github.event.pull_request.base.sha }}"
+      - name: Run openapi-generator for base
+        working-directory: ./backend
+        run: make openapi
+      - name: Install oasdiff
+        run: go install github.com/tufin/oasdiff@latest
+      - name: Compare openapi schema files
+        id: oasdiff
+        run: |
+          {
+            echo 'changelog<<EOF'
+            docker run --rm -v /tmp:/tmp:ro tufin/oasdiff changelog \
+              --format markup \
+              /tmp/openapi.json /tmp/openapi2.json
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+      - name: Find existing comment on PR
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: API Changelog
+      - name: Post comment with changelog
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.oasdiff.outputs.changelog }}
+          edit-mode: replace
