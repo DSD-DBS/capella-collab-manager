@@ -7,7 +7,7 @@ import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab.settings.modelsources.git import core as git_core
+from capellacollab.settings.modelsources.git import core as instances_git_core
 from capellacollab.settings.modelsources.git import crud as git_crud
 from capellacollab.settings.modelsources.git import models as git_models
 
@@ -119,7 +119,7 @@ def test_fetch_revisions(
         f.set_result(ls_remote)
         return f
 
-    monkeypatch.setattr(git_core, "ls_remote", mock_ls_remote)
+    monkeypatch.setattr(instances_git_core, "ls_remote", mock_ls_remote)
 
     response = client.post(
         "/api/v1/settings/modelsources/git/revisions",

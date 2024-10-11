@@ -17,7 +17,6 @@ from capellacollab.settings.modelsources.t4c.instance.repositories import (
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as repo_interface,
 )
-from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
 from .. import models as sessions_models
@@ -34,22 +33,19 @@ class T4CConfigEnvironment(t.TypedDict):
 
 
 class T4CIntegration(interface.HookRegistration):
-    def configuration_hook(  # type: ignore
-        self,
-        db: orm.Session,
-        user: users_models.DatabaseUser,
-        tool_version: tools_models.DatabaseVersion,
-        session_type: sessions_models.SessionType,
-        **kwargs,
+    def configuration_hook(
+        self, request: interface.ConfigurationHookRequest
     ) -> interface.ConfigurationHookResult:
-        if session_type != sessions_models.SessionType.PERSISTENT:
+        user = request.user
+
+        if request.session_type != sessions_models.SessionType.PERSISTENT:
             # Skip non-persistent sessions, no T4C integration needed.
             return interface.ConfigurationHookResult()
 
         warnings: list[core_models.Message] = []
 
         t4c_repositories = repo_crud.get_user_t4c_repositories(
-            db, tool_version, user
+            request.db, request.tool_version, user
         )
 
         t4c_json = json.dumps(
@@ -91,7 +87,7 @@ class T4CIntegration(interface.HookRegistration):
                     password=environment["T4C_PASSWORD"],
                     is_admin=auth_injectables.RoleVerification(
                         required_role=users_models.Role.ADMIN, verify=False
-                    )(user.name, db),
+                    )(user.name, request.db),
                 )
             except requests.RequestException:
                 warnings.append(
@@ -116,30 +112,25 @@ class T4CIntegration(interface.HookRegistration):
             environment=environment, warnings=warnings
         )
 
-    def pre_session_termination_hook(  # type: ignore
-        self,
-        db: orm.Session,
-        session: sessions_models.DatabaseSession,
-        **kwargs,
+    def pre_session_termination_hook(
+        self, request: interface.PreSessionTerminationHookRequest
     ):
-        if session.type == sessions_models.SessionType.PERSISTENT:
-            self._revoke_session_tokens(db, session)
+        if request.session.type == sessions_models.SessionType.PERSISTENT:
+            self._revoke_session_tokens(request.db, request.session)
 
-    def session_connection_hook(  # type: ignore[override]
+    def session_connection_hook(
         self,
-        db_session: sessions_models.DatabaseSession,
-        user: users_models.DatabaseUser,
-        **kwargs,
+        request: interface.SessionConnectionHookRequest,
     ) -> interface.SessionConnectionHookResult:
-        if db_session.type != sessions_models.SessionType.PERSISTENT:
+        if request.db_session.type != sessions_models.SessionType.PERSISTENT:
             return interface.SessionConnectionHookResult()
 
-        if db_session.owner != user:
+        if request.db_session.owner != request.user:
             # The session is shared, don't provide the T4C token.
             return interface.SessionConnectionHookResult()
 
         return interface.SessionConnectionHookResult(
-            t4c_token=db_session.environment.get("T4C_PASSWORD")
+            t4c_token=request.db_session.environment.get("T4C_PASSWORD")
         )
 
     def _revoke_session_tokens(

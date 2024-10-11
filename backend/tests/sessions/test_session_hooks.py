@@ -18,7 +18,6 @@ from capellacollab.sessions import routes as sessions_routes
 from capellacollab.sessions import util as sessions_util
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.operators import k8s
-from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
@@ -45,52 +44,25 @@ class TestSessionHook(hooks_interface.HookRegistration):
     post_termination_hook_counter = 0
 
     def configuration_hook(
-        self,
-        db: orm.Session,
-        operator: operators.KubernetesOperator,
-        user: users_models.DatabaseUser,
-        tool: tools_models.DatabaseTool,
-        tool_version: tools_models.DatabaseVersion,
-        session_type: sessions_models.SessionType,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        provisioning: list[sessions_models.SessionProvisioningRequest],
-        session_id: str,
-        **kwargs,
+        self, request: hooks_interface.ConfigurationHookRequest
     ) -> hooks_interface.ConfigurationHookResult:
         self.configuration_hook_counter += 1
         return hooks_interface.ConfigurationHookResult()
 
     def post_session_creation_hook(
-        self,
-        session_id: str,
-        session: k8s.Session,
-        db_session: sessions_models.DatabaseSession,
-        operator: operators.KubernetesOperator,
-        user: users_models.DatabaseUser,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+        self, request: hooks_interface.PostSessionCreationHookRequest
     ) -> hooks_interface.PostSessionCreationHookResult:
         self.post_session_creation_hook_counter += 1
         return hooks_interface.PostSessionCreationHookResult()
 
     def session_connection_hook(
-        self,
-        db: orm.Session,
-        db_session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        logger: logging.LoggerAdapter,
-        **kwargs,
+        self, request: hooks_interface.SessionConnectionHookRequest
     ) -> hooks_interface.SessionConnectionHookResult:
         self.session_connection_hook_counter += 1
         return hooks_interface.SessionConnectionHookResult()
 
     def pre_session_termination_hook(
-        self,
-        db: orm.Session,
-        operator: operators.KubernetesOperator,
-        session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+        self, request: hooks_interface.PreSessionTerminationHookRequest
     ) -> hooks_interface.PreSessionTerminationHookResult:
         self.post_termination_hook_counter += 1
         return hooks_interface.PreSessionTerminationHookResult()
