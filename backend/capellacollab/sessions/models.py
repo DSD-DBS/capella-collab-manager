@@ -21,6 +21,9 @@ from capellacollab.users import models as users_models
 from . import injection
 
 if t.TYPE_CHECKING:
+    from capellacollab.projects.toolmodels.provisioning.models import (
+        DatabaseModelProvisioning,
+    )
     from capellacollab.tools.models import DatabaseTool, DatabaseVersion
     from capellacollab.users.models import DatabaseUser
 
@@ -49,7 +52,7 @@ class SessionProvisioningRequest(core_pydantic.BaseModel):
     project_slug: str
     toolmodel_slug: str = pydantic.Field(alias="model_slug")
     git_model_id: int
-    revision: str
+    revision: str | None = None
     deep_clone: bool
 
 
@@ -157,6 +160,18 @@ class DatabaseSession(database.Base):
     version: orm.Mapped[DatabaseVersion] = orm.relationship()
 
     connection_method_id: orm.Mapped[str]
+
+    provisioning_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("model_provisioning.id"),
+        init=False,
+    )
+    provisioning: orm.Mapped[DatabaseModelProvisioning | None] = (
+        orm.relationship(
+            back_populates="session",
+            foreign_keys=[provisioning_id],
+            default=None,
+        )
+    )
 
     environment: orm.Mapped[dict[str, str]] = orm.mapped_column(
         nullable=False, default_factory=dict
