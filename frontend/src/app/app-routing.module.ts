@@ -11,6 +11,7 @@ import { PipelineRunWrapperComponent } from 'src/app/projects/models/backup-sett
 import { ViewLogsDialogComponent } from 'src/app/projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
 import { PipelineWrapperComponent } from 'src/app/projects/models/backup-settings/wrapper/pipeline-wrapper/pipeline-wrapper.component';
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
+import { CreateProjectToolsComponent } from 'src/app/projects/project-detail/create-project-tools/create-project-tools.component';
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { SessionViewerComponent } from 'src/app/sessions/session/session-viewer.component';
 import { ConfigurationSettingsComponent } from 'src/app/settings/core/configuration-settings/configuration-settings.component';
@@ -106,6 +107,16 @@ export const routes: Routes = [
                     `/project/${data.project?.slug}/metadata`,
                 },
                 component: EditProjectMetadataComponent,
+              },
+              {
+                path: 'tools',
+                children: [
+                  {
+                    path: 'link',
+                    data: { breadcrumb: 'Link Tool' },
+                    component: CreateProjectToolsComponent,
+                  },
+                ],
               },
               {
                 path: 'models',

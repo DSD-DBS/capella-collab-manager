@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import asyncio
 import json
 import logging
 import random
@@ -207,3 +208,24 @@ def is_session_shared_with_user(
     session: models.DatabaseSession, user: users_models.DatabaseUser
 ) -> bool:
     return user in [shared.user for shared in session.shared_with]
+
+
+async def schedule_configuration_hooks(
+    request: hooks_interface.ConfigurationHookRequest,
+    tool: tools_models.DatabaseTool,
+) -> list[hooks_interface.ConfigurationHookResult]:
+    """Schedule sync and async configuration hooks
+
+    Schedule async hooks, then schedule the sync hooks
+    and finally collect the async hook results
+    """
+
+    activated_hooks = hooks.get_activated_integration_hooks(tool)
+
+    async_hooks = [
+        hook.async_configuration_hook(request) for hook in activated_hooks
+    ]
+
+    return [
+        hook.configuration_hook(request) for hook in activated_hooks
+    ] + await asyncio.gather(*async_hooks)

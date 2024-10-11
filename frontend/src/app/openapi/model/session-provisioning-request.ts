@@ -15,7 +15,7 @@ export interface SessionProvisioningRequest {
     project_slug: string;
     model_slug: string;
     git_model_id: number;
-    revision: string;
+    revision?: string | null;
     deep_clone: boolean;
 }
 

@@ -17,7 +17,9 @@ from capellacollab.core import models as core_models
 from capellacollab.core import responses
 from capellacollab.core.authentication import exceptions as auth_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.sessions import hooks
+from capellacollab.projects import injectables as projects_injectables
+from capellacollab.projects.users import models as projects_users_models
+from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions.files import routes as files_routes
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.tools import exceptions as tools_exceptions
@@ -83,7 +85,7 @@ users_router = fastapi.APIRouter(
         ],
     ),
 )
-def request_session(
+async def request_session(
     body: models.PostSessionRequest,
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
@@ -96,26 +98,30 @@ def request_session(
         "Starting %s session for user %s", body.session_type, user.name
     )
 
-    # Provisioning will be supported in the future:
-    # https://github.com/DSD-DBS/capella-collab-manager/issues/1004
-    if (
-        body.session_type == models.SessionType.PERSISTENT
-        and body.provisioning
-    ):
-        raise exceptions.ProvisioningUnsupportedError()
-
     tool = tools_injectables.get_existing_tool(body.tool_id, db)
     version = tools_injectables.get_existing_tool_version(
         tool.id, body.version_id, db
     )
 
-    connection_method: tools_models.ToolSessionConnectionMethod = (
-        util.get_connection_method(tool, body.connection_method_id)
-    )
+    if body.connection_method_id:
+        connection_method: tools_models.ToolSessionConnectionMethod = (
+            util.get_connection_method(tool, body.connection_method_id)
+        )
+    else:
+        connection_method = tool.config.connection.methods[0]
 
     session_id = util.generate_id()
 
     util.raise_if_conflicting_sessions(tool, version, body.session_type, user)
+
+    project_scope = None
+    if body.project_slug:
+        auth_injectables.ProjectRoleVerification(
+            required_role=projects_users_models.ProjectUserRole.USER
+        )(body.project_slug, user.name, db)
+        project_scope = projects_injectables.get_existing_project(
+            body.project_slug, db
+        )
 
     environment = t.cast(
         dict[str, str],
@@ -136,11 +142,12 @@ def request_session(
         connection_method=connection_method,
         provisioning=body.provisioning,
         session_id=session_id,
+        project_scope=project_scope,
     )
 
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook_result = hook.configuration_hook(hook_request)
-
+    for hook_result in await util.schedule_configuration_hooks(
+        hook_request, tool
+    ):
         environment |= hook_result.get("environment", {})
         init_environment |= hook_result.get("init_environment", {})
         volumes += hook_result.get("volumes", [])
@@ -227,8 +234,7 @@ def request_session(
     )
 
     hook_config: dict[str, str] = {}
-
-    for hook in hooks.get_activated_integration_hooks(tool):
+    for hook in sessions_hooks.get_activated_integration_hooks(tool):
         result = hook.post_session_creation_hook(
             hooks_interface.PostSessionCreationHookRequest(
                 session_id=session_id,
@@ -238,7 +244,7 @@ def request_session(
                 db_session=db_session,
                 connection_method=connection_method,
                 db=db,
-            ),
+            )
         )
 
         hook_config |= result.get("config", {})
@@ -374,7 +380,7 @@ def get_session_connection_information(
     redirect_url = None
     t4c_token = None
 
-    for hook in hooks.get_activated_integration_hooks(session.tool):
+    for hook in sessions_hooks.get_activated_integration_hooks(session.tool):
         hook_result = hook.session_connection_hook(
             hooks_interface.SessionConnectionHookRequest(
                 db=db,

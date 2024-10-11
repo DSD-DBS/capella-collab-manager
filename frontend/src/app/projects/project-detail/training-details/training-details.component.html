@@ -1,0 +1,146 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="w-full">
+  <div class="mb-2 flex h-9 items-center">
+    <h2 class="text-xl font-medium">Training Details</h2>
+    @if (
+      projectUserService.verifyRole("manager") &&
+      (modelService.models$ | async)?.length === 0
+    ) {
+      <a
+        mat-stroked-button
+        class="!ml-4"
+        [routerLink]="
+          (projectService.project$ | async)?.is_archived
+            ? null
+            : [
+                '/project',
+                (projectService.project$ | async)?.slug,
+                'models',
+                'create',
+              ]
+        "
+        [matTooltip]="
+          (projectService.project$ | async)?.is_archived
+            ? 'You cannot add a model to an archived project'
+            : 'Add training details'
+        "
+        [disabled]="(projectService.project$ | async)?.is_archived"
+        ><div class="flex items-center">
+          <mat-icon id="add-icon">add</mat-icon>
+        </div>
+      </a>
+    }
+  </div>
+  <div class="flex flex-col gap-2">
+    @if ((modelService.models$ | async) === undefined) {
+      <ngx-skeleton-loader
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '544px',
+          width: '100%',
+          margin: '0px',
+          padding: '0px',
+          border: '1px solid white',
+        }"
+      ></ngx-skeleton-loader>
+    } @else {
+      @for (model of modelService.models$ | async; track model.id) {
+        <div class="collab-card flex w-full select-none flex-col !p-0">
+          <div class="m-3 flex gap-2">
+            <div class="w-fit rounded border bg-blue-100 p-2 text-sm">
+              {{ model.tool.name }} ({{ model.version?.name }})
+            </div>
+            @if (getPrimaryGitModel(model); as gitModel) {
+              <div class="w-fit rounded border bg-blue-100 p-2 text-sm">
+                Revision {{ gitModel.revision }}
+              </div>
+            }
+          </div>
+
+          <div class="flex grow flex-col justify-between">
+            <div class="mx-2.5 mt-2.5 h-card select-text overflow-y-auto">
+              @if (readmes.get(model.slug); as readme) {
+                @if (readme.readme) {
+                  <markdown
+                    class="[&_a]:text-blue-900 [&_a]:!underline [&_h1]:text-2xl [&_h2]:text-lg [&_ol]:ml-5
+                      [&_ol]:list-decimal [&_pre]:my-1 [&_pre]:rounded [&_pre]:border [&_pre]:bg-white
+                      [&_pre]:p-2 [&_ul]:ml-5 [&_ul]:list-disc"
+                    [data]="readme.readme"
+                  ></markdown>
+                } @else if (readme.errorCode) {
+                  <div class="flex items-center gap-3 p-2">
+                    @if (readme.errorCode === "FILE_NOT_FOUND") {
+                      <mat-icon class="basis-[60px] scale-[2] text-center"
+                        >info</mat-icon
+                      >
+                      <span class="basis-[calc(100%-60px)] text-left">
+                        <b>README not set up.</b><br />
+                        To set up a description for this training, create a
+                        README.md file in the root of the linked repository.
+                      </span>
+                    } @else {
+                      <mat-icon class="basis-[60px] scale-[2] text-center"
+                        >error</mat-icon
+                      >
+                      <span class="basis-[calc(100%-60px)] text-left"
+                        ><b>Error loading the README.</b> <br />{{
+                          readme.errorMessage ||
+                            "Please ask your project administrator or global administrator for help."
+                        }}</span
+                      >
+                    }
+                  </div>
+                }
+              }
+            </div>
+            <div class="m-2.5">
+              @if (projectUserService.verifyRole("manager")) {
+                <a
+                  mat-mini-fab
+                  color="primary"
+                  matTooltip="Configure training"
+                  class="!m-1.5"
+                  [routerLink]="['model', model.slug, 'metadata']"
+                >
+                  <mat-icon>settings</mat-icon>
+                </a>
+                <a
+                  mat-mini-fab
+                  color="primary"
+                  matTooltip="Configure Git repository"
+                  class="!m-1.5"
+                  [routerLink]="['model', model.slug, 'modelsources']"
+                >
+                  <mat-icon>link</mat-icon>
+                </a>
+              }
+              @if (model.git_models) {
+                <a
+                  mat-mini-fab
+                  color="primary"
+                  matTooltip="Open Git repository"
+                  class="!m-1.5"
+                  target="_blank"
+                  rel="noopener"
+                  [disabled]="!getPrimaryGitModelURL(model)"
+                  [href]="getPrimaryGitModelURL(model)"
+                >
+                  <mat-icon>open_in_new</mat-icon>
+                </a>
+              }
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="collab-card flex w-full select-none flex-col">
+          The training is not configured yet.
+        </div>
+      }
+    }
+  </div>
+</div>

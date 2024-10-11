@@ -17,5 +17,9 @@ export interface ToolModelProvisioningInput {
      */
     directory?: string;
     max_number_of_models?: number | null;
+    /**
+     * Specifies if a tool requires provisioning. If enabled and a session without provisioning is requested, it will be declined.
+     */
+    required?: boolean;
 }
 

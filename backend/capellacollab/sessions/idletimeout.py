@@ -18,6 +18,7 @@ log = logging.getLogger(__name__)
 
 
 def terminate_idle_session():
+    log.debug("Starting to terminate idle sessions...")
     url = config.prometheus.url
     url += "/".join(("api", "v1", 'query?query=ALERTS{alertstate="firing"}'))
     response = requests.get(
@@ -42,6 +43,7 @@ def terminate_idle_session():
                         session_id,
                     )
                     operators.get_operator().kill_session(session_id)
+    log.debug("Finished termination of idle sessions.")
 
 
 def terminate_idle_sessions_in_background(interval=60):

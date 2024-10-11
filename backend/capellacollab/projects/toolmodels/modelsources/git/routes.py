@@ -14,7 +14,7 @@ from capellacollab.projects.toolmodels import (
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
 from capellacollab.projects.users import models as projects_users_models
-from capellacollab.settings.modelsources.git import core as git_core
+from capellacollab.settings.modelsources.git import core as instances_git_core
 from capellacollab.settings.modelsources.git import models as git_models
 from capellacollab.settings.modelsources.git import util as git_util
 
@@ -69,7 +69,7 @@ async def get_revisions_of_primary_git_model(
         injectables.get_existing_primary_git_model
     ),
 ) -> git_models.GetRevisionsResponseModel:
-    return await git_core.get_remote_refs(
+    return await instances_git_core.get_remote_refs(
         primary_git_model.path,
         primary_git_model.username,
         primary_git_model.password,
@@ -94,7 +94,7 @@ async def get_revisions_with_model_credentials(
         injectables.get_existing_git_model
     ),
 ):
-    return await git_core.get_remote_refs(
+    return await instances_git_core.get_remote_refs(
         url, git_model.username, git_model.password
     )
 

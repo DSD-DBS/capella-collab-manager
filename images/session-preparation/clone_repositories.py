@@ -10,6 +10,8 @@ import dataclasses
 import json
 import logging
 import os
+import pathlib
+import shutil
 import subprocess
 import typing as t
 
@@ -37,21 +39,38 @@ class _ProjectDict(t.TypedDict):
     path: str
 
 
-def fetch_projects_from_environment() -> list[_ProjectDict]:
+def _fetch_projects_from_environment() -> list[_ProjectDict]:
     return json.loads(environment.GIT_REPOS_JSON)
 
 
-def clone_git_repository(project: _ProjectDict) -> None:
+def _backup_directory_if_exists(path: pathlib.Path) -> None:
+    if not path.exists():
+        return
+
+    log.info("Backing up existing directory %s", path)
+    backup_path = path.with_name(f"{path.name}.bak")
+
+    if backup_path.exists():
+        log.info("Removing existing backup directory %s", backup_path)
+        shutil.rmtree(path)
+        log.info("Removed existing backup directory %s", backup_path)
+
+    path.rename(backup_path)
+    log.info("Backed up existing directory %s to %s", path, backup_path)
+
+
+def _clone_git_repository(project: _ProjectDict) -> None:
     log.info("Cloning git repository with url %s", project["url"])
 
     flags = []
 
-    if revision := project["revision"]:
-        flags += ["--single-branch", "--branch", revision]
-
     git_depth = project["depth"]
+    revision = project["revision"]
+
     if git_depth != 0:
         flags += ["--depth", str(git_depth)]
+        if revision:
+            flags += ["--single-branch", "--branch", revision]
 
     try:
         subprocess.run(
@@ -63,6 +82,13 @@ def clone_git_repository(project: _ProjectDict) -> None:
                 "GIT_ASKPASS": "/etc/git_askpass.py",
             },
         )
+        if git_depth == 0 and revision:
+            subprocess.run(
+                ["git", "-c", "advice.detachedHead=false", "checkout", revision],
+                check=True,
+                cwd=project["path"],
+            )
+
     except subprocess.CalledProcessError as e:
         log.info("---FAILURE_PREPARE_WORKSPACE---")
         log.error(
@@ -71,6 +97,7 @@ def clone_git_repository(project: _ProjectDict) -> None:
             e.returncode,
         )
         raise
+
     log.info(
         "Successfully cloned Git repository with url '%s' to '%s'",
         project["url"],
@@ -81,9 +108,10 @@ def clone_git_repository(project: _ProjectDict) -> None:
 def main():
     log.info("Starting preparation of session")
     log.info("---START_PREPARE_WORKSPACE---")
-    projects = fetch_projects_from_environment()
+    projects = _fetch_projects_from_environment()
     for project in projects:
-        clone_git_repository(project)
+        _backup_directory_if_exists(pathlib.Path(project["path"]))
+        _clone_git_repository(project)
     log.info("Finished preparation of session")
     log.info("---FINISH_PREPARE_WORKSPACE---")
 

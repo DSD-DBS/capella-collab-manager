@@ -3,49 +3,48 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-You can choose two different types of workspaces:
+# Session Types
 
-### Persistent Capella/Papyrus Sessions
+The Capella Collaboration Manager offers different Session Types:
 
-Persistent Sessions allows you to use personal workspace within Capella. Your
-personal workspace will be stored and is part of our backup routines. However,
-we still advise not to save any important information there. By default, we
+## Persistent Sessions
+
+Persistent Sessions will store your work in the `/workspace` folder. Persistent
+Sessions allows you to use personal workspace within Capella. By default, we
 will request 20GB of storage for your personal workspace.
 
 If your project uses the T4C-workflow, we will suggest all visible models in
 the T4C connection dialog.
 
-???+ tip
-
-    Starting the first time, your personal workspace will be empty.
-    Please close the `Welcome`-dialog first:
-    ![Close Welcome dialog](screenshots/close_welcome_dialog.png)
-
-!!! info
-
-    Only work stored in the `/workspace` folder (default workspace folder) will
-    be persistent.
-
-### Persistent Jupyter Notebooks
-
-Jupyter notebooks allow you to programmatically explore (capella) models.
-You'll use the same shared workspace as with persistent Capella/Papyrus
-sessions. The same restrictions as with Capella sessions apply here.
-
-!!! info
-
-    Jupyter notebooks use the same `/workspace` folder as is used with
-    Capella sessions.
-
-### Readonly Capella/Papyrus Sessions
-
-Readonly Sessions allow you to read information from models without consuming a
-license.
-
 !!! warning
 
-    Read-only sessions work only with linked git models. Please ask your project
-    lead if your model has read-only support.
+    Only work stored in the `/workspace` folder (and subdirectories) will
+    be persistent. If you store your work in another folder, it will be lost
+    when the session is closed.
+
+### Provisioned Sessions
+
+Provisioned Sessions are a special type of Persistent Sessions. They are
+available in projects and can be used to initialize a workspace with content
+from Git repositories. After the initial provisioning, changes will be saved.
+You can reset the state at any time to the latest state of the Git repository.
+
+Provisioned sessions are a good alternative to persistent sessions if you only
+have read-only access in a project but want to make changes on the model that
+you want to integrate later.
+
+The provisioned workspace will saved in your personal workspace in the folder
+`/workspace/{project_slug}/tool-{tool_id}`.
+
+## Read-Only Sessions
+
+Read-Only Sessions allow you to read information from models without the risk
+of changing the model. The can be useful if you want to review a model or don't
+have permissions to write to the model.
+
+!!! info
+
+    Read-only sessions only work for models with linked Git repositories.
 
 !!! danger
 

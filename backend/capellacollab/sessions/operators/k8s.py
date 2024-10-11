@@ -19,6 +19,7 @@ import kubernetes
 import kubernetes.config
 import kubernetes.stream.stream
 import prometheus_client
+import typing_extensions as te  # codespell:ignore te
 from kubernetes import client
 from kubernetes.client import exceptions
 
@@ -51,7 +52,7 @@ if _pod_security_context := cfg.cluster.pod_security_context:
     )
 
 
-class Session(t.TypedDict):
+class Session(te.TypedDict):  # codespell:ignore te
     id: str
     port: int
     created_at: datetime.datetime

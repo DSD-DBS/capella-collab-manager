@@ -37,6 +37,7 @@ if t.TYPE_CHECKING:
         DatabaseVersion,
     )
 
+    from .provisioning.models import DatabaseModelProvisioning
     from .restrictions.models import DatabaseToolModelRestrictions
 
 
@@ -124,6 +125,14 @@ class DatabaseToolModel(database.Base):
         )
     )
 
+    provisioning: orm.Mapped[list[DatabaseModelProvisioning]] = (
+        orm.relationship(
+            back_populates="tool_model",
+            cascade="delete",
+            default_factory=list,
+        )
+    )
+
 
 class ToolModel(core_pydantic.BaseModel):
     id: int
@@ -144,3 +153,10 @@ class SimpleToolModel(core_pydantic.BaseModel):
     slug: str
     name: str
     project: projects_models.SimpleProject
+
+
+class SimpleToolModelWithoutProject(core_pydantic.BaseModel):
+    id: int
+    slug: str
+    name: str
+    git_models: list[GitModel] | None = None

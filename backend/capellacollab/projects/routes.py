@@ -18,6 +18,7 @@ from capellacollab.projects.toolmodels import routes as toolmodels_routes
 from capellacollab.projects.toolmodels.backups import core as backups_core
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
 from capellacollab.projects.toolmodels.backups import models as backups_models
+from capellacollab.projects.tools import routes as projects_tools_routes
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.projects.users import routes as projects_users_routes
@@ -205,4 +206,9 @@ router.include_router(
     projects_events_routes.router,
     prefix="/{project_slug}/events",
     tags=["Projects - Events"],
+)
+router.include_router(
+    projects_tools_routes.router,
+    prefix="/{project_slug}/tools",
+    tags=["Projects - Tools"],
 )

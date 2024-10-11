@@ -167,6 +167,13 @@ variables can be used by the tool:
             The tool has to set the `Content-Security-Policy` header to `frame-ancestors self {CAPELLACOLLAB_ORIGIN_HOST}`. Otherwise, the session viewer can't be used with the tool!
         </td>
     </tr>
+    <tr>
+        <td>`WORKSPACE_DIR`</td>
+        <td>`/workspace`</td>
+        <td>
+            The directory of the (persistent) workspace the application should work with.
+        </td>
+    </tr>
 
 </table>
 

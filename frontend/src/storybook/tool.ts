@@ -52,6 +52,12 @@ export const mockCapellaToolVersion: Readonly<ToolVersion> = {
   config: defaultToolVersionConfig,
 };
 
+export const mockOtherToolVersion: Readonly<ToolVersion> = {
+  id: 2,
+  name: 'Latest',
+  config: defaultToolVersionConfig,
+};
+
 export const mockToolNature: Readonly<ToolNature> = {
   id: 1,
   name: 'Project',
@@ -64,6 +70,7 @@ const defaultToolConfig: ToolSessionConfigurationOutput = {
   provisioning: {
     directory: '/tmp',
     max_number_of_models: null,
+    required: false,
   },
   persistent_workspaces: {
     mounting_enabled: true,
@@ -100,6 +107,17 @@ export const mockCapellaTool: Readonly<Tool> = {
     jupyter: false,
   },
   config: defaultToolConfig,
+};
+
+export const mockTrainingControllerTool: Readonly<Tool> = {
+  id: 2,
+  name: 'Training Controller',
+  integrations: {
+    t4c: false,
+    pure_variants: false,
+    jupyter: false,
+  },
+  config: { ...defaultToolConfig, supported_project_types: ['training'] },
 };
 
 export const mockToolVersionWithTool: Readonly<ToolVersionWithTool> = {

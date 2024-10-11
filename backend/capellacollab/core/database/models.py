@@ -13,7 +13,9 @@ import capellacollab.projects.toolmodels.backups.runs.models
 import capellacollab.projects.toolmodels.models
 import capellacollab.projects.toolmodels.modelsources.git.models
 import capellacollab.projects.toolmodels.modelsources.t4c.models
+import capellacollab.projects.toolmodels.provisioning.models
 import capellacollab.projects.toolmodels.restrictions.models
+import capellacollab.projects.tools.models
 import capellacollab.projects.users.models
 import capellacollab.sessions.models
 import capellacollab.settings.configuration.models

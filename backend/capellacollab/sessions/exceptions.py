@@ -115,6 +115,22 @@ class ToolAndModelMismatchError(core_exceptions.BaseError):
         )
 
 
+class ProjectAndModelMismatchError(core_exceptions.BaseError):
+    def __init__(
+        self,
+        project_slug: str,
+        model_name: str,
+    ):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            title="Mismatch between project scope and provisioning",
+            reason=(
+                f"The model '{model_name}' doesn't belong to the project '{project_slug}'."
+            ),
+            err_code="MODEL_PROJECT_MISMATCH",
+        )
+
+
 class InvalidConnectionMethodIdentifierError(core_exceptions.BaseError):
     def __init__(
         self,
@@ -165,4 +181,24 @@ class ProvisioningUnsupportedError(core_exceptions.BaseError):
             title="Provisioning not supported",
             reason="Provisioning is not supported for persistent sessions.",
             err_code="PROVISIONING_UNSUPPORTED",
+        )
+
+
+class ProvisioningRequiredError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Provisioning is required for this tool",
+            reason="Provisioning is required for persistent sessions of the selected tool.",
+            err_code="PROVISIONING_REQUIRED",
+        )
+
+
+class ProjectScopeRequiredError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="A project scope is required.",
+            reason="Persistent provisioning requires a project scope.",
+            err_code="PROJECT_SCOPE_REQUIRED",
         )

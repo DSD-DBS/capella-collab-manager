@@ -6,6 +6,7 @@ import typing as t
 
 from sqlalchemy import orm
 
+from capellacollab.core import models as core_models
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
@@ -19,9 +20,19 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
+from capellacollab.projects.toolmodels.provisioning import (
+    crud as provisioning_crud,
+)
+from capellacollab.projects.toolmodels.provisioning import (
+    models as provisioning_models,
+)
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import models as sessions_models
+from capellacollab.settings.modelsources.git import core as instances_git_core
+from capellacollab.settings.modelsources.git import (
+    exceptions as instances_git_exceptions,
+)
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
@@ -40,19 +51,18 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     """Takes care of the provisioning of user workspaces."""
 
     @classmethod
-    def configuration_hook(
-        cls, request: interface.ConfigurationHookRequest
+    async def async_configuration_hook(
+        cls,
+        request: interface.ConfigurationHookRequest,
     ) -> interface.ConfigurationHookResult:
-        max_number_of_models = (
-            request.tool.config.provisioning.max_number_of_models
-        )
-        if (
-            max_number_of_models
-            and len(request.provisioning) > max_number_of_models
-        ):
-            raise sessions_exceptions.TooManyModelsRequestedToProvisionError(
-                max_number_of_models
+        if len(request.provisioning) == 0:
+            if request.tool.config.provisioning.required:
+                raise sessions_exceptions.ProvisioningRequiredError()
+            return interface.ConfigurationHookResult(
+                environment={"CAPELLACOLLAB_SESSION_PROVISIONING": []}
             )
+
+        cls._verify_max_number_of_models(request)
 
         resolved_entries = cls._resolve_provisioning_request(
             request.db, request.provisioning
@@ -64,20 +74,132 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             request.db, request.user, resolved_entries
         )
 
-        init_environment = {
-            "CAPELLACOLLAB_PROVISIONING": cls._get_git_repos_json(
-                resolved_entries, include_credentials=True
+        init_environment: dict[str, str] = {}
+        environment: dict[str, str] = {}
+        warnings: list[core_models.Message] = []
+        if request.session_type == sessions_models.SessionType.PERSISTENT:
+            await cls._persistent_provisioning(
+                request,
+                resolved_entries,
+                init_environment,
+                environment,
+                warnings,
             )
-        }
-
-        environment = {
-            "CAPELLACOLLAB_SESSION_PROVISIONING": cls._get_git_repos_json(
-                resolved_entries, include_credentials=False
+        else:
+            cls._read_only_provisioning(
+                request, resolved_entries, init_environment, environment
             )
-        }
 
         return interface.ConfigurationHookResult(
-            init_environment=init_environment, environment=environment
+            init_environment=init_environment,
+            environment=environment,
+            warnings=warnings,
+        )
+
+    @classmethod
+    async def _persistent_provisioning(
+        cls,
+        request: interface.ConfigurationHookRequest,
+        resolved_entries: list[ResolvedSessionProvisioning],
+        init_environment: dict[str, t.Any],
+        environment: dict[str, t.Any],
+        warnings: list[core_models.Message],
+    ):
+        """Provisioning for persistent sessions"""
+
+        if not request.project_scope:
+            raise sessions_exceptions.ProjectScopeRequiredError()
+
+        cls._verify_matching_project_and_model(
+            request.project_scope, resolved_entries
+        )
+
+        init_provisioning: list[dict[str, str | int]] = []
+        session_provisioning: list[dict[str, str | int]] = []
+
+        for resolved_entry in resolved_entries:
+            existing_provisioning = provisioning_crud.get_model_provisioning(
+                request.db, resolved_entry["model"], request.user
+            )
+
+            entry = resolved_entry["entry"]
+            git_model = resolved_entry["git_model"]
+
+            if existing_provisioning:
+                entry.revision = existing_provisioning.commit_hash
+            else:
+                provisioning = await cls._create_provisioning_record(
+                    request.db,
+                    resolved_entry,
+                    request.user,
+                )
+
+                # Set revision to the actual commit hash
+                entry.revision = provisioning.commit_hash
+
+            if not entry.deep_clone:
+                warnings.append(
+                    core_models.Message(
+                        err_code="DEEP_CLONE_REQUIRED",
+                        title="Deep clone required.",
+                        reason=(
+                            "Deep clone is required for persistent provisioning."
+                            " The provisioning will continue with deep clone."
+                        ),
+                    )
+                )
+                entry.deep_clone = True
+
+            if not existing_provisioning:
+                init_provisioning.append(
+                    cls._git_model_as_json(
+                        git_model,
+                        entry.revision or git_model.revision,
+                        entry.deep_clone,
+                        request.session_type,
+                        include_credentials=True,
+                    )
+                )
+
+            session_provisioning.append(
+                cls._git_model_as_json(
+                    git_model,
+                    entry.revision or git_model.revision,
+                    entry.deep_clone,
+                    request.session_type,
+                    include_credentials=False,
+                )
+            )
+
+        init_environment["CAPELLACOLLAB_PROVISIONING"] = init_provisioning
+        environment["CAPELLACOLLAB_SESSION_PROVISIONING"] = (
+            session_provisioning
+        )
+
+    @classmethod
+    def _read_only_provisioning(
+        cls,
+        request: interface.ConfigurationHookRequest,
+        resolved_entries: list[ResolvedSessionProvisioning],
+        init_environment: dict[str, t.Any],
+        environment: dict[str, t.Any],
+    ):
+        """Provisioning of read-only sessions"""
+
+        init_environment["CAPELLACOLLAB_PROVISIONING"] = (
+            cls._get_git_repos_json(
+                resolved_entries,
+                request.session_type,
+                include_credentials=True,
+            )
+        )
+
+        environment["CAPELLACOLLAB_SESSION_PROVISIONING"] = (
+            cls._get_git_repos_json(
+                resolved_entries,
+                request.session_type,
+                include_credentials=False,
+            )
         )
 
     @classmethod
@@ -108,6 +230,21 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         return resolved_entries
 
     @classmethod
+    def _verify_max_number_of_models(
+        cls, request: interface.ConfigurationHookRequest
+    ):
+        max_number_of_models = (
+            request.tool.config.provisioning.max_number_of_models
+        )
+        if (
+            max_number_of_models
+            and len(request.provisioning) > max_number_of_models
+        ):
+            raise sessions_exceptions.TooManyModelsRequestedToProvisionError(
+                max_number_of_models
+            )
+
+    @classmethod
     def _verify_matching_tool_version_and_model(
         cls,
         db: orm.Session,
@@ -124,6 +261,19 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
                 raise sessions_exceptions.ToolAndModelMismatchError(
                     tool_name=version.tool.name,
                     version_name=version.name,
+                    model_name=entry["model"].name,
+                )
+
+    @classmethod
+    def _verify_matching_project_and_model(
+        cls,
+        project: projects_models.DatabaseProject,
+        resolved_entries: list[ResolvedSessionProvisioning],
+    ):
+        for entry in resolved_entries:
+            if entry["project"] != project:
+                raise sessions_exceptions.ProjectAndModelMismatchError(
+                    project_slug=project.slug,
                     model_name=entry["model"].name,
                 )
 
@@ -146,14 +296,16 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     def _get_git_repos_json(
         cls,
         resolved_entries: list[ResolvedSessionProvisioning],
+        session_type: sessions_models.SessionType,
         include_credentials: bool = False,
-    ):
+    ) -> list[dict[str, str | int]]:
         """Get the git repos as a JSON-serializable list"""
         return [
             cls._git_model_as_json(
                 entry["git_model"],
-                entry["entry"].revision,
+                entry["entry"].revision or entry["git_model"].revision,
                 entry["entry"].deep_clone,
+                session_type,
                 include_credentials,
             )
             for entry in resolved_entries
@@ -165,6 +317,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         git_model: git_models.DatabaseGitModel,
         revision: str,
         deep_clone: bool,
+        session_type: sessions_models.SessionType,
         include_credentials: bool,
     ) -> dict[str, str | int]:
         """Convert a DatabaseGitModel to a JSON-serializable dictionary."""
@@ -181,6 +334,8 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             "path": str(
                 pathlib.PurePosixPath(
                     toolmodel.tool.config.provisioning.directory
+                    if session_type == sessions_models.SessionType.READONLY
+                    else "/workspace"
                 )
                 / toolmodel.project.slug
                 / toolmodel.slug
@@ -190,3 +345,39 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             git_dict["username"] = git_model.username
             git_dict["password"] = git_model.password
         return git_dict
+
+    @classmethod
+    async def _determine_commit_hash(
+        cls, revision: str | None, git_model: git_models.DatabaseGitModel
+    ) -> tuple[str, str]:
+        revision = revision or git_model.revision
+        for hash, rev in await instances_git_core.ls_remote(
+            url=git_model.path,
+            username=git_model.username,
+            password=git_model.password,
+        ):
+            rev = rev.removeprefix("refs/heads/").removeprefix("refs/tags/")
+            if rev == revision:
+                return revision, hash
+
+        raise instances_git_exceptions.RevisionNotFoundError(revision)
+
+    @classmethod
+    async def _create_provisioning_record(
+        cls,
+        db: orm.Session,
+        resolved_entry: ResolvedSessionProvisioning,
+        user: users_models.DatabaseUser,
+    ) -> provisioning_models.DatabaseModelProvisioning:
+        rev, commit_hash = await cls._determine_commit_hash(
+            resolved_entry["entry"].revision, resolved_entry["git_model"]
+        )
+        return provisioning_crud.create_model_provisioning(
+            db,
+            provisioning_models.DatabaseModelProvisioning(
+                user=user,
+                tool_model=resolved_entry["model"],
+                revision=rev,
+                commit_hash=commit_hash,
+            ),
+        )

@@ -39,6 +39,7 @@ class MockOperator:
 
 class TestSessionHook(hooks_interface.HookRegistration):
     configuration_hook_counter = 0
+    async_configuration_hook_counter = 0
     post_session_creation_hook_counter = 0
     session_connection_hook_counter = 0
     post_termination_hook_counter = 0
@@ -47,6 +48,12 @@ class TestSessionHook(hooks_interface.HookRegistration):
         self, request: hooks_interface.ConfigurationHookRequest
     ) -> hooks_interface.ConfigurationHookResult:
         self.configuration_hook_counter += 1
+        return hooks_interface.ConfigurationHookResult()
+
+    async def async_configuration_hook(
+        self, request: hooks_interface.ConfigurationHookRequest
+    ) -> hooks_interface.ConfigurationHookResult:
+        self.async_configuration_hook_counter += 1
         return hooks_interface.ConfigurationHookResult()
 
     def post_session_creation_hook(
@@ -94,8 +101,9 @@ def fixture_mockoperator() -> t.Generator[MockOperator, None, None]:
     del __main__.app.dependency_overrides[operators.get_operator]
 
 
+@pytest.mark.asyncio
 @pytest.mark.usefixtures("mock_session_injection", "tool_version")
-def test_hook_calls_during_session_request(
+async def test_hook_calls_during_session_request(
     monkeypatch: pytest.MonkeyPatch,
     db: orm.Session,
     user: users_models.DatabaseUser,
@@ -117,7 +125,7 @@ def test_hook_calls_during_session_request(
         lambda *args, **kwargs: "placeholder",
     )
 
-    sessions_routes.request_session(
+    await sessions_routes.request_session(
         sessions_models.PostSessionRequest(
             tool_id=0,
             version_id=0,
@@ -132,6 +140,7 @@ def test_hook_calls_during_session_request(
     )
 
     assert session_hook.configuration_hook_counter == 1
+    assert session_hook.async_configuration_hook_counter == 1
     assert session_hook.post_session_creation_hook_counter == 1
     assert session_hook.session_connection_hook_counter == 0
     assert session_hook.post_termination_hook_counter == 0

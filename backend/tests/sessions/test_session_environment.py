@@ -4,9 +4,11 @@
 import logging
 
 import pytest
+from sqlalchemy import orm
 
 from capellacollab import config
 from capellacollab.config import models as config_models
+from capellacollab.core import models as core_models
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions import models as sessions_models
@@ -18,7 +20,7 @@ from capellacollab.users import models as users_models
 
 
 class MockOperator:
-    environment = {}
+    environment: dict[str, str] = {}
 
     # pylint: disable=unused-argument
     def start_session(self, environment, *args, **kwargs):
@@ -103,15 +105,17 @@ def fixture_patch_irrelevant_request_session_calls(
     )
 
 
+@pytest.mark.asyncio
 @pytest.mark.usefixtures(
     "patch_irrelevant_request_session_calls", "tool_version"
 )
-def test_environment_behaviour(
+async def test_environment_behavior(
     monkeypatch: pytest.MonkeyPatch,
     operator: MockOperator,
     logger: logging.LoggerAdapter,
+    db: orm.Session,
 ):
-    """Test the behaviour of environment variables
+    """Test the behavior of environment variables
 
     The rules are:
 
@@ -123,7 +127,7 @@ def test_environment_behaviour(
     """
 
     class GetSessionsReponseMock:
-        warnings = []
+        warnings: list[core_models.Message] = []
 
     response = GetSessionsReponseMock()
 
@@ -133,7 +137,7 @@ def test_environment_behaviour(
         lambda *args: response,
     )
 
-    sessions_routes.request_session(
+    await sessions_routes.request_session(
         sessions_models.PostSessionRequest(
             tool_id=0,
             version_id=0,
@@ -144,8 +148,8 @@ def test_environment_behaviour(
         users_models.DatabaseUser(
             name="test", idp_identifier="test", role=users_models.Role.USER
         ),
-        None,
-        operator,
+        db,
+        operator,  # type: ignore
         logger,
     )
 
@@ -175,7 +179,6 @@ def test_environment_behaviour(
 
 
 def test_environment_resolution_before_stage(logger: logging.LoggerAdapter):
-
     environment = {"TEST": [{"test": "test2"}]}
     rules = {
         "TEST2": tools_models.ToolSessionEnvironment(

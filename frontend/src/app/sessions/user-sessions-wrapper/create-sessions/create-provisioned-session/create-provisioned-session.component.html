@@ -1,0 +1,144 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper flex size-full flex-col">
+  <div class="mb-2 flex min-h-7 gap-2">
+    <h2 class="flex items-center text-xl font-medium">
+      @if ((projectWrapperService.project$ | async)?.type === "training") {
+        Training Provisioning
+      } @else {
+        Session Provisioning
+      }
+    </h2>
+    <span
+      class="flex items-center gap-1 rounded border bg-green-800 px-2 py-1 text-sm text-white"
+      ><app-mat-icon class="contents" size="15px">experiment</app-mat-icon
+      ><span>Experimental</span></span
+    >
+  </div>
+
+  <div class="collab-card w-full grow p-[16px]">
+    <div class="flex h-full flex-col justify-between gap-2">
+      <p class="text-sm">
+        Provision sessions and a workspace for this
+        {{ projectDisplayName$ | async }}. The
+        {{ projectDisplayName$ | async }} will be provisioned once and is
+        persistent from then on. You'll be able to reset the workspace to the
+        original state at any time.
+        @if ((projectWrapperService.project$ | async)?.type === "general") {
+          Please note that TeamForCapella repositories are not supported for
+          automatic provisioning yet.
+        }
+      </p>
+
+      <div
+        class="flex flex-wrap items-center justify-between gap-2 rounded border p-2 text-sm
+          shadow"
+      >
+        <div class="grow">
+          @if (provisioningPerTool?.length) {
+            <span class="font-bold"
+              >A provisioning will spawn the following sessions:</span
+            >
+            @for (tool of provisioningPerTool; track $index) {
+              <div>
+                {{ tool.tool.name }} {{ tool.tool_version.name }}
+
+                @for (model of tool.used_by; track model.slug) {
+                  <div class="ml-2 flex items-center gap-1">
+                    <mat-icon class="min-w-[13px]" inline>play_circle</mat-icon>
+                    <div>
+                      {{ model.name }}
+                      @if (model.provisioning; as provisioning) {
+                        was provisioned at
+                        {{ provisioning.provisioned_at | date }} with the
+                        revision {{ provisioning.revision }} ({{
+                          provisioning.commit_hash
+                        }}).
+                      } @else {
+                        will be provisioned.
+                      }
+                    </div>
+                  </div>
+                } @empty {
+                  <div class="ml-2 flex items-center gap-1">
+                    <mat-icon class="min-w-[13px]" inline>cancel</mat-icon>
+                    <div>The session will be created, but not provisioned.</div>
+                  </div>
+                }
+              </div>
+            }
+          } @else if (provisioningPerTool === undefined) {
+            <div class="h-[38px]">
+              <ngx-skeleton-loader
+                appearance="circle"
+                [theme]="{
+                  'border-radius': '5px',
+                  height: '100%',
+                  width: '100%',
+                  margin: '0',
+                  border: '1px solid white',
+                }"
+              ></ngx-skeleton-loader>
+            </div>
+          } @else {
+            Please add at least one tool to the project to provision a session.
+          }
+        </div>
+        <div
+          class="flex w-full grow basis-[330px] justify-end lg:min-w-[330px]"
+        >
+          <button
+            matInput
+            mat-flat-button
+            color="warn"
+            type="submit"
+            [disabled]="!provisioningPerTool?.length"
+            (click)="resetProvisioning()"
+            class="w-full"
+          >
+            <span class="ml-2">Hard-reset provisioning </span>
+            <span class="hidden lg:inline-block">
+              to latest available state
+            </span>
+            <mat-icon class="!m-0">history</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      @if (provisioningPerTool?.length) {
+        <button
+          [disabled]="provisioningRequestInProgress"
+          (click)="provisionWorkspace()"
+          matInput
+          mat-flat-button
+          color="primary"
+          type="submit"
+        >
+          @if (provisioningRequired) {
+            Provision
+          } @else {
+            Continue with the provisioned
+          }
+          {{ projectDisplayName$ | async }}
+          <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+        </button>
+      } @else if (provisioningPerTool === undefined) {
+        <div class="h-[36px]">
+          <ngx-skeleton-loader
+            appearance="circle"
+            [theme]="{
+              'border-radius': '5px',
+              height: '100%',
+              width: '100%',
+              margin: '0',
+              border: '1px solid white',
+            }"
+          ></ngx-skeleton-loader>
+        </div>
+      }
+    </div>
+  </div>
+</div>
