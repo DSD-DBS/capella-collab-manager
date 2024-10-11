@@ -67,6 +67,7 @@ dev = [
   "pytest-cov",
   "aioresponses",
   "types-lxml",
+  "pytest-asyncio",
 ]
 
 [tool.black]

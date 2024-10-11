@@ -1,0 +1,81 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="wrapper flex flex-col">
+  <h2 class="mb-2 text-xl font-medium">
+    @if ((projectWrapperService.project$ | async)?.type === "training") {
+      Training Controls
+    } @else {
+      Session Provisioning
+    }
+  </h2>
+  <div id="readonly-card" class="collab-card grow p-[16px]">
+    <div class="flex h-full flex-col justify-between gap-2">
+      <p class="text-sm">
+        Provision sessions and a workspace with all available models of this
+        {{ projectDisplayName$ | async }}. The
+        {{ projectDisplayName$ | async }} will be provisioned once and is
+        persistent from then on. You'll be able to reset the workspace to the
+        original state at any time. Please note that TeamForCapella repositories
+        are not supported for automatic provisioning yet.
+      </p>
+
+      <div
+        class="flex items-center justify-between rounded border p-2 text-sm shadow"
+      >
+        @if (provisioning?.length) {
+          <div>
+            @for (provisioned of provisioning; track provisioned[0].slug) {
+              <div>
+                {{ provisioned[0].slug }}
+                @if (provisioned[1]) {
+                  was provisioned at
+                  {{ provisioned[1].provisioned_at | date }} with the revision
+                  {{ provisioned[1].revision }} ({{
+                    provisioned[1].commit_hash
+                  }}).
+                } @else {
+                  has not been provisioned yet.
+                }
+              </div>
+            }
+          </div>
+        }
+        <button
+          matInput
+          mat-flat-button
+          color="warn"
+          type="submit"
+          [disabled]="!filteredProvisioning?.length"
+          (click)="resetProvisioning()"
+        >
+          Hard-reset {{ projectDisplayName$ | async }} to latest available state
+          <mat-icon>history</mat-icon>
+        </button>
+      </div>
+
+      @if (provisioning) {
+        <button
+          [disabled]="provisioningRequestInProgress || !this.provisioning"
+          (click)="provisionWorkspace()"
+          matInput
+          mat-flat-button
+          color="primary"
+          type="submit"
+        >
+          @if (filteredProvisioning!.length > 0) {
+            Continue with the provisioned
+          } @else {
+            Provision
+          }
+          {{ projectDisplayName$ | async }}
+          <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+        </button>
+      } @else {
+        <ngx-skeleton-loader class="h-[36px]"></ngx-skeleton-loader>
+      }
+    </div>
+  </div>
+</div>

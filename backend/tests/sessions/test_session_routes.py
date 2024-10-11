@@ -304,3 +304,7 @@ def test_own_sessions(
     # Check that environment and config are not exposed
     assert "environment" not in response.json()[0]
     assert "config" not in response.json()[0]
+
+
+def test_request_session_wo_connection_method():
+    raise NotImplementedError()
