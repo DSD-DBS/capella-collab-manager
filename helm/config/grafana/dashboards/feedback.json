@@ -436,7 +436,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "round((sum(increase(feedback_count{anonymous=\"true\"}[$__range])) / (sum(increase(feedback_count[$__range])) - sum(increase(feedback_count{anonymous=\"\"}[$__range])))) * 100)",
+          "expr": "round((sum(increase(feedback_count{anonymous=\"true\"}[$__range])) / (sum(increase(feedback_count[$__range])) - (sum(increase(feedback_count{anonymous=\"\"}[$__range])) or vector(0)))) * 100)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -561,6 +561,6 @@
   "timezone": "",
   "title": "Feedback",
   "uid": "edzhg6sv97lz4c",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }
