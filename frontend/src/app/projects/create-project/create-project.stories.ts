@@ -53,6 +53,11 @@ export const AddTeamMembers: Story = {
     const createProject = canvas.getByTestId('button-create-project');
     await userEvent.click(createProject);
   },
+  parameters: {
+    screenshot: {
+      delay: 1000,
+    },
+  },
 };
 
 export const AddModel: Story = {
@@ -78,5 +83,10 @@ export const AddModel: Story = {
     await AddTeamMembers.play!(context);
     const skipMembers = canvas.getByTestId('button-skipAddMembers');
     await userEvent.click(skipMembers);
+  },
+  parameters: {
+    screenshot: {
+      delay: 1000,
+    },
   },
 };
