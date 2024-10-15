@@ -113,6 +113,10 @@ def send_feedback_email(
     assert config.smtp  # Already checked in previous function
     cfg = config_core.get_global_configuration(db)
 
-    email_text = format_email(feedback, user, user_agent)
+    try:
+        email_text = format_email(feedback, user, user_agent)
+    except Exception:
+        logger.exception("Error while formatting email.")
+        raise
 
     email_send.send_email(cfg.feedback.recipients, email_text, logger)
