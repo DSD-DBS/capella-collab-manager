@@ -51,7 +51,7 @@ def check_if_feedback_is_allowed(db: orm.Session):
 
 def format_email(
     feedback: models.Feedback,
-    user: users_models.DatabaseUser | None,
+    user: users_models.User | None,
     user_agent: str | None,
 ) -> email_models.EMailContent:
     rating = feedback.rating.value
@@ -76,7 +76,7 @@ def format_email(
 
     message_list.append("---")
     message_list.append(
-        f"You receive this email because you're registered as feedback recipient in the "
+        f"You received this email because you're registered as feedback recipient in the "
         f"Capella Collaboration Manager ({config.general.scheme}://{config.general.host}:{config.general.port})."
     )
     message_list.append(
@@ -105,7 +105,7 @@ def format_email(
 def send_feedback_email(
     db: orm.Session,
     feedback: models.Feedback,
-    user: users_models.DatabaseUser | None,
+    user: users_models.User | None,
     user_agent: str | None,
     logger: logging.LoggerAdapter,
 ):
@@ -113,6 +113,10 @@ def send_feedback_email(
     assert config.smtp  # Already checked in previous function
     cfg = config_core.get_global_configuration(db)
 
-    email_text = format_email(feedback, user, user_agent)
+    try:
+        email_text = format_email(feedback, user, user_agent)
+    except Exception:
+        logger.exception("Error while formatting email.")
+        raise
 
     email_send.send_email(cfg.feedback.recipients, email_text, logger)

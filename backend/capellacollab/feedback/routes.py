@@ -73,7 +73,11 @@ def submit_feedback(
         util.send_feedback_email,
         db,
         feedback,
-        feedback_user,
+        (
+            users_models.User.model_validate(feedback_user)
+            if feedback_user
+            else None
+        ),
         user_agent,
         logger,
     )
