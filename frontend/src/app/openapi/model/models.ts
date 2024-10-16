@@ -109,6 +109,7 @@ export * from './project-user-role';
 export * from './prometheus-configuration-input';
 export * from './prometheus-configuration-output';
 export * from './protocol';
+export * from './public-license-server-with-usage';
 export * from './pure-variants-licenses-input';
 export * from './pure-variants-licenses-output';
 export * from './put-git-model';
