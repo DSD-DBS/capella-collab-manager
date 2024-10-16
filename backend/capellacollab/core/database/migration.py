@@ -197,7 +197,7 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
     )
     capella_database = tools_crud.create_tool(db, capella)
 
-    for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0"):
+    for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0", "7.0.0"):
         if "localhost" in registry:
             docker_tag = f"{capella_version_name}-latest"
         else:
@@ -206,8 +206,8 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
         capella_version = tools_models.CreateToolVersion(
             name=capella_version_name,
             config=tools_models.ToolVersionConfiguration(
-                is_recommended=capella_version_name == "6.1.0",
-                is_deprecated=capella_version_name == "5.0.0",
+                is_recommended=capella_version_name == "7.0.0",
+                is_deprecated=capella_version_name in ("5.0.0", "5.2.0"),
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
                         image=(f"{registry}/capella/remote:{docker_tag}"),
