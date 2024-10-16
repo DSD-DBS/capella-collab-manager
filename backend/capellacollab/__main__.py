@@ -15,7 +15,6 @@ from fastapi.middleware import cors
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 import capellacollab.sessions.metrics as sessions_metrics
 import capellacollab.settings.modelsources.t4c.license_server.metrics as t4c_metrics
-from capellacollab import core
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
@@ -42,12 +41,9 @@ logging.basicConfig(
     handlers=[stream_handler, timed_rotating_file_handler],
 )
 
-ALLOW_ORIGINS = (
-    [f"{config.general.scheme}//{config.general.host}:{config.general.port}"]
-    + ["http://localhost:4200", "http://127.0.0.1:4200"]
-    if core.DEVELOPMENT_MODE
-    else []
-)
+ALLOW_ORIGINS = [
+    f"{config.general.scheme}://{config.general.host}:{config.general.port}"
+]
 
 
 async def startup():

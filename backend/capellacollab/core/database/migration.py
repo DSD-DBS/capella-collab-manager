@@ -11,7 +11,6 @@ from alembic import config as alembic_config
 from alembic import migration
 from sqlalchemy import orm
 
-from capellacollab import core
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.events import crud as events_crud
@@ -156,11 +155,7 @@ def get_eclipse_session_configuration() -> (
                     environment={
                         "CONNECTION_METHOD": "xpra",
                         "XPRA_SUBPATH": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
-                        "XPRA_CSP_ORIGIN_HOST": (
-                            "http://localhost:4200"
-                            if core.DEVELOPMENT_MODE
-                            else "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
-                        ),
+                        "XPRA_CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                     },
                     redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&sharing=1&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/",
                     cookies={
@@ -277,11 +272,7 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
             environment={
                 "JUPYTER_PORT": "8888",
                 "JUPYTER_TOKEN": "{CAPELLACOLLAB_SESSION_TOKEN}",
-                "CSP_ORIGIN_HOST": (
-                    "http://localhost:4200"
-                    if core.DEVELOPMENT_MODE
-                    else "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
-                ),
+                "CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                 "JUPYTER_BASE_URL": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
             },
             connection=tools_models.ToolSessionConnection(
