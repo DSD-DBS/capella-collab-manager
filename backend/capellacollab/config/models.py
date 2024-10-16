@@ -192,7 +192,7 @@ class GeneralConfig(BaseConfig):
         examples=["localhost", "capella.example.com"],
     )
     port: int | str = pydantic.Field(
-        default=8000,
+        default=4200,
         description="The port the application should run on.",
         examples=[8000, 443, 8080],
     )

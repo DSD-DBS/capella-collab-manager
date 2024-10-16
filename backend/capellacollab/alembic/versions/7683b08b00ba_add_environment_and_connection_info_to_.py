@@ -112,11 +112,9 @@ def get_eclipse_configuration():
                 {
                     "type": "guacamole",
                     "id": "guacamole",
-                    "name": "Classic (Guacamole)",
+                    "name": "Guacamole",
                     "description": (
-                        "Old connection method using Guacamole. "
-                        "If it has worked fine previously, keep using it. "
-                        "In case of issues, try the Xpra connection method."
+                        "Guacamole doesn't support session sharing."
                     ),
                     "ports": {"metrics": 9118, "rdp": 3389},
                     "environment": {"CONNECTION_METHOD": "xrdp"},
@@ -124,11 +122,8 @@ def get_eclipse_configuration():
                 {
                     "type": "http",
                     "id": "xpra",
-                    "name": "Experimental (Xpra)",
-                    "description": (
-                        "Experimental connection method using Xpra. "
-                        "It's intended for those users who have issues with the Guacamole connection method."
-                    ),
+                    "name": "Xpra",
+                    "description": "Xpra supports session sharing.",
                     "ports": {"http": 10000, "metrics": 9118},
                     "environment": {
                         "CONNECTION_METHOD": "xpra",

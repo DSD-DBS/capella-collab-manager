@@ -100,7 +100,7 @@ def test_send_feedback_with_session(
                         "warnings": [],
                         "connection_method": {
                             "id": "xpra",
-                            "name": "Experimental (Xpra)",
+                            "name": "Xpra",
                         },
                     }
                 ],

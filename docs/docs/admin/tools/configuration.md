@@ -341,11 +341,8 @@ To help you configure your tools, we provide some examples as part of our
         methods:
           - id: guacamole
             type: guacamole
-            name: Classic (Guacamole)
-            description: Old connection method using Guacamole. If
-              it has worked fine previously, keep using it.
-              In case of issues, try the Xpra connection
-              method.
+            name: Guacamole
+            description: Guacamole doesn't support session sharing.
             ports:
               metrics: 9118
               rdp: 3389
@@ -353,10 +350,8 @@ To help you configure your tools, we provide some examples as part of our
               CONNECTION_METHOD: xrdp
           - id: xpra
             type: http
-            name: Experimental (Xpra)
-            description: Experimental connection method using Xpra.
-              It's intended for those users who have issues
-              with the Guacamole connection method.
+            name: Xpra
+            description: Xpra supports session sharing.
             ports:
               metrics: 9118
               http: 10000

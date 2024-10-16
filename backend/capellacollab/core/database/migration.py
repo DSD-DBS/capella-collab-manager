@@ -11,7 +11,6 @@ from alembic import config as alembic_config
 from alembic import migration
 from sqlalchemy import orm
 
-from capellacollab import core
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.events import crud as events_crud
@@ -143,31 +142,20 @@ def get_eclipse_session_configuration() -> (
             methods=[
                 tools_models.GuacamoleConnectionMethod(
                     id="guacamole",
-                    name="Classic (Guacamole)",
-                    description=(
-                        "Old connection method using Guacamole. "
-                        "If it has worked fine previously, keep using it. "
-                        "In case of issues, try the Xpra connection method."
-                    ),
+                    name="Guacamole",
+                    description="Guacamole doesn't support session sharing.",
                     ports=tools_models.RDPPorts(metrics=9118, rdp=3389),
                     environment={"CONNECTION_METHOD": "xrdp"},
                 ),
                 tools_models.HTTPConnectionMethod(
                     id="xpra",
-                    name="Experimental (Xpra)",
-                    description=(
-                        "Experimental connection method using Xpra. "
-                        "It's intended for those users who have issues with the Guacamole connection method."
-                    ),
+                    name="Xpra",
+                    description="Xpra supports session sharing.",
                     ports=tools_models.HTTPPorts(http=10000, metrics=9118),
                     environment={
                         "CONNECTION_METHOD": "xpra",
                         "XPRA_SUBPATH": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
-                        "XPRA_CSP_ORIGIN_HOST": (
-                            "http://localhost:4200"
-                            if core.DEVELOPMENT_MODE
-                            else "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
-                        ),
+                        "XPRA_CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                     },
                     redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&sharing=1&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/",
                     cookies={
@@ -197,7 +185,7 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
     )
     capella_database = tools_crud.create_tool(db, capella)
 
-    for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0"):
+    for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0", "7.0.0"):
         if "localhost" in registry:
             docker_tag = f"{capella_version_name}-latest"
         else:
@@ -206,8 +194,8 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
         capella_version = tools_models.CreateToolVersion(
             name=capella_version_name,
             config=tools_models.ToolVersionConfiguration(
-                is_recommended=capella_version_name == "6.1.0",
-                is_deprecated=capella_version_name == "5.0.0",
+                is_recommended=capella_version_name == "7.0.0",
+                is_deprecated=capella_version_name in ("5.0.0", "5.2.0"),
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
                         image=(f"{registry}/capella/remote:{docker_tag}"),
@@ -284,11 +272,7 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
             environment={
                 "JUPYTER_PORT": "8888",
                 "JUPYTER_TOKEN": "{CAPELLACOLLAB_SESSION_TOKEN}",
-                "CSP_ORIGIN_HOST": (
-                    "http://localhost:4200"
-                    if core.DEVELOPMENT_MODE
-                    else "{CAPELLACOLLAB_ORIGIN_BASE_URL}"
-                ),
+                "CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                 "JUPYTER_BASE_URL": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
             },
             connection=tools_models.ToolSessionConnection(
