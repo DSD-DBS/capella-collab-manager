@@ -23,6 +23,7 @@ from .backups import routes as backups_routes
 from .diagrams import routes as diagrams_routes
 from .modelbadge import routes as complexity_badge_routes
 from .modelsources import routes as modelsources_routes
+from .provisioning import routes as provisioning_routes
 from .restrictions import routes as restrictions_routes
 
 router = fastapi.APIRouter(
@@ -266,4 +267,9 @@ router.include_router(
     complexity_badge_routes.router,
     prefix="/{model_slug}/badges/complexity",
     tags=["Projects - Models - Model complexity badge"],
+)
+router.include_router(
+    provisioning_routes.router,
+    prefix="/{model_slug}/provisioning",
+    tags=["Projects - Models - Provisioning"],
 )

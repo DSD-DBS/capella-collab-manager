@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import asyncio
-import collections.abc as cabc
 import logging
 import os
 import pathlib
@@ -13,7 +12,17 @@ from . import exceptions, models
 log = logging.getLogger(__name__)
 
 
-async def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
+async def ls_remote(
+    url: str, username: str | None, password: str | None
+) -> list[tuple[str, str]]:
+    env = {
+        "GIT_USERNAME": username or "",
+        "GIT_PASSWORD": password or "",
+        "GIT_ASKPASS": str(
+            (pathlib.Path(__file__).parents[0] / "askpass.py").absolute()
+        ),
+    }
+
     try:
         proc = await asyncio.create_subprocess_exec(
             "git",
@@ -37,7 +46,13 @@ async def ls_remote(url: str, env: cabc.Mapping[str, str]) -> list[str]:
         else:
             raise e
     stdout, _ = await proc.communicate()
-    return stdout.decode().strip().splitlines()
+
+    resolved_revisions = []
+    for line in stdout.decode().strip().splitlines():
+        (hash, rev) = line.split("\t")
+        resolved_revisions.append((hash, rev))
+
+    return resolved_revisions
 
 
 async def get_remote_refs(
@@ -47,15 +62,7 @@ async def get_remote_refs(
         models.GetRevisionsResponseModel(branches=[], tags=[])
     )
 
-    git_env = {
-        "GIT_USERNAME": username or "",
-        "GIT_PASSWORD": password or "",
-        "GIT_ASKPASS": str(
-            (pathlib.Path(__file__).parents[0] / "askpass.py").absolute()
-        ),
-    }
-    for ref in await ls_remote(url, git_env):
-        (_, ref) = ref.split("\t")
+    for _, ref in await ls_remote(url, username, password):
         if "^" in ref:
             continue
         if ref.startswith("refs/heads/"):
