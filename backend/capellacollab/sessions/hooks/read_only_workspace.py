@@ -12,12 +12,10 @@ from . import interface
 class ReadOnlyWorkspaceHook(interface.HookRegistration):
     """Mounts an empty workspace to the container for read-only sessions."""
 
-    def configuration_hook(  # type: ignore
-        self,
-        session_type: sessions_models.SessionType,
-        **kwargs,
+    def configuration_hook(
+        self, request: interface.ConfigurationHookRequest
     ) -> interface.ConfigurationHookResult:
-        if session_type != sessions_models.SessionType.READONLY:
+        if request.session_type != sessions_models.SessionType.READONLY:
             # Configuration for persistent workspace sessions happens in the PersistentWorkspaceHook.
             return interface.ConfigurationHookResult()
 

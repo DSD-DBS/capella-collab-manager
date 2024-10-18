@@ -127,23 +127,12 @@ def fixture_guacamole_apis():
     "guacamole_create_token", "guacamole_delete_user", "guacamole_apis"
 )
 def test_guacamole_configuration_hook(
-    session: sessions_models.DatabaseSession,
+    post_session_creation_hook_request: session_hooks_interface.PostSessionCreationHookRequest,
 ):
     """Test that the Guacamole hook creates a user and a connection"""
 
     response = guacamole.GuacamoleIntegration().post_session_creation_hook(
-        session_id="test",
-        db_session=session,
-        session={
-            "id": "test",
-            "port": "8080",
-            "created_at": "2021-01-01T00:00:00",
-            "host": "test",
-        },
-        user=users_models.DatabaseUser(
-            name="test", idp_identifier="test", role=users_models.Role.USER
-        ),
-        connection_method=tools_models.GuacamoleConnectionMethod(),
+        post_session_creation_hook_request
     )
 
     assert response["config"]["guacamole_username"]
@@ -157,7 +146,7 @@ def test_guacamole_configuration_hook(
     "guacamole_create_token", "guacamole_delete_user", "guacamole_apis"
 )
 def test_fail_if_guacamole_unreachable(
-    session: sessions_models.DatabaseSession,
+    post_session_creation_hook_request: session_hooks_interface.PostSessionCreationHookRequest,
 ):
     """If Guacamole is unreachable, the session hook will abort the session creation"""
 
@@ -171,18 +160,7 @@ def test_fail_if_guacamole_unreachable(
 
     with pytest.raises(guacamole.GuacamoleError):
         guacamole.GuacamoleIntegration().post_session_creation_hook(
-            session_id="test",
-            db_session=session,
-            session={
-                "id": "test",
-                "port": "8080",
-                "created_at": "2021-01-01T00:00:00",
-                "host": "test",
-            },
-            user=users_models.DatabaseUser(
-                name="test", idp_identifier="test", role=users_models.Role.USER
-            ),
-            connection_method=tools_models.GuacamoleConnectionMethod(),
+            post_session_creation_hook_request
         )
 
 
@@ -191,26 +169,18 @@ def test_fail_if_guacamole_unreachable(
     "guacamole_create_token", "guacamole_delete_user", "guacamole_apis"
 )
 def test_guacamole_hook_not_executed_for_http_method(
-    session: sessions_models.DatabaseSession,
+    post_session_creation_hook_request: session_hooks_interface.PostSessionCreationHookRequest,
 ):
     """Skip if connection method is not Guacamole
 
     If the connection method is not Guacamole, the hook should skip the preparation.
     """
 
+    post_session_creation_hook_request.connection_method = (
+        tools_models.HTTPConnectionMethod()
+    )
     response = guacamole.GuacamoleIntegration().post_session_creation_hook(
-        session_id="test",
-        session={
-            "id": "test",
-            "port": "8080",
-            "created_at": "2021-01-01T00:00:00",
-            "host": "test",
-        },
-        db_session=session,
-        user=users_models.DatabaseUser(
-            name="test", idp_identifier="test", role=users_models.Role.USER
-        ),
-        connection_method=tools_models.HTTPConnectionMethod(),
+        post_session_creation_hook_request
     )
 
     assert session_hooks_interface.PostSessionCreationHookResult() == response
@@ -222,23 +192,12 @@ def test_guacamole_hook_not_executed_for_http_method(
     "guacamole_create_token", "guacamole_delete_user", "guacamole_apis"
 )
 def test_skip_guacamole_user_deletion_on_404(
-    session: sessions_models.DatabaseSession,
+    post_session_creation_hook_request: session_hooks_interface.PostSessionCreationHookRequest,
 ):
     """If the user does not exist, the hook should not fail"""
 
     response = guacamole.GuacamoleIntegration().post_session_creation_hook(
-        session_id="test",
-        db_session=session,
-        session={
-            "id": "test",
-            "port": "8080",
-            "created_at": "2021-01-01T00:00:00",
-            "host": "test",
-        },
-        user=users_models.DatabaseUser(
-            name="test", idp_identifier="test", role=users_models.Role.USER
-        ),
-        connection_method=tools_models.GuacamoleConnectionMethod(),
+        post_session_creation_hook_request
     )
 
     assert response["config"]

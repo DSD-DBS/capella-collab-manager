@@ -18,6 +18,7 @@ from capellacollab.core import responses
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.sessions import hooks
 from capellacollab.sessions.files import routes as files_routes
+from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
@@ -124,19 +125,26 @@ def request_session(
     init_volumes: list[operators_models.Volume] = []
     init_environment: dict[str, str] = {}
 
+    hook_results = []
+
     for hook in hooks.get_activated_integration_hooks(tool):
-        hook_result = hook.configuration_hook(
-            db=db,
-            user=user,
-            tool_version=version,
-            tool=tool,
-            username=user.name,
-            operator=operator,
-            session_type=body.session_type,
-            connection_method=connection_method,
-            provisioning=body.provisioning,
-            session_id=session_id,
+        hook_results.append(
+            hook.configuration_hook(
+                hooks_interface.ConfigurationHookRequest(
+                    db=db,
+                    user=user,
+                    tool_version=version,
+                    tool=tool,
+                    operator=operator,
+                    session_type=body.session_type,
+                    connection_method=connection_method,
+                    provisioning=body.provisioning,
+                    session_id=session_id,
+                )
+            )
         )
+
+    for hook_result in hook_results:
         environment |= hook_result.get("environment", {})
         init_environment |= hook_result.get("init_environment", {})
         volumes += hook_result.get("volumes", [])
@@ -223,12 +231,14 @@ def request_session(
     hook_config: dict[str, str] = {}
     for hook in hooks.get_activated_integration_hooks(tool):
         result = hook.post_session_creation_hook(
-            session_id=session_id,
-            operator=operator,
-            user=user,
-            session=session,
-            db_session=db_session,
-            connection_method=connection_method,
+            hooks_interface.PostSessionCreationHookRequest(
+                session_id=session_id,
+                operator=operator,
+                user=user,
+                session=session,
+                db_session=db_session,
+                connection_method=connection_method,
+            )
         )
 
         hook_config |= result.get("config", {})
@@ -366,11 +376,13 @@ def get_session_connection_information(
 
     for hook in hooks.get_activated_integration_hooks(session.tool):
         hook_result = hook.session_connection_hook(
-            db=db,
-            user=user,
-            db_session=session,
-            connection_method=connection_method,
-            logger=logger,
+            hooks_interface.SessionConnectionHookRequest(
+                db=db,
+                db_session=session,
+                connection_method=connection_method,
+                logger=logger,
+                user=user,
+            )
         )
 
         local_storage |= hook_result.get("local_storage", {})

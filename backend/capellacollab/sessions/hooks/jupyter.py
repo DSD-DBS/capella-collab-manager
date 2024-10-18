@@ -14,7 +14,6 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
-from capellacollab.users import models as users_models
 
 from . import interface
 
@@ -22,16 +21,12 @@ log = logging.getLogger(__name__)
 
 
 class JupyterIntegration(interface.HookRegistration):
-    def configuration_hook(  # type: ignore[override]
+    def configuration_hook(
         self,
-        db: orm.Session,
-        user: users_models.DatabaseUser,
-        tool: tools_models.DatabaseTool,
-        operator: operators.KubernetesOperator,
-        **kwargs,
+        request: interface.ConfigurationHookRequest,
     ) -> interface.ConfigurationHookResult:
         volumes, warnings = self._get_project_share_volume_mounts(
-            db, user.name, tool, operator
+            request.db, request.user.name, request.tool, request.operator
         )
         return interface.ConfigurationHookResult(
             volumes=volumes, warnings=warnings

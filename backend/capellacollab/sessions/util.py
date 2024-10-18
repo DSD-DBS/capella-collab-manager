@@ -13,6 +13,7 @@ from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
 from capellacollab.sessions import hooks
+from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.operators import k8s
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
@@ -33,11 +34,12 @@ def terminate_session(
     )
     for hook in hooks.get_activated_integration_hooks(session.tool):
         hook.pre_session_termination_hook(
-            db=db,
-            session=session,
-            operator=operator,
-            user=session.owner,
-            connection_method=connection_method,
+            hooks_interface.PreSessionTerminationHookRequest(
+                db=db,
+                session=session,
+                operator=operator,
+                connection_method=connection_method,
+            )
         )
 
     crud.delete_session(db, session)
