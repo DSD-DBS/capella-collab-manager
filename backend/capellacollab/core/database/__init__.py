@@ -15,6 +15,8 @@ from capellacollab.config import config
 engine = sa.create_engine(
     config.database.url,
     connect_args={"connect_timeout": 5, "options": "-c timezone=utc"},
+    pool_size=20,
+    pool_timeout=5,
 )
 SessionLocal = orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
