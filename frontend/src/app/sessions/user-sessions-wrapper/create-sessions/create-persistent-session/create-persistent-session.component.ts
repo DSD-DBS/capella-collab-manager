@@ -2,23 +2,23 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
-  Validators,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
-import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Session, Tool, ToolVersion } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
@@ -26,6 +26,7 @@ import {
   ConnectionMethod,
   ToolWrapperService,
 } from 'src/app/settings/core/tools-settings/tool.service';
+import { LicenseIndicatorComponent } from '../../../license-indicator/license-indicator.component';
 import { CreateSessionHistoryComponent } from '../create-session-history/create-session-history.component';
 
 @UntilDestroy()
@@ -50,6 +51,7 @@ import { CreateSessionHistoryComponent } from '../create-session-history/create-
     MatIcon,
     CreateSessionHistoryComponent,
     AsyncPipe,
+    LicenseIndicatorComponent,
   ],
 })
 export class CreatePersistentSessionComponent implements OnInit {

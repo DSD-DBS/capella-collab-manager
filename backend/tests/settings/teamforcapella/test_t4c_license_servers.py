@@ -63,7 +63,7 @@ def test_create_t4c_license_server_already_existing_name(
 
 
 @pytest.mark.usefixtures("t4c_license_server")
-def test_get_t4c_license_servers(
+def test_get_t4c_license_servers_admin(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
@@ -79,6 +79,29 @@ def test_get_t4c_license_servers(
     assert len(response.json()) == 2
 
     assert response.json()[1]["name"] == "test license server"
+    assert response.json()[1]["license_key"] == "test key"
+    assert response.json()[1]["usage_api"] == "http://localhost:8086"
+
+
+@pytest.mark.usefixtures("t4c_license_server")
+def test_get_t4c_license_servers(
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+):
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.USER
+    )
+
+    response = client.get(
+        "/api/v1/settings/modelsources/t4c/license-servers",
+    )
+
+    assert len(response.json()) == 2
+
+    assert response.json()[1]["name"] == "test license server"
+    assert response.json()[1]["license_key"] == ""
+    assert response.json()[1]["usage_api"] == ""
 
 
 def test_get_t4c_license_server(
