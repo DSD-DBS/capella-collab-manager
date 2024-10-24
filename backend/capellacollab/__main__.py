@@ -4,6 +4,7 @@
 
 import logging
 import os
+import typing as t
 
 import fastapi
 import fastapi_pagination
@@ -13,18 +14,15 @@ from fastapi import middleware, responses, routing
 from fastapi.middleware import cors
 
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
-import capellacollab.sessions.metrics as sessions_metrics
-import capellacollab.settings.modelsources.t4c.license_server.metrics as t4c_metrics
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.config import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
-from capellacollab.feedback import metrics as feedback_metrics
 from capellacollab.routes import router
 from capellacollab.sessions import idletimeout, operators
 
-from . import __version__
+from . import __version__, metrics
 
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(core_logging.CustomFormatter())
@@ -62,17 +60,16 @@ async def shutdown():
     logging.getLogger("uvicorn.error").disabled = False
 
 
+on_startup: list[t.Callable] = [
+    startup,
+    idletimeout.terminate_idle_sessions_in_background,
+    pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
+]
+
 app = fastapi.FastAPI(
     title="Capella Collaboration",
     version=__version__,
-    on_startup=[
-        startup,
-        idletimeout.terminate_idle_sessions_in_background,
-        sessions_metrics.register,
-        t4c_metrics.register,
-        feedback_metrics.register,
-        pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
-    ],
+    on_startup=on_startup + metrics.metrics_registration,
     middleware=[
         middleware.Middleware(
             cors.CORSMiddleware,
