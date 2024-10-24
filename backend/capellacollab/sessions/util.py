@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import asyncio
 import json
 import logging
 import random
@@ -12,7 +13,7 @@ from sqlalchemy import orm
 from capellacollab.config import config
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
-from capellacollab.sessions import hooks
+from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.operators import k8s
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
@@ -33,11 +34,12 @@ def terminate_session(
     )
     for hook in hooks.get_activated_integration_hooks(session.tool):
         hook.pre_session_termination_hook(
-            db=db,
-            session=session,
-            operator=operator,
-            user=session.owner,
-            connection_method=connection_method,
+            hooks_interface.PreSessionTerminationHookRequest(
+                db=db,
+                session=session,
+                operator=operator,
+                connection_method=connection_method,
+            )
         )
 
     crud.delete_session(db, session)
@@ -202,3 +204,24 @@ def is_session_shared_with_user(
     session: models.DatabaseSession, user: users_models.DatabaseUser
 ) -> bool:
     return user in [shared.user for shared in session.shared_with]
+
+
+async def schedule_configuration_hooks(
+    request: hooks_interface.ConfigurationHookRequest,
+    tool: tools_models.DatabaseTool,
+) -> list[hooks_interface.ConfigurationHookResult]:
+    """Schedule sync and async configuration hooks
+
+    Schedule async hooks, then schedule the sync hooks
+    and finally collect the async hook results
+    """
+
+    activated_hooks = hooks.get_activated_integration_hooks(tool)
+
+    async_hooks = [
+        hook.async_configuration_hook(request) for hook in activated_hooks
+    ]
+
+    return [
+        hook.configuration_hook(request) for hook in activated_hooks
+    ] + await asyncio.gather(*async_hooks)

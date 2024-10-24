@@ -9,7 +9,10 @@ from capellacollab.sessions.hooks import interface as sessions_hooks_interface
 from capellacollab.tools import models as tools_models
 
 
-def test_http_hook(session: sessions_models.DatabaseSession):
+def test_http_hook(
+    session: sessions_models.DatabaseSession,
+    session_connection_hook_request: sessions_hooks_interface.SessionConnectionHookRequest,
+):
     session.environment = {
         "TEST": "test",
         "CAPELLACOLLAB_SESSION_TOKEN": "test",
@@ -18,10 +21,10 @@ def test_http_hook(session: sessions_models.DatabaseSession):
         redirect_url="http://localhost:8000/{TEST}",
         cookies={"test": "{TEST}"},
     )
+    session_connection_hook_request.connection_method = connection_method
+    session_connection_hook_request.db_session = session
     result = http.HTTPIntegration().session_connection_hook(
-        db_session=session,
-        connection_method=connection_method,
-        logger=logging.getLogger(),
+        session_connection_hook_request
     )
 
     assert result["cookies"] == {"test": "test", "ccm_session_token": "test"}
@@ -29,24 +32,27 @@ def test_http_hook(session: sessions_models.DatabaseSession):
     assert not result["warnings"]
 
 
-def test_skip_http_hook_if_guacamole(session: sessions_models.DatabaseSession):
+def test_skip_http_hook_if_guacamole(
+    session_connection_hook_request: sessions_hooks_interface.SessionConnectionHookRequest,
+):
     result = http.HTTPIntegration().session_connection_hook(
-        db_session=session,
-        connection_method=tools_models.GuacamoleConnectionMethod(),
-        logger=logging.getLogger(),
+        session_connection_hook_request
     )
     assert result == sessions_hooks_interface.SessionConnectionHookResult()
 
 
-def test_fail_derive_redirect_url(session: sessions_models.DatabaseSession):
+def test_fail_derive_redirect_url(
+    session: sessions_models.DatabaseSession,
+    session_connection_hook_request: sessions_hooks_interface.SessionConnectionHookRequest,
+):
     session.environment = {"TEST": "test"}
     connection_method = tools_models.HTTPConnectionMethod(
         redirect_url="http://localhost:8000/{TEST2}"
     )
+    session_connection_hook_request.connection_method = connection_method
+    session_connection_hook_request.db_session = session
     result = http.HTTPIntegration().session_connection_hook(
-        db_session=session,
-        connection_method=connection_method,
-        logger=logging.getLogger(),
+        session_connection_hook_request
     )
 
     assert len(result["warnings"]) == 1

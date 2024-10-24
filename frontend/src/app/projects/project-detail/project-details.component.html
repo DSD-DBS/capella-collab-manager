@@ -7,7 +7,10 @@
   <div class="grow basis-1">
     <div class="flex flex-wrap items-stretch gap-2">
       <app-project-metadata class="flex-1"></app-project-metadata>
-      <app-create-readonly-session class="flex"></app-create-readonly-session>
+      <app-create-provisioned-session></app-create-provisioned-session>
+      @if ((projectService.project$ | async)?.type === "general") {
+        <app-create-readonly-session class="flex"></app-create-readonly-session>
+      }
     </div>
     <app-model-overview></app-model-overview>
   </div>

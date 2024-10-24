@@ -14,6 +14,7 @@ api/projects-models-backups.service.ts
 api/projects-models-diagrams.service.ts
 api/projects-models-git.service.ts
 api/projects-models-model-complexity-badge.service.ts
+api/projects-models-provisioning.service.ts
 api/projects-models-restrictions.service.ts
 api/projects-models-t4-c.service.ts
 api/projects-models.service.ts
@@ -90,6 +91,7 @@ model/minimal-tool-session-connection-method.ts
 model/minimal-tool-version-with-tool.ts
 model/minimal-tool.ts
 model/model-artifact-status.ts
+model/model-provisioning.ts
 model/models.ts
 model/navbar-configuration-input-external-links-inner.ts
 model/navbar-configuration-input.ts

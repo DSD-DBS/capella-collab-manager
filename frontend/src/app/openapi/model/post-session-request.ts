@@ -17,10 +17,7 @@ export interface PostSessionRequest {
     tool_id: number;
     version_id: number;
     session_type?: SessionType;
-    /**
-     * The identifier of the connection method to use
-     */
-    connection_method_id: string;
+    connection_method_id?: string | null;
     provisioning?: Array<SessionProvisioningRequest>;
 }
 export namespace PostSessionRequest {

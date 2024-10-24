@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pathlib
-import typing as t
 import uuid
 
 from sqlalchemy import orm
@@ -19,32 +18,25 @@ from capellacollab.users.workspaces import models as users_workspaces_models
 from . import interface
 
 
-class PersistentWorkspacEnvironment(t.TypedDict):
-    pass
-
-
 class PersistentWorkspaceHook(interface.HookRegistration):
     """Takes care of the persistent workspace of a user.
 
     Is responsible for mounting the persistent workspace into persistent sessions.
     """
 
-    def configuration_hook(  # type: ignore
+    def configuration_hook(
         self,
-        db: orm.Session,
-        operator: operators.KubernetesOperator,
-        user: users_models.DatabaseUser,
-        session_type: sessions_models.SessionType,
-        tool: tools_models.DatabaseTool,
-        **kwargs,
+        request: interface.ConfigurationHookRequest,
     ) -> interface.ConfigurationHookResult:
-        if session_type == sessions_models.SessionType.READONLY:
+        if request.session_type == sessions_models.SessionType.READONLY:
             # Skip read-only sessions, no persistent workspace needed.
             return interface.ConfigurationHookResult()
 
-        self._check_that_persistent_workspace_is_allowed(tool)
+        self._check_that_persistent_workspace_is_allowed(request.tool)
 
-        volume_name = self._create_persistent_workspace(db, operator, user)
+        volume_name = self._create_persistent_workspace(
+            request.db, request.operator, request.user
+        )
         volume = operators_models.PersistentVolume(
             name="workspace",
             read_only=False,
@@ -53,7 +45,7 @@ class PersistentWorkspaceHook(interface.HookRegistration):
         )
 
         return interface.ConfigurationHookResult(
-            volumes=[volume],
+            volumes=[volume], init_volumes=[volume]
         )
 
     def _check_that_persistent_workspace_is_allowed(

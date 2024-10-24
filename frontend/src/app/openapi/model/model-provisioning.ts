@@ -9,13 +9,13 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { Session } from './session';
 
 
-export interface SessionProvisioningRequest { 
-    project_slug: string;
-    model_slug: string;
-    git_model_id: number;
-    revision?: string | null;
-    deep_clone: boolean;
+export interface ModelProvisioning { 
+    session: Session | null;
+    provisioned_at: string;
+    revision: string;
+    commit_hash: string;
 }
 

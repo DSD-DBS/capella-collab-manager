@@ -69,6 +69,7 @@ export * from './minimal-tool';
 export * from './minimal-tool-session-connection-method';
 export * from './minimal-tool-version-with-tool';
 export * from './model-artifact-status';
+export * from './model-provisioning';
 export * from './navbar-configuration-input';
 export * from './navbar-configuration-input-external-links-inner';
 export * from './navbar-configuration-output';

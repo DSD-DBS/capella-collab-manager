@@ -16,8 +16,9 @@ from capellacollab.core import logging as log
 from capellacollab.core import models as core_models
 from capellacollab.core import responses
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.sessions import hooks
+from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions.files import routes as files_routes
+from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
@@ -81,7 +82,7 @@ users_router = fastapi.APIRouter(
         ],
     ),
 )
-def request_session(
+async def request_session(
     body: models.PostSessionRequest,
     user: users_models.DatabaseUser = fastapi.Depends(
         users_injectables.get_own_user
@@ -94,22 +95,17 @@ def request_session(
         "Starting %s session for user %s", body.session_type, user.name
     )
 
-    # Provisioning will be supported in the future:
-    # https://github.com/DSD-DBS/capella-collab-manager/issues/1004
-    if (
-        body.session_type == models.SessionType.PERSISTENT
-        and body.provisioning
-    ):
-        raise exceptions.ProvisioningUnsupportedError()
-
     tool = tools_injectables.get_existing_tool(body.tool_id, db)
     version = tools_injectables.get_existing_tool_version(
         tool.id, body.version_id, db
     )
 
-    connection_method: tools_models.ToolSessionConnectionMethod = (
-        util.get_connection_method(tool, body.connection_method_id)
-    )
+    if body.connection_method_id:
+        connection_method: tools_models.ToolSessionConnectionMethod = (
+            util.get_connection_method(tool, body.connection_method_id)
+        )
+    else:
+        connection_method = tool.config.connection.methods[0]
 
     session_id = util.generate_id()
 
@@ -124,19 +120,21 @@ def request_session(
     init_volumes: list[operators_models.Volume] = []
     init_environment: dict[str, str] = {}
 
-    for hook in hooks.get_activated_integration_hooks(tool):
-        hook_result = hook.configuration_hook(
-            db=db,
-            user=user,
-            tool_version=version,
-            tool=tool,
-            username=user.name,
-            operator=operator,
-            session_type=body.session_type,
-            connection_method=connection_method,
-            provisioning=body.provisioning,
-            session_id=session_id,
-        )
+    hook_request = hooks_interface.ConfigurationHookRequest(
+        db=db,
+        user=user,
+        tool_version=version,
+        tool=tool,
+        operator=operator,
+        session_type=body.session_type,
+        connection_method=connection_method,
+        provisioning=body.provisioning,
+        session_id=session_id,
+    )
+
+    for hook_result in await util.schedule_configuration_hooks(
+        hook_request, tool
+    ):
         environment |= hook_result.get("environment", {})
         init_environment |= hook_result.get("init_environment", {})
         volumes += hook_result.get("volumes", [])
@@ -221,14 +219,16 @@ def request_session(
     )
 
     hook_config: dict[str, str] = {}
-    for hook in hooks.get_activated_integration_hooks(tool):
+    for hook in sessions_hooks.get_activated_integration_hooks(tool):
         result = hook.post_session_creation_hook(
-            session_id=session_id,
-            operator=operator,
-            user=user,
-            session=session,
-            db_session=db_session,
-            connection_method=connection_method,
+            hooks_interface.PostSessionCreationHookRequest(
+                session_id=session_id,
+                operator=operator,
+                user=user,
+                session=session,
+                db_session=db_session,
+                connection_method=connection_method,
+            )
         )
 
         hook_config |= result.get("config", {})
@@ -364,13 +364,15 @@ def get_session_connection_information(
     redirect_url = None
     t4c_token = None
 
-    for hook in hooks.get_activated_integration_hooks(session.tool):
+    for hook in sessions_hooks.get_activated_integration_hooks(session.tool):
         hook_result = hook.session_connection_hook(
-            db=db,
-            user=user,
-            db_session=session,
-            connection_method=connection_method,
-            logger=logger,
+            hooks_interface.SessionConnectionHookRequest(
+                db=db,
+                db_session=session,
+                connection_method=connection_method,
+                logger=logger,
+                user=user,
+            )
         )
 
         local_storage |= hook_result.get("local_storage", {})

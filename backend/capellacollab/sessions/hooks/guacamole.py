@@ -12,9 +12,6 @@ from requests import exceptions as requests_exceptions
 
 from capellacollab.config import config
 from capellacollab.core import credentials
-from capellacollab.sessions import models as sessions_models
-from capellacollab.sessions.operators import k8s
-from capellacollab.tools import models as tools_models
 
 from . import interface
 
@@ -40,14 +37,11 @@ class GuacamoleIntegration(interface.HookRegistration):
         "https": None,
     }
 
-    def post_session_creation_hook(  # type: ignore[override]
+    def post_session_creation_hook(
         self,
-        session: k8s.Session,
-        db_session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+        request: interface.PostSessionCreationHookRequest,
     ) -> interface.PostSessionCreationHookResult:
-        if connection_method.type != "guacamole":
+        if request.connection_method.type != "guacamole":
             return interface.PostSessionCreationHookResult()
 
         guacamole_username = credentials.generate_password()
@@ -60,9 +54,9 @@ class GuacamoleIntegration(interface.HookRegistration):
 
         guacamole_identifier = self._create_connection(
             guacamole_token,
-            db_session.environment["CAPELLACOLLAB_SESSION_TOKEN"],
-            session["host"],
-            session["port"],
+            request.db_session.environment["CAPELLACOLLAB_SESSION_TOKEN"],
+            request.session["host"],
+            request.session["port"],
         )["identifier"]
 
         self._assign_user_to_connection(
@@ -79,16 +73,14 @@ class GuacamoleIntegration(interface.HookRegistration):
             config=guacamole_config,
         )
 
-    def session_connection_hook(  # type: ignore[override]
+    def session_connection_hook(
         self,
-        db_session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+        request: interface.SessionConnectionHookRequest,
     ) -> interface.SessionConnectionHookResult:
-        if connection_method.type != "guacamole":
+        if request.connection_method.type != "guacamole":
             return interface.SessionConnectionHookResult()
 
-        session_config = db_session.config
+        session_config = request.db_session.config
 
         if not session_config or not session_config.get("guacamole_username"):
             return interface.SessionConnectionHookResult()
@@ -102,16 +94,13 @@ class GuacamoleIntegration(interface.HookRegistration):
             redirect_url=config.extensions.guacamole.public_uri + "/#/",
         )
 
-    def pre_session_termination_hook(  # type: ignore[override]
-        self,
-        session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+    def pre_session_termination_hook(
+        self, request: interface.PreSessionTerminationHookRequest
     ) -> interface.PreSessionTerminationHookResult:
-        if connection_method.type != "guacamole":
+        if request.connection_method.type != "guacamole":
             return interface.SessionConnectionHookResult()
 
-        session_config = session.config
+        session_config = request.session.config
 
         if session_config and session_config.get("guacamole_username"):
             guacamole_token = self._get_admin_token()
