@@ -40,6 +40,7 @@ class ConfigurationHookResult(t.TypedDict):
     warnings: t.NotRequired[list[core_models.Message]]
     init_volumes: t.NotRequired[list[operators_models.Volume]]
     init_environment: t.NotRequired[t.Mapping]
+    config: t.NotRequired[t.Mapping]
 
 
 class PostSessionCreationHookResult(t.TypedDict):
