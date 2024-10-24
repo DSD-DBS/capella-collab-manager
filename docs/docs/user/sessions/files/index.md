@@ -5,6 +5,8 @@
 
 # Browse, Upload and Download Files
 
+## Upload
+
 1.  Navigate to the `Session` tab.
 1.  On the right side, select the corresponding session. Select the persistent
     session to upload files into your persistent workspace. Click the
@@ -37,7 +39,7 @@
 1.  The upload can take a few seconds/minutes, depending on the file size.
 1.  When the upload was successful, the dialog closes without error message.
 
-# Download
+## Download
 
 1.  Navigate to the `Session` tab.
 1.  On the right side, select the corresponding session. Select the persistent
