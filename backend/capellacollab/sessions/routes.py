@@ -124,6 +124,7 @@ def request_session(
     init_volumes: list[operators_models.Volume] = []
     init_environment: dict[str, str] = {}
 
+    hook_config: dict[str, str] = {}
     for hook in hooks.get_activated_integration_hooks(tool):
         hook_result = hook.configuration_hook(
             db=db,
@@ -142,6 +143,7 @@ def request_session(
         volumes += hook_result.get("volumes", [])
         init_volumes += hook_result.get("init_volumes", [])
         warnings += hook_result.get("warnings", [])
+        hook_config |= hook_result.get("config", {})
 
     local_env, local_warnings = util.resolve_environment_variables(
         logger,
@@ -220,7 +222,6 @@ def request_session(
         ),
     )
 
-    hook_config: dict[str, str] = {}
     for hook in hooks.get_activated_integration_hooks(tool):
         result = hook.post_session_creation_hook(
             session_id=session_id,
