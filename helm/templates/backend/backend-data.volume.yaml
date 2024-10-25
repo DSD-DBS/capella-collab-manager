@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-backend-data
+  labels:
+    id: {{ .Release.Name }}-pvc-backend-data
+  annotations:
+    "helm.sh/resource-policy": keep
+spec:
+  accessModes:
+    - {{ .Values.backend.storageAccessMode }}
+  resources:
+    requests:
+      storage: 50Mi
+  storageClassName: {{ .Values.cluster.pvc.storageClassName }}

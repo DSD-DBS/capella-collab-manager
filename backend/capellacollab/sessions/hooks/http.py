@@ -46,13 +46,6 @@ class HTTPIntegration(interface.HookRegistration):
             logger, db_session.environment, connection_method.cookies
         )
 
-        # Set token for pre-authentication
-        cookies |= {
-            "ccm_session_token": db_session.environment[
-                "CAPELLACOLLAB_SESSION_TOKEN"
-            ]
-        }
-
         return interface.SessionConnectionHookResult(
             redirect_url=redirect_url, cookies=cookies, warnings=warnings
         )

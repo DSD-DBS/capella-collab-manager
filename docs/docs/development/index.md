@@ -77,6 +77,21 @@ If everything went well, the frontend and backend should be running now:
 -   [Documentation](http://localhost:8081)
 -   [Storybook](http://localhost:6006)
 
+### Spawn and Access Sessions in the Cluster
+
+You can also spawn sessions in the development environment, but it requires a
+running
+[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d).
+
+Sessions are secured with pre-authentication. If you use the same private key
+in the cluster and locally, the token issued in the development environment
+will also be accepted in the development k3d cluster. To synchronize the keys,
+run the following command:
+
+```zsh
+make synchronize-rsa-keys
+```
+
 ## General Notes
 
 ### REST APIs

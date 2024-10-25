@@ -3,11 +3,11 @@
 
 
 import datetime
-import hmac
 import logging
 import typing as t
 
 import fastapi
+import jwt
 from fastapi import status
 from sqlalchemy import orm
 
@@ -15,6 +15,7 @@ from capellacollab.core import database
 from capellacollab.core import logging as log
 from capellacollab.core import models as core_models
 from capellacollab.core import responses
+from capellacollab.core.authentication import exceptions as auth_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.sessions import hooks
 from capellacollab.sessions.files import routes as files_routes
@@ -26,7 +27,7 @@ from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, exceptions, injectables, models, operators, util
+from . import auth, crud, exceptions, injectables, models, operators, util
 from .operators import k8s
 from .operators import models as operators_models
 
@@ -407,21 +408,29 @@ def get_session_connection_information(
 def validate_session_token(
     session_id: str,
     ccm_session_token: t.Annotated[str | None, fastapi.Cookie()] = None,
-    db: orm.Session = fastapi.Depends(database.get_db),
 ):
     """Validate that the passed session token is valid for the given session."""
-    session = crud.get_session_by_id(db, session_id)
-
-    if not session or not ccm_session_token:
+    if not ccm_session_token:
         return fastapi.Response(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    if hmac.compare_digest(
-        ccm_session_token,
-        session.environment["CAPELLACOLLAB_SESSION_TOKEN"],
-    ):
-        return fastapi.Response(status_code=status.HTTP_204_NO_CONTENT)
+    assert auth.PUBLIC_KEY
 
-    return fastapi.Response(status_code=status.HTTP_403_FORBIDDEN)
+    try:
+        decoded_token = jwt.decode(
+            jwt=ccm_session_token,
+            key=auth.PUBLIC_KEY,
+            algorithms=["RS256"],
+            options={"require": ["exp", "iat"]},
+        )
+    except jwt.exceptions.ExpiredSignatureError:
+        return auth_exceptions.TokenSignatureExpired()
+    except jwt.exceptions.PyJWTError:
+        raise auth_exceptions.JWTValidationFailed()
+
+    if decoded_token.get("session", {}).get("id") != session_id:
+        return fastapi.Response(status_code=status.HTTP_403_FORBIDDEN)
+
+    return fastapi.Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.delete(

@@ -237,6 +237,34 @@ dashboard:
 	echo "Please use the following token: $$(kubectl -n default create token dashboard-admin)"
 	kubectl proxy
 
+synchronize-rsa-keys:
+	export POD_NAME=$$(kubectl get pods \
+		--context k3d-$(CLUSTER_NAME) \
+		-n $(NAMESPACE) \
+		-l id=$(RELEASE)-deployment-backend \
+		-o jsonpath="{.items[0].metadata.name}")
+
+	echo "Found Pod $$POD_NAME"
+
+	kubectl exec \
+		--context k3d-$(CLUSTER_NAME) \
+		-n $(NAMESPACE) \
+		--container $(RELEASE)-backend \
+		$$POD_NAME \
+		-- python -m capellacollab.cli keys export /tmp/private.key
+
+	kubectl cp \
+		--context k3d-$(CLUSTER_NAME) \
+		-n $(NAMESPACE) \
+		--container $(RELEASE)-backend \
+		$$POD_NAME:/tmp/private.key \
+		/tmp/private.key
+
+	$(MAKE) -C backend import-rsa-key
+
+	rm /tmp/private.key
+	echo "Please restart the local backend to apply the new RSA key."
+
 openapi:
 	$(MAKE) -C backend openapi
 	$(MAKE) -C frontend openapi

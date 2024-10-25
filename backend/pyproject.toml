@@ -45,6 +45,7 @@ dependencies = [
   "typer",
   "lxml",
   "valkey[libvalkey]",
+  "cryptography",
 ]
 
 [project.urls]

@@ -11,6 +11,7 @@ from alembic import config as alembic_config
 from alembic import migration
 from sqlalchemy import orm
 
+from capellacollab import core
 from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.events import crud as events_crud
@@ -157,7 +158,14 @@ def get_eclipse_session_configuration() -> (
                         "XPRA_SUBPATH": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
                         "XPRA_CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                     },
-                    redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&sharing=1&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/",
+                    redirect_url=(
+                        (
+                            "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
+                            if not core.LOCAL_DEVELOPMENT_MODE
+                            else "http://localhost:8080"
+                        )
+                        + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
+                    ),
                     cookies={
                         "token": "{CAPELLACOLLAB_SESSION_TOKEN}",
                     },
@@ -282,7 +290,14 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
                         name="Direct Jupyter connection (Browser)",
                         description="The only available connection method for Jupyter.",
                         ports=tools_models.HTTPPorts(http=8888, metrics=9118),
-                        redirect_url="{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/lab?token={CAPELLACOLLAB_SESSION_TOKEN}",
+                        redirect_url=(
+                            (
+                                "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
+                                if not core.LOCAL_DEVELOPMENT_MODE
+                                else "http://localhost:8080"
+                            )
+                            + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/lab?token={CAPELLACOLLAB_SESSION_TOKEN}"
+                        ),
                         sharing=tools_models.ToolSessionSharingConfiguration(
                             enabled=True
                         ),

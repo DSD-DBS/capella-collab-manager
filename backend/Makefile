@@ -24,7 +24,7 @@ SHELL = /bin/bash
 export MSYS_NO_PATHCONV=1
 export DISABLE_SESSION_TIMEOUT ?= 1
 export DISABLE_SESSION_COLLECTOR ?= 1
-export DEVELOPMENT_MODE ?= 1
+export LOCAL_DEVELOPMENT_MODE ?= 1
 
 database:
 	docker start capella-collab-postgres || \
@@ -79,6 +79,11 @@ openapi:
 		--remove-min-max-keys \
 		--skip-error-responses \
 		/tmp/openapi.json
+
+import-rsa-key:
+	$(VENV)/bin/python \
+		-m capellacollab.cli keys import \
+		/tmp/private.key
 
 dev: database valkey app
 

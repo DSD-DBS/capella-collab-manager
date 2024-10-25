@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 def get_last_seen(sid: str) -> str:
     """Return project session last seen activity"""
-    if core.DEVELOPMENT_MODE:
+    if core.LOCAL_DEVELOPMENT_MODE:
         return "Disabled in development mode"
 
     url = f"{config.prometheus.url}/api/v1/query?query=idletime_minutes"
