@@ -8,6 +8,7 @@ from fastapi import testclient
 from sqlalchemy import orm
 
 from capellacollab.__main__ import app
+from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import models as sessions_models
 from capellacollab.tools import models as tools_models
@@ -192,7 +193,11 @@ def test_share_session(
 def test_connect_to_shared_session(
     shared_session: sessions_models.DatabaseSession,
     client: testclient.TestClient,
+    monkeypatch: pytest.MonkeyPatch,
 ):
+    private_key = sessions_auth.generate_private_key()
+    monkeypatch.setattr(sessions_auth, "PRIVATE_KEY", private_key)
+
     response = client.get(
         f"/api/v1/sessions/{shared_session.id}/connection",
     )

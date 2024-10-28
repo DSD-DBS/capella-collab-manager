@@ -130,7 +130,10 @@ def get_eclipse_configuration():
                         "XPRA_SUBPATH": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
                         "XPRA_CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                     },
-                    "redirect_url": "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/",
+                    "redirect_url": (
+                        "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
+                        "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
+                    ),
                     "cookies": {
                         "token": "{CAPELLACOLLAB_SESSION_TOKEN}",
                     },

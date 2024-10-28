@@ -28,6 +28,9 @@ spec:
         - name: config
           configMap:
             name: {{ .Release.Name }}-backend
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-backend-data
         {{ if .Values.loki.enabled }}
         - name: logs
           emptyDir: {}
@@ -59,7 +62,7 @@ spec:
             - name: OAUTHLIB_INSECURE_TRANSPORT
               value: "1"
           {{ end }}
-            - name: DEVELOPMENT_MODE
+            - name: CLUSTER_DEVELOPMENT_MODE
               value: "{{ .Values.development }}"
             - name: no_proxy_additional
               value: "{{ .Values.proxy.no_proxy }}"
@@ -96,6 +99,8 @@ spec:
             - name: config
               mountPath: /etc/capellacollab
               readOnly: true
+            - name: data
+              mountPath: /.local/share/capellacollab
             {{ if .Values.loki.enabled }}
             - name: logs
               mountPath: /var/log/backend

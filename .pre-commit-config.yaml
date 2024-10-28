@@ -75,6 +75,7 @@ repos:
           - capellambse
           - typer
           - types-lxml
+          - cryptography
   - repo: local
     hooks:
       - id: pylint

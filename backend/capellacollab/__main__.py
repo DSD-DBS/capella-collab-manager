@@ -20,6 +20,7 @@ from capellacollab.config import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.routes import router
+from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import idletimeout, operators
 
 from . import __version__, metrics
@@ -64,6 +65,7 @@ on_startup: list[t.Callable] = [
     startup,
     idletimeout.terminate_idle_sessions_in_background,
     pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
+    sessions_auth.initialize_session_pre_authentication,
 ]
 
 app = fastapi.FastAPI(

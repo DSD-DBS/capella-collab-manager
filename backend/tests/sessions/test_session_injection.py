@@ -13,7 +13,7 @@ from capellacollab.sessions.operators import k8s
 def test_get_last_seen_disabled_in_development_mode(
     monkeypatch: pytest.MonkeyPatch,
 ):
-    monkeypatch.setattr(core, "DEVELOPMENT_MODE", True)
+    monkeypatch.setattr(core, "LOCAL_DEVELOPMENT_MODE", True)
     assert injection.get_last_seen("test") == "Disabled in development mode"
 
 

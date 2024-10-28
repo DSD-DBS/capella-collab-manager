@@ -3,8 +3,20 @@
 
 import os
 
-DEVELOPMENT_MODE: bool = os.getenv("DEVELOPMENT_MODE", "").lower() in (
+CLUSTER_DEVELOPMENT_MODE: bool = os.getenv(
+    "CLUSTER_DEVELOPMENT_MODE", ""
+).lower() in (
     "1",
     "true",
     "t",
 )
+
+LOCAL_DEVELOPMENT_MODE: bool = os.getenv(
+    "LOCAL_DEVELOPMENT_MODE", ""
+).lower() in (
+    "1",
+    "true",
+    "t",
+)
+
+DEVELOPMENT_MODE = LOCAL_DEVELOPMENT_MODE or CLUSTER_DEVELOPMENT_MODE

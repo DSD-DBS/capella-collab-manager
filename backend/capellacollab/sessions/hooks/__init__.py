@@ -4,6 +4,7 @@
 from capellacollab.tools import models as tools_models
 
 from . import (
+    authentication,
     guacamole,
     http,
     interface,
@@ -31,6 +32,7 @@ REGISTER_HOOKS_AUTO_USE: dict[str, interface.HookRegistration] = {
     "provisioning": provisioning.ProvisionWorkspaceHook(),
     "session_preparation": session_preparation.GitRepositoryCloningHook(),
     "networking": networking.NetworkingIntegration(),
+    "authentication": authentication.PreAuthenticationHook(),
 }
 
 
