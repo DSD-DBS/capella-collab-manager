@@ -536,7 +536,7 @@
             "uid": "prometheus_ccm"
           },
           "editorMode": "code",
-          "expr": "(sum(increase(feedback_count{rating=\"good\"}[$__range]) * 10) + sum(increase(feedback_count{rating=\"okay\"}[$__range]) * 5)) / sum(increase(feedback_count[$__range]))",
+          "expr": "(sum(increase(feedback_count{rating=\"good\"}[7d]) * 10) + sum(increase(feedback_count{rating=\"okay\"}[7d]) * 5)) / sum(increase(feedback_count[7d]))",
           "instant": false,
           "legendFormat": "User happiness index",
           "range": true,
@@ -561,6 +561,6 @@
   "timezone": "",
   "title": "Feedback",
   "uid": "edzhg6sv97lz4c",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
