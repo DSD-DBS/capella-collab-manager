@@ -3,7 +3,6 @@
 
 import pathlib
 import subprocess
-import typing as t
 
 
 def run_git_command(cmd: list[str]):

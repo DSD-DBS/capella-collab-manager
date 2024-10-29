@@ -17,6 +17,7 @@ def test_network_policy_created(
     network_policy_counter = 0
 
     def mock_create_namespaced_network_policy(
+        # pylint: disable=unused-argument
         self,
         namespace: str,
         network_policy: kubernetes.client.V1PersistentVolumeClaim,
@@ -45,6 +46,7 @@ def test_network_policy_deleted(
     network_policy_del_counter = 0
 
     def mock_delete_namespaced_network_policy(
+        # pylint: disable=unused-argument
         self,
         name: str,
         namespace: str,

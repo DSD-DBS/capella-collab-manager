@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import json
-
 import fastapi
 import pytest
 from sqlalchemy import orm
@@ -15,7 +13,6 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import provisioning as hooks_provisioning
-from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 

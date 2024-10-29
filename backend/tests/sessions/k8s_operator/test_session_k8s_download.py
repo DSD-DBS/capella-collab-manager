@@ -55,5 +55,5 @@ class MockStream:
     def is_open(self):
         return bool(self._blocks)
 
-    def read_stdout(self, timeout=None):
+    def read_stdout(self, timeout=None):  # pylint: disable=unused-argument
         return self._blocks.pop(0)

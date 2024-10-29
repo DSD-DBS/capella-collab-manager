@@ -29,6 +29,7 @@ class MockOperator:
     sessions: list[dict[str, t.Any]] = []
 
     def start_session(
+        # pylint: disable=unused-argument
         self,
         *args,
         **kwargs,

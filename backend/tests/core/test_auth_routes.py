@@ -11,7 +11,6 @@ from sqlalchemy import orm
 
 from capellacollab.config import config
 from capellacollab.core.authentication import api_key_cookie, exceptions, oidc
-from capellacollab.core.authentication import routes
 from capellacollab.core.authentication import routes as auth_routes
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
@@ -216,7 +215,7 @@ def test_validate_id_token_nonce_mismatch(
     monkeypatch.setattr(api_key_cookie, "JWTAPIKeyCookie", mock_jwt_api_cookie)
 
     with pytest.raises(exceptions.NonceMismatchError):
-        routes.validate_id_token("any", "correct-nonce")
+        auth_routes.validate_id_token("any", "correct-nonce")
 
 
 @responses.activate
@@ -233,4 +232,4 @@ def test_validate_id_token_audience_mismatch(
     monkeypatch.setattr(api_key_cookie, "JWTAPIKeyCookie", mock_jwt_api_cookie)
 
     with pytest.raises(exceptions.UnauthenticatedError):
-        routes.validate_id_token("any", "mock-nonce")
+        auth_routes.validate_id_token("any", "mock-nonce")

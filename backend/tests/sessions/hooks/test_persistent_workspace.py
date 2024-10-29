@@ -62,7 +62,10 @@ def test_workspace_is_created(
     volume_name = None
 
     def mock_create_namespaced_persistent_volume_claim(
-        self, ns: str, pvc: kubernetes.client.V1PersistentVolumeClaim
+        # pylint: disable=unused-argument
+        self,
+        ns: str,
+        pvc: kubernetes.client.V1PersistentVolumeClaim,
     ):
         nonlocal created_volumes, volume_name
         created_volumes += 1
@@ -102,6 +105,7 @@ def test_existing_workspace_is_mounted(
     created_volumes = 0
     volume_name = None
 
+    # pylint: disable=unused-argument
     def mock_create_namespaced_persistent_volume_claim(self, ns, pvc):
         nonlocal created_volumes, volume_name
         created_volumes += 1

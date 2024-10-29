@@ -19,6 +19,7 @@ def test_jupyter_successful_volume_mount(
     db: orm.Session,
 ):
     class MockOperator:
+        # pylint: disable=unused-argument
         def persistent_volume_exists(self, name: str) -> bool:
             return True
 
@@ -41,6 +42,7 @@ def test_jupyter_volume_mount_not_found(
     db: orm.Session,
 ):
     class MockOperator:
+        # pylint: disable=unused-argument
         def persistent_volume_exists(self, name: str) -> bool:
             return False
 

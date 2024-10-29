@@ -84,7 +84,7 @@ repos:
         args: [--rcfile=./backend/pyproject.toml]
         language: system
         types: [python]
-        files: '^backend/capellacollab'
+        files: '^backend'
         exclude: '^backend/capellacollab/alembic/'
   - repo: local
     hooks:

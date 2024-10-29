@@ -3,9 +3,6 @@
 
 import logging
 
-import pytest
-
-from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import http
 from capellacollab.sessions.hooks import interface as sessions_hooks_interface

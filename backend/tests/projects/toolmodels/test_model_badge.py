@@ -109,7 +109,7 @@ def fixture_mock_get_model_badge_from_artifacts_api(
             )
         case git_models.GitType.GITHUB:
             responses.get(
-                f"https://example.com/api/v4/repos/test/project/actions/artifacts/12347/zip",
+                "https://example.com/api/v4/repos/test/project/actions/artifacts/12347/zip",
                 status=200,
                 body=get_zipfile(),
                 content_type="application/zip",
