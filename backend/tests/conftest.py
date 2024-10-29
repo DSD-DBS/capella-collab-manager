@@ -80,6 +80,7 @@ def fixture_db(
 
         app.dependency_overrides[database.get_db] = mock_get_db
 
+        # pylint: disable=unused-argument
         def commit(*args, **kwargs):
             session.flush()
             session.expire_all()

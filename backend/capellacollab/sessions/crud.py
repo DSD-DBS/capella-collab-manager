@@ -64,6 +64,7 @@ def get_session_by_id(
 
 def count_sessions(db: orm.Session) -> int:
     count = db.scalar(
+        # pylint: disable=not-callable
         sa.select(sa.func.count()).select_from(models.DatabaseSession)
     )
     return count if count else 0

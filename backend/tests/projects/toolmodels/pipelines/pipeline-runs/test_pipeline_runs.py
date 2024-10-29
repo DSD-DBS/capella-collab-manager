@@ -20,9 +20,6 @@ from capellacollab.core.logging import loki
 from capellacollab.projects.toolmodels.backups.runs import (
     injectables as runs_injectables,
 )
-from capellacollab.projects.toolmodels.backups.runs import (
-    models as runs_models,
-)
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
@@ -35,7 +32,10 @@ def fixture_unix_time_in_ns() -> int:
 @pytest.fixture(name="patch_loki")
 def fixture_patch_loki(monkeypatch: pytest.MonkeyPatch, unix_time_in_ns: int):
     def fetch_logs_from_loki(
-        query, start_time: datetime.datetime, end_time: datetime.datetime
+        # pylint: disable=unused-argument
+        query,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
     ):
         return [
             {
@@ -174,7 +174,9 @@ def test_get_logs_with_loki_disabled(
 
 @pytest.fixture(name="mock_pipeline_run")
 def fixture_mock_pipeline_run():
-    mock_pipeline_run = mock.MagicMock(spec=runs_models.DatabasePipelineRun)
+    mock_pipeline_run = mock.MagicMock(
+        spec=pipeline_runs_models.DatabasePipelineRun
+    )
 
     # Assign the values you want the mock object to return
     mock_pipeline_run.id = "mock_id"
@@ -197,7 +199,9 @@ def fixture_mock_pipeline_run():
 def fixture_override_get_existing_pipeline_run_dependency(
     mock_pipeline_run: mock.Mock,
 ):
-    def get_mock_existing_pipeline_run() -> runs_models.DatabasePipelineRun:
+    def get_mock_existing_pipeline_run() -> (
+        pipeline_runs_models.DatabasePipelineRun
+    ):
         return mock_pipeline_run
 
     app.dependency_overrides[runs_injectables.get_existing_pipeline_run] = (

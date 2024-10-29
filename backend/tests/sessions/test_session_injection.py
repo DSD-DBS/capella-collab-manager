@@ -7,7 +7,6 @@ from kubernetes.client import exceptions as kubernetes_exceptions
 
 from capellacollab import core
 from capellacollab.sessions import injection
-from capellacollab.sessions.operators import k8s
 
 
 def test_get_last_seen_disabled_in_development_mode(
@@ -27,7 +26,10 @@ def test_started_session_state(monkeypatch: pytest.MonkeyPatch):
     """
 
     def mock_list_namespaced_pod(
-        self, namespace: str, label_selector: str
+        # pylint: disable=unused-argument
+        self,
+        namespace: str,
+        label_selector: str,
     ) -> client.V1PodList:
         return client.V1PodList(
             items=[
@@ -38,7 +40,10 @@ def test_started_session_state(monkeypatch: pytest.MonkeyPatch):
         )
 
     def mock_list_namespaced_event(
-        self, namespace: str, field_selector: str
+        # pylint: disable=unused-argument
+        self,
+        namespace: str,
+        field_selector: str,
     ) -> client.V1PodList:
         return client.CoreV1EventList(
             items=[
@@ -51,7 +56,11 @@ def test_started_session_state(monkeypatch: pytest.MonkeyPatch):
         )
 
     def mock_read_namespaced_pod_log(
-        self, name: str, container: str, namespace: str
+        # pylint: disable=unused-argument
+        self,
+        name: str,
+        container: str,
+        namespace: str,
     ) -> str:
         if container == "session-preparation":
             return "---FINISH_PREPARE_WORKSPACE---"

@@ -39,6 +39,7 @@ def test_get_user_tokens(client: testclient.TestClient):
 def test_use_basic_token(
     unauthenticated_user: users_models.User, monkeypatch: pytest.MonkeyPatch
 ):
+    # pylint: disable=unused-argument
     async def basic_passthrough(self, request: fastapi.Request):
         return unauthenticated_user.name
 

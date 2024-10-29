@@ -26,6 +26,7 @@ class MockOperator:
     cronjob_counter = 0
 
     def create_cronjob(
+        # pylint: disable=unused-argument
         self,
         *args,
         **kwargs,
@@ -38,7 +39,6 @@ class MockOperator:
 
     def delete_cronjob(self, _id: str):
         self.cronjob_counter -= 1
-        return
 
 
 @pytest.fixture(name="mockoperator")
@@ -179,6 +179,7 @@ def test_delete_pipeline(
     run_nightly: bool,
 ):
     def mock_remove_user_from_repository(
+        # pylint: disable=unused-argument
         instance: t4c_models.DatabaseT4CInstance,
         repository_name: str,
         username: str,

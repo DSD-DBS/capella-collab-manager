@@ -6,11 +6,7 @@ import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab.__main__ import app
 from capellacollab.settings.configuration import crud as configuration_crud
-from capellacollab.users import crud as users_crud
-from capellacollab.users import injectables as users_injectables
-from capellacollab.users import models as users_models
 
 
 @pytest.mark.usefixtures("admin")

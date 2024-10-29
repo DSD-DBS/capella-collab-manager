@@ -4,10 +4,8 @@
 import pytest
 from sqlalchemy import orm
 
-import capellacollab.projects.models as projects_models
 import capellacollab.projects.users.crud as projects_users_crud
 import capellacollab.projects.users.models as projects_users_models
-import capellacollab.users.models as users_models
 from capellacollab.projects import models as projects_models
 from capellacollab.users import models as users_models
 

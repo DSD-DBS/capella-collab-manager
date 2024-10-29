@@ -18,7 +18,6 @@ from capellacollab.sessions import routes as sessions_routes
 from capellacollab.sessions import util as sessions_util
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.operators import k8s
-from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
