@@ -20,6 +20,10 @@ const config: StorybookConfig = {
     name: '@storybook/angular',
     options: {},
   },
+  docs: {
+    autodocs: 'tag',
+  },
+  staticDirs: [{ from: './test-assets', to: '/test-assets' }],
   core: {
     disableTelemetry: true,
     enableCrashReports: false,

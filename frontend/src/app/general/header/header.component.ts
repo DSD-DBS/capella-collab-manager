@@ -12,6 +12,7 @@ import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthenticationWrapperService } from '../../services/auth/auth.service';
 import { OwnUserWrapperService } from '../../services/user/user.service';
 import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
+import { LogoComponent } from '../logo/logo.component';
 
 @Component({
   selector: 'app-header',
@@ -27,6 +28,7 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
     MatMenuTrigger,
     BreadcrumbsComponent,
     AsyncPipe,
+    LogoComponent,
   ],
 })
 export class HeaderComponent {

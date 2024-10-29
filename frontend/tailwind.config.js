@@ -37,6 +37,10 @@ module.exports = {
       screens: {
         tall: { raw: "(min-height: 945px)" },
       },
+      backgroundImage: {
+        hazard:
+          "repeating-linear-gradient(-55deg, #000, #000 10px, #966708 10px, #966708 20px)",
+      },
     },
   },
   plugins: [],
