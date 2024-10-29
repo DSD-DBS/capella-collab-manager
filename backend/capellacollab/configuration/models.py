@@ -12,7 +12,7 @@ from croniter import croniter
 from sqlalchemy import orm
 
 from capellacollab import core
-from capellacollab.core import database
+from capellacollab.core import DEVELOPMENT_MODE, database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.users import models as users_models
 
@@ -69,6 +69,27 @@ class CustomNavbarLink(NavbarLink):
     )
 
 
+class BadgeVariant(str, enum.Enum):
+    AUTO = "auto"
+    WARNING = "warning"
+    SUCCESS = "success"
+
+
+class Badge(core_pydantic.BaseModelStrict):
+    show: bool = pydantic.Field(
+        default=True,
+        description="Show a badge with the current environment.",
+    )
+    variant: BadgeVariant = pydantic.Field(
+        default=BadgeVariant.AUTO,
+        description="Color of the badge.",
+    )
+    text: str | t.Literal["auto"] = pydantic.Field(
+        default="auto",
+        description="Text to display in the badge. Use 'auto' to display the environment name.",
+    )
+
+
 class NavbarConfiguration(core_pydantic.BaseModelStrict):
     external_links: collections_abc.Sequence[
         BuiltInNavbarLink | CustomNavbarLink
@@ -104,6 +125,14 @@ class NavbarConfiguration(core_pydantic.BaseModelStrict):
             )
         ),
         description="Links to display in the navigation bar.",
+    )
+    logo_url: str | None = pydantic.Field(
+        default=None,
+        description="URL to a logo to display in the navigation bar.",
+    )
+    badge: Badge = pydantic.Field(
+        default=Badge(show=DEVELOPMENT_MODE),
+        description="Badge to display in the navigation bar.",
     )
 
 
