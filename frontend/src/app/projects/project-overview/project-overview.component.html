@@ -3,17 +3,24 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-form-field id="search" appearance="outline" class="w-full">
-  <mat-label>Search</mat-label>
-  <input
-    autocomplete="off"
-    matInput
-    placeholder="Project Name"
-    type="text"
-    [formControl]="searchControl"
-  />
-  <mat-icon matSuffix>search</mat-icon>
-</mat-form-field>
+<form class="pb-4" [formGroup]="form">
+  <mat-form-field id="search" appearance="outline" class="w-full">
+    <mat-label>Search</mat-label>
+    <input
+      autocomplete="off"
+      matInput
+      placeholder="Project Name"
+      type="text"
+      formControlName="search"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-chip-listbox class="-mt-2" formControlName="projectType">
+    <mat-chip-option value="general">Projects</mat-chip-option>
+    <mat-chip-option value="training">Trainings</mat-chip-option>
+  </mat-chip-listbox>
+</form>
 
 <div class="flex flex-wrap gap-5">
   <a routerLink="/projects/create" class="w-full sm:w-fit">

@@ -4,7 +4,13 @@
  */
 import { NgClass, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatRipple } from '@angular/material/core';
 import {
   MatFormField,
@@ -38,17 +44,34 @@ import { ProjectWrapperService } from '../service/project.service';
     MatSuffix,
     ReactiveFormsModule,
     FormsModule,
+    MatChipsModule,
   ],
 })
 export class ProjectOverviewComponent implements OnInit {
-  searchControl = new FormControl('');
-  public readonly filteredProjects$ = this.searchControl.valueChanges.pipe(
-    startWith(''),
-    switchMap((query) => this.searchAndSortProjects(query!)),
+  form = new FormGroup({
+    search: new FormControl<string>(''),
+    projectType: new FormControl<string | null>(null),
+  });
+  public readonly filteredProjects$ = this.form.valueChanges.pipe(
+    startWith(this.form.value),
+    switchMap((query) =>
+      this.searchAndSortProjects(
+        query.search!,
+        query?.projectType ?? undefined,
+      ),
+    ),
   );
 
-  searchAndSortProjects(query: string) {
+  searchAndSortProjects(query: string, projectType?: string) {
     return this.projectService.projects$.pipe(
+      map((projects) =>
+        projects?.filter((project) => {
+          if (projectType) {
+            return project.type === projectType;
+          }
+          return true;
+        }),
+      ),
       map((projects) =>
         projects?.filter((project) =>
           project.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
