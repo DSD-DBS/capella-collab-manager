@@ -16,10 +16,19 @@
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 
-  <mat-chip-listbox class="-mt-2" formControlName="projectType">
-    <mat-chip-option value="general">Projects</mat-chip-option>
-    <mat-chip-option value="training">Trainings</mat-chip-option>
-  </mat-chip-listbox>
+  <div class="-mt-2 flex gap-3">
+    <mat-chip-listbox formControlName="projectType">
+      <mat-chip-option value="general">Projects</mat-chip-option>
+      <mat-chip-option value="training">Trainings</mat-chip-option>
+    </mat-chip-listbox>
+
+    <div class="border-l"></div>
+
+    <mat-chip-listbox formControlName="projectVisibility">
+      <mat-chip-option value="internal">Internal</mat-chip-option>
+      <mat-chip-option value="private">Private</mat-chip-option>
+    </mat-chip-listbox>
+  </div>
 </form>
 
 <div class="flex flex-wrap gap-5">
