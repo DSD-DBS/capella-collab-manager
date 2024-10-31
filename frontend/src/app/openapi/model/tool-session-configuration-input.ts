@@ -12,6 +12,7 @@
 import { ToolSessionConnectionInput } from './tool-session-connection-input';
 import { EnvironmentValue } from './environment-value';
 import { PersistentWorkspaceSessionConfigurationInput } from './persistent-workspace-session-configuration-input';
+import { ProjectType } from './project-type';
 import { ResourcesInput } from './resources-input';
 import { SessionMonitoringInput } from './session-monitoring-input';
 import { ToolModelProvisioningInput } from './tool-model-provisioning-input';
@@ -33,5 +34,9 @@ export interface ToolSessionConfigurationInput {
      * Configuration for persistent workspaces.
      */
     persistent_workspaces?: PersistentWorkspaceSessionConfigurationInput;
+    /**
+     * Supported project types for this tool.
+     */
+    supported_project_types?: Array<ProjectType>;
 }
 

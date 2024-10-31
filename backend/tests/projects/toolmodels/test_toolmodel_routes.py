@@ -155,3 +155,66 @@ def test_patch_toolmodel_version_with_invalid_t4c_link(
         response.json()["detail"]["err_code"]
         == "T4C_INTEGRATION_WRONG_CAPELLA_VERSION"
     )
+
+
+@pytest.fixture
+def training_tool(db: orm.Session) -> tools_models.DatabaseTool:
+    tool = tools_models.CreateTool(
+        name="Training Tool",
+        config=tools_models.ToolSessionConfiguration(
+            supported_project_types=[projects_models.ProjectType.TRAINING]
+        ),
+    )
+
+    return tools_crud.create_tool(db, tool)
+
+
+def test_create_training_toolmodel(
+    training_project: projects_models.DatabaseProject,
+    client: testclient.TestClient,
+    training_tool: tools_models.DatabaseTool,
+    executor_name: str,
+    db: orm.Session,
+):
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
+
+    response = client.post(
+        f"/api/v1/projects/{training_project.slug}/models",
+        json={
+            "name": "Valid Training Toolmodel",
+            "description": "",
+            "tool_id": training_tool.id,
+        },
+    )
+
+    assert response.status_code == 200
+    assert "Valid Training Toolmodel" in response.text
+
+
+def test_create_toolmodel_project_type_not_allowed(
+    project: projects_models.DatabaseProject,
+    client: testclient.TestClient,
+    training_tool: tools_models.DatabaseTool,
+    executor_name: str,
+    db: orm.Session,
+):
+    users_crud.create_user(
+        db, executor_name, executor_name, None, users_models.Role.ADMIN
+    )
+
+    response = client.post(
+        f"/api/v1/projects/{project.slug}/models",
+        json={
+            "name": "Invalid Training Toolmodel",
+            "description": "",
+            "tool_id": training_tool.id,
+        },
+    )
+
+    assert response.status_code == 400
+    assert (
+        response.json()["detail"]["err_code"]
+        == "PROJECT_TYPE_NOT_SUPPORTED_BY_TOOLMODEL"
+    )

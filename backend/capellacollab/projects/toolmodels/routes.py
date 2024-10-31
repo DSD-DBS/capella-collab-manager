@@ -87,6 +87,8 @@ def create_new_tool_model(
         configuration["workspace"] = str(uuid.uuid4())
 
     slug = slugify.slugify(new_model.name)
+    if project.type not in tool.config.supported_project_types:
+        raise exceptions.ProjectTypeNotSupportedByToolModel(project.slug, slug)
     if crud.get_model_by_slugs(db, project.slug, slug):
         raise exceptions.ToolModelAlreadyExistsError(project.slug, slug)
 

@@ -34,7 +34,7 @@
           <mat-label>Model tool</mat-label>
           <mat-select matInput formControlName="toolID">
             <mat-option
-              *ngFor="let tool of toolWrapperService.tools"
+              *ngFor="let tool of $tools | async"
               value="{{ tool.id }}"
             >
               {{ tool.name }}
