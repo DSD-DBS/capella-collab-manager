@@ -14,6 +14,7 @@ import sqlalchemy as sa
 from lxml.html import builder
 from sqlalchemy import orm
 
+from capellacollab import core
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.core.database import decorator
@@ -114,7 +115,14 @@ class GuacamoleConnectionMethod(ToolSessionConnectionMethod):
 
 class HTTPConnectionMethod(ToolSessionConnectionMethod):
     type: t.Literal["http"] = "http"
-    redirect_url: str = pydantic.Field(default="http://localhost:8080")
+    redirect_url: str = pydantic.Field(
+        default=(
+            "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
+            if not core.LOCAL_DEVELOPMENT_MODE
+            else "http://localhost:8080"
+        )
+        + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}"
+    )
     ports: HTTPPorts = pydantic.Field(default=HTTPPorts())
     cookies: dict[str, str] = pydantic.Field(
         default={},
