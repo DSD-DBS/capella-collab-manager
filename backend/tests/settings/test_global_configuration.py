@@ -161,3 +161,21 @@ def test_navbar_is_updated(
         "href": "https://example.com",
         "role": "user",
     }
+
+
+@pytest.mark.usefixtures("admin")
+def test_global_configuration_invalid_pipelines(
+    client: testclient.TestClient,
+):
+    response = client.put(
+        "/api/v1/settings/configurations/global",
+        json={"pipelines": {"cron": "invalid", "timezone": "Berlin"}},
+    )
+
+    assert response.status_code == 422
+
+    detail = response.json()["detail"]
+    assert detail[0]["type"] == "value_error"
+    assert detail[0]["loc"] == ["body", "pipelines", "cron"]
+    assert detail[1]["type"] == "value_error"
+    assert detail[1]["loc"] == ["body", "pipelines", "timezone"]

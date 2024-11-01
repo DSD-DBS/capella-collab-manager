@@ -112,6 +112,8 @@ model/persistent-session-tool-configuration-input.ts
 model/persistent-session-tool-configuration-output.ts
 model/persistent-workspace-session-configuration-input.ts
 model/persistent-workspace-session-configuration-output.ts
+model/pipeline-configuration-input.ts
+model/pipeline-configuration-output.ts
 model/pipeline-run-status.ts
 model/pipeline-run.ts
 model/post-git-instance.ts
