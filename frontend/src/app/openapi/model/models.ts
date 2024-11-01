@@ -90,6 +90,8 @@ export * from './persistent-session-tool-configuration-input';
 export * from './persistent-session-tool-configuration-output';
 export * from './persistent-workspace-session-configuration-input';
 export * from './persistent-workspace-session-configuration-output';
+export * from './pipeline-configuration-input';
+export * from './pipeline-configuration-output';
 export * from './pipeline-run';
 export * from './pipeline-run-status';
 export * from './post-git-instance';

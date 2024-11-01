@@ -23,6 +23,7 @@ from capellacollab.projects.toolmodels.modelsources.t4c import (
 )
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
+from capellacollab.settings.configuration import core as configuration_core
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as t4c_repository_interface,
 )
@@ -99,6 +100,8 @@ def create_backup(
             exceptions.PipelineOperation.CREATE
         )
 
+    pipeline_config = configuration_core.get_global_configuration(db).pipelines
+
     if body.run_nightly:
         if not toolmodel.version_id:
             raise toolmodels_exceptions.VersionIdNotSetError(toolmodel.id)
@@ -117,7 +120,8 @@ def create_backup(
             labels=core.get_pipeline_labels(toolmodel),
             tool_resources=toolmodel.tool.config.resources,
             command="backup",
-            schedule="0 3 * * *",
+            schedule=pipeline_config.cron,
+            timezone=pipeline_config.timezone,
         )
     else:
         reference = operators.get_operator()._generate_id()

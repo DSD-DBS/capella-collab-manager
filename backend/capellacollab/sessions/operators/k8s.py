@@ -275,6 +275,7 @@ class KubernetesOperator:
         tool_resources: tools_models.Resources,
         environment: dict[str, str | None],
         schedule="* * * * *",
+        timezone="UTC",
         timeout=18000,
     ) -> str:
         _id = self._generate_id()
@@ -282,9 +283,10 @@ class KubernetesOperator:
         cronjob: client.V1CronJob = client.V1CronJob(
             kind="CronJob",
             api_version="batch/v1",
-            metadata=client.V1ObjectMeta(name=_id),
+            metadata=client.V1ObjectMeta(name=_id, labels=labels),
             spec=client.V1CronJobSpec(
                 schedule=schedule,
+                time_zone=timezone,
                 job_template=client.V1JobTemplateSpec(
                     metadata=client.V1ObjectMeta(labels=labels),
                     spec=self._create_job_spec(

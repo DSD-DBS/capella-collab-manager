@@ -4,8 +4,10 @@
 import abc
 import enum
 import typing as t
+import zoneinfo
 
 import pydantic
+from croniter import croniter
 from sqlalchemy import orm
 
 from capellacollab import core
@@ -166,6 +168,38 @@ class ConfigurationBase(core_pydantic.BaseModelStrict, abc.ABC):
     _name: t.ClassVar[str]
 
 
+class PipelineConfiguration(core_pydantic.BaseModelStrict):
+    cron: str = pydantic.Field(
+        default="0 3 * * *",
+        description=(
+            "Cron for nightly backup. Only applies to newly created pipelines."
+        ),
+    )
+    timezone: str = pydantic.Field(
+        default="UTC",
+        description="Timezone for the cron expression.",
+    )
+
+    @pydantic.field_validator("cron")
+    @classmethod
+    def validate_cron(cls, v: str) -> str:
+        if croniter.is_valid(v):
+            return v
+
+        raise ValueError("Cron doesn't have a valid syntax.")
+
+    @pydantic.field_validator("timezone")
+    @classmethod
+    def validate_timezone(cls, v: str) -> str:
+        if v in zoneinfo.available_timezones():
+            return v
+
+        raise ValueError(
+            "Timezone is not valid. A list of timezones can be found at"
+            " https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"
+        )
+
+
 class GlobalConfiguration(ConfigurationBase):
     """Global application configuration."""
 
@@ -181,6 +215,10 @@ class GlobalConfiguration(ConfigurationBase):
 
     feedback: FeedbackConfiguration = pydantic.Field(
         default_factory=FeedbackConfiguration
+    )
+
+    pipelines: PipelineConfiguration = pydantic.Field(
+        default_factory=PipelineConfiguration
     )
 
 

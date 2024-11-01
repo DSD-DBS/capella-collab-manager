@@ -76,6 +76,7 @@ repos:
           - typer
           - types-lxml
           - cryptography
+          - types-croniter
   - repo: local
     hooks:
       - id: pylint

@@ -11,6 +11,7 @@
 
 import { NavbarConfigurationInput } from './navbar-configuration-input';
 import { MetadataConfigurationInput } from './metadata-configuration-input';
+import { PipelineConfigurationInput } from './pipeline-configuration-input';
 import { FeedbackConfigurationInput } from './feedback-configuration-input';
 
 
@@ -21,5 +22,6 @@ export interface GlobalConfigurationInput {
     metadata?: MetadataConfigurationInput;
     navbar?: NavbarConfigurationInput;
     feedback?: FeedbackConfigurationInput;
+    pipelines?: PipelineConfigurationInput;
 }
 
