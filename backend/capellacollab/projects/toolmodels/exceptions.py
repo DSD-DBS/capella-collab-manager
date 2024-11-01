@@ -35,3 +35,13 @@ class ToolModelAlreadyExistsError(core_exceptions.BaseError):
             reason=f"A model with the slug '{model_slug}' already exists in the project '{project_slug}'.",
             err_code="TOOLMODEL_ALREADY_EXISTS",
         )
+
+
+class ProjectTypeNotSupportedByToolModel(core_exceptions.BaseError):
+    def __init__(self, project_slug: str, model_slug: str):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Project type not supported by toolmodel",
+            reason=f"The project type of the project '{project_slug}' is not supported by the toolmodel '{model_slug}'.",
+            err_code="PROJECT_TYPE_NOT_SUPPORTED_BY_TOOLMODEL",
+        )

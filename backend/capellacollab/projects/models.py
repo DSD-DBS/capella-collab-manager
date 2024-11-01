@@ -30,7 +30,7 @@ class Visibility(enum.Enum):
     INTERNAL = "internal"
 
 
-class ProjectType(enum.Enum):
+class ProjectType(str, enum.Enum):
     GENERAL = "general"
     TRAINING = "training"
 

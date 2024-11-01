@@ -21,6 +21,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { map, switchMap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
@@ -65,6 +66,23 @@ export class CreateModelBaseComponent implements OnInit {
       this.validToolValidator(),
     ]),
   });
+
+  readonly $tools = this.projectService.project$.pipe(
+    untilDestroyed(this),
+    switchMap((project) =>
+      project
+        ? this.toolWrapperService
+            .getTools()
+            .pipe(
+              map((tools) =>
+                tools.filter((tool) =>
+                  tool.config.supported_project_types.includes(project.type),
+                ),
+              ),
+            )
+        : [],
+    ),
+  );
 
   constructor(
     private modelService: ModelWrapperService,

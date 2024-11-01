@@ -13,3 +13,12 @@ from capellacollab.projects import models as projects_models
 @pytest.fixture(name="project")
 def fixture_project(db: orm.Session) -> projects_models.DatabaseProject:
     return projects_crud.create_project(db, str(uuid.uuid1()))
+
+
+@pytest.fixture(name="training_project")
+def fixture_training_project(
+    db: orm.Session,
+) -> projects_models.DatabaseProject:
+    return projects_crud.create_project(
+        db, str(uuid.uuid1()), type=projects_models.ProjectType.TRAINING
+    )

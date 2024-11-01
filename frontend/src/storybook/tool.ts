@@ -83,6 +83,7 @@ export const mockTool: Readonly<Tool> = {
         path: '/metrics',
       },
     },
+    supported_project_types: ['general', 'training'],
   },
 };
 

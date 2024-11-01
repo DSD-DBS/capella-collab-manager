@@ -18,6 +18,7 @@ from capellacollab import core
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.core.database import decorator
+from capellacollab.projects import models as project_models
 
 DOCKER_IMAGE_PATTERN = r"^[a-zA-Z0-9][a-zA-Z0-9_\-/.:${}]*$"
 
@@ -309,6 +310,22 @@ class ToolSessionConfiguration(core_pydantic.BaseModel):
             description="Configuration for persistent workspaces.",
         )
     )
+    supported_project_types: list[project_models.ProjectType] = pydantic.Field(
+        default=[
+            project_models.ProjectType.GENERAL,
+            project_models.ProjectType.TRAINING,
+        ],
+        description="Supported project types for this tool.",
+    )
+
+    @pydantic.field_validator("supported_project_types")
+    @classmethod
+    def check_uniqueness_of_supported_project_types(
+        cls, value: list[project_models.ProjectType]
+    ) -> list[project_models.ProjectType]:
+        if len(value) != len(set(value)):
+            raise ValueError("Project types must be unique.")
+        return value
 
 
 class DatabaseTool(database.Base):
