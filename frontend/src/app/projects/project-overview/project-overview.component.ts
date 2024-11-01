@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRipple } from '@angular/material/core';
+import { MatDivider } from '@angular/material/divider';
 import {
   MatFormField,
   MatLabel,
@@ -45,12 +46,14 @@ import { ProjectWrapperService } from '../service/project.service';
     ReactiveFormsModule,
     FormsModule,
     MatChipsModule,
+    MatDivider,
   ],
 })
 export class ProjectOverviewComponent implements OnInit {
   form = new FormGroup({
     search: new FormControl<string>(''),
     projectType: new FormControl<string | null>(null),
+    projectVisibility: new FormControl<string | null>(null),
   });
   public readonly filteredProjects$ = this.form.valueChanges.pipe(
     startWith(this.form.value),
@@ -58,16 +61,29 @@ export class ProjectOverviewComponent implements OnInit {
       this.searchAndSortProjects(
         query.search!,
         query?.projectType ?? undefined,
+        query?.projectVisibility ?? undefined,
       ),
     ),
   );
 
-  searchAndSortProjects(query: string, projectType?: string) {
+  searchAndSortProjects(
+    query: string,
+    projectType?: string,
+    projectVisibility?: string,
+  ) {
     return this.projectService.projects$.pipe(
       map((projects) =>
         projects?.filter((project) => {
           if (projectType) {
             return project.type === projectType;
+          }
+          return true;
+        }),
+      ),
+      map((projects) =>
+        projects?.filter((project) => {
+          if (projectVisibility) {
+            return project.visibility === projectVisibility;
           }
           return true;
         }),
