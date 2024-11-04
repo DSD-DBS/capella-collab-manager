@@ -21,8 +21,12 @@ def test_create_tool_version(
                 "is_recommended": False,
                 "is_deprecated": False,
                 "sessions": {
-                    "persistent": {"image": "docker.io/hello-world:latest"},
-                    "read_only": {"image": "docker.io/hello-world:latest"},
+                    "persistent": {
+                        "image": {
+                            "default": "docker.io/hello-world:latest",
+                            "beta": None,
+                        }
+                    },
                 },
                 "backups": {"image": "docker.io/hello-world:latest"},
             },
@@ -78,8 +82,12 @@ def test_update_tools_version(
                 "is_recommended": False,
                 "is_deprecated": False,
                 "sessions": {
-                    "persistent": {"image": "docker.io/hello-world:latest"},
-                    "read_only": {"image": "docker.io/hello-world:latest"},
+                    "persistent": {
+                        "image": {
+                            "default": "docker.io/hello-world:latest",
+                            "beta": None,
+                        }
+                    },
                 },
                 "backups": {"image": "docker.io/hello-world:latest"},
             },

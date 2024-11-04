@@ -18,6 +18,7 @@ export interface BaseUser {
     idp_identifier: string;
     email: string | null;
     role: Role;
+    beta_tester: boolean;
 }
 export namespace BaseUser {
 }

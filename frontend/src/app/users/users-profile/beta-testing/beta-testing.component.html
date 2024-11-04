@@ -1,0 +1,30 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+@if (this.userWrapperService.user$ | async; as user) {
+  <div class="collab-card">
+    <h2 class="text-xl font-medium">Try experimental features</h2>
+    <hr />
+    <p>
+      Be one of the first to try our new updates! This may include new versions
+      of our docker images, experimental features, changes to the user
+      interface, and more. <br />
+      If you run into any issues, please let us know using the feedback form.
+      You can opt-out at any time.
+    </p>
+
+    <div class="mt-1">
+      @if (isBetaTester$ | async) {
+        <button (click)="setBetaTester(false)" mat-flat-button color="warn">
+          <mat-icon>science_off</mat-icon>Opt-out of beta-testing
+        </button>
+      } @else {
+        <button (click)="setBetaTester(true)" mat-flat-button color="primary">
+          <mat-icon>experiment</mat-icon>Opt-in for beta-testing
+        </button>
+      }
+    </div>
+  </div>
+}

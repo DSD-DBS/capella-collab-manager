@@ -18,6 +18,7 @@ export interface User {
     idp_identifier: string;
     email: string | null;
     role: Role;
+    beta_tester: boolean;
     created: string | null;
     last_login: string | null;
 }

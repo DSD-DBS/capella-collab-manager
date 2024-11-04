@@ -31,6 +31,7 @@ class BaseUser(core_pydantic.BaseModel):
     idp_identifier: str
     email: str | None = None
     role: Role
+    beta_tester: bool = False
 
 
 class User(BaseUser):
@@ -51,6 +52,7 @@ class PatchUser(core_pydantic.BaseModel):
     email: str | None = None
     role: Role | None = None
     reason: str | None = None
+    beta_tester: bool | None = None
 
 
 class PostUser(core_pydantic.BaseModel):
@@ -59,6 +61,7 @@ class PostUser(core_pydantic.BaseModel):
     email: str | None = None
     role: Role
     reason: str
+    beta_tester: bool = False
 
 
 class DatabaseUser(database.Base):
@@ -104,3 +107,5 @@ class DatabaseUser(database.Base):
     last_login: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
         default=None
     )
+
+    beta_tester: orm.Mapped[bool] = orm.mapped_column(default=False)

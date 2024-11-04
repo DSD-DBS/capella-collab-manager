@@ -108,3 +108,12 @@ def update_last_login(
 def delete_user(db: orm.Session, user: models.DatabaseUser):
     db.delete(user)
     db.commit()
+
+
+def unenroll_all_beta_testers(db: orm.Session):
+    db.execute(
+        sa.update(models.DatabaseUser)
+        .where(models.DatabaseUser.beta_tester.is_(True))
+        .values(beta_tester=False)
+    )
+    db.commit()

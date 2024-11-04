@@ -9,9 +9,10 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { PersistentSessionToolConfigurationImagesInput } from './persistent-session-tool-configuration-images-input';
 
 
 export interface PersistentSessionToolConfigurationInput { 
-    image?: string | null;
+    image?: PersistentSessionToolConfigurationImagesInput;
 }
 

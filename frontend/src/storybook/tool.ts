@@ -36,7 +36,10 @@ export const mockToolVersion: Readonly<ToolVersion> = {
     compatible_versions: [],
     sessions: {
       persistent: {
-        image: 'fakeImage',
+        image: {
+          regular: 'fakeImage',
+          beta: null,
+        },
       },
     },
     backups: {

@@ -209,7 +209,10 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
                 is_deprecated=capella_version_name in ("5.0.0", "5.2.0"),
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
-                        image=(f"{registry}/capella/remote:{docker_tag}"),
+                        image=tools_models.PersistentSessionToolConfigurationImages(
+                            regular=f"{registry}/capella/remote:{docker_tag}",
+                            beta=None,
+                        ),
                     ),
                 ),
                 backups=tools_models.ToolBackupConfiguration(
@@ -247,8 +250,9 @@ def create_papyrus_tool(db: orm.Session) -> tools_models.DatabaseTool:
                 is_deprecated=False,
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
-                        image=(
-                            f"{config.docker.sessions_registry}/capella/remote:{papyrus_version_name}-latest"
+                        image=tools_models.PersistentSessionToolConfigurationImages(
+                            regular=f"{config.docker.sessions_registry}/papyrus/remote:{papyrus_version_name}-latest",
+                            beta=None,
                         ),
                     ),
                 ),
@@ -329,8 +333,9 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
                 is_deprecated=False,
                 sessions=tools_models.SessionToolConfiguration(
                     persistent=tools_models.PersistentSessionToolConfiguration(
-                        image=(
-                            f"{config.docker.sessions_registry}/jupyter-notebook:python-3.11"
+                        image=tools_models.PersistentSessionToolConfigurationImages(
+                            regular=f"{config.docker.sessions_registry}/jupyter-notebook:python-3.11",
+                            beta=None,
                         ),
                     ),
                 ),

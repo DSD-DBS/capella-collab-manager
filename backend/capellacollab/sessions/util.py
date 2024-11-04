@@ -171,10 +171,13 @@ def stringify_environment_variables(
 
 
 def get_docker_image(
-    version: tools_models.DatabaseVersion, workspace_type: models.SessionType
+    version: tools_models.DatabaseVersion,
+    workspace_type: models.SessionType,
+    beta: bool,
 ) -> str:
     """Get the Docker image for a given tool version and workspace type"""
-    template = version.config.sessions.persistent.image
+    images = version.config.sessions.persistent.image
+    template = images.beta if beta and images.beta else images.regular
 
     if not template:
         raise exceptions.UnsupportedSessionTypeError(

@@ -129,3 +129,16 @@ def test_delete_user(
         )
         is None
     )
+
+
+def test_fail_update_own_user(
+    client: testclient.TestClient, user: users_models.DatabaseUser
+):
+    response = client.patch(
+        f"/api/v1/users/{user.id}", json={"name": "new_name"}
+    )
+
+    assert response.status_code == 403
+    assert (
+        response.json()["detail"]["err_code"] == "CHANGES_NOT_ALLOWED_FOR_ROLE"
+    )

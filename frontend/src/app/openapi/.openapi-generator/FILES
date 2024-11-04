@@ -35,6 +35,8 @@ model/authorization-response.ts
 model/backup-pipeline-run.ts
 model/backup.ts
 model/base-user.ts
+model/beta-configuration-input.ts
+model/beta-configuration-output.ts
 model/built-in-link-item.ts
 model/built-in-navbar-link.ts
 model/cpu-resources-input.ts
@@ -108,6 +110,8 @@ model/patch-user.ts
 model/path-validation.ts
 model/payload-response-model-list-simple-t4-c-repository-with-integrations.ts
 model/payload-response-model-session-connection-information.ts
+model/persistent-session-tool-configuration-images-input.ts
+model/persistent-session-tool-configuration-images-output.ts
 model/persistent-session-tool-configuration-input.ts
 model/persistent-session-tool-configuration-output.ts
 model/persistent-workspace-session-configuration-input.ts

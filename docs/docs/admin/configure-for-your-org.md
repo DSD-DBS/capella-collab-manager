@@ -101,3 +101,16 @@ Prompts that are associated with a session automatically include anonymized
 metadata about the session.
 
 1. Feedback will be sent by email to all addresses specified here.
+
+## Beta-Testing
+
+To test new images, you can enable the beta-testing feature. This will allow
+you specify a different image tag to use. Users can self-enroll as a
+beta-tester if you enable self-enrollment. Admins can always enroll themselves
+and others.
+
+```yaml
+beta:
+    enabled: true
+    allow_self_enrollment: true
+```

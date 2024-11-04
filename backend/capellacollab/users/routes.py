@@ -15,6 +15,8 @@ from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.sessions import routes as session_routes
+from capellacollab.settings.configuration import core as config_core
+from capellacollab.settings.configuration import models as config_models
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes
@@ -37,6 +39,18 @@ def get_current_user(
     user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
 ) -> models.DatabaseUser:
     return user
+
+
+@router.get(
+    "/beta",
+    response_model=config_models.BetaConfiguration,
+)
+def get_beta_config(db: orm.Session = fastapi.Depends(database.get_db)):
+    cfg = config_core.get_global_configuration(db)
+
+    return config_models.BetaConfiguration.model_validate(
+        cfg.beta.model_dump()
+    )
 
 
 @router.get(
@@ -125,11 +139,6 @@ def get_common_projects(
 @router.patch(
     "/{user_id}",
     response_model=models.User,
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=models.Role.ADMIN)
-        )
-    ],
 )
 def update_user(
     patch_user: models.PatchUser,
@@ -137,6 +146,23 @@ def update_user(
     own_user: models.DatabaseUser = fastapi.Depends(get_current_user),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+    # Users are only allowed to update their beta_tester status unless they are an admin
+    if own_user.role != models.Role.ADMIN:
+        if own_user.id != user.id:
+            raise exceptions.ChangesNotAllowedForOtherUsersError()
+        if any(patch_user.model_dump(exclude={"beta_tester"}).values()):
+            raise exceptions.ChangesNotAllowedForRoleError()
+
+    if patch_user.beta_tester:
+        cfg = config_core.get_global_configuration(db)
+        if not cfg.beta.enabled:
+            raise exceptions.BetaTestingDisabledError()
+        if (
+            not cfg.beta.allow_self_enrollment
+            and own_user.role != models.Role.ADMIN
+        ):
+            raise exceptions.BetaTestingSelfEnrollmentNotAllowedError()
+
     if patch_user.role and patch_user.role != user.role:
         reason = patch_user.reason
         if not reason:

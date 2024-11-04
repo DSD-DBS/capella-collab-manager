@@ -40,6 +40,11 @@ class DatabaseFeedback(database.Base):
         cascade="all, delete-orphan",
         single_parent=True,
     )
+    beta_tester: orm.Mapped[bool] = orm.mapped_column(
+        sa.Boolean,
+        nullable=False,
+        server_default="false",
+    )
 
     trigger: orm.Mapped[str | None]
     created_at: orm.Mapped[datetime.datetime]

@@ -159,6 +159,17 @@ class FeedbackConfiguration(core_pydantic.BaseModelStrict):
     )
 
 
+class BetaConfiguration(core_pydantic.BaseModelStrict):
+    enabled: bool = pydantic.Field(
+        default=core.DEVELOPMENT_MODE,
+        description="Enable beta-testing features. Disabling this will un-enroll all beta-testers.",
+    )
+    allow_self_enrollment: bool = pydantic.Field(
+        default=core.DEVELOPMENT_MODE,
+        description="Allow users to register themselves as beta-testers.",
+    )
+
+
 class ConfigurationBase(core_pydantic.BaseModelStrict, abc.ABC):
     """
     Base class for configuration models. Can be used to define new configurations
@@ -216,6 +227,8 @@ class GlobalConfiguration(ConfigurationBase):
     feedback: FeedbackConfiguration = pydantic.Field(
         default_factory=FeedbackConfiguration
     )
+
+    beta: BetaConfiguration = pydantic.Field(default_factory=BetaConfiguration)
 
     pipelines: PipelineConfiguration = pydantic.Field(
         default_factory=PipelineConfiguration
