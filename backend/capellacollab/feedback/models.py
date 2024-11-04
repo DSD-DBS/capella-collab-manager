@@ -65,7 +65,7 @@ class Feedback(core_pydantic.BaseModel):
         description="The rating of the feedback"
     )
     feedback_text: str | None = pydantic.Field(
-        description="The feedback text", max_length=255
+        description="The feedback text", max_length=500
     )
     share_contact: bool = pydantic.Field(
         description="Whether the user wants to share their contact information"

@@ -64,7 +64,9 @@ export class FeedbackDialogComponent {
       undefined,
       Validators.required,
     ),
-    feedbackText: new FormControl<string>(''),
+    feedbackText: new FormControl<string>('', {
+      validators: [Validators.maxLength(500)],
+    }),
     shareContact: new FormControl<boolean>(true),
   });
 

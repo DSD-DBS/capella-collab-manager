@@ -60,6 +60,11 @@
           formControlName="feedbackText"
           data-testid="feedback-text"
         ></textarea>
+        @if (feedbackForm.controls.feedbackText.hasError("maxlength")) {
+          <mat-error>
+            Your feedback can't be longer than 500 characters.
+          </mat-error>
+        }
         <mat-hint
           >Try to be specific. What happened? What were you doing?</mat-hint
         >
