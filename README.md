@@ -53,8 +53,7 @@ In addition, we have integrated commercial products:
   - Automatic repository monitoring
   - UI to create and delete models
   - Automatic license injection into sessions.
-  - Nightly synchronization from TeamForCapella repositories to Git
-    repositories
+  - Synchronization from TeamForCapella repositories to Git repositories
   - Automatic access management via session tokens.
 
 - [pure::variants](https://www.pure-systems.com/purevariants)

@@ -124,9 +124,9 @@ overview reasons, they are separated:
     and you won't need to touch it. In the session namespace, the following
     services run:
     -   Storage for persistent workspaces
-    -   Storage for Juypter file-shares
-    -   Pipeline jobs for nightly TeamForCapella to Git synchronisation
-    -   Session containers (Capella, Papyrus, Juypter, pure::variants)
+    -   Storage for Jupyter file-shares
+    -   Pipeline jobs for TeamForCapella to Git synchronization
+    -   Session containers (Capella, Papyrus, Jupyter, pure::variants)
 
 ---
 

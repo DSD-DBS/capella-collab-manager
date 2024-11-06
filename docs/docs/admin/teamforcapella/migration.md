@@ -24,8 +24,7 @@
     previously imported project!
 1.  Terminate the session.
 1.  Remove existing TeamForCapella to Git backup pipelines in the Collaboration
-    Manager:
-    [Remove a (nightly) backup](../../user/projects/models/backups/remove.md)
+    Manager: [Remove a backup](../../user/projects/models/backups/remove.md)
 1.  Add a new repository in the TeamForCapella server with the new Capella
     version via the Capella Collaboration Manager:
     [Add a new TeamForCapella repository](./repository-management/index.md#add-a-new-teamforcapella-repository)
