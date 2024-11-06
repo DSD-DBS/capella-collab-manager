@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Remove a (Nightly) Backup
+# Remove a Backup
 
 !!! warning
 

@@ -46,12 +46,12 @@
   <tr>
     <td><b>Potential of data loss</b></td>
     <td>Changes are backed up after each push (more regularly).</td>
-    <td>Changes are backed up on a nightly basis.</td>
+    <td>Changes are backed up on schedule, usually once a day.</td>
   </tr>
   <tr>
     <td><b>Automation</b></td>
     <td>Possible via CI/CD in the Git repository.</td>
-    <td>Possible via TeamForCapella &rarr; Git synchronisation (runs on a nightly basis).</td>
+    <td>Possible via TeamForCapella &rarr; Git synchronization (runs on schedule, usually once a day).</td>
   </tr>
   <tr markdown="span">
     <td><b>Change control</b></td>
@@ -61,7 +61,7 @@
   <tr>
     <td><b>Release tagging</b></td>
     <td>Directly possible via tags in Git.</td>
-    <td>Possible via TeamForCapella &rarr; Git synchronisation (Releases are stored as tags in the Git repository).</td>
+    <td>Possible via TeamForCapella &rarr; Git synchronization (Releases are stored as tags in the Git repository).</td>
   </tr>
 </table>
 
@@ -103,7 +103,7 @@
     modeling process that would stop a person from making changes that are not
     allowed. Yet there are a few ways around that limitation. For teams with
     basic or no experience in modeling and git this is probably the best way to
-    start co-woking. Git is still used for nightly backup of the model and
+    start co-woking. Git is still used for regular backups of the model and
     release-tagging.
 
     !!! info "TeamForCapella license required"

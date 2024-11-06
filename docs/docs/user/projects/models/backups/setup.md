@@ -12,12 +12,13 @@
 
 !!! danger
 
-    Models are not automatically backed up! Please make sure to set up a nightly
+    Models are not automatically backed up! Please make sure to set up a regular
     backup for important content.
 
 It's possible to create a backup from any TeamForCapella repository to any Git
 repository in a project. Pipelines can be triggered manually and can be
-executed nightly at 3 am UTC.
+executed on schedule. By default the schedule is set to run every night at 3am
+UTC, but can be configured in the configuration.
 
 1.  Navigate to `Projects`
 1.  Select the relevant project
