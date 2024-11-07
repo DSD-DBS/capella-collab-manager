@@ -71,6 +71,7 @@ dev = [
   "aioresponses",
   "types-lxml",
   "types-croniter",
+  "pyinstrument",
 ]
 
 [tool.black]

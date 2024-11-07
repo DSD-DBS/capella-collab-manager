@@ -111,6 +111,7 @@ nav:
       - Introduction: development/index.md
       - Backend:
           - Code Style: development/backend/code-style.md
+          - Profiling: development/backend/profiling.md
           - Technology Overview: development/backend/technology.md
           - Extension Modules: development/backend/extensions.md
           - Exception Handling: development/backend/exception.md

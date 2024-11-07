@@ -68,6 +68,8 @@ jobs:
       - name: Run openapi-generator for target
         working-directory: ./backend
         run: make openapi
+      - name: Clear configuration
+        run: rm backend/config/config.yaml
       - name: Move openapi schema file
         run: mv /tmp/openapi.json /tmp/openapi2.json
       - name: Checkout base

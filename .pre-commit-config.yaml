@@ -77,6 +77,7 @@ repos:
           - types-lxml
           - cryptography
           - types-croniter
+          - pyinstrument
   - repo: local
     hooks:
       - id: pylint

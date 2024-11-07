@@ -329,6 +329,10 @@ class LoggingConfig(BaseConfig):
         description="The path to the log file (saved as 'backend.log').",
         examples=["logs/"],
     )
+    profiling: bool = pydantic.Field(
+        default=False,
+        description="Enable profiling of requests.",
+    )
 
 
 class RequestsConfig(BaseConfig):
