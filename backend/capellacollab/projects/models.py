@@ -107,6 +107,7 @@ class PostProjectRequest(core_pydantic.BaseModel):
     name: str
     description: str | None = None
     visibility: Visibility = Visibility.PRIVATE
+    type: ProjectType = ProjectType.GENERAL
 
 
 class DatabaseProject(database.Base):

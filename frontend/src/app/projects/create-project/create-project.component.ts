@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormControl,
@@ -18,7 +18,7 @@ import { MatInput } from '@angular/material/input';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { RouterLink } from '@angular/router';
-import { Visibility } from 'src/app/openapi';
+import { ProjectType, Visibility } from 'src/app/openapi';
 import {
   CreateModelComponent,
   CreateModelStep,
@@ -44,7 +44,6 @@ import { ProjectWrapperService } from '../service/project.service';
     MatInput,
     MatError,
     MatRadioGroup,
-    NgFor,
     MatRadioButton,
     MatButton,
     MatIcon,
@@ -73,6 +72,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
     }),
     description: new FormControl(''),
     visibility: new FormControl('private'),
+    type: new FormControl('general'),
   });
 
   ngOnInit(): void {
@@ -90,6 +90,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
           name: this.form.value.name!,
           description: this.form.value.description!,
           visibility: this.form.value.visibility! as Visibility,
+          type: this.form.value.type! as ProjectType,
         })
         .subscribe((project) => {
           this.toastService.showSuccess(

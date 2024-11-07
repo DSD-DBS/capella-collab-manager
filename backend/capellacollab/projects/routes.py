@@ -141,6 +141,7 @@ def create_project(
         post_project.name,
         post_project.description or "",
         post_project.visibility,
+        post_project.type,
     )
 
     if user.role != users_models.Role.ADMIN:

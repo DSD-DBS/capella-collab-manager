@@ -4,8 +4,9 @@
  */
 import { AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { Project, Visibility } from 'src/app/openapi';
+import { Project, ProjectType, Visibility } from 'src/app/openapi';
 import {
+  ProjectTypeDescriptions,
   ProjectVisibilityDescriptions,
   ProjectWrapperService,
 } from 'src/app/projects/service/project.service';
@@ -50,6 +51,14 @@ export class MockProjectWrapperService
 
   getAvailableVisibilities(): Visibility[] {
     return Object.keys(ProjectVisibilityDescriptions) as Visibility[];
+  }
+
+  getProjectTypeDescription(type: ProjectType): string {
+    return ProjectTypeDescriptions[type];
+  }
+
+  getAvailableProjectTypes(): ProjectType[] {
+    return Object.keys(ProjectTypeDescriptions) as ProjectType[];
   }
   createProject(project: Project): Observable<Project> {
     return of(project);

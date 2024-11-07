@@ -53,16 +53,33 @@
                   formControlName="visibility"
                   class="flex flex-col"
                 >
-                  <mat-radio-button
-                    *ngFor="
-                      let visibility of projectService.getAvailableVisibilities()
-                    "
-                    [value]="visibility"
-                  >
-                    {{
-                      projectService.getProjectVisibilityDescription(visibility)
-                    }}
-                  </mat-radio-button>
+                  @for (
+                    visibility of projectService.getAvailableVisibilities();
+                    track visibility
+                  ) {
+                    <mat-radio-button [value]="visibility">
+                      {{
+                        projectService.getProjectVisibilityDescription(
+                          visibility
+                        )
+                      }}
+                    </mat-radio-button>
+                  }
+                </mat-radio-group>
+              </div>
+            </fieldset>
+            <fieldset>
+              <div class="flex flex-col">
+                <legend>Project type</legend>
+                <mat-radio-group formControlName="type" class="flex flex-col">
+                  @for (
+                    type of projectService.getAvailableProjectTypes();
+                    track type
+                  ) {
+                    <mat-radio-button [value]="type">
+                      {{ projectService.getProjectTypeDescription(type) }}
+                    </mat-radio-button>
+                  }
                 </mat-radio-group>
               </div>
             </fieldset>

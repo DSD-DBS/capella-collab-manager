@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { ProjectType } from './project-type';
 import { Visibility } from './visibility';
 
 
@@ -16,6 +17,7 @@ export interface PostProjectRequest {
     name: string;
     description?: string | null;
     visibility?: Visibility;
+    type?: ProjectType;
 }
 export namespace PostProjectRequest {
 }
