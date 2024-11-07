@@ -132,6 +132,6 @@ export const ProjectVisibilityDescriptions = {
 };
 
 export const ProjectTypeDescriptions = {
-  general: 'General (a project that contains multiple related models)',
+  general: 'General (a project that contains related models)',
   training: 'Training (special project containing training material)',
 };
