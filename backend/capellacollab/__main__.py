@@ -93,6 +93,22 @@ app = fastapi.FastAPI(
 )
 
 
+if config.logging.profiling:
+    import pyinstrument
+
+    @app.middleware("http")
+    async def profile_request(request: fastapi.Request, call_next):
+        profiling = request.query_params.get("profile", False)
+        if profiling:
+            profiler = pyinstrument.Profiler(async_mode="enabled")
+            profiler.start()
+            await call_next(request)
+            profiler.stop()
+            return responses.HTMLResponse(profiler.output_html())
+        else:
+            return await call_next(request)
+
+
 @app.get(
     "/docs", response_class=responses.RedirectResponse, include_in_schema=False
 )
