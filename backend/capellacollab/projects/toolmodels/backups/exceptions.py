@@ -18,7 +18,7 @@ class PipelineOperationFailedT4CServerUnreachable(core_exceptions.BaseError):
         self.operation = operation
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            title=f"The '{operation.value}' operation on the pipeline failed",
+            title=f"Couldn't {operation.value} pipeline",
             reason=(
                 f"We're not able to connect to the TeamForCapella server and therefore cannot {operation.value} the pipeline. "
                 "Please try again later or contact your administrator."
