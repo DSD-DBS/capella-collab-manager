@@ -44,7 +44,7 @@ def terminate_idle_session():
                     operators.get_operator().kill_session(session_id)
 
 
-async def terminate_idle_sessions_in_background(interval=60):
+def terminate_idle_sessions_in_background(interval=60):
     async def loop():
         while True:
             try:

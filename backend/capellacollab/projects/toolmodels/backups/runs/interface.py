@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 PIPELINES_TIMEOUT = config.pipelines.timeout
 
 
-async def schedule_refresh_and_trigger_pipeline_jobs(interval=5):
+def schedule_refresh_and_trigger_pipeline_jobs(interval=5):
     async def loop():
         while True:
             try:

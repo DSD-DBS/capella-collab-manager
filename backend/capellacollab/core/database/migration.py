@@ -52,43 +52,45 @@ LOGGER = logging.getLogger(__name__)
 
 
 def migrate_db(engine, database_url: str):
-    if os.getenv("ALEMBIC_CONTEXT") != "1":
-        os.environ["ALEMBIC_CONFIGURE_LOGGER"] = "false"
-        root_dir = pathlib.Path(__file__).parents[2]
+    if os.getenv("ALEMBIC_CONTEXT") == "1":
+        return
 
-        # Get current revision of Database. If no revision is available, initialize the database.
+    os.environ["ALEMBIC_CONFIGURE_LOGGER"] = "false"
+    root_dir = pathlib.Path(__file__).parents[2]
 
-        alembic_cfg = alembic_config.Config(str(root_dir / "alembic.ini"))
-        alembic_cfg.set_main_option(
-            "script_location", str(root_dir / "alembic")
-        )
-        alembic_cfg.set_main_option("sqlalchemy.url", database_url)
-        alembic_cfg.attributes["configure_logger"] = False
+    # Get current revision of Database. If no revision is available, initialize the database.
 
-        with engine.connect() as conn:
-            context = migration.MigrationContext.configure(conn)
-            current_rev = context.get_current_revision()
+    alembic_cfg = alembic_config.Config(str(root_dir / "alembic.ini"))
+    alembic_cfg.set_main_option("script_location", str(root_dir / "alembic"))
+    alembic_cfg.set_main_option("sqlalchemy.url", database_url)
+    alembic_cfg.attributes["configure_logger"] = False
 
-        session_maker = orm.sessionmaker(bind=engine)
+    with engine.connect() as conn:
+        context = migration.MigrationContext.configure(conn)
+        current_rev = context.get_current_revision()
 
-        with session_maker() as session:
-            if current_rev:
-                LOGGER.info("Upgrade database to head")
-                command.upgrade(alembic_cfg, "head")
-            else:
-                LOGGER.info("Empty database detected.")
-                database.Base.metadata.create_all(bind=engine)
-                LOGGER.info("Database structure creation successful")
-                command.stamp(alembic_cfg, "head")
-                initialize_admin_user(session)
-                initialize_default_project(session)
-                initialize_coffee_machine_project(session)
+    session_maker = orm.sessionmaker(bind=engine)
 
-                create_tools(session)
-                create_t4c_instance_and_repositories(session)
-                create_github_instance(session)
-                create_default_models(session)
-                create_coffee_machine_model(session)
+    with session_maker() as session:
+        if current_rev:
+            LOGGER.info("Upgrade database to head")
+            command.upgrade(alembic_cfg, "head")
+        else:
+            LOGGER.info("Empty database detected.")
+            database.Base.metadata.create_all(bind=engine)
+            LOGGER.info("Database structure creation successful")
+            command.stamp(alembic_cfg, "head")
+            initialize_admin_user(session)
+            initialize_default_project(session)
+            initialize_coffee_machine_project(session)
+
+            create_tools(session)
+            create_t4c_instance_and_repositories(session)
+            create_github_instance(session)
+            create_default_models(session)
+            create_coffee_machine_model(session)
+
+    logging.info("Database migrations completed.")
 
 
 def initialize_admin_user(db: orm.Session):

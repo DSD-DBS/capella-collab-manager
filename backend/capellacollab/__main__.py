@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import contextlib
 import logging
 import os
-import typing as t
 
 import fastapi
 import fastapi_pagination
@@ -45,33 +45,35 @@ ALLOW_ORIGINS = [
 ]
 
 
-async def startup():
-    migration.migrate_db(engine, config.database.url)
-    logging.info("Migrations done - Server is running")
+@contextlib.asynccontextmanager
+async def lifespan(_app: fastapi.FastAPI):
+    del _app
 
-    # This is needed to load the Kubernetes configuration at startup
+    migration.migrate_db(engine, config.database.url)
+
+    # Load the Kubernetes configuration at startup
     operators.get_operator()
+
+    idletimeout.terminate_idle_sessions_in_background()
+    pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs()
+    sessions_auth.initialize_session_pre_authentication()
+
+    metrics.register_metrics()
 
     logging.getLogger("uvicorn.access").disabled = True
     logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
+    logging.info("Startup completed.")
 
-async def shutdown():
+    yield
+
     logging.getLogger("uvicorn.access").disabled = False
-    logging.getLogger("uvicorn.error").disabled = False
+    logging.info("Shutdown completed.")
 
-
-on_startup: list[t.Callable] = [
-    startup,
-    idletimeout.terminate_idle_sessions_in_background,
-    pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs,
-    sessions_auth.initialize_session_pre_authentication,
-]
 
 app = fastapi.FastAPI(
     title="Capella Collaboration",
     version=__version__,
-    on_startup=on_startup + metrics.metrics_registration,
     middleware=[
         middleware.Middleware(
             cors.CORSMiddleware,
@@ -86,7 +88,7 @@ app = fastapi.FastAPI(
         middleware.Middleware(core_logging.LogRequestsMiddleware),
         middleware.Middleware(starlette_prometheus.PrometheusMiddleware),
     ],
-    on_shutdown=[shutdown],
+    lifespan=lifespan,
     openapi_url="/api/docs/openapi.json",
     docs_url="/api/docs/swagger",
     redoc_url="/api/docs/redoc",
