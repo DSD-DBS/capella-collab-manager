@@ -360,7 +360,7 @@ def create_t4c_instance_and_repositories(db):
     assert tool
 
     version = tools_crud.get_version_by_tool_id_version_name(
-        db, tool.id, "5.2.0"
+        db, tool.id, "6.0.0"
     )
     assert version
 
