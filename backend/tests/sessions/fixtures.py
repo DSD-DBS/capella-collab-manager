@@ -11,6 +11,7 @@ from capellacollab import __main__
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import injection as sessions_injection
 from capellacollab.sessions import models as sessions_models
+from capellacollab.sessions.operators import k8s as k8s_operator
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
@@ -61,5 +62,10 @@ def fixture_mock_session_injection(monkeypatch: pytest.MonkeyPatch):
         sessions_injection, "get_last_seen", lambda _: "UNKNOWN"
     )
     monkeypatch.setattr(
-        sessions_injection, "determine_session_state", lambda _: "UNKNOWN"
+        k8s_operator.KubernetesOperator,
+        "get_session_state",
+        lambda self, session_id: (
+            sessions_models.SessionPreparationState.UNKNOWN,
+            sessions_models.SessionState.UNKNOWN,
+        ),
     )

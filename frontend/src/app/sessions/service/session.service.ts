@@ -10,6 +10,8 @@ import {
   SessionsService,
   SessionConnectionInformation,
   FileTree,
+  SessionPreparationState,
+  SessionState,
 } from 'src/app/openapi';
 import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 
@@ -65,165 +67,114 @@ export class SessionService {
     }
   }
 
-  beautifyState(state: string | undefined): SessionState {
-    /* Possible states are (and a few more states):
-    https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/events/event.go */
+  beautifyState(
+    preparationState: SessionPreparationState,
+    state: SessionState,
+  ): DisplaySessionState {
+    if (
+      preparationState === SessionPreparationState.NotFound ||
+      state === SessionState.NotFound
+    ) {
+      return {
+        text: 'Session not found',
+        css: 'error',
+        icon: 'error',
+        success: false,
+      };
+    }
+    switch (preparationState) {
+      case SessionPreparationState.Pending:
+        return {
+          text: 'Session preparation is pending',
+          css: 'warning',
+          icon: 'timer',
+          success: false,
+        };
+      case SessionPreparationState.Failed:
+        return {
+          text: 'Session preparation failed',
+          info: [
+            'The session preparation has failed. We will not continue to start the session.',
+            'A failed preparation usually indicates a failed provisioning,',
+            'e. g., due to an unreachable Git Server or invalid credentials.',
+            'Contact support for more details.',
+          ].join(' '),
+          css: 'error',
+          icon: 'error',
+          success: false,
+        };
+      case SessionPreparationState.Running:
+        return {
+          text: 'Session preparation is running',
+          info: 'During session preparation, we provision the workspace and configure the environment.',
+          css: 'warning',
+          icon: 'timer',
+          success: false,
+        };
+      case SessionPreparationState.Completed:
+        // Switch to session state
 
-    let text = state;
-    let css = 'warning';
-    let icon = 'pending';
-    let success = false;
-    switch (state) {
-      case 'Created':
-        text = 'Session created';
-        css = 'warning';
-        break;
-      case 'Started':
-        text = 'Session started';
-        css = 'success';
-        success = true;
-        icon = 'check';
-        break;
-      case 'Failed':
-      case 'FailedCreatePodContainer':
-        text = 'Failed to create session';
-        css = 'error';
-        icon = 'error';
-        break;
-      case 'Killing':
-        text = 'Stopping session';
-        css = 'error';
-        icon = 'close';
-        break;
-      case 'Preempting':
-        text = 'Session is waiting in the queue';
-        css = 'error';
-        icon = 'timer_pause';
-        break;
-      case 'BackOff':
-        text = 'Session crashed unexpectedly';
-        css = 'error';
-        icon = 'error';
-        break;
-      case 'ExceededGracePeriod':
-        text = 'The session stopped.';
-        css = 'error';
-        icon = 'cancel';
-        break;
-
-      case 'FailedKillPod':
-        text = 'Failed to stop session';
-        css = 'error';
-        icon = 'error';
-        break;
-      case 'NetworkNotReady':
-        text = 'Backend network issues';
-        css = 'error';
-        icon = 'cloud_off';
-        break;
-      case 'Pulling':
-        text = 'Preparation of the session';
-        css = 'warning';
-        icon = 'downloading';
-        break;
-      case 'Pulled':
-        text = 'Preparation finished';
-        css = 'warning';
-        icon = 'download_done';
-        break;
-
-      // Some additional reasons that came up
-      case 'Scheduled':
-        text = 'Your session is scheduled';
-        css = 'warning';
-        icon = 'schedule';
-        break;
-      case 'FailedScheduling':
-        text = 'High demand. Please wait a moment.';
-        css = 'warning';
-        icon = 'timer_pause';
-        break;
-
-      // OpenShift specific
-      case 'AddedInterface':
-        text = 'Preparation of the session';
-        css = 'warning';
-        break;
-
-      // Pod phases (that are not handled before)
-      case 'Pending':
-        text = 'Your session is scheduled';
-        css = 'warning';
-        icon = 'schedule';
-        break;
-      case 'Running':
-        text = 'Session is running';
-        css = 'success';
-        success = true;
-        icon = 'check';
-        break;
-
-      // Cases for starting containers
-      case 'START_LOAD_MODEL':
-        text = 'Modelloading started';
-        css = 'warning';
-        icon = 'downloading';
-        break;
-      case 'FINISH_LOAD_MODEL':
-        text = 'Modelloading finished';
-        css = 'warning';
-        icon = 'download_done';
-        break;
-      case 'FAILURE_LOAD_MODEL':
-        text = 'Error during loading of the model';
-        css = 'error';
-        icon = 'error';
-        break;
-      case 'START_PREPARE_WORKSPACE':
-        text = 'Started workspace preparation';
-        css = 'warning';
-        icon = 'downloading';
-        break;
-      case 'FINISH_PREPARE_WORKSPACE':
-        text = 'Workspace preparation finished';
-        css = 'warning';
-        icon = 'download_done';
-        break;
-      case 'FAILURE_PREPARE_WORKSPACE':
-        text = 'Error during workspace preparation';
-        css = 'error';
-        icon = 'error';
-        break;
-      case 'START_SESSION':
-        text = 'Session started';
-        css = 'success';
-        success = true;
-        icon = 'check';
-        break;
-      case 'NOT_FOUND':
-        text = 'Session container not found';
-        css = 'error';
-        icon = 'error';
-        break;
-      case 'unknown':
-      case 'Unknown':
-        text = 'Unknown State';
-        css = 'primary';
-        icon = 'help';
-        break;
+        switch (state) {
+          case SessionState.Running:
+            return {
+              text: 'Session is up & running',
+              css: 'success',
+              icon: 'check',
+              success: true,
+            };
+          case SessionState.Terminated:
+            return {
+              text: 'Session is terminated',
+              info: [
+                "The session is terminated and can't be accessed anymore.",
+                'Request a new session or contact support for further information.',
+              ].join(' '),
+              css: 'error',
+              icon: 'close',
+              success: false,
+            };
+          case SessionState.Pending:
+            return {
+              text: 'Session is pending',
+              info: [
+                'The session preparation is completed, but the session is pending.',
+                'Depending on the load and the infrastructure, it may take until all necessary information for the session is available.',
+                'Take a moment to make some tea and return shortly.',
+              ].join(' '),
+              css: 'warning',
+              icon: 'hourglass',
+              success: false,
+            };
+          case SessionState.Failed:
+            return {
+              text: 'Session startup has failed',
+              info: [
+                'The session preparation was completed, but the session startup did fail.',
+                'This should not happen. Contact support for help.',
+              ].join(' '),
+              css: 'error',
+              icon: 'error',
+              success: false,
+            };
+        }
     }
 
     return {
-      text: text || '',
-      css: css,
-      icon: icon,
-      success: success,
+      text: 'Session state is unknown',
+      info: [
+        "We're not sure what happened here.",
+        "Contact support if the state doesn't change.",
+      ].join(' '),
+      css: 'primary',
+      icon: 'help',
+      success: false,
     };
   }
 }
 
-export interface SessionState {
+export interface DisplaySessionState {
   text: string;
+  info?: string | undefined;
   css: string;
   icon: string;
   success: boolean;

@@ -20,24 +20,24 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
     name = "testname"
     creation_timestamp = datetime.datetime.now()
 
-    deployment_counter = 0
+    pod_counter = 0
     service_counter = 0
     disruption_budget_counter = 0
 
     # pylint: disable=unused-argument
-    def create_namespaced_deployment(namespace, deployment):
-        nonlocal deployment_counter
-        deployment_counter += 1
-        return client.V1Deployment(
+    def create_namespaced_pod(namespace, deployment):
+        nonlocal pod_counter
+        pod_counter += 1
+        return client.V1Pod(
             metadata=client.V1ObjectMeta(
                 name=name, creation_timestamp=creation_timestamp
             )
         )
 
     monkeypatch.setattr(
-        operator.v1_apps,
-        "create_namespaced_deployment",
-        create_namespaced_deployment,
+        operator.v1_core,
+        "create_namespaced_pod",
+        create_namespaced_pod,
     )
 
     # pylint: disable=unused-argument
@@ -79,7 +79,7 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
         annotations={},
     )
 
-    assert deployment_counter == 1
+    assert pod_counter == 1
     assert service_counter == 1
     assert disruption_budget_counter == 1
 
@@ -91,8 +91,8 @@ def test_kill_session(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(k8s, "loki_enabled", False)
 
     monkeypatch.setattr(
-        operator.v1_apps,
-        "delete_namespaced_deployment",
+        operator.v1_core,
+        "delete_namespaced_pod",
         lambda namespace, name: client.V1Status(),
     )
 

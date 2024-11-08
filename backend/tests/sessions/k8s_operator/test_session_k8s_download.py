@@ -33,10 +33,6 @@ def test_download_file(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         "kubernetes.stream.stream", lambda *a, **ka: mock_stream
     )
-    monkeypatch.setattr(
-        "capellacollab.sessions.operators.k8s.KubernetesOperator._get_pod_name",
-        lambda *a: "",
-    )
 
     oper = KubernetesOperator()
     download_iter = oper.download_file("some-id", "filename")

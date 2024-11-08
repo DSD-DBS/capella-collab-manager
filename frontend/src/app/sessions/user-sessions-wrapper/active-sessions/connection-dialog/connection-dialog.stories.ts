@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { startedSession } from 'src/storybook/session';
+import { mockPersistentSession } from 'src/storybook/session';
 import { mockTool } from 'src/storybook/tool';
 import { MockOwnUserWrapperService, mockUser } from 'src/storybook/user';
 import { ConnectionDialogComponent } from './connection-dialog.component';
@@ -19,7 +19,7 @@ const meta: Meta<ConnectionDialogComponent> = {
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: startedSession,
+          useValue: mockPersistentSession,
         },
       ],
     }),
@@ -44,9 +44,9 @@ export const WithoutTeamForCapella: Story = {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            ...startedSession,
+            ...mockPersistentSession,
             version: {
-              ...startedSession.version,
+              ...mockPersistentSession.version,
               tool: { ...mockTool, integrations: { t4c: false } },
             },
           },
@@ -70,7 +70,7 @@ export const SharedSession: Story = {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            ...startedSession,
+            ...mockPersistentSession,
             owner: { ...mockUser, id: '2' },
           },
         },

@@ -15,6 +15,7 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core import models as core_models
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.sessions import operators
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
@@ -69,6 +70,24 @@ class SessionSharing(core_pydantic.BaseModel):
     created_at: datetime.datetime
 
 
+class SessionPreparationState(enum.Enum):
+    RUNNING = "Running"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+    PENDING = "Pending"
+    NOT_FOUND = "NotFound"
+    UNKNOWN = "Unknown"
+
+
+class SessionState(enum.Enum):
+    RUNNING = "Running"
+    FAILED = "Failed"
+    TERMINATED = "Terminated"
+    PENDING = "Pending"
+    NOT_FOUND = "NotFound"
+    UNKNOWN = "Unknown"
+
+
 class Session(core_pydantic.BaseModel):
     id: str
     type: SessionType
@@ -77,7 +96,10 @@ class Session(core_pydantic.BaseModel):
 
     version: tools_models.ToolVersionWithTool
 
-    state: str = pydantic.Field(default="UNKNOWN")
+    preparation_state: SessionPreparationState = pydantic.Field(
+        default=SessionPreparationState.UNKNOWN
+    )
+    state: SessionState = pydantic.Field(default=SessionState.UNKNOWN)
     warnings: list[core_models.Message] = pydantic.Field(default=[])
     last_seen: str = pydantic.Field(default="UNKNOWN")
 
@@ -105,7 +127,9 @@ class Session(core_pydantic.BaseModel):
     @pydantic.model_validator(mode="after")
     def add_warnings_and_last_seen(self) -> t.Any:
         self.last_seen = injection.get_last_seen(self.id)
-        self.state = injection.determine_session_state(self.id)
+        self.preparation_state, self.state = (
+            operators.get_operator().get_session_state(self.id)
+        )
 
         return self
 

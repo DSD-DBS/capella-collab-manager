@@ -39,8 +39,15 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="preparation_state">
+      <th mat-header-cell *matHeaderCellDef>Session Preparation</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.preparation_state }}
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="state">
-      <th mat-header-cell *matHeaderCellDef>State of Container</th>
+      <th mat-header-cell *matHeaderCellDef>Session State</th>
       <td mat-cell *matCellDef="let element">{{ element.state }}</td>
     </ng-container>
 

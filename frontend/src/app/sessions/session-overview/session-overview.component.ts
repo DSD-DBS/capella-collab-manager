@@ -66,6 +66,7 @@ export class SessionOverviewComponent implements OnInit {
     'id',
     'user',
     'created_at',
+    'preparation_state',
     'state',
     'last_seen',
     'tool',

@@ -9,10 +9,12 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { SessionState } from './session-state';
 import { BaseUser } from './base-user';
 import { SessionType } from './session-type';
 import { Message } from './message';
 import { ToolVersionWithTool } from './tool-version-with-tool';
+import { SessionPreparationState } from './session-preparation-state';
 import { ToolSessionConnectionMethod } from './tool-session-connection-method';
 import { SessionSharing } from './session-sharing';
 
@@ -23,7 +25,8 @@ export interface Session {
     created_at: string;
     owner: BaseUser;
     version: ToolVersionWithTool;
-    state: string;
+    preparation_state: SessionPreparationState;
+    state: SessionState;
     warnings: Array<Message>;
     last_seen: string;
     connection_method_id: string;

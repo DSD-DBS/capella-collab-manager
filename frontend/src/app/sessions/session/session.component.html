@@ -34,9 +34,15 @@
     <mat-checkbox
       class="w-fit"
       color="primary"
-      [disabled]="!sessionService.beautifyState(session.state).success"
+      [disabled]="
+        !sessionService.beautifyState(session.preparation_state, session.state)
+          .success
+      "
       matTooltip="Please wait until the session is running. You can check the status in the 'Sessions' tab."
-      [matTooltipDisabled]="sessionService.beautifyState(session.state).success"
+      [matTooltipDisabled]="
+        sessionService.beautifyState(session.preparation_state, session.state)
+          .success
+      "
       [value]="session.id"
       [(ngModel)]="session.checked"
       *ngFor="let session of cachedSessions"

@@ -9,7 +9,7 @@ import { userEvent, within } from '@storybook/test';
 import { PathNode } from 'src/app/sessions/service/session.service';
 import { FileBrowserDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-browser-dialog.component';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { startedSession } from 'src/storybook/session';
+import { mockPersistentSession } from 'src/storybook/session';
 
 const meta: Meta<FileBrowserDialogComponent> = {
   title: 'Session Components/File Browser',
@@ -19,7 +19,7 @@ const meta: Meta<FileBrowserDialogComponent> = {
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { session: startedSession },
+          useValue: { session: mockPersistentSession },
         },
       ],
     }),
@@ -165,7 +165,7 @@ export const DownloadPreparation: Story = {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            ...startedSession,
+            ...mockPersistentSession,
             download_in_progress: true,
           },
         },

@@ -5,7 +5,7 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { createPersistentSessionWithState } from 'src/storybook/session';
+import { mockPersistentSession } from 'src/storybook/session';
 import { SessionSharingDialogComponent } from './session-sharing-dialog.component';
 
 const meta: Meta<SessionSharingDialogComponent> = {
@@ -16,7 +16,7 @@ const meta: Meta<SessionSharingDialogComponent> = {
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: createPersistentSessionWithState('running'),
+          useValue: mockPersistentSession,
         },
       ],
     }),

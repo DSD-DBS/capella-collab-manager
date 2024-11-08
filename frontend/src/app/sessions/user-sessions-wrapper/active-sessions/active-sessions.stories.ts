@@ -9,7 +9,11 @@ import {
   moduleMetadata,
 } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
-import { Session } from 'src/app/openapi';
+import {
+  Session,
+  SessionPreparationState,
+  SessionState,
+} from 'src/app/openapi';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.service';
 import {
@@ -18,6 +22,7 @@ import {
 } from 'src/storybook/feedback';
 import {
   createPersistentSessionWithState,
+  mockPersistentSession,
   mockReadonlySession,
 } from 'src/storybook/session';
 import { mockHttpConnectionMethod } from 'src/storybook/tool';
@@ -58,7 +63,7 @@ const meta: Meta<ActiveSessionsComponent> = {
 export default meta;
 type Story = StoryObj<ActiveSessionsComponent>;
 
-export const LoadingStory: Story = {
+export const Loading: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -86,7 +91,7 @@ export const NoActiveStories: Story = {
   ],
 };
 
-export const SessionSuccessStateStory: Story = {
+export const SessionNotFoundState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -95,7 +100,10 @@ export const SessionSuccessStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('Started'),
+              createPersistentSessionWithState(
+                SessionPreparationState.NotFound,
+                SessionState.NotFound,
+              ),
             ),
         },
       ],
@@ -103,7 +111,7 @@ export const SessionSuccessStateStory: Story = {
   ],
 };
 
-export const SessionWarningStateStory: Story = {
+export const SessionPreparationPendingState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -112,7 +120,10 @@ export const SessionWarningStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('Created'),
+              createPersistentSessionWithState(
+                SessionPreparationState.Pending,
+                SessionState.Pending,
+              ),
             ),
         },
       ],
@@ -120,7 +131,7 @@ export const SessionWarningStateStory: Story = {
   ],
 };
 
-export const SessionErrorStateStory: Story = {
+export const SessionPreparationRunningState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -129,7 +140,10 @@ export const SessionErrorStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('Failed'),
+              createPersistentSessionWithState(
+                SessionPreparationState.Running,
+                SessionState.Pending,
+              ),
             ),
         },
       ],
@@ -137,7 +151,7 @@ export const SessionErrorStateStory: Story = {
   ],
 };
 
-export const SessionKillingStateStory: Story = {
+export const SessionRunningState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -146,7 +160,10 @@ export const SessionKillingStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('Killing'),
+              createPersistentSessionWithState(
+                SessionPreparationState.Completed,
+                SessionState.Running,
+              ),
             ),
         },
       ],
@@ -154,7 +171,7 @@ export const SessionKillingStateStory: Story = {
   ],
 };
 
-export const SessionStoppedStateStory: Story = {
+export const SessionTerminatedState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -163,7 +180,10 @@ export const SessionStoppedStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('ExceededGracePeriod'),
+              createPersistentSessionWithState(
+                SessionPreparationState.Completed,
+                SessionState.Terminated,
+              ),
             ),
         },
       ],
@@ -171,7 +191,7 @@ export const SessionStoppedStateStory: Story = {
   ],
 };
 
-export const SessionQueuedStateStory: Story = {
+export const SessionPendingState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -180,7 +200,10 @@ export const SessionQueuedStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('Preempting'),
+              createPersistentSessionWithState(
+                SessionPreparationState.Completed,
+                SessionState.Pending,
+              ),
             ),
         },
       ],
@@ -188,7 +211,7 @@ export const SessionQueuedStateStory: Story = {
   ],
 };
 
-export const SessionNetworkIssuesStateStory: Story = {
+export const SessionFailedState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -197,7 +220,10 @@ export const SessionNetworkIssuesStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('NetworkNotReady'),
+              createPersistentSessionWithState(
+                SessionPreparationState.Completed,
+                SessionState.Failed,
+              ),
             ),
         },
       ],
@@ -205,7 +231,7 @@ export const SessionNetworkIssuesStateStory: Story = {
   ],
 };
 
-export const SessionPullingStateStory: Story = {
+export const SessionUnknownState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -214,75 +240,10 @@ export const SessionPullingStateStory: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService(
-              createPersistentSessionWithState('Pulling'),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionPulledStateStory: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState('Pulled'),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionScheduledStateStory: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState('Scheduled'),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionFailedSchedulingStateStory: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState('FailedScheduling'),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionUnknownStateStory: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState('unknown'),
+              createPersistentSessionWithState(
+                SessionPreparationState.Completed,
+                SessionState.Unknown,
+              ),
             ),
         },
       ],
@@ -297,10 +258,7 @@ export const SessionWithFeedbackEnabled: Story = {
       providers: [
         {
           provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState('Started'),
-            ),
+          useFactory: () => new MockUserSessionService(mockPersistentSession),
         },
         {
           provide: FeedbackWrapperService,
@@ -311,7 +269,7 @@ export const SessionWithFeedbackEnabled: Story = {
   ],
 };
 
-export const ReadonlySessionSuccessStateStory: Story = {
+export const ReadonlySessionSuccessState: Story = {
   args: {},
   decorators: [
     moduleMetadata({
@@ -334,7 +292,7 @@ export const SessionSharingEnabled: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService({
-              ...createPersistentSessionWithState('Started'),
+              ...mockPersistentSession,
               connection_method: {
                 ...mockHttpConnectionMethod,
                 sharing: { enabled: true },
@@ -355,7 +313,7 @@ export const SessionSharedWithUser: Story = {
           provide: UserSessionService,
           useFactory: () =>
             new MockUserSessionService({
-              ...createPersistentSessionWithState('Started'),
+              ...mockPersistentSession,
               connection_method: {
                 ...mockHttpConnectionMethod,
                 sharing: { enabled: true },
@@ -396,10 +354,7 @@ export const SharedSession: Story = {
       providers: [
         {
           provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService({
-              ...createPersistentSessionWithState('Started'),
-            }),
+          useFactory: () => new MockUserSessionService(mockPersistentSession),
         },
         {
           provide: OwnUserWrapperService,
