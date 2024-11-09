@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { userEvent, within } from '@storybook/test';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { createPersistentSessionWithState } from '../../../../storybook/session';
+import { mockPersistentSession } from '../../../../storybook/session';
 import { FeedbackDialogComponent } from './feedback-dialog.component';
 
 const meta: Meta<FeedbackDialogComponent> = {
@@ -59,7 +59,7 @@ export const OneSession: Story = {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            sessions: [createPersistentSessionWithState('running')],
+            sessions: [mockPersistentSession],
             trigger: 'storybook',
           },
         },
@@ -76,7 +76,7 @@ export const OneSessionWithUserInformation: Story = {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            sessions: [createPersistentSessionWithState('running')],
+            sessions: [mockPersistentSession],
             trigger: 'storybook',
           },
         },
@@ -107,10 +107,7 @@ export const TwoSessions: Story = {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            sessions: [
-              createPersistentSessionWithState('running'),
-              createPersistentSessionWithState('running'),
-            ],
+            sessions: [mockPersistentSession, mockPersistentSession],
             trigger: 'storybook',
           },
         },

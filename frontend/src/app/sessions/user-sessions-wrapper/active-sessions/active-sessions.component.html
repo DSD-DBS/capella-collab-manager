@@ -62,12 +62,31 @@
         <div>
           <h3
             class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
-            [ngClass]="sessionService.beautifyState(session.state).css"
+            [ngClass]="
+              sessionService.beautifyState(
+                session.preparation_state,
+                session.state
+              ).css
+            "
+            [matTooltip]="
+              sessionService.beautifyState(
+                session.preparation_state,
+                session.state
+              ).info
+            "
           >
             <mat-icon>{{
-              sessionService.beautifyState(session.state).icon
+              sessionService.beautifyState(
+                session.preparation_state,
+                session.state
+              ).icon
             }}</mat-icon>
-            {{ sessionService.beautifyState(session.state).text }}
+            {{
+              sessionService.beautifyState(
+                session.preparation_state,
+                session.state
+              ).text
+            }}
           </h3>
           <p class="mt-1.5">
             The session was created
@@ -126,7 +145,12 @@
             mat-button
             color="primary"
             (click)="openConnectDialog(session)"
-            [disabled]="!sessionService.beautifyState(session.state).success"
+            [disabled]="
+              !sessionService.beautifyState(
+                session.preparation_state,
+                session.state
+              ).success
+            "
           >
             Connect <mat-icon>open_in_browser</mat-icon>
           </button>
@@ -146,7 +170,12 @@
               mat-button
               color="primary"
               (click)="uploadFileDialog(session)"
-              [disabled]="!sessionService.beautifyState(session.state).success"
+              [disabled]="
+                !sessionService.beautifyState(
+                  session.preparation_state,
+                  session.state
+                ).success
+              "
             >
               File browser <mat-icon> insert_drive_file</mat-icon>
             </button>

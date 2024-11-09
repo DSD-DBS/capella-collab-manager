@@ -2,14 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-import re
 
 import requests
 
 from capellacollab import core
 from capellacollab.config import config
-
-from . import operators
 
 log = logging.getLogger(__name__)
 
@@ -45,20 +42,3 @@ def _get_last_seen(idletime: int | float) -> str:
         return f"{round(idlehours, 2)} hrs ago"
 
     return f"{idletime:.0f} mins ago"
-
-
-def determine_session_state(session_id: str) -> str:
-    state = operators.get_operator().get_session_state(session_id)
-
-    if state in ("Started", "BackOff"):
-        try:
-            logs = operators.get_operator().get_session_logs(
-                session_id, container="session-preparation"
-            )
-            logs += operators.get_operator().get_session_logs(session_id)
-            res = re.search(r"(?s:.*)^---(.*?)---$", logs, re.MULTILINE)
-            if res:
-                return res.group(1)
-        except Exception:
-            log.exception("Could not parse log")
-    return state

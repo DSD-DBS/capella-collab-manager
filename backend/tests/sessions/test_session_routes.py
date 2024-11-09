@@ -108,7 +108,7 @@ def test_request_session_with_invalid_connection_id(
     assert len(sessions_crud.get_sessions(db)) == 0
 
 
-@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("user", "mock_session_injection")
 def test_request_session_with_provisioning(
     db: orm.Session,
     client: testclient.TestClient,
@@ -116,6 +116,8 @@ def test_request_session_with_provisioning(
     git_model: git_models.DatabaseGitModel,
 ):
     """Test that a session with provisioning is accepted"""
+
+    assert capella_model.version
 
     response = client.post(
         "/api/v1/sessions",
@@ -149,6 +151,7 @@ def test_request_session_with_provisioning(
     assert session.type == sessions_models.SessionType.READONLY
 
 
+@pytest.mark.usefixtures("mock_session_injection")
 def test_create_session_without_provisioning(
     client: testclient.TestClient,
     db: orm.Session,
@@ -178,6 +181,7 @@ def test_create_session_without_provisioning(
     assert kubernetes.sessions
 
 
+@pytest.mark.usefixtures("mock_session_injection")
 def test_get_all_sessions(
     db: orm.Session,
     client: testclient.TestClient,
@@ -202,7 +206,7 @@ def test_get_all_sessions(
     assert len(response.json()) == 1
 
 
-@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("user", "mock_session_injection")
 def test_get_session_by_id(
     client: testclient.TestClient,
     session: sessions_models.DatabaseSession,
@@ -212,6 +216,7 @@ def test_get_session_by_id(
     assert response.json()["id"] == session.id
 
 
+@pytest.mark.usefixtures("mock_session_injection")
 def test_own_sessions(
     db: orm.Session,
     client: testclient.TestClient,

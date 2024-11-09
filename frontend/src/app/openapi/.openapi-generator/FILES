@@ -146,8 +146,10 @@ model/session-connection-information.ts
 model/session-monitoring-input.ts
 model/session-monitoring-output.ts
 model/session-ports.ts
+model/session-preparation-state.ts
 model/session-provisioning-request.ts
 model/session-sharing.ts
+model/session-state.ts
 model/session-tool-configuration-input.ts
 model/session-tool-configuration-output.ts
 model/session-type.ts

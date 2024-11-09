@@ -5,9 +5,15 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { userEvent, within } from '@storybook/test';
 import { of } from 'rxjs';
-import { Session, SessionsService } from 'src/app/openapi';
+import {
+  Session,
+  SessionPreparationState,
+  SessionsService,
+  SessionState,
+} from 'src/app/openapi';
 import {
   createPersistentSessionWithState,
+  mockPersistentSession,
   mockReadonlySession,
 } from 'src/storybook/session';
 import { mockUser } from 'src/storybook/user';
@@ -44,10 +50,13 @@ export const NoSessions: Story = {
 };
 
 const sessions = [
-  createPersistentSessionWithState('Running'),
+  mockPersistentSession,
   { ...mockReadonlySession, id: 'vjmczglcgeltbfcronujtelwx' },
   {
-    ...createPersistentSessionWithState('Failed'),
+    ...createPersistentSessionWithState(
+      SessionPreparationState.Failed,
+      SessionState.Pending,
+    ),
     owner: {
       ...mockUser,
       name: 'anotherUser',

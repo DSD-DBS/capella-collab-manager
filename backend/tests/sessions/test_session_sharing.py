@@ -164,7 +164,9 @@ def test_terminate_session_not_owned(
     assert response.json()["detail"]["err_code"] == "SESSION_NOT_OWNED"
 
 
-@pytest.mark.usefixtures("enable_tool_session_sharing")
+@pytest.mark.usefixtures(
+    "enable_tool_session_sharing", "mock_session_injection"
+)
 def test_share_session(
     session: sessions_models.DatabaseSession,
     client: testclient.TestClient,
@@ -220,7 +222,7 @@ def test_connect_to_unshared_session_fails(
     assert response.json()["detail"]["err_code"] == "SESSION_NOT_OWNED"
 
 
-@pytest.mark.usefixtures("act_as_shared_with_user")
+@pytest.mark.usefixtures("act_as_shared_with_user", "mock_session_injection")
 def test_shared_session_in_user_sessions(
     shared_session: sessions_models.DatabaseSession,
     client: testclient.TestClient,
