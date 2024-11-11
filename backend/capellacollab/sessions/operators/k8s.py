@@ -228,29 +228,30 @@ class KubernetesOperator:
         self,
         status: client.V1PodStatus,
     ) -> sessions_models.SessionState:
-        container_statuses = [
-            container_status
-            for container_status in status.container_statuses
-            if container_status.name == "session"
-        ]
-        if not container_statuses:
-            return sessions_models.SessionState.UNKNOWN
+        if status.container_statuses:
+            container_statuses = [
+                container_status
+                for container_status in status.container_statuses
+                if container_status.name == "session"
+            ]
+            if not container_statuses:
+                return sessions_models.SessionState.UNKNOWN
 
-        state: client.V1ContainerState = container_statuses[0].state
+            state: client.V1ContainerState = container_statuses[0].state
 
-        if state.running:
-            return sessions_models.SessionState.RUNNING
-        if state.waiting:
-            waiting: client.V1ContainerStateWaiting = state.waiting
+            if state.running:
+                return sessions_models.SessionState.RUNNING
+            if state.waiting:
+                waiting: client.V1ContainerStateWaiting = state.waiting
 
-            # https://github.com/kubernetes/kubernetes/blob/da215bf06a3b8ac3da4e0adb110dc5acc7f61fe1/pkg/kubelet/kubelet_pods.go#L83
-            if waiting.reason in ("ContainerCreating", "PodInitializing"):
-                return sessions_models.SessionState.PENDING
+                # https://github.com/kubernetes/kubernetes/blob/da215bf06a3b8ac3da4e0adb110dc5acc7f61fe1/pkg/kubelet/kubelet_pods.go#L83
+                if waiting.reason in ("ContainerCreating", "PodInitializing"):
+                    return sessions_models.SessionState.PENDING
 
-            # Handle errors like ImagePullBackOff properly
-            return sessions_models.SessionState.FAILED
-        if state.terminated:
-            return sessions_models.SessionState.TERMINATED
+                # Handle errors like ImagePullBackOff properly
+                return sessions_models.SessionState.FAILED
+            if state.terminated:
+                return sessions_models.SessionState.TERMINATED
 
         return sessions_models.SessionState.UNKNOWN
 
