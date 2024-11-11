@@ -31,7 +31,6 @@ import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.serv
 @Component({
   selector: 'create-readonly-session-dialog',
   templateUrl: './create-readonly-session-dialog.component.html',
-  styleUrls: ['./create-readonly-session-dialog.component.css'],
   standalone: true,
   imports: [
     FormsModule,
@@ -130,9 +129,11 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: () => {
+        next: (session) => {
           this.dialog.close();
-          this.router.navigateByUrl('/');
+          this.router.navigate(['/session-viewer'], {
+            queryParams: { 'session-id': session.id },
+          });
         },
         error: () => {
           this.loading = false;

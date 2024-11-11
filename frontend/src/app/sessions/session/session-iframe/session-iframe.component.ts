@@ -2,8 +2,10 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { SessionService } from 'src/app/sessions/service/session.service';
 import { ViewerSession } from '../session-viewer.service';
 
 @Component({
@@ -11,8 +13,10 @@ import { ViewerSession } from '../session-viewer.service';
   templateUrl: './session-iframe.component.html',
   styleUrls: ['./session-iframe.component.css'],
   standalone: true,
-  imports: [NgIf, NgClass],
+  imports: [NgClass, MatIconModule],
 })
 export class SessionIFrameComponent {
   @Input({ required: true }) session!: ViewerSession;
+
+  constructor(public sessionService: SessionService) {}
 }

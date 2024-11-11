@@ -12,7 +12,7 @@ import { ViewLogsDialogComponent } from 'src/app/projects/models/backup-settings
 import { PipelineWrapperComponent } from 'src/app/projects/models/backup-settings/wrapper/pipeline-wrapper/pipeline-wrapper.component';
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
-import { SessionComponent } from 'src/app/sessions/session/session.component';
+import { SessionViewerComponent } from 'src/app/sessions/session/session-viewer.component';
 import { ConfigurationSettingsComponent } from 'src/app/settings/core/configuration-settings/configuration-settings.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
@@ -61,8 +61,8 @@ export const routes: Routes = [
         data: { breadcrumb: 'Sessions' },
       },
       {
-        path: 'session',
-        component: SessionComponent,
+        path: 'session-viewer',
+        component: SessionViewerComponent,
         data: { breadcrumb: 'Session Viewer' },
       },
       {

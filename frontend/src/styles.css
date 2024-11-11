@@ -64,8 +64,8 @@ table {
 /* All global variables are defined here */
 :root {
   --primary-color: #3f51b5;
-  --error-color: darkred;
-  --warning-color: darkorange;
+  --error-color: rgb(127 29 29);
+  --warning-color: rgb(194 65 12);
   --success-color: darkgreen;
   --hover-color: lightcyan;
   --banner-color: #010035;

@@ -3,53 +3,58 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<ng-container *ngIf="sessionViewerService.sessions$ | async as viewerSessions">
+@if (sessionViewerService.sessions$ | async; as viewerSessions) {
   <div class="flex h-full gap-0.5">
-    <div
-      class="flex w-full flex-col active:z-30"
-      [ngClass]="{
-        'z-20': session.focused,
-        'z-10': !session.focused,
-      }"
-      (click)="sessionViewerService.focusSession(session)"
-      *ngFor="let session of viewerSessions; trackBy: trackBySessionId"
-      cdkDrag
-      (cdkDragStarted)="dragStart()"
-      (cdkDragEnded)="dragStop()"
-    >
+    @for (session of viewerSessions; track trackBySessionId) {
       <div
-        class="flex cursor-grab items-center justify-between gap-2 rounded-t p-1 active:cursor-grabbing"
-        [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
-        cdkDragHandle
+        class="flex w-full flex-col active:z-30"
+        [ngClass]="{
+          'z-20': session.focused,
+          'z-10': !session.focused,
+        }"
+        (click)="sessionViewerService.focusSession(session)"
+        cdkDrag
+        (cdkDragStarted)="dragStart()"
+        (cdkDragEnded)="dragStop()"
       >
-        <div class="flex items-center gap-2">
-          <mat-icon>control_camera</mat-icon>
-          <span>
-            {{ session.version.tool.name }} {{ session.version.name }},
-            {{ session.type }}
-          </span>
-        </div>
-
-        <div>
-          <div *ngIf="session.focused" class="flex items-center gap-2">
-            <span>Focused</span><mat-icon>phonelink</mat-icon>
-          </div>
-          <div *ngIf="!session.focused" class="flex items-center gap-2">
-            <span>Not focused</span>
-            <mat-icon>phonelink_off</mat-icon>
-          </div>
-        </div>
-
-        <button
-          class="m-0 flex items-center"
-          (click)="sessionViewerService.toggleFullscreen(session)"
+        <div
+          class="flex cursor-grab items-center justify-between gap-2 rounded-t p-1 active:cursor-grabbing"
+          [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
+          cdkDragHandle
         >
-          <mat-icon *ngIf="!session.fullscreen">fullscreen</mat-icon>
-          <mat-icon *ngIf="session.fullscreen">fullscreen_exit</mat-icon>
-        </button>
-      </div>
+          <div class="flex items-center gap-2">
+            <mat-icon>control_camera</mat-icon>
+            <span>
+              {{ session.version.tool.name }} {{ session.version.name }},
+              {{ session.type }}
+            </span>
+          </div>
 
-      <app-session-iframe class="flex h-full" [session]="session" />
-    </div>
+          <div class="flex items-center gap-2">
+            @if (session.focused) {
+              <span>Focused</span><mat-icon>phonelink</mat-icon>
+            } @else {
+              <span>Not focused</span>
+              <mat-icon>phonelink_off</mat-icon>
+            }
+          </div>
+
+          @if ((sessionViewerService.allSessions$ | async)!.length > 1) {
+            <button
+              class="m-0 flex items-center"
+              (click)="sessionViewerService.toggleFullscreen(session)"
+            >
+              @if (session.fullscreen) {
+                <mat-icon>fullscreen_exit</mat-icon>
+              } @else {
+                <mat-icon>fullscreen</mat-icon>
+              }
+            </button>
+          }
+        </div>
+
+        <app-session-iframe class="flex h-full" [session]="session" />
+      </div>
+    }
   </div>
-</ng-container>
+}

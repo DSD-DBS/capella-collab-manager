@@ -20,7 +20,7 @@ export const authGuard: CanActivateFn = (
     return true;
   } else {
     // Needs window.location, since Router.url isn't updated yet
-    authService.redirectURL = window.location.pathname;
+    authService.redirectURL = window.location.pathname + window.location.search;
     authService.login();
     return false;
   }

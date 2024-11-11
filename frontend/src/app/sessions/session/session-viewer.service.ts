@@ -4,9 +4,20 @@
  */
 import { Injectable } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { BehaviorSubject, map } from 'rxjs';
+import {
+  BehaviorSubject,
+  map,
+  Subscription,
+  switchMap,
+  takeWhile,
+  timer,
+} from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Session, SessionConnectionInformation } from 'src/app/openapi';
+import {
+  Session,
+  SessionConnectionInformation,
+  SessionsService,
+} from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 
 @Injectable({
@@ -17,6 +28,7 @@ export class SessionViewerService {
     private sessionService: SessionService,
     private domSanitizer: DomSanitizer,
     private toastService: ToastService,
+    private sessionsService: SessionsService,
   ) {}
 
   private _sessions = new BehaviorSubject<ViewerSession[] | undefined>(
@@ -30,7 +42,35 @@ export class SessionViewerService {
     }),
   );
 
-  pushSession(
+  public readonly allSessions$ = this._sessions.asObservable();
+
+  private _subscriptions: Subscription[] = [];
+
+  pushSession(sessionID: string): void {
+    this._subscriptions.push(
+      timer(0, 3000)
+        .pipe(
+          switchMap(() => this.sessionsService.getSession(sessionID)),
+          takeWhile(
+            (session) =>
+              !this.sessionService.beautifyState(
+                session.preparation_state,
+                session.state,
+              ).success,
+            true,
+          ),
+        )
+        .subscribe((session) => {
+          this.sessionsService
+            .getSessionConnectionInformation(session.id)
+            .subscribe((connectionInfo) => {
+              this._connectToSession(session, connectionInfo.payload);
+            });
+        }),
+    );
+  }
+
+  private _connectToSession(
     session: Session,
     connectionInfo: SessionConnectionInformation,
   ): void {
@@ -38,16 +78,8 @@ export class SessionViewerService {
 
     if (!connectionInfo.redirect_url) {
       this.toastService.showError(
-        'Session connection information is not available yet.',
-        'Try again later.',
-      );
-      return;
-    }
-
-    if (!connectionInfo.redirect_url) {
-      this.toastService.showError(
-        'Session connection information is not available yet.',
-        'Try again later.',
+        'Session connection information is not available.',
+        'Contact support for more details.',
       );
       return;
     }
@@ -104,7 +136,7 @@ export class SessionViewerService {
       );
 
       if (session?.reloadToResize) {
-        this.reloadIFrame(iframe);
+        this._reloadIFrame(iframe);
       }
     });
   }
@@ -115,7 +147,7 @@ export class SessionViewerService {
     );
 
     if (sessionIFrame && session.reloadToResize) {
-      this.reloadIFrame(sessionIFrame);
+      this._reloadIFrame(sessionIFrame);
     }
   }
 
@@ -132,9 +164,10 @@ export class SessionViewerService {
 
   clearSessions(): void {
     this._sessions.next(undefined);
+    this._subscriptions.forEach((s) => s.unsubscribe());
   }
 
-  private reloadIFrame(iframe: HTMLIFrameElement) {
+  private _reloadIFrame(iframe: HTMLIFrameElement) {
     const src = iframe.src;
 
     iframe.removeAttribute('src');
@@ -150,7 +183,15 @@ export class SessionViewerService {
     if (currentSessions === undefined) {
       this._sessions.next([viewerSession]);
     } else {
-      this._sessions.next([...currentSessions, viewerSession]);
+      const index = currentSessions.findIndex(
+        (session) => session.id === viewerSession.id,
+      );
+      if (index === -1) {
+        this._sessions.next([...currentSessions, viewerSession]);
+      } else {
+        currentSessions[index] = viewerSession;
+        this._sessions.next(currentSessions);
+      }
     }
   }
 }

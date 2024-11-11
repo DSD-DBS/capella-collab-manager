@@ -1,8 +1,0 @@
-/*
- * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
- * SPDX-License-Identifier: Apache-2.0
- */
-
-.height {
-  height: calc(100vh - 2vh - 65px - 110px);
-}

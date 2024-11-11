@@ -5,7 +5,7 @@
 
 <h1 class="text-2xl">Active Sessions</h1>
 
-@if ((userSessionService.sessions$ | async) === undefined) {
+@if ((sessions | async) === undefined) {
   <ngx-skeleton-loader
     appearance="circle"
     [theme]="{
@@ -15,48 +15,74 @@
       border: '1px solid white',
     }"
   ></ngx-skeleton-loader>
-} @else if ((userSessionService.sessions$ | async)?.length === 0) {
+} @else if ((sessions | async)?.length === 0) {
   <div class="mat-card collab-card w-full">
     <h2 class="mb-3 text-xl font-medium">No active sessions</h2>
     <div class="text-sm">
       There are no active sessions for your user in our system. <br />
     </div>
   </div>
-} @else if ((userSessionService.sessions$ | async)?.length !== 0) {
+} @else if ((sessions | async)?.length !== 0) {
   <div class="flex flex-col gap-2">
-    <a
-      class="w-full max-w-[85vw]"
-      matInput
-      mat-stroked-button
-      color="primary"
-      type="submit"
-      routerLink="/session"
-    >
-      <span> Open internal session viewer </span>
-      <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
-    </a>
+    <div class="rounded border bg-white p-2">
+      <h2><b>Internal Session Viewer</b></h2>
+      <mat-radio-group [(ngModel)]="selectedWindowManager">
+        <mat-radio-button value="tiling"
+          >Tiling window manager</mat-radio-button
+        >
+        <mat-radio-button value="floating">
+          Floating window manager
+        </mat-radio-button>
+      </mat-radio-group>
 
-    @for (session of userSessionService.sessions$ | async; track session.id) {
+      <a
+        class="w-full max-w-[85vw]"
+        matInput
+        mat-stroked-button
+        color="primary"
+        type="submit"
+        routerLink="/session-viewer"
+        [queryParams]="{
+          'window-manager': selectedWindowManager,
+          'session-id': (selectedSessionIDs$ | async),
+        }"
+        [disabled]="!(selectedSessionIDs$ | async)?.length"
+      >
+        <span> Open selected sessions in internal session viewer </span>
+        <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+      </a>
+    </div>
+
+    @for (session of sessions | async; track session.id) {
       <div class="collab-card">
-        <div class="flex items-center justify-between">
+        <div class="flex h-12 items-center justify-between">
+          <mat-checkbox
+            class="left-[-10px]"
+            color="primary"
+            [(ngModel)]="session.selected"
+          ></mat-checkbox>
           <b class="text-lg">
             @if (isPersistentSession(session)) {
               <h2>Persistent workspace session</h2>
             } @else if (isReadonlySession(session)) {
-              <h2>Read-only session</h2>
+              <h2>Read-Only session</h2>
             }
           </b>
-          @if ((feedbackService.feedbackConfig$ | async)?.on_session_card) {
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="feedbackService.showDialog([session], 'On session card')"
-              matTooltip="Give feedback"
-              matTooltipPosition="above"
-            >
-              <mat-icon>feedback</mat-icon>
-            </button>
-          }
+          <div>
+            @if ((feedbackService.feedbackConfig$ | async)?.on_session_card) {
+              <button
+                mat-icon-button
+                color="primary"
+                (click)="
+                  feedbackService.showDialog([session], 'On session card')
+                "
+                matTooltip="Give feedback"
+                matTooltipPosition="above"
+              >
+                <mat-icon>feedback</mat-icon>
+              </button>
+            }
+          </div>
         </div>
 
         <div>

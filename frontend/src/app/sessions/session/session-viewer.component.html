@@ -1,0 +1,43 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+@if ((sessionViewerService.sessions$ | async) === undefined) {
+  <div class="flex h-screen">
+    <mat-spinner class="m-auto"></mat-spinner>
+  </div>
+}
+
+@if (sessionViewerService.sessions$ | async; as viewerSessions) {
+  @if (viewerSessions.length) {
+    <div
+      class="select-none"
+      [ngClass]="{
+        'h-[calc(100vh-2vh-65px-110px)]':
+          (fullscreenService.isFullscreen$ | async) === false,
+        'h-screen': fullscreenService.isFullscreen$ | async,
+      }"
+    >
+      @if (this.selectedWindowType === "floating") {
+        <app-floating-window-manager />
+      } @else {
+        <app-tiling-window-manager />
+      }
+    </div>
+  }
+}
+
+<div class="fixed bottom-4 right-4 z-50">
+  <button
+    mat-fab
+    color="primary"
+    (click)="fullscreenService.toggleFullscreen()"
+  >
+    @if (fullscreenService.isFullscreen$ | async) {
+      <mat-icon>fullscreen_exit</mat-icon>
+    } @else {
+      <mat-icon>fullscreen</mat-icon>
+    }
+  </button>
+</div>

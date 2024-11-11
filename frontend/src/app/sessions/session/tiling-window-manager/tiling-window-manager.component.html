@@ -4,9 +4,7 @@
  -->
 
 <div class="flex h-full gap-0.5">
-  <ng-container
-    *ngFor="let session of sessions; trackBy: trackBySessionIndexAndId"
-  >
+  @for (session of sessions; track trackBySessionIndexAndId) {
     <div
       class="flex flex-col"
       (click)="sessionViewerService.focusSession(session)"
@@ -20,42 +18,40 @@
           {{ session.type }}
         </span>
 
-        <div>
-          <div *ngIf="session.focused" class="flex items-center gap-2">
+        <div class="flex items-center gap-2">
+          @if (session.focused) {
             <span>Focused</span><mat-icon>phonelink</mat-icon>
-          </div>
-          <div *ngIf="!session.focused" class="flex items-center gap-2">
+          } @else {
             <span>Not focused</span>
             <mat-icon>phonelink_off</mat-icon>
-          </div>
+          }
         </div>
 
         <div class="flex items-center gap-2">
           <div class="flex items-center gap-1">
-            <button
-              class="m-0"
-              *ngIf="session.index !== 0"
-              (click)="onLeftArrowClick(session)"
-            >
-              <mat-icon class="!flex items-center"> arrow_back </mat-icon>
-            </button>
-
-            <button
-              class="m-0"
-              *ngIf="session.index !== sessions.length - 1"
-              (click)="onRightArrowClick(session)"
-            >
-              <mat-icon class="!flex items-center"> arrow_forward </mat-icon>
-            </button>
+            @if (session.index !== 0) {
+              <button class="m-0" (click)="onLeftArrowClick(session)">
+                <mat-icon class="!flex items-center">arrow_back</mat-icon>
+              </button>
+            } @else if (session.index !== sessions.length - 1) {
+              <button class="m-0" (click)="onRightArrowClick(session)">
+                <mat-icon class="!flex items-center">arrow_forward</mat-icon>
+              </button>
+            }
           </div>
 
-          <button
-            class="m-0 flex items-center"
-            (click)="sessionViewerService.toggleFullscreen(session)"
-          >
-            <mat-icon *ngIf="!session.fullscreen">fullscreen</mat-icon>
-            <mat-icon *ngIf="session.fullscreen">fullscreen_exit</mat-icon>
-          </button>
+          @if ((sessionViewerService.allSessions$ | async)!.length > 1) {
+            <button
+              class="m-0 flex items-center"
+              (click)="sessionViewerService.toggleFullscreen(session)"
+            >
+              @if (session.fullscreen) {
+                <mat-icon>fullscreen_exit</mat-icon>
+              } @else {
+                <mat-icon>fullscreen</mat-icon>
+              }
+            </button>
+          }
         </div>
       </div>
 
@@ -66,10 +62,11 @@
       />
     </div>
 
-    <div
-      *ngIf="session.index < sessions.length - 1"
-      class="w-2 cursor-col-resize rounded bg-gray-300"
-      (mousedown)="onMouseDown($event, session.index)"
-    ></div>
-  </ng-container>
+    @if (session.index < sessions.length - 1) {
+      <div
+        class="w-2 cursor-col-resize rounded bg-gray-300"
+        (mousedown)="onMouseDown($event, session.index)"
+      ></div>
+    }
+  }
 </div>

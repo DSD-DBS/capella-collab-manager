@@ -62,11 +62,6 @@ export class NavBarService {
       requiredRole: 'user',
     },
     {
-      name: 'Session viewer',
-      routerLink: ['/session'],
-      requiredRole: 'user',
-    },
-    {
       name: 'Session overview',
       routerLink: ['/sessions', 'overview'],
       requiredRole: 'administrator',

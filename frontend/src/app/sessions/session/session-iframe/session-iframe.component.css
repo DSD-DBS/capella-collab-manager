@@ -12,3 +12,15 @@
 
   z-index: 40;
 }
+
+.error {
+  @apply bg-error;
+}
+
+.warning {
+  @apply bg-warning;
+}
+
+.primary {
+  @apply bg-primary;
+}
