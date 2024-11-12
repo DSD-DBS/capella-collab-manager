@@ -48,7 +48,7 @@ def upgrade():
     for row in results:
         config = row["config"]
         config["sessions"]["persistent"]["image"] = {
-            "default": config["sessions"]["persistent"]["image"],
+            "regular": config["sessions"]["persistent"]["image"],
             "beta": None,
         }
 
