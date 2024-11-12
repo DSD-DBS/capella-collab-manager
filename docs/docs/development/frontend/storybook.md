@@ -53,48 +53,16 @@ import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { Component } from './component-name.component';
 
 const meta: Meta<YourComponent> = {
-  title: 'Your Component',
-  component: YourComponent,
+    title: 'Your Component',
+    component: YourComponent,
 };
 
 export default meta;
 type Story = StoryObj<YourComponent>;
 
 export const ExampleStory: Story = {
-  args: {
-    ...
-  },
+    args: {},
 };
-```
-
-## Add documentation for the Story
-
-In the same directory of the component, add a file `{component_name}.docs.mdx`
-and use the following code as a template:
-
-```mdx
-import * as Component from './component-name.stories.ts';
-import { Meta, Title, Story, Canvas, Unstyled } from '@storybook/blocks';
-
-<Meta of={Component} />
-
-<Title />
-
-This is an example story for the component:
-
-<Story of={Component.ExampleStory} />
-```
-
-If you want to use `HTML` in your template, you can use the `Unstyled` block.
-In the example, we wrap the story in a `div` to show how it behaves on smaller
-devices:
-
-```mdx
-<Unstyled>
-    <div style={{ width: '500px' }}>
-        <Story of={Component.ExampleStory} />
-    </div>
-</Unstyled>
 ```
 
 ## Mock Angular services
@@ -105,31 +73,31 @@ access levels:
 
 ```js
 class MockProjectUserService implements Partial<ProjectUserService> {
-  role: ProjectUserRole
+    role: ProjectUserRole;
 
-  constructor(role: ProjectUserRole) {
-    this.role = role
-  }
+    constructor(role: ProjectUserRole) {
+        this.role = role;
+    }
 
-  verifyRole(requiredRole: ProjectUserRole): boolean {
-    const roles = ['user', 'manager', 'administrator']
-    return roles.indexOf(requiredRole) <= roles.indexOf(this.role)
-  }
+    verifyRole(requiredRole: ProjectUserRole): boolean {
+        const roles = ['user', 'manager', 'administrator'];
+        return roles.indexOf(requiredRole) <= roles.indexOf(this.role);
+    }
 }
+
+const mockProjectUserServiceProvider = (role: ProjectUserRole) => {
+    return {
+        provide: ProjectUserService,
+        useValue: new MockProjectUserService(role),
+    };
+};
 
 export const ExampleStory: Story = {
-  args: {
-    ...
-  },
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () => new MockProjectUserService('user'),
-        },
-      ],
-    }),
-  ],
-}
+    args: {},
+    decorators: [
+        moduleMetadata({
+            providers: [mockProjectUserServiceProvider('user')],
+        }),
+    ],
+};
 ```
