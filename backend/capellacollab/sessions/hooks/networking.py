@@ -23,8 +23,14 @@ class NetworkingIntegration(interface.HookRegistration):
 
         operator.create_network_policy_from_pod_to_label(
             session_id,
-            {"capellacollab/session-id": session_id},
-            {"capellacollab/owner-id": str(user.id)},
+            match_labels_from={
+                "capellacollab/session-id": session_id,
+                "capellacollab/workload": "session",
+            },
+            match_labels_to={
+                "capellacollab/owner-id": str(user.id),
+                "capellacollab/workload": "session",
+            },
         )
 
         return interface.PostSessionCreationHookResult()

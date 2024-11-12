@@ -152,6 +152,7 @@ class HookRegistration(metaclass=abc.ABCMeta):
         operator: operators.KubernetesOperator,
         user: users_models.DatabaseUser,
         connection_method: tools_models.ToolSessionConnectionMethod,
+        db: orm.Session,
         **kwargs,
     ) -> PostSessionCreationHookResult:
         """Hook executed after session creation
@@ -173,6 +174,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
             User who has requested the session
         connection_method : tools_models.ToolSessionConnectionMethod
             Requested connection method for the session
+        db : sqlalchemy.orm.Session
+            Database session. Can be used to access the database
 
         Returns
         -------
