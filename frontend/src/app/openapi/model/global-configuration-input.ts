@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { BetaConfigurationInput } from './beta-configuration-input';
 import { NavbarConfigurationInput } from './navbar-configuration-input';
 import { MetadataConfigurationInput } from './metadata-configuration-input';
 import { PipelineConfigurationInput } from './pipeline-configuration-input';
@@ -22,6 +23,7 @@ export interface GlobalConfigurationInput {
     metadata?: MetadataConfigurationInput;
     navbar?: NavbarConfigurationInput;
     feedback?: FeedbackConfigurationInput;
+    beta?: BetaConfigurationInput;
     pipelines?: PipelineConfigurationInput;
 }
 

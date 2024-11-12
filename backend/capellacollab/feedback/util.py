@@ -65,6 +65,11 @@ def format_email(
         f"User: {user_msg}",
         f"User Agent: {user_agent or 'Unknown'}",
     ]
+    if user:
+        message_list.append(
+            f"Beta Tester: {user.beta_tester}",
+        )
+
     if feedback.trigger:
         message_list.append(f"Trigger: {feedback.trigger}")
 

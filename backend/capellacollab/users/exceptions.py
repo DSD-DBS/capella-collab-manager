@@ -38,3 +38,43 @@ class RoleUpdateRequiresReasonError(core_exceptions.BaseError):
             reason=("You must provide a reason for updating the users roles."),
             err_code="ROLE_UPDATE_REQUIRES_REASON",
         )
+
+
+class ChangesNotAllowedForOtherUsersError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            title="You cannot make changes for other users",
+            reason="Your role does not allow you to make changes for other users.",
+            err_code="CHANGES_NOT_ALLOWED_FOR_OTHER_USERS",
+        )
+
+
+class ChangesNotAllowedForRoleError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            title="Changes not allowed for role",
+            reason="Your role does not allow you to make these changes.",
+            err_code="CHANGES_NOT_ALLOWED_FOR_ROLE",
+        )
+
+
+class BetaTestingDisabledError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            title="Beta testing disabled",
+            reason="Beta testing is currently disabled.",
+            err_code="BETA_TESTING_DISABLED",
+        )
+
+
+class BetaTestingSelfEnrollmentNotAllowedError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            title="Beta testing self enrollment not allowed",
+            reason="You do not have permission to enroll yourself in beta testing.",
+            err_code="BETA_TESTING_SELF_ENROLLMENT_NOT_ALLOWED",
+        )

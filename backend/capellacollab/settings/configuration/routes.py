@@ -9,6 +9,7 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.feedback import util as feedback_util
+from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
 from . import core, crud, models
@@ -50,6 +51,10 @@ async def update_configuration(
     )
 
     feedback_util.validate_global_configuration(body.feedback)
+
+    if body.beta.enabled is False:
+        users_crud.unenroll_all_beta_testers(db)
+
     if body.feedback.enabled is False:
         feedback_util.disable_feedback(body.feedback)
 

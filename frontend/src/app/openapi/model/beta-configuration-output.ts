@@ -9,18 +9,16 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { Role } from './role';
 
 
-export interface PostUser { 
-    name: string;
-    idp_identifier: string;
-    email?: string | null;
-    role: Role;
-    reason: string;
-    beta_tester?: boolean;
+export interface BetaConfigurationOutput { 
+    /**
+     * Enable beta-testing features. Disabling this will un-enroll all beta-testers.
+     */
+    enabled: boolean;
+    /**
+     * Allow users to register themselves as beta-testers.
+     */
+    allow_self_enrollment: boolean;
 }
-export namespace PostUser {
-}
-
 

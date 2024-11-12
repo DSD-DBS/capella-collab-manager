@@ -359,8 +359,8 @@ class DatabaseTool(database.Base):
     )
 
 
-class PersistentSessionToolConfiguration(core_pydantic.BaseModel):
-    image: str | None = pydantic.Field(
+class PersistentSessionToolConfigurationImages(core_pydantic.BaseModel):
+    regular: str | None = pydantic.Field(
         default="docker.io/hello-world:latest",
         pattern=DOCKER_IMAGE_PATTERN,
         examples=[
@@ -373,6 +373,25 @@ class PersistentSessionToolConfiguration(core_pydantic.BaseModel):
             "You can use '{version}' in the image, which will be replaced with the version name of the tool. "
             "Always use tags to prevent breaking updates. "
         ),
+    )
+    beta: str | None = pydantic.Field(
+        default=None,
+        pattern=DOCKER_IMAGE_PATTERN,
+        examples=[
+            "docker.io/hello-world:latest",
+            "ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:{version}-main",
+        ],
+        description=(
+            "Docker image, which is used for persistent sessions of beta users."
+            " If set to None, the regular image will be used instead."
+            " You can use '{version}' in the image, which will be replaced with the version name of the tool."
+        ),
+    )
+
+
+class PersistentSessionToolConfiguration(core_pydantic.BaseModel):
+    image: PersistentSessionToolConfigurationImages = pydantic.Field(
+        default=PersistentSessionToolConfigurationImages()
     )
 
 

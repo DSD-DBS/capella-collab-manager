@@ -9,18 +9,10 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { Role } from './role';
 
 
-export interface PostUser { 
-    name: string;
-    idp_identifier: string;
-    email?: string | null;
-    role: Role;
-    reason: string;
-    beta_tester?: boolean;
+export interface PersistentSessionToolConfigurationImagesInput { 
+    regular?: string | null;
+    beta?: string | null;
 }
-export namespace PostUser {
-}
-
 

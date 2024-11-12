@@ -27,6 +27,16 @@
   @if (ownUserService.user?.role === "administrator") {
     <app-user-information></app-user-information>
   }
+  @if ((betaConfig$ | async)?.enabled) {
+    @if (
+      ownUserService.user?.role === "administrator" ||
+      (ownUserService.user?.id === (userWrapperService.user$ | async)?.id &&
+        (betaConfig$ | async)?.allow_self_enrollment)
+    ) {
+      <app-beta-testing></app-beta-testing>
+    }
+  }
+
   <app-common-projects></app-common-projects>
   @if (ownUserService.user?.role === "administrator") {
     <app-user-workspaces></app-user-workspaces>

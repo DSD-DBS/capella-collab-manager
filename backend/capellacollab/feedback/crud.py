@@ -46,6 +46,7 @@ def save_feedback(
     model = models.DatabaseFeedback(
         rating=rating,
         user=user,
+        beta_tester=user.beta_tester if user else False,
         feedback_text=feedback_text,
         created_at=created_at,
         trigger=trigger,

@@ -165,7 +165,9 @@ def request_session(
     warnings += local_warnings
     environment |= local_env
 
-    docker_image = util.get_docker_image(version, body.session_type)
+    docker_image = util.get_docker_image(
+        version, body.session_type, user.beta_tester
+    )
 
     annotations: dict[str, str] = {
         "capellacollab/owner-name": user.name,
