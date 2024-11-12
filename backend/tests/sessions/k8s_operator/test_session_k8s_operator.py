@@ -15,7 +15,6 @@ from capellacollab.tools import models as tools_models
 
 def test_start_session(monkeypatch: pytest.MonkeyPatch):
     operator = k8s.KubernetesOperator()
-    monkeypatch.setattr(k8s, "loki_enabled", False)
 
     name = "testname"
     creation_timestamp = datetime.datetime.now()
@@ -69,7 +68,6 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
         username="testuser",
         session_type=sessions_models.SessionType.PERSISTENT,
         tool=tool,
-        version=tools_models.DatabaseVersion(name="testversion", tool=tool),
         environment={},
         init_environment={},
         ports={"rdp": 3389},
@@ -88,7 +86,6 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
 
 def test_kill_session(monkeypatch: pytest.MonkeyPatch):
     operator = k8s.KubernetesOperator()
-    monkeypatch.setattr(k8s, "loki_enabled", False)
 
     monkeypatch.setattr(
         operator.v1_core,

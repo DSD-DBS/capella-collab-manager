@@ -22,6 +22,14 @@ class SecretReferenceVolume(Volume):
 
 
 @dataclasses.dataclass
+class ConfigMapReferenceVolume(Volume):
+    """Mount an existing config map volume to the container."""
+
+    config_map_name: str
+    optional: bool
+
+
+@dataclasses.dataclass
 class PersistentVolume(Volume):
     """A persistent volume that is mounted into the container."""
 

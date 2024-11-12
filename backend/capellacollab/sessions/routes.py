@@ -183,6 +183,7 @@ def request_session(
     }
 
     labels: dict[str, str] = {
+        "capellacollab/workload": "session",
         "capellacollab/session-id": session_id,
         "capellacollab/owner-id": str(user.id),
     }
@@ -193,7 +194,6 @@ def request_session(
         username=user.name,
         session_type=body.session_type,
         tool=tool,
-        version=version,
         environment=environment,
         init_environment=init_environment,
         ports=connection_method.ports.model_dump(),
@@ -232,6 +232,7 @@ def request_session(
             session=session,
             db_session=db_session,
             connection_method=connection_method,
+            db=db,
         )
 
         hook_config |= result.get("config", {})

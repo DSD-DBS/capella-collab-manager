@@ -7,13 +7,14 @@ import typing as t
 
 import prometheus_client
 import prometheus_client.core
+from prometheus_client import registry as prometheus_registry
 
 from capellacollab.core import database
 
 from . import crud, operators
 
 
-class DatabaseSessionsCollector:
+class DatabaseSessionsCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
         metric = prometheus_client.core.GaugeMetricFamily(
             "backend_database_sessions",
@@ -24,7 +25,7 @@ class DatabaseSessionsCollector:
         yield metric
 
 
-class DeployedSessionsCollector:
+class DeployedSessionsCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
         metric = prometheus_client.core.GaugeMetricFamily(
             "backend_deployed_sessions",
@@ -32,7 +33,9 @@ class DeployedSessionsCollector:
             labels=("workload", "phase"),
         )
         operator = operators.get_operator()
-        pods = operator.get_pods(label_selector=None)
+        pods = operator.get_pods(
+            label_selector="capellacollab/workload=session"
+        )
         statuses = []
         for pod in pods:
             labels = pod.metadata.labels

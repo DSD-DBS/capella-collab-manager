@@ -9,6 +9,7 @@ from . import (
     http,
     interface,
     jupyter,
+    log_collector,
     networking,
     persistent_workspace,
     provisioning,
@@ -33,6 +34,7 @@ REGISTER_HOOKS_AUTO_USE: dict[str, interface.HookRegistration] = {
     "session_preparation": session_preparation.GitRepositoryCloningHook(),
     "networking": networking.NetworkingIntegration(),
     "authentication": authentication.PreAuthenticationHook(),
+    "log_collector": log_collector.LogCollectorIntegration(),
 }
 
 

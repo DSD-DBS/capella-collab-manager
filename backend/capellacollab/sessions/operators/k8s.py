@@ -19,7 +19,6 @@ import kubernetes
 import kubernetes.config
 import kubernetes.stream.stream
 import prometheus_client
-import yaml
 from kubernetes import client
 from kubernetes.client import exceptions
 
@@ -42,7 +41,6 @@ SESSIONS_KILLED = prometheus_client.Counter(
 cfg: config_models.K8sConfig = config.k8s
 
 namespace: str = cfg.namespace
-loki_enabled: bool = cfg.promtail.loki_enabled
 
 image_pull_policy: str = cfg.cluster.image_pull_policy
 
@@ -92,7 +90,6 @@ class KubernetesOperator:
         username: str,
         session_type: sessions_models.SessionType,
         tool: tools_models.DatabaseTool,
-        version: tools_models.DatabaseVersion,
         environment: dict[str, str],
         init_environment: dict[str, str],
         ports: dict[str, int],
@@ -107,16 +104,7 @@ class KubernetesOperator:
             "Launching a %s session for user %s", session_type.value, username
         )
 
-        if loki_enabled:
-            self._create_promtail_configmap(
-                name=session_id,
-                username=username,
-                session_type=session_type.value,
-                tool_name=tool.name,
-                version_name=version.name,
-            )
-
-        pod = self._create_pod(
+        pod = self._create_session_pod(
             image=image,
             name=session_id,
             environment=environment,
@@ -159,9 +147,6 @@ class KubernetesOperator:
         self._delete_disruptionbudget(name=_id)
         self._delete_service(name=_id)
 
-        if loki_enabled:
-            self._delete_config_map(name=_id)
-
         SESSIONS_KILLED.inc()
 
     def get_job_by_name(self, name: str) -> client.V1Job:
@@ -172,9 +157,7 @@ class KubernetesOperator:
         sessions_models.SessionState,
     ]:
         try:
-            pods = self.get_pods(
-                label_selector=f"capellacollab/session-id={session_id}"
-            )
+            pod = self.get_pod_by_name(session_id)
         except exceptions.ApiException:
             log.warning("Error while getting session pod", exc_info=True)
             return (
@@ -182,13 +165,13 @@ class KubernetesOperator:
                 sessions_models.SessionState.UNKNOWN,
             )
 
-        if not pods:
+        if not pod:
             return (
                 sessions_models.SessionPreparationState.NOT_FOUND,
                 sessions_models.SessionState.NOT_FOUND,
             )
 
-        status: client.V1PodStatus = pods[0].status
+        status: client.V1PodStatus = pod.status
         return (
             self._get_init_container_state(status),
             self._get_container_state(status),
@@ -462,6 +445,13 @@ class KubernetesOperator:
                         optional=volume.optional,
                     ),
                 )
+            case models.ConfigMapReferenceVolume():
+                return client.V1Volume(
+                    name=volume.name,
+                    config_map=client.V1ConfigMapVolumeSource(
+                        name=volume.config_map_name, optional=volume.optional
+                    ),
+                )
             case _:
                 raise KeyError(
                     f"The Kubernetes operator encountered an unsupported session volume type '{type(volume)}'"
@@ -512,7 +502,48 @@ class KubernetesOperator:
                 return
             raise
 
-    def _create_pod(
+    def _create_sidecar_pod(
+        self,
+        image: str,
+        name: str,
+        labels: dict[str, str],
+        volumes: list[models.Volume],
+        args: list[str] | None = None,
+    ):
+        k8s_volumes, k8s_volume_mounts = self._map_volumes_to_k8s_volumes(
+            volumes
+        )
+
+        pod: client.V1Pod = client.V1Pod(
+            metadata=client.V1ObjectMeta(
+                name=name,
+                labels=labels,
+            ),
+            spec=client.V1PodSpec(
+                automount_service_account_token=False,
+                security_context=pod_security_context,
+                node_selector=cfg.cluster.node_selector,
+                containers=[
+                    client.V1Container(
+                        name=name,
+                        image=image,
+                        args=args,
+                        resources=client.V1ResourceRequirements(
+                            limits={"cpu": "0.1", "memory": "50Mi"},
+                            requests={"cpu": "0.05", "memory": "5Mi"},
+                        ),
+                        volume_mounts=k8s_volume_mounts,
+                        image_pull_policy=image_pull_policy,
+                    )
+                ],
+                volumes=k8s_volumes,
+                restart_policy="Always",
+            ),
+        )
+
+        return self.v1_core.create_namespaced_pod(namespace, pod)
+
+    def _create_session_pod(
         self,
         image: str,
         name: str,
@@ -533,28 +564,6 @@ class KubernetesOperator:
             init_volumes
         )
 
-        promtail_volume_mounts: list[client.V1VolumeMount] = []
-
-        if loki_enabled:
-            promtail_volume_mounts.append(
-                client.V1VolumeMount(
-                    name="workspace", mount_path="/var/log/promtail"
-                )
-            )
-
-            k8s_volumes.append(
-                client.V1Volume(
-                    name="prom-config",
-                    config_map=client.V1ConfigMapVolumeSource(name=name),
-                )
-            )
-
-            promtail_volume_mounts.append(
-                client.V1VolumeMount(
-                    name="prom-config", mount_path="/etc/promtail"
-                )
-            )
-
         resources = client.V1ResourceRequirements(
             limits={
                 "cpu": tool_resources.cpu.limits,
@@ -566,55 +575,32 @@ class KubernetesOperator:
             },
         )
 
-        containers: list[client.V1Container] = []
-        containers.append(
-            client.V1Container(
-                name="session",
-                image=image,
-                ports=[
-                    client.V1ContainerPort(container_port=port, protocol="TCP")
-                    for port in ports.values()
-                ],
-                env=self._transform_env_to_k8s_env(environment),
-                resources=resources,
-                volume_mounts=k8s_volume_mounts,
-                image_pull_policy=image_pull_policy,
-            )
-        )
-        if loki_enabled:
-            containers.append(
-                client.V1Container(
-                    name="promtail",
-                    image=f"{config.docker.external_registry}/grafana/promtail",
-                    args=[
-                        "--config.file=/etc/promtail/promtail.yaml",
-                        "-log-config-reverse-order",
-                    ],
-                    ports=[
-                        client.V1ContainerPort(
-                            name="metrics", container_port=3101, protocol="TCP"
-                        )
-                    ],
-                    resources=client.V1ResourceRequirements(
-                        limits={"cpu": "0.1", "memory": "50Mi"},
-                        requests={"cpu": "0.05", "memory": "5Mi"},
-                    ),
-                    volume_mounts=promtail_volume_mounts,
-                    image_pull_policy=image_pull_policy,
-                )
-            )
-
         pod: client.V1Pod = client.V1Pod(
             metadata=client.V1ObjectMeta(
                 name=name,
-                labels={"capellacollab/workload": "session"} | labels,
+                labels=labels,
                 annotations=annotations,
             ),
             spec=client.V1PodSpec(
                 automount_service_account_token=False,
                 security_context=pod_security_context,
                 node_selector=cfg.cluster.node_selector,
-                containers=containers,
+                containers=[
+                    client.V1Container(
+                        name="session",
+                        image=image,
+                        ports=[
+                            client.V1ContainerPort(
+                                container_port=port, protocol="TCP"
+                            )
+                            for port in ports.values()
+                        ],
+                        env=self._transform_env_to_k8s_env(environment),
+                        resources=resources,
+                        volume_mounts=k8s_volume_mounts,
+                        image_pull_policy=image_pull_policy,
+                    )
+                ],
                 init_containers=[
                     client.V1Container(
                         name="session-preparation",
@@ -677,7 +663,10 @@ class KubernetesOperator:
                 spec=client.V1PodDisruptionBudgetSpec(
                     max_unavailable=0,
                     selector=client.V1LabelSelector(
-                        match_labels={"capellacollab/session-id": session_id}
+                        match_labels={
+                            "capellacollab/session-id": session_id,
+                            "capellacollab/workload": "session",
+                        }
                     ),
                 ),
             )
@@ -718,7 +707,10 @@ class KubernetesOperator:
                     )
                     for name, port in ports.items()
                 ],
-                selector={"capellacollab/session-id": session_id},
+                selector={
+                    "capellacollab/session-id": session_id,
+                    "capellacollab/workload": "session",
+                },
                 type="ClusterIP",
             ),
         )
@@ -835,70 +827,16 @@ class KubernetesOperator:
             for key, value in environment.items()
         ]
 
-    def _create_promtail_configmap(
+    def _create_configmap(
         self,
         name: str,
-        username: str,
-        session_type: str,
-        tool_name: str,
-        version_name: str,
+        data: dict,
     ) -> client.V1ConfigMap | None:
-        """Create the configuration for promtail.
-
-        Do not call if loki is disabled!
-        """
-
-        assert cfg.promtail.loki_url
         config_map: client.V1ConfigMap = client.V1ConfigMap(
             kind="ConfigMap",
             api_version="v1",
             metadata=client.V1ObjectMeta(name=name),
-            data={
-                "promtail.yaml": yaml.dump(
-                    {
-                        "server": {
-                            "http_listen_port": cfg.promtail.server_port,
-                        },
-                        "clients": [
-                            {
-                                "url": cfg.promtail.loki_url + "/push",
-                                "basic_auth": {
-                                    "username": cfg.promtail.loki_username,
-                                    "password": cfg.promtail.loki_password,
-                                },
-                            }
-                        ],
-                        "positions": {
-                            "filename": "/var/log/promtail/positions.yaml"
-                        },
-                        "scrape_configs": [
-                            {
-                                "job_name": "system",
-                                "pipeline_stages": [
-                                    {
-                                        "multiline": {
-                                            "firstline": "^[^\t]",
-                                        },
-                                    }
-                                ],
-                                "static_configs": [
-                                    {
-                                        "targets": ["localhost"],
-                                        "labels": {
-                                            "deployment": f"{namespace}-sessions",
-                                            "username": username,
-                                            "session_type": session_type,
-                                            "tool": tool_name,
-                                            "version": version_name,
-                                            "__path__": "/var/log/promtail/**/*.log",
-                                        },
-                                    }
-                                ],
-                            }
-                        ],
-                    }
-                )
-            },
+            data=data,
         )
         return self.v1_core.create_namespaced_config_map(namespace, config_map)
 
@@ -980,6 +918,16 @@ class KubernetesOperator:
         return self.v1_core.list_namespaced_pod(
             namespace=namespace, label_selector=label_selector
         ).items
+
+    def get_pod_by_name(self, name: str) -> client.V1Pod:
+        try:
+            return self.v1_core.read_namespaced_pod(
+                namespace=namespace, name=name
+            )
+        except exceptions.ApiException as e:
+            if e.status == http.HTTPStatus.NOT_FOUND:
+                return None
+            raise
 
     def list_files(self, session_id: str, directory: str, show_hidden: bool):
         def print_file_tree_as_json():

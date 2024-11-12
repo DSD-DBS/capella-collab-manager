@@ -70,8 +70,8 @@ def fixture_pod(
 
     monkeypatch.setattr(
         client.CoreV1Api,
-        "list_namespaced_pod",
-        lambda *args, **kwargs: client.V1PodList(items=[pod]),
+        "read_namespaced_pod",
+        lambda *args, **kwargs: pod,
     )
 
 
@@ -232,8 +232,8 @@ def test_session_state(
 def test_session_state_not_found(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         client.CoreV1Api,
-        "list_namespaced_pod",
-        lambda *args, **kwargs: client.V1PodList(items=[]),
+        "read_namespaced_pod",
+        lambda *args, **kwargs: None,
     )
 
     assert operators.get_operator().get_session_state("test") == (
