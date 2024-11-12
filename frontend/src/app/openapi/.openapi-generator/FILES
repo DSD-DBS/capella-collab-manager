@@ -31,6 +31,8 @@ api/users.service.ts
 configuration.ts
 encoder.ts
 index.ts
+model/additional-resource-profile-input.ts
+model/additional-resource-profile-output.ts
 model/anonymized-session.ts
 model/authorization-response.ts
 model/backup-pipeline-run.ts
@@ -56,6 +58,8 @@ model/create-tool-output.ts
 model/create-tool-version-input.ts
 model/create-tool-version-output.ts
 model/custom-navbar-link.ts
+model/default-resource-profile-input.ts
+model/default-resource-profile-output.ts
 model/diagram-cache-metadata.ts
 model/diagram-metadata.ts
 model/environment-value.ts

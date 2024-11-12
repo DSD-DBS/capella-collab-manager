@@ -118,10 +118,13 @@ def get_eclipse_session_configuration() -> (
     """
     return tools_models.ToolSessionConfiguration(
         resources=tools_models.Resources(
-            cpu=tools_models.CPUResources(requests=0.4, limits=2),
-            memory=tools_models.MemoryResources(
-                requests="1.6Gi", limits="6Gi"
+            default_profile=tools_models.DefaultResourceProfile(
+                cpu=tools_models.CPUResources(requests=0.4, limits=2),
+                memory=tools_models.MemoryResources(
+                    requests="1.6Gi", limits="6Gi"
+                ),
             ),
+            additional={},
         ),
         environment={
             "RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}",
@@ -353,10 +356,13 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
         integrations=tools_models.ToolIntegrations(jupyter=True),
         config=tools_models.ToolSessionConfiguration(
             resources=tools_models.Resources(
-                cpu=tools_models.CPUResources(requests=1, limits=2),
-                memory=tools_models.MemoryResources(
-                    requests="500Mi", limits="3Gi"
+                default_profile=tools_models.DefaultResourceProfile(
+                    cpu=tools_models.CPUResources(requests=1, limits=2),
+                    memory=tools_models.MemoryResources(
+                        requests="500Mi", limits="3Gi"
+                    ),
                 ),
+                additional={},
             ),
             environment={
                 "JUPYTER_PORT": "8888",

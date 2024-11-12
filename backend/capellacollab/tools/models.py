@@ -230,7 +230,7 @@ class MemoryResources(core_pydantic.BaseModel):
     )
 
 
-class Resources(core_pydantic.BaseModelStrict):
+class DefaultResourceProfile(core_pydantic.BaseModel):
     cpu: CPUResources = pydantic.Field(
         default=CPUResources(),
         description="Configuration about the number of CPU cores that sessions can use.",
@@ -239,6 +239,60 @@ class Resources(core_pydantic.BaseModelStrict):
         default=MemoryResources(),
         description="Configuration about the amount of memory that sessions can use.",
     )
+
+
+class AdditionalResourceProfile(DefaultResourceProfile):
+    usernames: list[str] = pydantic.Field(
+        default=None,
+        description="List of usernames, which are allowed to use this resource profile.",
+    )
+
+
+class Resources(core_pydantic.BaseModelStrict):
+    default_profile: DefaultResourceProfile = pydantic.Field(
+        default_factory=DefaultResourceProfile,
+        description="Default resource profile, which is used when no other profile matches.",
+    )
+    additional: dict[str, AdditionalResourceProfile] = pydantic.Field(
+        default={},
+        description="Additional resource profiles, which can be used to limit the resource usage of sessions.",
+    )
+
+    def get_profile(
+        self, username: str | None
+    ) -> DefaultResourceProfile | AdditionalResourceProfile:
+        if username is None:
+            return self.default_profile
+
+        for profile in self.additional.values():
+            if username in profile.usernames:
+                return profile
+
+        return self.default_profile
+
+    @pydantic.field_validator("additional")
+    @classmethod
+    def check_additional_profiles(
+        cls,
+        value: dict[str, AdditionalResourceProfile],
+    ) -> dict[str, AdditionalResourceProfile]:
+
+        for profile_name, profile in value.items():
+            if len(profile.usernames) != len(set(profile.usernames)):
+                raise ValueError(
+                    f"Usernames in profile '{profile_name}' must be unique."
+                )
+        usernames = [set(profile.usernames) for profile in value.values()]
+
+        all_usernames = [
+            username for usernames in usernames for username in usernames
+        ]
+
+        # Check that usernames aren't in multiple profiles
+        if len(all_usernames) != len(set(all_usernames)):
+            raise ValueError("Usernames must be unique across all profiles.")
+
+        return value
 
 
 class PrometheusConfiguration(core_pydantic.BaseModel):

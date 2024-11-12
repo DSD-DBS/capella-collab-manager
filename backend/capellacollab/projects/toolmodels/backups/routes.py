@@ -119,7 +119,7 @@ def create_backup(
                 body.include_commit_history,
             ),
             labels=core.get_pipeline_labels(toolmodel),
-            tool_resources=toolmodel.tool.config.resources,
+            tool_resources=toolmodel.tool.config.resources.get_profile(None),
             command="backup",
             schedule=pipeline_config.cron,
             timezone=pipeline_config.timezone,

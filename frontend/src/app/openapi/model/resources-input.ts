@@ -9,18 +9,18 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { MemoryResourcesInput } from './memory-resources-input';
-import { CPUResourcesInput } from './cpu-resources-input';
+import { DefaultResourceProfileInput } from './default-resource-profile-input';
+import { AdditionalResourceProfileInput } from './additional-resource-profile-input';
 
 
 export interface ResourcesInput { 
     /**
-     * Configuration about the number of CPU cores that sessions can use.
+     * Default resource profile, which is used when no other profile matches.
      */
-    cpu?: CPUResourcesInput;
+    default_profile?: DefaultResourceProfileInput;
     /**
-     * Configuration about the amount of memory that sessions can use.
+     * Additional resource profiles, which can be used to limit the resource usage of sessions.
      */
-    memory?: MemoryResourcesInput;
+    additional?: { [key: string]: AdditionalResourceProfileInput; };
 }
 
