@@ -3,10 +3,9 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="dialog">
+<div class="max-h-[90vh] px-5 pt-5">
   <form [formGroup]="form" (ngSubmit)="requestSession()">
-    <h2>Open Read-Only Session</h2>
-
+    <h2 class="mb-2 text-xl font-medium">Start a Read-Only Session</h2>
     @if (modelOptions.length && connectionMethods.length > 1) {
       <div class="mb-2">
         <p class="text-sm">
@@ -59,7 +58,7 @@
     @if (maxNumberOfModelsExceeded()) {
       <div class="my-1 rounded border bg-error p-2 text-sm shadow">
         <div class="flex items-center gap-2 text-white">
-          <mat-icon>warning</mat-icon>
+          <mat-icon class="!hidden sm:!block">warning</mat-icon>
           <span>
             The selected tool only supports up to
             {{ maxNumberOfModels }} provisioned model(s) at a time.
@@ -68,8 +67,8 @@
       </div>
     }
 
-    <div class="flex justify-between">
-      <button mat-flat-button mat-dialog-close type="button">Cancel</button>
+    <div class="mt-2 flex justify-between pb-5">
+      <button mat-stroked-button mat-dialog-close type="button">Cancel</button>
       <button
         mat-flat-button
         [disabled]="

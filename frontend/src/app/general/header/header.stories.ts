@@ -28,10 +28,6 @@ class MockNavbarService implements Partial<NavBarService> {
       requiredRole: 'user',
     },
     {
-      name: 'Session viewer',
-      requiredRole: 'user',
-    },
-    {
       name: 'Session overview',
       requiredRole: 'administrator',
     },

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,8 +16,6 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
   templateUrl: './floating-window-manager.component.html',
   standalone: true,
   imports: [
-    NgIf,
-    NgFor,
     CdkDrag,
     NgClass,
     CdkDragHandle,

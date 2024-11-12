@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgIf, NgClass } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,7 +14,7 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
   selector: 'app-tiling-window-manager',
   templateUrl: './tiling-window-manager.component.html',
   standalone: true,
-  imports: [NgFor, NgIf, MatIcon, SessionIFrameComponent, NgClass],
+  imports: [MatIcon, SessionIFrameComponent, NgClass, AsyncPipe],
 })
 @UntilDestroy()
 export class TilingWindowManagerComponent implements OnInit {

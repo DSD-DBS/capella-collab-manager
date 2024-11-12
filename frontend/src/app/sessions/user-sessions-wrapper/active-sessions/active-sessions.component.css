@@ -4,17 +4,17 @@
 */
 
 .error {
-  background-color: var(--error-color);
+  @apply bg-error;
 }
 
 .warning {
-  background-color: var(--warning-color);
+  @apply bg-warning;
 }
 
 .success {
-  background-color: var(--success-color);
+  @apply bg-success;
 }
 
 .primary {
-  background-color: var(--primary-color);
+  @apply bg-primary;
 }

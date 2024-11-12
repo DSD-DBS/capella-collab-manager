@@ -3,15 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgClass, AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButton, MatIconButton } from '@angular/material/button';
 import { MatCardContent } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { BehaviorSubject, map } from 'rxjs';
 import { Session } from 'src/app/openapi';
 import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
@@ -44,9 +48,12 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
     AsyncPipe,
     MatIconButton,
     MatTooltip,
+    MatCheckboxModule,
+    MatRadioModule,
+    FormsModule,
   ],
 })
-export class ActiveSessionsComponent {
+export class ActiveSessionsComponent implements OnInit {
   isReadonlySession = isReadonlySession;
   isPersistentSession = isPersistentSession;
 
@@ -58,6 +65,35 @@ export class ActiveSessionsComponent {
     private userWrapperService: OwnUserWrapperService,
     private dialog: MatDialog,
   ) {}
+
+  selectedWindowManager = 'tiling';
+
+  sessions = new BehaviorSubject<SessionWithSelection[] | undefined>(undefined);
+
+  ngOnInit(): void {
+    this.userSessionService.sessions$.subscribe((sessions) => {
+      const selectedSessionIDs = new Set(
+        this.sessions.value?.filter((s) => s.selected).map((s) => s.id) ?? [],
+      );
+
+      this.sessions.next(
+        sessions?.map((s) => ({
+          ...s,
+          selected: selectedSessionIDs.has(s.id),
+        })),
+      );
+    });
+  }
+
+  get selectedSessionIDs$() {
+    return this.sessions.pipe(
+      map((sessions) =>
+        sessions
+          ?.filter((session) => session.selected)
+          .map((session) => session.id),
+      ),
+    );
+  }
 
   openDeletionDialog(sessions: Session[]): void {
     const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
@@ -98,3 +134,5 @@ export class ActiveSessionsComponent {
     return session.owner.id != this.userWrapperService.user?.id;
   }
 }
+
+type SessionWithSelection = Session & { selected: boolean };
