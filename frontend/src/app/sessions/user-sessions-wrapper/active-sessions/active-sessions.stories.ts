@@ -51,7 +51,7 @@ const meta: Meta<ActiveSessionsComponent> = {
       providers: [mockOwnUserWrapperServiceProvider(mockUser)],
     }),
     componentWrapperDecorator(
-      (story) => `<div class="w-[360px] sm:w-[450px]">${story}</div>`,
+      (story) => `<div class="w-full sm:w-[450px]">${story}</div>`,
     ),
   ],
 };
