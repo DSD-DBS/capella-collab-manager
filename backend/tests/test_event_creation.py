@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import uuid
+
 import pytest
 import sqlalchemy as sa
 from fastapi import testclient
@@ -17,7 +19,12 @@ from capellacollab.users import models as users_models
 reason: str = "TestReason"
 
 
-def test_create_admin_user_by_system(db):
+@pytest.fixture(name="unique_username")
+def fixture_unique_username() -> str:
+    return str(uuid.uuid1())
+
+
+def test_create_admin_user_by_system(db: orm.Session):
     user = users_crud.get_user_by_name(db, config.config.initial.admin)
     assert user is not None
 
@@ -36,7 +43,12 @@ def test_create_admin_user_by_system(db):
     assert event.user_id == user.id
 
 
-def test_create_user_created_event(client, db, executor_name, unique_username):
+def test_create_user_created_event(
+    client: testclient.TestClient,
+    db: orm.Session,
+    executor_name: str,
+    unique_username: str,
+):
     executor = users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
     )
@@ -160,45 +172,39 @@ def test_create_assign_user_role_event(
         ),
     ],
 )
+@pytest.mark.usefixtures("admin")
 def test_create_user_added_to_project_event(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
-    unique_username: str,
+    admin: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
     permission: projects_users_models.ProjectUserPermission,
     expected_permission_event_type: events_models.EventType,
+    user2: users_models.DatabaseUser,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
         json={
             "role": projects_users_models.ProjectUserRole.USER.value,
             "permission": permission.value,
-            "username": user.name,
+            "username": user2.name,
             "reason": reason,
         },
     )
 
     assert response.status_code == 200
 
-    events = get_events_by_user_id(db, user.id)
+    events = get_events_by_user_id(db, user2.id)
     assert len(events) == 3
 
     user_added_event = events[0]
     assert (
         user_added_event.event_type == events_models.EventType.ADDED_TO_PROJECT
     )
-    assert user_added_event.executor_id == executor.id
+    assert user_added_event.executor_id == admin.id
     assert user_added_event.reason == reason
     assert user_added_event.project_id == project.id
-    assert user_added_event.user_id == user.id
+    assert user_added_event.user_id == user2.id
 
     assert (
         events[1].event_type
@@ -210,71 +216,57 @@ def test_create_user_added_to_project_event(
 def test_create_user_removed_from_project_event(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
-    unique_username: str,
+    user2: users_models.DatabaseUser,
+    admin: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     projects_users_crud.add_user_to_project(
         db,
         project,
-        user,
+        user2,
         projects_users_models.ProjectUserRole.USER,
         projects_users_models.ProjectUserPermission.READ,
     )
 
     response = client.request(
         "DELETE",
-        f"/api/v1/projects/{project.slug}/users/{user.id}",
+        f"/api/v1/projects/{project.slug}/users/{user2.id}",
         content=reason,
         headers={"Content-Type": "text/plain"},
     )
 
     assert response.status_code == 204
 
-    events = get_events_by_user_id(db, user.id)
+    events = get_events_by_user_id(db, user2.id)
     assert len(events) == 1
 
     event = events[0]
 
     assert event.event_type == events_models.EventType.REMOVED_FROM_PROJECT
-    assert event.executor_id == executor.id
+    assert event.executor_id == admin.id
     assert event.reason == reason
     assert event.project_id == project.id
-    assert event.user_id == user.id
+    assert event.user_id == user2.id
 
 
 def test_create_manager_added_to_project_event(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
-    unique_username: str,
+    admin: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
+    user2: users_models.DatabaseUser,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
         json={
             "role": projects_users_models.ProjectUserRole.MANAGER.value,
             "permission": projects_users_models.ProjectUserPermission.READ.value,
-            "username": user.name,
+            "username": user2.name,
             "reason": reason,
         },
     )
 
-    events = get_events_by_user_id(db, user.id)
+    events = get_events_by_user_id(db, user2.id)
 
     assert response.status_code == 200
     assert len(events) == 2
@@ -287,10 +279,10 @@ def test_create_manager_added_to_project_event(
         ],
     ):
         assert event.event_type == expected_event_type
-        assert event.executor_id == executor.id
+        assert event.executor_id == admin.id
         assert event.reason == reason
         assert event.project_id == project.id
-        assert event.user_id == user.id
+        assert event.user_id == user2.id
 
 
 @pytest.mark.parametrize(
@@ -312,29 +304,23 @@ def test_create_user_permission_change_event(
     client: testclient.TestClient,
     db: orm.Session,
     executor_name: str,
-    unique_username: str,
+    admin: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
     initial_permission: projects_users_models.ProjectUserPermission,
     target_permission: projects_users_models.ProjectUserPermission,
     expected_permission_event_type: events_models.EventType,
+    user2: users_models.DatabaseUser,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     projects_users_crud.add_user_to_project(
         db,
         project,
-        user,
+        user2,
         projects_users_models.ProjectUserRole.USER,
         initial_permission,
     )
 
     response = client.patch(
-        f"/api/v1/projects/{project.slug}/users/{user.id}",
+        f"/api/v1/projects/{project.slug}/users/{user2.id}",
         json={
             "permission": target_permission.value,
             "reason": reason,
@@ -343,16 +329,16 @@ def test_create_user_permission_change_event(
 
     assert response.status_code == 204
 
-    events = get_events_by_user_id(db, user.id)
+    events = get_events_by_user_id(db, user2.id)
     assert len(events) == 1
 
     event = events[0]
 
     assert event.event_type == expected_permission_event_type
-    assert event.executor_id == executor.id
+    assert event.executor_id == admin.id
     assert event.reason == reason
     assert event.project_id == project.id
-    assert event.user_id == user.id
+    assert event.user_id == user2.id
 
 
 @pytest.mark.parametrize(
@@ -373,30 +359,23 @@ def test_create_user_permission_change_event(
 def test_create_user_role_change_event(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
-    unique_username: str,
+    admin: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
     initial_role: projects_users_models.ProjectUserRole,
     target_role: projects_users_models.ProjectUserRole,
     expected_role_event_type: events_models.EventType,
+    user2: users_models.DatabaseUser,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     projects_users_crud.add_user_to_project(
         db,
         project,
-        user,
+        user2,
         initial_role,
         projects_users_models.ProjectUserPermission.READ,
     )
 
     response = client.patch(
-        f"/api/v1/projects/{project.slug}/users/{user.id}",
+        f"/api/v1/projects/{project.slug}/users/{user2.id}",
         json={
             "role": target_role.value,
             "reason": reason,
@@ -405,16 +384,16 @@ def test_create_user_role_change_event(
 
     assert response.status_code == 204
 
-    events = get_events_by_user_id(db, user.id)
+    events = get_events_by_user_id(db, user2.id)
     assert len(events) == 1
 
     event = events[0]
 
     assert event.event_type == expected_role_event_type
-    assert event.executor_id == executor.id
+    assert event.executor_id == admin.id
     assert event.reason == reason
     assert event.project_id == project.id
-    assert event.user_id == user.id
+    assert event.user_id == user2.id
 
 
 def get_events_by_username(

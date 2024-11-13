@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
@@ -12,32 +13,25 @@ from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
 
+@pytest.mark.usefixtures("admin")
 def test_assign_read_write_permission_when_adding_manager(
     db: orm.Session,
     client: testclient.TestClient,
-    executor_name: str,
-    unique_username: str,
+    user2: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     response = client.post(
         f"/api/v1/projects/{project.slug}/users/",
         json={
             "role": projects_users_models.ProjectUserRole.MANAGER.value,
             "permission": projects_users_models.ProjectUserPermission.READ.value,
-            "username": user.name,
+            "username": user2.name,
             "reason": "",
         },
     )
 
     project_user = projects_users_crud.get_project_user_association(
-        db, project, user
+        db, project, user2
     )
 
     assert response.status_code == 200
@@ -49,30 +43,23 @@ def test_assign_read_write_permission_when_adding_manager(
     )
 
 
+@pytest.mark.usefixtures("admin")
 def test_assign_read_write_permission_when_changing_project_role_to_manager(
     db: orm.Session,
     client: testclient.TestClient,
-    executor_name: str,
-    unique_username: str,
     project: projects_models.DatabaseProject,
+    user2: users_models.DatabaseUser,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     projects_users_crud.add_user_to_project(
         db,
         project,
-        user,
+        user2,
         projects_users_models.ProjectUserRole.USER,
         projects_users_models.ProjectUserPermission.READ,
     )
 
     response = client.patch(
-        f"/api/v1/projects/{project.slug}/users/{user.id}",
+        f"/api/v1/projects/{project.slug}/users/{user2.id}",
         json={
             "role": projects_users_models.ProjectUserRole.MANAGER.value,
             "reason": "",
@@ -80,7 +67,7 @@ def test_assign_read_write_permission_when_changing_project_role_to_manager(
     )
 
     project_user = projects_users_crud.get_project_user_association(
-        db, project, user
+        db, project, user2
     )
 
     assert response.status_code == 204
@@ -92,30 +79,23 @@ def test_assign_read_write_permission_when_changing_project_role_to_manager(
     )
 
 
+@pytest.mark.usefixtures("admin")
 def test_http_exception_when_updating_permission_of_manager(
     db: orm.Session,
     client: testclient.TestClient,
-    executor_name: str,
-    unique_username: str,
+    user2: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-    user = users_crud.create_user(
-        db, unique_username, unique_username, None, users_models.Role.USER
-    )
-
     projects_users_crud.add_user_to_project(
         db,
         project,
-        user,
+        user2,
         projects_users_models.ProjectUserRole.MANAGER,
         projects_users_models.ProjectUserPermission.WRITE,
     )
 
     response = client.patch(
-        f"/api/v1/projects/{project.slug}/users/{user.id}",
+        f"/api/v1/projects/{project.slug}/users/{user2.id}",
         json={
             "permission": projects_users_models.ProjectUserPermission.READ.value,
             "reason": "",

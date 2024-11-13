@@ -83,9 +83,14 @@ repos:
       - id: pylint
         name: pylint
         entry: pylint
-        args: [--rcfile=./backend/pyproject.toml]
+        args: [
+            '-rn', # Only display messages
+            '-sn', # Don't display the score
+            '--rcfile=./backend/pyproject.toml',
+          ]
         language: system
         types: [python]
+        require_serial: true
         files: '^backend'
         exclude: '^backend/capellacollab/alembic/'
   - repo: local
