@@ -27,9 +27,7 @@ export const mockProject: Readonly<Project> = {
   },
 };
 
-export class MockProjectWrapperService
-  implements Partial<ProjectWrapperService>
-{
+class MockProjectWrapperService implements Partial<ProjectWrapperService> {
   private _project = new BehaviorSubject<Project | undefined>(undefined);
   private _projects = new BehaviorSubject<Project[] | undefined>(undefined);
 
@@ -67,3 +65,13 @@ export class MockProjectWrapperService
     return;
   }
 }
+
+export const mockProjectWrapperServiceProvider = (
+  project: Project | undefined = undefined,
+  projects: Project[] | undefined = undefined,
+) => {
+  return {
+    provide: ProjectWrapperService,
+    useValue: new MockProjectWrapperService(project, projects),
+  };
+};

@@ -3,10 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import {
   mockProjectUsers,
-  MockProjectUserService,
+  mockProjectUserServiceProvider,
 } from 'src/storybook/project-users';
 import { ProjectUserSettingsComponent } from './project-user-settings.component';
 
@@ -27,11 +26,7 @@ export const Overview: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () =>
-            new MockProjectUserService('user', undefined, mockProjectUsers),
-        },
+        mockProjectUserServiceProvider('user', undefined, mockProjectUsers),
       ],
     }),
   ],

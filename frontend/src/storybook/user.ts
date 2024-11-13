@@ -8,10 +8,11 @@ import {
   UserRole,
   OwnUserWrapperService,
 } from 'src/app/services/user/user.service';
+import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 
 export const mockUser: Readonly<User> = {
   id: 1,
-  name: 'fakeUser',
+  name: 'User XYZ',
   idp_identifier: 'identifier',
   email: 'test@example.com',
   role: 'user',
@@ -20,9 +21,7 @@ export const mockUser: Readonly<User> = {
   beta_tester: false,
 };
 
-export class MockOwnUserWrapperService
-  implements Partial<OwnUserWrapperService>
-{
+class MockOwnUserWrapperService implements Partial<OwnUserWrapperService> {
   _user = new BehaviorSubject<User | undefined>(undefined);
   user$ = this._user.asObservable();
   user: User | undefined = mockUser;
@@ -38,7 +37,14 @@ export class MockOwnUserWrapperService
   }
 }
 
-export class MockUserWrapperService implements Partial<OwnUserWrapperService> {
+export const mockOwnUserWrapperServiceProvider = (user: User) => {
+  return {
+    provide: OwnUserWrapperService,
+    useValue: new MockOwnUserWrapperService(user),
+  };
+};
+
+class MockUserWrapperService implements Partial<UserWrapperService> {
   _user = new BehaviorSubject<User | undefined>(undefined);
   user$ = this._user.asObservable();
 
@@ -55,3 +61,13 @@ export class MockUserWrapperService implements Partial<OwnUserWrapperService> {
 
   loadUsers() {} // eslint-disable-line @typescript-eslint/no-empty-function
 }
+
+export const mockUserWrapperServiceProvider = (
+  user: User | undefined = undefined,
+  users: User[] | undefined = undefined,
+) => {
+  return {
+    provide: UserWrapperService,
+    useValue: new MockUserWrapperService(user, users),
+  };
+};

@@ -5,13 +5,11 @@
 import { MatTableDataSource } from '@angular/material/table';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { EventType, HistoryEvent } from 'src/app/openapi';
-import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 import { mockProject } from 'src/storybook/project';
 import {
   mockUser,
-  MockOwnUserWrapperService,
-  MockUserWrapperService,
+  mockOwnUserWrapperServiceProvider,
+  mockUserWrapperServiceProvider,
 } from 'src/storybook/user';
 import { UserInformationComponent } from './user-information.component';
 
@@ -21,18 +19,11 @@ const meta: Meta<UserInformationComponent> = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () =>
-            new MockOwnUserWrapperService({
-              ...mockUser,
-              role: 'administrator',
-            }),
-        },
-        {
-          provide: UserWrapperService,
-          useFactory: () => new MockUserWrapperService({ ...mockUser, id: 0 }),
-        },
+        mockOwnUserWrapperServiceProvider({
+          ...mockUser,
+          role: 'administrator',
+        }),
+        mockUserWrapperServiceProvider({ ...mockUser, id: 0 }),
       ],
     }),
   ],

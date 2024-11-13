@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
-import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.service';
-import { MockAuthenticationWrapperService } from 'src/storybook/auth';
+import { mockAuthenticationWrapperServiceProvider } from 'src/storybook/auth';
 import {
   mockFeedbackConfig,
-  MockFeedbackWrapperService,
+  mockFeedbackWrapperServiceProvider,
 } from 'src/storybook/feedback';
 import { FooterComponent } from './footer.component';
 
@@ -16,7 +14,6 @@ const meta: Meta<FooterComponent> = {
   title: 'General Components/Footer',
   component: FooterComponent,
   parameters: {
-    chromatic: { viewports: [430, 1920] },
     screenshot: {
       viewports: {
         mobile: {
@@ -39,14 +36,8 @@ export const WithFeedbackEnabled: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: FeedbackWrapperService,
-          useFactory: () => new MockFeedbackWrapperService(mockFeedbackConfig),
-        },
-        {
-          provide: AuthenticationWrapperService,
-          useFactory: () => new MockAuthenticationWrapperService(),
-        },
+        mockFeedbackWrapperServiceProvider(mockFeedbackConfig),
+        mockAuthenticationWrapperServiceProvider(),
       ],
     }),
   ],

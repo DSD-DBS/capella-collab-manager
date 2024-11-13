@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { NoticeWrapperService } from 'src/app/general/notice/notice.service';
-import { mockNotice, MockNoticeWrapperService } from 'src/storybook/notices';
+import {
+  mockNotice,
+  mockNoticeWrapperServiceProvider,
+} from 'src/storybook/notices';
 import { AlertSettingsComponent } from './alert-settings.component';
 
 const meta: Meta<AlertSettingsComponent> = {
@@ -23,12 +25,7 @@ export const NoAlerts: Story = {
   args: {},
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: NoticeWrapperService,
-          useFactory: () => new MockNoticeWrapperService([]),
-        },
-      ],
+      providers: [mockNoticeWrapperServiceProvider([])],
     }),
   ],
 };
@@ -38,14 +35,10 @@ export const SomeAlerts: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: NoticeWrapperService,
-          useFactory: () =>
-            new MockNoticeWrapperService([
-              mockNotice,
-              { ...mockNotice, id: 2 },
-            ]),
-        },
+        mockNoticeWrapperServiceProvider([
+          mockNotice,
+          { ...mockNotice, id: 2 },
+        ]),
       ],
     }),
   ],

@@ -2,10 +2,10 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { convertToParamMap, Params } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, Params } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
-export class MockActivedRoute {
+class MockActivatedRoute {
   _queryParams = new BehaviorSubject<Params>({});
   queryParams = this._queryParams.asObservable();
   params = this._queryParams.asObservable();
@@ -18,3 +18,10 @@ export class MockActivedRoute {
     this._queryParamMap.next(convertToParamMap(params));
   }
 }
+
+export const mockActivatedRouteProvider = (params: Params) => {
+  return {
+    provide: ActivatedRoute,
+    useValue: new MockActivatedRoute(params),
+  };
+};

@@ -4,11 +4,13 @@
  */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPersistentSession } from 'src/storybook/session';
-import { mockTool } from 'src/storybook/tool';
-import { MockOwnUserWrapperService, mockUser } from 'src/storybook/user';
+import { mockCapellaTool } from 'src/storybook/tool';
+import {
+  mockOwnUserWrapperServiceProvider,
+  mockUser,
+} from 'src/storybook/user';
 import { ConnectionDialogComponent } from './connection-dialog.component';
 
 const meta: Meta<ConnectionDialogComponent> = {
@@ -47,7 +49,7 @@ export const WithoutTeamForCapella: Story = {
             ...mockPersistentSession,
             version: {
               ...mockPersistentSession.version,
-              tool: { ...mockTool, integrations: { t4c: false } },
+              tool: { ...mockCapellaTool, integrations: { t4c: false } },
             },
           },
         },
@@ -74,10 +76,7 @@ export const SharedSession: Story = {
             owner: { ...mockUser, id: '2' },
           },
         },
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () => new MockOwnUserWrapperService(mockUser),
-        },
+        mockOwnUserWrapperServiceProvider(mockUser),
       ],
     }),
   ],

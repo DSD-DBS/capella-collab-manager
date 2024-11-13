@@ -4,12 +4,10 @@
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { User } from 'src/app/openapi';
-import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 import {
-  MockOwnUserWrapperService,
+  mockOwnUserWrapperServiceProvider,
   mockUser,
-  MockUserWrapperService,
+  mockUserWrapperServiceProvider,
 } from 'src/storybook/user';
 import { UserSettingsComponent } from './user-settings.component';
 
@@ -37,32 +35,25 @@ export const Overview: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: UserWrapperService,
-          useFactory: () =>
-            new MockUserWrapperService(undefined, [
-              {
-                ...mockUser,
-                role: 'administrator',
-                name: 'globalAdministrator1',
-              },
-              {
-                ...mockUser,
-                role: 'administrator',
-                name: 'globalAdministrator2',
-              },
-              loggedInUser,
-              mockUser,
-              {
-                ...mockUser,
-                name: 'userWithReallyLongNameThatHasToBeWrapped',
-              },
-            ]),
-        },
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () => new MockOwnUserWrapperService(loggedInUser),
-        },
+        mockUserWrapperServiceProvider(undefined, [
+          {
+            ...mockUser,
+            role: 'administrator',
+            name: 'globalAdministrator1',
+          },
+          {
+            ...mockUser,
+            role: 'administrator',
+            name: 'globalAdministrator2',
+          },
+          loggedInUser,
+          mockUser,
+          {
+            ...mockUser,
+            name: 'userWithReallyLongNameThatHasToBeWrapped',
+          },
+        ]),
+        mockOwnUserWrapperServiceProvider(loggedInUser),
       ],
     }),
   ],

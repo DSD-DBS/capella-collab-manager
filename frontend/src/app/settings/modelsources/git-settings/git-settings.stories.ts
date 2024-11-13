@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 import {
   mockGitHubInstance,
   mockGitInstance,
-  MockGitInstancesService,
+  mockGitInstancesServiceProvider,
   mockGitLabInstance,
 } from 'src/storybook/git';
 import { GitSettingsComponent } from './git-settings.component';
@@ -24,12 +23,7 @@ export const Loading: Story = {
   args: {},
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: GitInstancesWrapperService,
-          useFactory: () => new MockGitInstancesService(),
-        },
-      ],
+      providers: [mockGitInstancesServiceProvider()],
     }),
   ],
 };
@@ -39,15 +33,11 @@ export const General: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: GitInstancesWrapperService,
-          useFactory: () =>
-            new MockGitInstancesService(undefined, [
-              mockGitLabInstance,
-              mockGitHubInstance,
-              mockGitInstance,
-            ]),
-        },
+        mockGitInstancesServiceProvider(undefined, [
+          mockGitLabInstance,
+          mockGitHubInstance,
+          mockGitInstance,
+        ]),
       ],
     }),
   ],

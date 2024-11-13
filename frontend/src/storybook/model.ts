@@ -7,16 +7,20 @@ import { SimpleToolModel, ToolModel } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { mockProject } from 'src/storybook/project';
 import { mockPrimaryGitModel } from './git';
-import { mockTool, mockToolNature, mockToolVersion } from './tool';
+import {
+  mockCapellaTool,
+  mockCapellaToolVersion,
+  mockToolNature,
+} from './tool';
 
 export function createModelWithId(id: number): ToolModel {
   return {
     id: 1,
-    name: `fakeModelName-${id}`,
-    slug: `fakeModelSlug-${id}`,
-    description: `fakeModelDescription-${id}`,
-    tool: mockTool,
-    version: mockToolVersion,
+    name: `Model ${id}`,
+    slug: `slug-${id}`,
+    description: `This is the description of the model with id ${id}`,
+    tool: mockCapellaTool,
+    version: mockCapellaToolVersion,
     t4c_models: [],
     git_models: [mockPrimaryGitModel],
     restrictions: { allow_pure_variants: false },
@@ -31,15 +35,28 @@ export const mockSimpleToolModel: Readonly<SimpleToolModel> = {
   project: mockProject,
 };
 
-export class MockModelWrapperService implements Partial<ModelWrapperService> {
+class MockModelWrapperService implements Partial<ModelWrapperService> {
   private _model = new BehaviorSubject<ToolModel | undefined>(undefined);
   private _models = new BehaviorSubject<ToolModel[] | undefined>(undefined);
 
   public readonly model$ = this._model.asObservable();
   public readonly models$ = this._models.asObservable();
 
-  constructor(model: ToolModel, models: ToolModel[]) {
+  constructor(
+    model: ToolModel | undefined = undefined,
+    models: ToolModel[] | undefined = undefined,
+  ) {
     this._model.next(model);
     this._models.next(models);
   }
 }
+
+export const mockModelWrapperServiceProvider = (
+  model: ToolModel | undefined = undefined,
+  models: ToolModel[] | undefined = undefined,
+) => {
+  return {
+    provide: ModelWrapperService,
+    useValue: new MockModelWrapperService(model, models),
+  };
+};

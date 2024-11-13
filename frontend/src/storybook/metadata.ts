@@ -21,7 +21,7 @@ export const mockMetadata: Metadata = {
   protocol: 'http',
 };
 
-export class MockMetadataService implements Partial<MetadataService> {
+class MockMetadataService implements Partial<MetadataService> {
   public readonly backendMetadata: Observable<Metadata | undefined> =
     of(undefined);
   public version: Version | undefined;
@@ -40,3 +40,20 @@ export class MockMetadataService implements Partial<MetadataService> {
     if (changedVersion) this.changedVersion = changedVersion;
   }
 }
+
+export const mockMetadataServiceProvider = (
+  metadata: Metadata | undefined,
+  version?: Version | undefined,
+  oldVersion?: string | undefined,
+  changedVersion?: boolean,
+) => {
+  return {
+    provide: MetadataService,
+    useValue: new MockMetadataService(
+      metadata,
+      version,
+      oldVersion,
+      changedVersion,
+    ),
+  };
+};

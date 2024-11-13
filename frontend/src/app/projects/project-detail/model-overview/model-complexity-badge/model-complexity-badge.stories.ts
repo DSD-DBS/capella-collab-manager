@@ -10,7 +10,6 @@ const meta: Meta<ModelComplexityBadgeComponent> = {
   title: 'Model Components/Model Complexity Badge',
   component: ModelComplexityBadgeComponent,
   parameters: {
-    chromatic: { viewports: [500] },
     screenshot: {
       viewport: {
         height: 150,

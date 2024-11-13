@@ -4,12 +4,10 @@
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import {
-  MockOwnUserWrapperService,
+  mockOwnUserWrapperServiceProvider,
   mockUser,
-  MockUserWrapperService,
+  mockUserWrapperServiceProvider,
 } from '../../../../storybook/user';
-import { OwnUserWrapperService } from '../../../services/user/user.service';
-import { UserWrapperService } from '../../user-wrapper/user-wrapper.service';
 import { BetaTestingComponent } from './beta-testing.component';
 
 const meta: Meta<BetaTestingComponent> = {
@@ -25,14 +23,8 @@ export const OptIntoBeta: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () => new MockOwnUserWrapperService(mockUser),
-        },
-        {
-          provide: UserWrapperService,
-          useFactory: () => new MockUserWrapperService(mockUser),
-        },
+        mockOwnUserWrapperServiceProvider(mockUser),
+        mockUserWrapperServiceProvider(mockUser),
       ],
     }),
   ],
@@ -43,15 +35,8 @@ export const OptOutOfBeta: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () => new MockOwnUserWrapperService(mockUser),
-        },
-        {
-          provide: UserWrapperService,
-          useFactory: () =>
-            new MockUserWrapperService({ ...mockUser, beta_tester: true }),
-        },
+        mockOwnUserWrapperServiceProvider(mockUser),
+        mockUserWrapperServiceProvider({ ...mockUser, beta_tester: true }),
       ],
     }),
   ],

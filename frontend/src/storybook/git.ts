@@ -20,10 +20,10 @@ export const mockPrimaryGitModel: Readonly<GitModel> = {
   id: 1,
   primary: true,
   path: 'https://example.com/repository.git',
-  revision: 'fakeRevision',
-  entrypoint: 'fakeEntrypoint',
+  revision: 'main',
+  entrypoint: 'path/to/entrypoint',
   password: false,
-  username: 'fakeUsername',
+  username: 'User ABC',
   repository_id: null,
 };
 
@@ -51,7 +51,7 @@ export const mockGitInstance: Readonly<GitInstance> = {
   type: GitType.General,
 };
 
-export class MockGitModelService implements Partial<GitModelService> {
+class MockGitModelService implements Partial<GitModelService> {
   private _gitModel = new BehaviorSubject<GetGitModel | undefined>(undefined);
   private _gitModels = new BehaviorSubject<GetGitModel[] | undefined>(
     undefined,
@@ -68,9 +68,17 @@ export class MockGitModelService implements Partial<GitModelService> {
   reset() {} // eslint-disable-line @typescript-eslint/no-empty-function
 }
 
-export class MockGitInstancesService
-  implements Partial<GitInstancesWrapperService>
-{
+export const mockGitModelServiceProvider = (
+  gitModel: GetGitModel,
+  gitModels: GetGitModel[],
+) => {
+  return {
+    provide: GitModelService,
+    useValue: new MockGitModelService(gitModel, gitModels),
+  };
+};
+
+class MockGitInstancesService implements Partial<GitInstancesWrapperService> {
   private _gitInstances = new BehaviorSubject<GitInstance[] | undefined>(
     undefined,
   );
@@ -97,3 +105,13 @@ export class MockGitInstancesService
 
   loadGitInstances(): void {} // eslint-disable-line @typescript-eslint/no-empty-function
 }
+
+export const mockGitInstancesServiceProvider = (
+  gitInstance?: GitInstance | undefined,
+  gitInstances?: GitInstance[] | undefined,
+) => {
+  return {
+    provide: GitInstancesWrapperService,
+    useValue: new MockGitInstancesService(gitInstance, gitInstances),
+  };
+};

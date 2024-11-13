@@ -6,14 +6,12 @@ import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { userEvent, within } from '@storybook/test';
 import {
   mockProject,
-  MockProjectWrapperService,
+  mockProjectWrapperServiceProvider,
 } from '../../../storybook/project';
 import {
   mockProjectUsers,
-  MockProjectUserService,
+  mockProjectUserServiceProvider,
 } from '../../../storybook/project-users';
-import { ProjectUserService } from '../project-detail/project-users/service/project-user.service';
-import { ProjectWrapperService } from '../service/project.service';
 import { CreateProjectComponent } from './create-project.component';
 
 const meta: Meta<CreateProjectComponent> = {
@@ -33,16 +31,8 @@ export const AddTeamMembers: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: ProjectWrapperService,
-          useFactory: () =>
-            new MockProjectWrapperService(mockProject, [mockProject]),
-        },
-        {
-          provide: ProjectUserService,
-          useFactory: () =>
-            new MockProjectUserService('user', undefined, mockProjectUsers),
-        },
+        mockProjectWrapperServiceProvider(mockProject, [mockProject]),
+        mockProjectUserServiceProvider('user', undefined, mockProjectUsers),
       ],
     }),
   ],
@@ -65,16 +55,8 @@ export const AddModel: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: ProjectWrapperService,
-          useFactory: () =>
-            new MockProjectWrapperService(mockProject, [mockProject]),
-        },
-        {
-          provide: ProjectUserService,
-          useFactory: () =>
-            new MockProjectUserService('user', undefined, mockProjectUsers),
-        },
+        mockProjectWrapperServiceProvider(mockProject, [mockProject]),
+        mockProjectUserServiceProvider('user', undefined, mockProjectUsers),
       ],
     }),
   ],

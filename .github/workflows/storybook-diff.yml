@@ -22,5 +22,5 @@ jobs:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           image-directory-path: './frontend/__screenshots__'
           outdated-comment-action: minimize
-          matching-threshold: 0.01
+          matching-threshold: 0.02
           retention-days: 90

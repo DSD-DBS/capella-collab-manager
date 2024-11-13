@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { NoticeWrapperService } from 'src/app/general/notice/notice.service';
 import { NoticeLevel } from 'src/app/openapi';
-import { mockNotice, MockNoticeWrapperService } from 'src/storybook/notices';
+import {
+  mockNotice,
+  mockNoticeWrapperServiceProvider,
+} from 'src/storybook/notices';
 import { NoticeComponent } from './notice.component';
 
 const meta: Meta<NoticeComponent> = {
@@ -21,17 +23,13 @@ export const AllLevels: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: NoticeWrapperService,
-          useFactory: () =>
-            new MockNoticeWrapperService(
-              Object.values(NoticeLevel).map((level) => ({
-                ...mockNotice,
-                title: 'This is an example notice with level ' + level,
-                level,
-              })),
-            ),
-        },
+        mockNoticeWrapperServiceProvider(
+          Object.values(NoticeLevel).map((level) => ({
+            ...mockNotice,
+            title: 'This is an example notice with level ' + level,
+            level,
+          })),
+        ),
       ],
     }),
   ],

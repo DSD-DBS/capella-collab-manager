@@ -6,14 +6,16 @@ import {
   HTTPConnectionMethodOutput,
   Tool,
   ToolNature,
+  ToolSessionConfigurationOutput,
   ToolVersion,
+  ToolVersionConfigurationOutput,
 } from 'src/app/openapi';
 import { ToolVersionWithTool } from 'src/app/settings/core/tools-settings/tool.service';
 
 export const mockHttpConnectionMethod: Readonly<HTTPConnectionMethodOutput> = {
   id: '1',
-  name: 'fakeConnectionMethod',
-  description: 'fakeConnectionMethodDescription',
+  name: 'HTTP Connection',
+  description: 'Connect directly to the session via the browser.',
   type: 'http',
   ports: {
     http: 0,
@@ -27,70 +29,76 @@ export const mockHttpConnectionMethod: Readonly<HTTPConnectionMethodOutput> = {
   },
 };
 
-export const mockToolVersion: Readonly<ToolVersion> = {
-  id: 1,
-  name: 'fakeVersion',
-  config: {
-    is_recommended: false,
-    is_deprecated: false,
-    compatible_versions: [],
-    sessions: {
-      persistent: {
-        image: {
-          regular: 'fakeImage',
-          beta: null,
-        },
+const defaultToolVersionConfig: ToolVersionConfigurationOutput = {
+  is_recommended: false,
+  is_deprecated: false,
+  compatible_versions: [],
+  sessions: {
+    persistent: {
+      image: {
+        regular: 'docker.io/hello-world:latest',
+        beta: null,
       },
     },
-    backups: {
-      image: 'fakeImage',
-    },
   },
+  backups: {
+    image: 'docker.io/hello-world:latest',
+  },
+};
+
+export const mockCapellaToolVersion: Readonly<ToolVersion> = {
+  id: 1,
+  name: '7.0.0',
+  config: defaultToolVersionConfig,
 };
 
 export const mockToolNature: Readonly<ToolNature> = {
   id: 1,
-  name: 'fakeNature',
+  name: 'Project',
 };
 
-export const mockTool: Readonly<Tool> = {
+const defaultToolConfig: ToolSessionConfigurationOutput = {
+  connection: {
+    methods: [{ ...mockHttpConnectionMethod, type: 'http', environment: {} }],
+  },
+  provisioning: {
+    directory: '/tmp',
+    max_number_of_models: null,
+  },
+  persistent_workspaces: {
+    mounting_enabled: true,
+  },
+  resources: {
+    cpu: {
+      requests: 0.5,
+      limits: 1,
+    },
+    memory: {
+      requests: '1Gi',
+      limits: '2Gi',
+    },
+  },
+  environment: {},
+  monitoring: {
+    prometheus: {
+      path: '/metrics',
+    },
+  },
+  supported_project_types: ['general', 'training'],
+};
+
+export const mockCapellaTool: Readonly<Tool> = {
   id: 1,
-  name: 'fakeTool',
+  name: 'Eclipse Capella',
   integrations: {
     t4c: true,
     pure_variants: true,
     jupyter: false,
   },
-  config: {
-    connection: {
-      methods: [{ ...mockHttpConnectionMethod, type: 'http', environment: {} }],
-    },
-    provisioning: {
-      directory: '/tmp',
-      max_number_of_models: null,
-    },
-    persistent_workspaces: { mounting_enabled: true },
-    resources: {
-      cpu: {
-        requests: 0.5,
-        limits: 1,
-      },
-      memory: {
-        requests: '1Gi',
-        limits: '2Gi',
-      },
-    },
-    environment: {},
-    monitoring: {
-      prometheus: {
-        path: '/metrics',
-      },
-    },
-    supported_project_types: ['general', 'training'],
-  },
+  config: defaultToolConfig,
 };
 
 export const mockToolVersionWithTool: Readonly<ToolVersionWithTool> = {
-  ...mockToolVersion,
-  tool: mockTool,
+  ...mockCapellaToolVersion,
+  tool: mockCapellaTool,
 };

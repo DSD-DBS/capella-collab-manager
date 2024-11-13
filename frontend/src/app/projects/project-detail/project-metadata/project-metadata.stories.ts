@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { mockProject } from 'src/storybook/project';
-import { MockProjectUserService } from 'src/storybook/project-users';
+import { mockProjectUserServiceProvider } from 'src/storybook/project-users';
 import { ProjectMetadataComponent } from './project-metadata.component';
 
 const meta: Meta<ProjectMetadataComponent> = {
@@ -22,12 +21,7 @@ export const Loading: Story = {
   },
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () => new MockProjectUserService('user'),
-        },
-      ],
+      providers: [mockProjectUserServiceProvider('user')],
     }),
   ],
 };
@@ -38,12 +32,7 @@ export const NormalUser: Story = {
   },
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () => new MockProjectUserService('user'),
-        },
-      ],
+      providers: [mockProjectUserServiceProvider('user')],
     }),
   ],
 };
@@ -55,12 +44,7 @@ export const ProjectAdmin: Story = {
   },
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () => new MockProjectUserService('manager'),
-        },
-      ],
+      providers: [mockProjectUserServiceProvider('manager')],
     }),
   ],
 };
@@ -72,12 +56,7 @@ export const NormalUserArchived: Story = {
   },
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () => new MockProjectUserService('user'),
-        },
-      ],
+      providers: [mockProjectUserServiceProvider('user')],
     }),
   ],
 };
@@ -89,12 +68,7 @@ export const ProjectAdminArchived: Story = {
   },
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () => new MockProjectUserService('manager'),
-        },
-      ],
+      providers: [mockProjectUserServiceProvider('manager')],
     }),
   ],
 };
@@ -106,12 +80,7 @@ export const CantDelete: Story = {
   },
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: ProjectUserService,
-          useFactory: () => new MockProjectUserService('manager'),
-        },
-      ],
+      providers: [mockProjectUserServiceProvider('manager')],
     }),
   ],
 };

@@ -5,12 +5,10 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
 import { UsersService, Workspace } from 'src/app/openapi';
-import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 import {
   mockUser,
-  MockOwnUserWrapperService,
-  MockUserWrapperService,
+  mockOwnUserWrapperServiceProvider,
+  mockUserWrapperServiceProvider,
 } from 'src/storybook/user';
 import { UserWorkspacesComponent } from './user-workspaces.component';
 
@@ -32,18 +30,11 @@ const meta: Meta<UserWorkspacesComponent> = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () =>
-            new MockOwnUserWrapperService({
-              ...mockUser,
-              role: 'administrator',
-            }),
-        },
-        {
-          provide: UserWrapperService,
-          useFactory: () => new MockUserWrapperService({ ...mockUser, id: 0 }),
-        },
+        mockOwnUserWrapperServiceProvider({
+          ...mockUser,
+          role: 'administrator',
+        }),
+        mockUserWrapperServiceProvider({ ...mockUser, id: 0 }),
       ],
     }),
   ],
