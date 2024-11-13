@@ -13,6 +13,8 @@
       height: '240px',
       width: '432px',
       border: '1px solid white',
+      margin: 0,
+      'max-width': '100%',
     }"
   ></ngx-skeleton-loader>
 } @else if ((sessions | async)?.length === 0) {
@@ -24,7 +26,7 @@
   </div>
 } @else if ((sessions | async)?.length !== 0) {
   <div class="flex flex-col gap-2">
-    <div class="rounded border bg-white p-2">
+    <div class="w-full rounded border bg-white p-2">
       <h2><b>Internal Session Viewer</b></h2>
       <mat-radio-group [(ngModel)]="selectedWindowManager">
         <mat-radio-button value="tiling"
@@ -36,7 +38,7 @@
       </mat-radio-group>
 
       <a
-        class="w-full max-w-[85vw]"
+        class="w-full"
         matInput
         mat-stroked-button
         color="primary"
@@ -48,7 +50,10 @@
         }"
         [disabled]="!(selectedSessionIDs$ | async)?.length"
       >
-        <span> Open selected sessions in internal session viewer </span>
+        <div>
+          Open selected sessions
+          <span class="hidden sm:inline">in internal session viewer</span>
+        </div>
         <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
       </a>
     </div>
