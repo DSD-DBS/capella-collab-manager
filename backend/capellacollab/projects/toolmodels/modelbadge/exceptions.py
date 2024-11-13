@@ -13,7 +13,7 @@ class ModelBadgeNotConfiguredProperlyError(core_exceptions.BaseError):
             title="Model complexity badge not configured properly",
             reason=(
                 "The model complexity badge is not configured properly. "
-                "Please contact your diagram cache administrator."
+                "Please contact your project admin or system administrator."
             ),
             err_code="MODEL_COMPLEXITY_BADGE_NOT_CONFIGURED_PROPERLY",
         )
