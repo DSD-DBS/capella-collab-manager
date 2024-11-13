@@ -19,22 +19,21 @@ import { MatSelect } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { combineLatest, filter, Observable, tap } from 'rxjs';
+import { combineLatest, filter, Observable } from 'rxjs';
 import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
+import { CreateReadonlySessionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog/create-readonly-session-dialog.component';
 import {
   ToolWrapperService,
   ToolVersionWithTool,
 } from 'src/app/settings/core/tools-settings/tool.service';
-import { CreateReadonlySessionDialogComponent } from '../../create-sessions/create-readonly-session/create-readonly-session-dialog.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-create-readonly-session',
   templateUrl: './create-readonly-session.component.html',
-  styleUrls: ['./create-readonly-session.component.css'],
   standalone: true,
   imports: [
     FormsModule,
@@ -56,7 +55,6 @@ export class CreateReadonlySessionComponent implements OnInit {
   models?: ModelWithCompatibility[];
 
   relevantToolVersions?: ToolVersion[];
-  allToolVersions?: ToolVersionWithTool[];
 
   public toolSelectionForm = this.fb.group({
     tool: this.fb.control<Tool | null>(null, Validators.required),
@@ -91,11 +89,7 @@ export class CreateReadonlySessionComponent implements OnInit {
     return combineLatest([
       this.modelService.models$.pipe(untilDestroyed(this), filter(Boolean)),
       this.toolWrapperService.getVersionsForTools(),
-    ]).pipe(
-      tap(([_, versions]) => {
-        this.allToolVersions = versions;
-      }),
-    );
+    ]);
   }
 
   resolveVersionCompatibility(
@@ -113,7 +107,7 @@ export class CreateReadonlySessionComponent implements OnInit {
         this.findVersionByID(model.version.id, allVersions)!,
       ];
 
-      for (const version of allVersions!) {
+      for (const version of allVersions) {
         if (version.config.compatible_versions.includes(model.version.id)) {
           extendedModel.compatibleVersions.push(version);
         }

@@ -22,7 +22,7 @@ const meta: Meta<CreatePersistentSessionComponent> = {
   decorators: [
     componentWrapperDecorator(
       (story) =>
-        `<div class="w-[360px] sm:w-[450px]">
+        `<div class="w-full sm:w-[450px]">
           ${story}
         </div>`,
     ),

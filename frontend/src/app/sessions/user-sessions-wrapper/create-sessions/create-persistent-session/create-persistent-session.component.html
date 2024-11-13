@@ -24,12 +24,11 @@
             formControlName="toolId"
             (selectionChange)="toolSelectionChange($event.value)"
           >
-            <mat-option
-              *ngFor="let tool of toolsWithWorkspaceEnabled | async"
-              [value]="tool.id"
-            >
-              {{ tool.name }}
-            </mat-option>
+            @for (tool of toolsWithWorkspaceEnabled | async; track tool.id) {
+              <mat-option [value]="tool.id">
+                {{ tool.name }}
+              </mat-option>
+            }
           </mat-select>
           <mat-error> Please select a valid tool. </mat-error>
         </mat-form-field>
@@ -37,14 +36,17 @@
         <mat-form-field appearance="fill" class="w-full">
           <mat-label>Version</mat-label>
           <mat-select formControlName="versionId">
-            <mat-option
-              *ngFor="let version of this.versions"
-              [value]="version.id"
-            >
-              {{ version.name }}
-              <span *ngIf="version.config.is_recommended"> (recommended)</span>
-              <span *ngIf="version.config.is_deprecated"> (deprecated)</span>
-            </mat-option>
+            @for (version of this.versions; track version.id) {
+              <mat-option [value]="version.id">
+                {{ version.name }}
+                @if (version.config.is_recommended) {
+                  <span> (recommended)</span>
+                }
+                @if (version.config.is_deprecated) {
+                  <span> (deprecated)</span>
+                }
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </div>
@@ -84,8 +86,14 @@
           type="submit"
           [disabled]="requestInProgress"
         >
-          Request a session with a persistent workspace
-          <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+          <span class="hidden items-center gap-1 sm:flex">
+            Request a session with a persistent workspace
+            <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+          </span>
+          <span class="flex items-center gap-1 sm:hidden">
+            Request session
+            <mat-icon inline>keyboard_arrow_right</mat-icon>
+          </span>
         </button>
       </div>
     </form>
