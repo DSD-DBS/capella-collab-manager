@@ -36,7 +36,6 @@ import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-co
 @Component({
   selector: 'app-model-overview',
   templateUrl: './model-overview.component.html',
-  styleUrls: ['./model-overview.component.css'],
   standalone: true,
   imports: [
     MatAnchor,

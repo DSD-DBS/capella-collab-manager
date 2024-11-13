@@ -15,21 +15,26 @@
         [formGroup]="toolSelectionForm"
         (ngSubmit)="requestReadonlySession()"
       >
-        <div class="skeleton-loader flex gap-2" *ngIf="tools === undefined">
-          <div class="flex-1" *ngFor="let menu of [0, 1]">
-            <ngx-skeleton-loader
-              appearance="circle"
-              [theme]="{
-                'border-radius': '5px',
-                height: '52px',
-                padding: '0',
-                margin: '0 0 18px 0',
-                width: '100%',
-                border: '1px solid white',
-              }"
-            ></ngx-skeleton-loader>
+        @if (tools === undefined) {
+          <div class="flex gap-2">
+            @for (menu of [0, 1]; track menu) {
+              <div class="flex-1">
+                <ngx-skeleton-loader
+                  appearance="circle"
+                  [theme]="{
+                    'border-radius': '5px',
+                    height: '52px',
+                    padding: '0',
+                    margin: '0 0 18px 0',
+                    width: '100%',
+                    border: '1px solid white',
+                  }"
+                ></ngx-skeleton-loader>
+              </div>
+            }
           </div>
-        </div>
+        }
+
         <div [hidden]="tools === undefined">
           <fieldset class="flex flex-wrap gap-2">
             <mat-form-field appearance="fill">
@@ -50,12 +55,11 @@
             <mat-form-field appearance="fill">
               <mat-label>Version</mat-label>
               <mat-select formControlName="version">
-                <mat-option
-                  *ngFor="let version of this.relevantToolVersions"
-                  [value]="version"
-                >
-                  {{ version.name }}
-                </mat-option>
+                @for (version of this.relevantToolVersions; track version.id) {
+                  <mat-option [value]="version">
+                    {{ version.name }}
+                  </mat-option>
+                }
               </mat-select>
             </mat-form-field>
           </fieldset>
