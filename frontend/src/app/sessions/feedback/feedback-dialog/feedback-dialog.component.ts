@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {
   FormControl,
@@ -55,6 +55,7 @@ interface DialogData {
     ReactiveFormsModule,
     FormsModule,
     AsyncPipe,
+    NgClass,
   ],
   templateUrl: './feedback-dialog.component.html',
 })
