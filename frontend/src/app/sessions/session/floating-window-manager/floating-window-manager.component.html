@@ -18,7 +18,8 @@
         (cdkDragEnded)="dragStop()"
       >
         <div
-          class="flex cursor-grab items-center justify-between gap-2 rounded-t p-1 active:cursor-grabbing"
+          class="flex cursor-grab items-center justify-between gap-2 rounded-t p-1
+            active:cursor-grabbing"
           [ngClass]="session.focused ? 'bg-slate-100' : 'bg-slate-300'"
           cdkDragHandle
         >

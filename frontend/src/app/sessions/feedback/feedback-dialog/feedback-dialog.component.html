@@ -25,15 +25,13 @@
           [attr.data-testid]="'rating-' + rating"
           mat-icon-button
           type="button"
-          [class]="
-            [
-              '!flex',
-              getColorForRating(rating),
-              this.feedbackForm.get('rating')?.value === rating
-                ? '!bg-gray-200'
-                : '',
-            ].join(' ')
-          "
+          [ngClass]="[
+            '!flex',
+            getColorForRating(rating),
+            this.feedbackForm.get('rating')?.value === rating
+              ? '!bg-gray-200'
+              : '',
+          ]"
         >
           <mat-icon>
             @switch (rating) {

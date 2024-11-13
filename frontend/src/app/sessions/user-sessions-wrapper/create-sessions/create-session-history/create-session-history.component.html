@@ -17,7 +17,8 @@
     }
     @for (session of sortedResolvedHistory; track $index) {
       <button
-        class="flex w-full flex-row items-center justify-between gap-5 rounded border bg-slate-100 p-2"
+        class="flex w-full flex-row items-center justify-between gap-5 rounded border
+          bg-slate-100 p-2"
         (click)="requestSession(session)"
       >
         <div class="w-full flex-col items-center">
