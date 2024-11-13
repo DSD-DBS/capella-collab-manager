@@ -134,9 +134,7 @@ def get_eclipse_configuration():
                         "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
                         "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
                     ),
-                    "cookies": {
-                        "token": "{CAPELLACOLLAB_SESSION_TOKEN}",
-                    },
+                    "cookies": {},
                 },
             ]
         },

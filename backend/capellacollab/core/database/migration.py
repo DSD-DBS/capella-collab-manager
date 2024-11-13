@@ -168,9 +168,7 @@ def get_eclipse_session_configuration() -> (
                         )
                         + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
                     ),
-                    cookies={
-                        "token": "{CAPELLACOLLAB_SESSION_TOKEN}",
-                    },
+                    cookies={},
                     sharing=tools_models.ToolSessionSharingConfiguration(
                         enabled=True
                     ),
