@@ -3,20 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { T4CRepositoryWrapperService } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
 import { mockSimpleToolModel } from 'src/storybook/model';
 import {
-  MockT4CRepositoryWrapperService,
   mockT4CInstance,
+  mockT4CRepositoryWrapperServiceProvider,
 } from 'src/storybook/t4c';
 import { T4CInstanceSettingsComponent } from './t4c-instance-settings.component';
 
 const meta: Meta<T4CInstanceSettingsComponent> = {
   title: 'Settings Components/Modelsources/T4C/Repositories',
   component: T4CInstanceSettingsComponent,
-  parameters: {
-    chromatic: { viewports: [380] },
-  },
 };
 
 export default meta;
@@ -27,54 +23,50 @@ export const Repositories: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CRepositoryWrapperService,
-          useFactory: () =>
-            new MockT4CRepositoryWrapperService([
-              {
-                id: 1,
-                name: 'online-repository',
-                instance: mockT4CInstance,
-                status: 'ONLINE',
-                integrations: [],
-              },
-              {
-                id: 2,
-                name: 'offline-repository',
-                instance: mockT4CInstance,
-                status: 'OFFLINE',
-                integrations: [],
-              },
-              {
-                id: 3,
-                name: 'not-found-repository',
-                instance: mockT4CInstance,
-                status: 'NOT_FOUND',
-                integrations: [],
-              },
-              {
-                id: 4,
-                name: 'loading-repository',
-                instance: mockT4CInstance,
-                status: 'LOADING',
-                integrations: [],
-              },
-              {
-                id: 5,
-                name: 'initial-repository',
-                instance: mockT4CInstance,
-                status: 'INITIAL',
-                integrations: [],
-              },
-              {
-                id: 6,
-                name: 'unreachable-repository',
-                instance: mockT4CInstance,
-                status: 'INSTANCE_UNREACHABLE',
-                integrations: [],
-              },
-            ]),
-        },
+        mockT4CRepositoryWrapperServiceProvider([
+          {
+            id: 1,
+            name: 'online-repository',
+            instance: mockT4CInstance,
+            status: 'ONLINE',
+            integrations: [],
+          },
+          {
+            id: 2,
+            name: 'offline-repository',
+            instance: mockT4CInstance,
+            status: 'OFFLINE',
+            integrations: [],
+          },
+          {
+            id: 3,
+            name: 'not-found-repository',
+            instance: mockT4CInstance,
+            status: 'NOT_FOUND',
+            integrations: [],
+          },
+          {
+            id: 4,
+            name: 'loading-repository',
+            instance: mockT4CInstance,
+            status: 'LOADING',
+            integrations: [],
+          },
+          {
+            id: 5,
+            name: 'initial-repository',
+            instance: mockT4CInstance,
+            status: 'INITIAL',
+            integrations: [],
+          },
+          {
+            id: 6,
+            name: 'unreachable-repository',
+            instance: mockT4CInstance,
+            status: 'INSTANCE_UNREACHABLE',
+            integrations: [],
+          },
+        ]),
       ],
     }),
   ],
@@ -85,50 +77,46 @@ export const RepositoriesWithIntegrations: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CRepositoryWrapperService,
-          useFactory: () =>
-            new MockT4CRepositoryWrapperService([
+        mockT4CRepositoryWrapperServiceProvider([
+          {
+            id: 1,
+            name: 'online-repository',
+            instance: mockT4CInstance,
+            status: 'ONLINE',
+            integrations: [
               {
                 id: 1,
-                name: 'online-repository',
-                instance: mockT4CInstance,
-                status: 'ONLINE',
-                integrations: [
-                  {
-                    id: 1,
-                    name: 'mockModel',
-                    model: mockSimpleToolModel,
-                  },
-                  {
-                    id: 2,
-                    name: 'mockModel 2',
-                    model: mockSimpleToolModel,
-                  },
-                ],
+                name: 'mockModel',
+                model: mockSimpleToolModel,
               },
               {
                 id: 2,
-                name: 'offline-repository',
-                instance: mockT4CInstance,
-                status: 'OFFLINE',
-                integrations: [
-                  {
-                    id: 2,
-                    name: 'mockModel 3',
-                    model: mockSimpleToolModel,
-                  },
-                ],
+                name: 'mockModel 2',
+                model: mockSimpleToolModel,
               },
+            ],
+          },
+          {
+            id: 2,
+            name: 'offline-repository',
+            instance: mockT4CInstance,
+            status: 'OFFLINE',
+            integrations: [
               {
-                id: 3,
-                name: 'not-found-repository',
-                instance: mockT4CInstance,
-                status: 'NOT_FOUND',
-                integrations: [],
+                id: 2,
+                name: 'mockModel 3',
+                model: mockSimpleToolModel,
               },
-            ]),
-        },
+            ],
+          },
+          {
+            id: 3,
+            name: 'not-found-repository',
+            instance: mockT4CInstance,
+            status: 'NOT_FOUND',
+            integrations: [],
+          },
+        ]),
       ],
     }),
   ],
@@ -139,19 +127,15 @@ export const AddRepositories: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CRepositoryWrapperService,
-          useFactory: () =>
-            new MockT4CRepositoryWrapperService([
-              {
-                id: 1,
-                name: 'test',
-                instance: mockT4CInstance,
-                status: 'ONLINE',
-                integrations: [],
-              },
-            ]),
-        },
+        mockT4CRepositoryWrapperServiceProvider([
+          {
+            id: 1,
+            name: 'test',
+            instance: mockT4CInstance,
+            status: 'ONLINE',
+            integrations: [],
+          },
+        ]),
       ],
     }),
   ],

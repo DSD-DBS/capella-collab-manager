@@ -4,11 +4,12 @@
  */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
-import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { MockGitModelService, mockPrimaryGitModel } from 'src/storybook/git';
-import { mockT4CModel, MockT4CModelService } from 'src/storybook/t4c';
+import {
+  mockGitModelServiceProvider,
+  mockPrimaryGitModel,
+} from 'src/storybook/git';
+import { mockT4CModel, mockT4CModelServiceProvider } from 'src/storybook/t4c';
 import { CreateBackupComponent } from './create-backup.component';
 
 const meta: Meta<CreateBackupComponent> = {
@@ -42,14 +43,8 @@ export const WithoutLinkedModels: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: GitModelService,
-          useFactory: () => new MockGitModelService(mockPrimaryGitModel, []),
-        },
-        {
-          provide: T4CModelService,
-          useFactory: () => new MockT4CModelService(mockT4CModel, []),
-        },
+        mockGitModelServiceProvider(mockPrimaryGitModel, []),
+        mockT4CModelServiceProvider(mockT4CModel, []),
       ],
     }),
   ],
@@ -60,19 +55,11 @@ export const WithLinkedModels: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: GitModelService,
-          useFactory: () =>
-            new MockGitModelService(mockPrimaryGitModel, [
-              mockPrimaryGitModel,
-              { ...mockPrimaryGitModel, id: 2, primary: false, username: '' },
-            ]),
-        },
-        {
-          provide: T4CModelService,
-          useFactory: () =>
-            new MockT4CModelService(mockT4CModel, [mockT4CModel]),
-        },
+        mockGitModelServiceProvider(mockPrimaryGitModel, [
+          mockPrimaryGitModel,
+          { ...mockPrimaryGitModel, id: 2, primary: false, username: '' },
+        ]),
+        mockT4CModelServiceProvider(mockT4CModel, [mockT4CModel]),
       ],
     }),
   ],
@@ -83,16 +70,8 @@ export const RequestSent: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: GitModelService,
-          useFactory: () =>
-            new MockGitModelService(mockPrimaryGitModel, [mockPrimaryGitModel]),
-        },
-        {
-          provide: T4CModelService,
-          useFactory: () =>
-            new MockT4CModelService(mockT4CModel, [mockT4CModel]),
-        },
+        mockGitModelServiceProvider(mockPrimaryGitModel, [mockPrimaryGitModel]),
+        mockT4CModelServiceProvider(mockT4CModel, [mockT4CModel]),
       ],
     }),
   ],

@@ -5,8 +5,8 @@
 import { Meta, StoryObj } from '@storybook/angular';
 import {
   mockHttpConnectionMethod,
-  mockTool,
-  mockToolVersion,
+  mockCapellaTool,
+  mockCapellaToolVersion,
 } from 'src/storybook/tool';
 import { CreateSessionHistoryComponent } from './create-session-history.component';
 
@@ -31,8 +31,8 @@ export const ResolvedSessionHistory: Story = {
   args: {
     resolvedHistory: [
       {
-        tool: mockTool,
-        version: mockToolVersion,
+        tool: mockCapellaTool,
+        version: mockCapellaToolVersion,
         lastTimeRequested: new Date('2024-04-01'),
         loading: true,
         connectionMethod: {
@@ -42,8 +42,8 @@ export const ResolvedSessionHistory: Story = {
         },
       },
       {
-        tool: { ...mockTool, name: 'Example tool' },
-        version: { ...mockToolVersion, name: 'Example version' },
+        tool: { ...mockCapellaTool, name: 'Example tool' },
+        version: { ...mockCapellaToolVersion, name: 'Example version' },
         lastTimeRequested: new Date('2024-01-01'),
         loading: false,
         connectionMethod: {

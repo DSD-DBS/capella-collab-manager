@@ -22,7 +22,7 @@ import {
   ExtendedT4CRepository,
   T4CRepositoryWrapperService,
 } from 'src/app/settings/modelsources/t4c-settings/service/t4c-repos/t4c-repo.service';
-import { mockToolVersion } from 'src/storybook/tool';
+import { mockCapellaToolVersion } from 'src/storybook/tool';
 import { T4CLicenseServerWrapperService } from '../app/services/settings/t4c-license-server.service';
 
 export const mockT4CInstance: Readonly<T4CInstance> = {
@@ -41,7 +41,7 @@ export const mockT4CInstance: Readonly<T4CInstance> = {
   rest_api: 'http://localhost:8081/api/v1.0',
   username: 'admin',
   protocol: 'ws',
-  version: mockToolVersion,
+  version: mockCapellaToolVersion,
   is_archived: false,
 };
 
@@ -66,7 +66,7 @@ export const mockT4CModel: Readonly<SimpleT4CModelWithRepository> = {
   repository: mockT4CRepository,
 };
 
-export class MockT4CInstanceWrapperService
+class MockT4CInstanceWrapperService
   implements Partial<T4CInstanceWrapperService>
 {
   private _t4cInstance = new BehaviorSubject<T4CInstance | undefined>(
@@ -93,6 +93,16 @@ export class MockT4CInstanceWrapperService
   resetT4CInstance(): void {} // eslint-disable-line @typescript-eslint/no-empty-function
 }
 
+export const mockT4CInstanceWrapperServiceProvider = (
+  t4cInstance: T4CInstance,
+  t4cInstances: T4CInstance[],
+) => {
+  return {
+    provide: T4CInstanceWrapperService,
+    useValue: new MockT4CInstanceWrapperService(t4cInstance, t4cInstances),
+  };
+};
+
 export const mockT4CLicenseServer: Readonly<T4CLicenseServer> = {
   id: 1,
   name: 'licenseServer',
@@ -118,7 +128,7 @@ export const mockT4CLicenseServerUnused: Readonly<T4CLicenseServer> = {
   instances: [],
 };
 
-export class MockT4CLicenseServerWrapperService
+class MockT4CLicenseServerWrapperService
   implements Partial<T4CLicenseServerWrapperService>
 {
   private _licenseServer = new BehaviorSubject<T4CLicenseServer | undefined>(
@@ -148,7 +158,20 @@ export class MockT4CLicenseServerWrapperService
   resetLicenseServer(): void {} // eslint-disable-line @typescript-eslint/no-empty-function
 }
 
-export class MockT4CRepositoryWrapperService
+export const mockT4CLicenseServerWrapperServiceProvider = (
+  licenseServer: T4CLicenseServer,
+  licenseServers: T4CLicenseServer[],
+) => {
+  return {
+    provide: T4CLicenseServerWrapperService,
+    useValue: new MockT4CLicenseServerWrapperService(
+      licenseServer,
+      licenseServers,
+    ),
+  };
+};
+
+class MockT4CRepositoryWrapperService
   implements Partial<T4CRepositoryWrapperService>
 {
   private _repositories = new BehaviorSubject<
@@ -171,7 +194,16 @@ export class MockT4CRepositoryWrapperService
   }
 }
 
-export class MockT4CModelService implements Partial<T4CModelService> {
+export const mockT4CRepositoryWrapperServiceProvider = (
+  repositories: ExtendedT4CRepository[],
+) => {
+  return {
+    provide: T4CRepositoryWrapperService,
+    useValue: new MockT4CRepositoryWrapperService(repositories),
+  };
+};
+
+class MockT4CModelService implements Partial<T4CModelService> {
   private _t4cModel = new BehaviorSubject<
     SimpleT4CModelWithRepository | undefined
   >(undefined);
@@ -197,3 +229,14 @@ export class MockT4CModelService implements Partial<T4CModelService> {
     this.compatibleT4CInstances$ = of(t4cInstances);
   }
 }
+
+export const mockT4CModelServiceProvider = (
+  t4cModel: SimpleT4CModelWithRepository | undefined,
+  t4cModels: SimpleT4CModelWithRepository[] | undefined,
+  t4cInstances: T4CInstance[] | undefined = undefined,
+) => {
+  return {
+    provide: T4CModelService,
+    useValue: new MockT4CModelService(t4cModel, t4cModels, t4cInstances),
+  };
+};

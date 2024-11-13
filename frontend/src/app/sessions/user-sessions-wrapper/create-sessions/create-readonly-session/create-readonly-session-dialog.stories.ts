@@ -9,7 +9,7 @@ import { SessionService } from 'src/app/sessions/service/session.service';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPrimaryGitModel } from 'src/storybook/git';
 import { createModelWithId } from 'src/storybook/model';
-import { mockTool, mockToolVersion } from 'src/storybook/tool';
+import { mockCapellaTool, mockCapellaToolVersion } from 'src/storybook/tool';
 import { CreateReadonlySessionDialogComponent } from './create-readonly-session-dialog.component';
 
 class MockSessionService implements Partial<SessionService> {}
@@ -25,12 +25,12 @@ const meta: Meta<CreateReadonlySessionDialogComponent> = {
   ],
 };
 
-const tool: Tool = { ...mockTool };
+const tool: Tool = { ...mockCapellaTool };
 tool.config.provisioning.max_number_of_models = 1;
 
 const data = {
   tool: tool,
-  toolVersion: mockToolVersion,
+  toolVersion: mockCapellaToolVersion,
   models: [],
   projectSlug: '',
 };
@@ -123,7 +123,11 @@ export const ShowNoteForCompatibleSession: Story = {
     ],
     data: {
       tool: { ...tool, id: 2, name: 'compatibleTool' },
-      toolVersion: { ...mockToolVersion, id: 2, name: 'compatibleVersion' },
+      toolVersion: {
+        ...mockCapellaToolVersion,
+        id: 2,
+        name: 'compatibleVersion',
+      },
       models: [],
       projectSlug: '',
     },

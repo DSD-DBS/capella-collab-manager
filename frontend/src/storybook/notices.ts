@@ -15,7 +15,7 @@ export const mockNotice: NoticeResponse = {
   level: NoticeLevel.Info,
 };
 
-export class MockNoticeWrapperService implements Partial<NoticeWrapperService> {
+class MockNoticeWrapperService implements Partial<NoticeWrapperService> {
   private _notices = new BehaviorSubject<NoticeResponse[] | undefined>(
     undefined,
   );
@@ -25,3 +25,10 @@ export class MockNoticeWrapperService implements Partial<NoticeWrapperService> {
     this._notices.next(notices);
   }
 }
+
+export const mockNoticeWrapperServiceProvider = (notices: NoticeResponse[]) => {
+  return {
+    provide: NoticeWrapperService,
+    useValue: new MockNoticeWrapperService(notices),
+  };
+};

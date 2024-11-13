@@ -3,13 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
-import { T4CLicenseServerWrapperService } from 'src/app/services/settings/t4c-license-server.service';
 import {
   mockT4CInstance,
-  MockT4CInstanceWrapperService,
+  mockT4CInstanceWrapperServiceProvider,
   mockT4CLicenseServer,
-  MockT4CLicenseServerWrapperService,
+  mockT4CLicenseServerWrapperServiceProvider,
 } from 'src/storybook/t4c';
 import { T4CSettingsComponent } from './t4c-settings.component';
 
@@ -30,21 +28,13 @@ export const Overview: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CInstanceWrapperService,
-          useFactory: () =>
-            new MockT4CInstanceWrapperService(mockT4CInstance, [
-              mockT4CInstance,
-              { ...mockT4CInstance, is_archived: true },
-            ]),
-        },
-        {
-          provide: T4CLicenseServerWrapperService,
-          useFactory: () =>
-            new MockT4CLicenseServerWrapperService(mockT4CLicenseServer, [
-              mockT4CLicenseServer,
-            ]),
-        },
+        mockT4CInstanceWrapperServiceProvider(mockT4CInstance, [
+          mockT4CInstance,
+          { ...mockT4CInstance, is_archived: true },
+        ]),
+        mockT4CLicenseServerWrapperServiceProvider(mockT4CLicenseServer, [
+          mockT4CLicenseServer,
+        ]),
       ],
     }),
   ],

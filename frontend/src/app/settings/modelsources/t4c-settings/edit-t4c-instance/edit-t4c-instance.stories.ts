@@ -2,37 +2,30 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { ActivatedRoute } from '@angular/router';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import { userEvent, within } from '@storybook/test';
-import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
-import { T4CLicenseServerWrapperService } from 'src/app/services/settings/t4c-license-server.service';
-import { MockActivedRoute } from 'src/storybook/routes';
+import { mockActivatedRouteProvider } from 'src/storybook/routes';
 import {
-  MockT4CInstanceWrapperService,
-  MockT4CLicenseServerWrapperService,
   mockT4CInstance,
+  mockT4CInstanceWrapperServiceProvider,
   mockT4CLicenseServer,
+  mockT4CLicenseServerWrapperServiceProvider,
 } from 'src/storybook/t4c';
-import { mockToolVersion } from 'src/storybook/tool';
+import { mockCapellaToolVersion } from 'src/storybook/tool';
 import { EditT4CInstanceComponent } from './edit-t4c-instance.component';
 
 const meta: Meta<EditT4CInstanceComponent> = {
   title: 'Settings Components/Modelsources/T4C/Server Instance',
   component: EditT4CInstanceComponent,
   args: {
-    capellaVersions: [mockToolVersion],
+    capellaVersions: [mockCapellaToolVersion],
   },
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CLicenseServerWrapperService,
-          useFactory: () =>
-            new MockT4CLicenseServerWrapperService(mockT4CLicenseServer, [
-              mockT4CLicenseServer,
-            ]),
-        },
+        mockT4CLicenseServerWrapperServiceProvider(mockT4CLicenseServer, [
+          mockT4CLicenseServer,
+        ]),
       ],
     }),
   ],
@@ -52,20 +45,12 @@ export const ExistingInstance: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CInstanceWrapperService,
-          useFactory: () =>
-            new MockT4CInstanceWrapperService(mockT4CInstance, [
-              mockT4CInstance,
-            ]),
-        },
-        {
-          provide: ActivatedRoute,
-          useFactory: () =>
-            new MockActivedRoute({
-              instance: -1,
-            }),
-        },
+        mockT4CInstanceWrapperServiceProvider(mockT4CInstance, [
+          mockT4CInstance,
+        ]),
+        mockActivatedRouteProvider({
+          instance: -1,
+        }),
       ],
     }),
   ],
@@ -76,20 +61,12 @@ export const EditExistingInstance: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CInstanceWrapperService,
-          useFactory: () =>
-            new MockT4CInstanceWrapperService(mockT4CInstance, [
-              mockT4CInstance,
-            ]),
-        },
-        {
-          provide: ActivatedRoute,
-          useFactory: () =>
-            new MockActivedRoute({
-              instance: -1,
-            }),
-        },
+        mockT4CInstanceWrapperServiceProvider(mockT4CInstance, [
+          mockT4CInstance,
+        ]),
+        mockActivatedRouteProvider({
+          instance: -1,
+        }),
       ],
     }),
   ],
@@ -107,20 +84,12 @@ export const ArchivedInstance: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CInstanceWrapperService,
-          useFactory: () =>
-            new MockT4CInstanceWrapperService(mockT4CInstance, [
-              mockT4CInstance,
-            ]),
-        },
-        {
-          provide: ActivatedRoute,
-          useFactory: () =>
-            new MockActivedRoute({
-              instance: -1,
-            }),
-        },
+        mockT4CInstanceWrapperServiceProvider(mockT4CInstance, [
+          mockT4CInstance,
+        ]),
+        mockActivatedRouteProvider({
+          instance: -1,
+        }),
       ],
     }),
   ],

@@ -39,7 +39,7 @@ export const mockProjectUsers: ProjectUser[] = [
   },
 ];
 
-export class MockProjectUserService implements Partial<ProjectUserService> {
+class MockProjectUserService implements Partial<ProjectUserService> {
   role: ProjectUserRole;
   permission: ProjectUserPermission | undefined;
 
@@ -72,3 +72,14 @@ export class MockProjectUserService implements Partial<ProjectUserService> {
     );
   }
 }
+
+export const mockProjectUserServiceProvider = (
+  role: ProjectUserRole,
+  permission: ProjectUserPermission | undefined = undefined,
+  projectUsers: ProjectUser[] | undefined = undefined,
+) => {
+  return {
+    provide: ProjectUserService,
+    useValue: new MockProjectUserService(role, permission, projectUsers),
+  };
+};

@@ -5,14 +5,12 @@
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import {
   mockModel,
-  MockModelWrapperService,
+  mockModelWrapperServiceProvider,
 } from '../../../../storybook/model';
 import {
   mockProject,
-  MockProjectWrapperService,
+  mockProjectWrapperServiceProvider,
 } from '../../../../storybook/project';
-import { ProjectWrapperService } from '../../service/project.service';
-import { ModelWrapperService } from '../service/model.service';
 import { InitModelComponent } from './init-model.component';
 
 const meta: Meta<InitModelComponent> = {
@@ -28,21 +26,14 @@ export const General: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: ModelWrapperService,
-          useFactory: () => new MockModelWrapperService(mockModel, []),
-        },
-        {
-          provide: ProjectWrapperService,
-          useFactory: () =>
-            new MockProjectWrapperService(undefined, [
-              {
-                ...mockProject,
-                name: 'Internal project',
-                visibility: 'internal',
-              },
-            ]),
-        },
+        mockModelWrapperServiceProvider(mockModel, []),
+        mockProjectWrapperServiceProvider(undefined, [
+          {
+            ...mockProject,
+            name: 'Internal project',
+            visibility: 'internal',
+          },
+        ]),
       ],
     }),
   ],

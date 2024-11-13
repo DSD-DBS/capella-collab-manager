@@ -4,10 +4,17 @@
  */
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 
-export class MockAuthenticationWrapperService
+class MockAuthenticationWrapperService
   implements Partial<AuthenticationWrapperService>
 {
   isLoggedIn(): boolean {
     return true;
   }
 }
+
+export const mockAuthenticationWrapperServiceProvider = () => {
+  return {
+    provide: AuthenticationWrapperService,
+    useValue: new MockAuthenticationWrapperService(),
+  };
+};

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import {
-  MetadataService,
-  Version,
-} from 'src/app/general/metadata/metadata.service';
+import { Version } from 'src/app/general/metadata/metadata.service';
 import { VersionComponent } from 'src/app/general/metadata/version/version.component';
-import { mockMetadata, MockMetadataService } from 'src/storybook/metadata';
+import {
+  mockMetadata,
+  mockMetadataServiceProvider,
+} from 'src/storybook/metadata';
 
 const meta: Meta<VersionComponent> = {
   title: 'General Components/Version',
@@ -30,11 +30,7 @@ export const VersionUnchanged: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: MetadataService,
-          useFactory: () =>
-            new MockMetadataService(mockMetadata, version, 'v1.0.0', false),
-        },
+        mockMetadataServiceProvider(mockMetadata, version, 'v1.0.0', false),
       ],
     }),
   ],
@@ -45,11 +41,7 @@ export const NewVersionAvailable: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: MetadataService,
-          useFactory: () =>
-            new MockMetadataService(mockMetadata, version, 'v0.1.0', true),
-        },
+        mockMetadataServiceProvider(mockMetadata, version, 'v0.1.0', true),
       ],
     }),
   ],
@@ -60,11 +52,7 @@ export const FirstTimeAccessed: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: MetadataService,
-          useFactory: () =>
-            new MockMetadataService(mockMetadata, version, undefined, true),
-        },
+        mockMetadataServiceProvider(mockMetadata, version, undefined, true),
       ],
     }),
   ],

@@ -7,9 +7,8 @@ import {
   mockT4CLicenseServer,
   mockT4CLicenseServerUnreachable,
   mockT4CLicenseServerUnused,
-  MockT4CLicenseServerWrapperService,
+  mockT4CLicenseServerWrapperServiceProvider,
 } from '../../../../../storybook/t4c';
-import { T4CLicenseServerWrapperService } from '../../../../services/settings/t4c-license-server.service';
 import { EditT4cLicenseServerComponent } from './edit-t4c-license-server.component';
 
 const meta: Meta<EditT4cLicenseServerComponent> = {
@@ -31,13 +30,9 @@ export const ExistingLicenseServer: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CLicenseServerWrapperService,
-          useFactory: () =>
-            new MockT4CLicenseServerWrapperService(mockT4CLicenseServer, [
-              mockT4CLicenseServer,
-            ]),
-        },
+        mockT4CLicenseServerWrapperServiceProvider(mockT4CLicenseServer, [
+          mockT4CLicenseServer,
+        ]),
       ],
     }),
   ],
@@ -50,14 +45,10 @@ export const ExistingUnreachableLicenseServer: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CLicenseServerWrapperService,
-          useFactory: () =>
-            new MockT4CLicenseServerWrapperService(
-              mockT4CLicenseServerUnreachable,
-              [mockT4CLicenseServerUnreachable],
-            ),
-        },
+        mockT4CLicenseServerWrapperServiceProvider(
+          mockT4CLicenseServerUnreachable,
+          [mockT4CLicenseServerUnreachable],
+        ),
       ],
     }),
   ],
@@ -70,13 +61,9 @@ export const ExistingUnusedLicenseServer: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: T4CLicenseServerWrapperService,
-          useFactory: () =>
-            new MockT4CLicenseServerWrapperService(mockT4CLicenseServerUnused, [
-              mockT4CLicenseServerUnused,
-            ]),
-        },
+        mockT4CLicenseServerWrapperServiceProvider(mockT4CLicenseServerUnused, [
+          mockT4CLicenseServerUnused,
+        ]),
       ],
     }),
   ],

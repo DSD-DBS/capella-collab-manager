@@ -9,7 +9,7 @@ import {
   StoryObj,
 } from '@storybook/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { mockTool } from '../../../../../storybook/tool';
+import { mockCapellaTool } from '../../../../../storybook/tool';
 import { Tool } from '../../../../openapi';
 import { ToolWrapperService } from '../../../../settings/core/tools-settings/tool.service';
 import { MockLicenseUsageWrapperService } from '../../../license-indicator/license-indicator.stories';
@@ -72,7 +72,7 @@ export const Default: Story = {
         },
         {
           provide: ToolWrapperService,
-          useFactory: () => new MockToolWrapperService([mockTool]),
+          useFactory: () => new MockToolWrapperService([mockCapellaTool]),
         },
       ],
     }),

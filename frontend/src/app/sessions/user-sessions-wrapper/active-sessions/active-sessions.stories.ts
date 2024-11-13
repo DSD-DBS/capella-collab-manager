@@ -14,11 +14,9 @@ import {
   SessionPreparationState,
   SessionState,
 } from 'src/app/openapi';
-import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.service';
 import {
   mockFeedbackConfig,
-  MockFeedbackWrapperService,
+  mockFeedbackWrapperServiceProvider,
 } from 'src/storybook/feedback';
 import {
   createPersistentSessionWithState,
@@ -26,7 +24,10 @@ import {
   mockReadonlySession,
 } from 'src/storybook/session';
 import { mockHttpConnectionMethod } from 'src/storybook/tool';
-import { MockOwnUserWrapperService, mockUser } from 'src/storybook/user';
+import {
+  mockOwnUserWrapperServiceProvider,
+  mockUser,
+} from 'src/storybook/user';
 import { UserSessionService } from '../../service/user-session.service';
 import { ActiveSessionsComponent } from './active-sessions.component';
 
@@ -47,12 +48,7 @@ const meta: Meta<ActiveSessionsComponent> = {
   component: ActiveSessionsComponent,
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () => new MockOwnUserWrapperService(mockUser),
-        },
-      ],
+      providers: [mockOwnUserWrapperServiceProvider(mockUser)],
     }),
     componentWrapperDecorator(
       (story) => `<div class="w-[360px] sm:w-[450px]">${story}</div>`,
@@ -260,10 +256,7 @@ export const SessionWithFeedbackEnabled: Story = {
           provide: UserSessionService,
           useFactory: () => new MockUserSessionService(mockPersistentSession),
         },
-        {
-          provide: FeedbackWrapperService,
-          useFactory: () => new MockFeedbackWrapperService(mockFeedbackConfig),
-        },
+        mockFeedbackWrapperServiceProvider(mockFeedbackConfig),
       ],
     }),
   ],
@@ -358,11 +351,7 @@ export const SharedSession: Story = {
           provide: UserSessionService,
           useFactory: () => new MockUserSessionService(mockPersistentSession),
         },
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () =>
-            new MockOwnUserWrapperService({ ...mockUser, id: 2 }),
-        },
+        mockOwnUserWrapperServiceProvider({ ...mockUser, id: 2 }),
       ],
     }),
   ],

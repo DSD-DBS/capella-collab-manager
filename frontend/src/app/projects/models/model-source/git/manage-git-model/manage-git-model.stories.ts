@@ -2,22 +2,23 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { ActivatedRoute } from '@angular/router';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { userEvent, within } from '@storybook/test';
-import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
-import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { ProjectWrapperService } from 'src/app/projects/service/project.service';
-import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 import {
   mockGitInstance,
-  MockGitInstancesService,
-  MockGitModelService,
+  mockGitInstancesServiceProvider,
+  mockGitModelServiceProvider,
   mockPrimaryGitModel,
 } from 'src/storybook/git';
-import { mockModel, MockModelWrapperService } from 'src/storybook/model';
-import { mockProject, MockProjectWrapperService } from 'src/storybook/project';
-import { MockActivedRoute } from 'src/storybook/routes';
+import {
+  mockModel,
+  mockModelWrapperServiceProvider,
+} from 'src/storybook/model';
+import {
+  mockProject,
+  mockProjectWrapperServiceProvider,
+} from 'src/storybook/project';
+import { mockActivatedRouteProvider } from 'src/storybook/routes';
 import { ManageGitModelComponent } from './manage-git-model.component';
 
 const meta: Meta<ManageGitModelComponent> = {
@@ -26,15 +27,8 @@ const meta: Meta<ManageGitModelComponent> = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: ProjectWrapperService,
-          useFactory: () =>
-            new MockProjectWrapperService(mockProject, [mockProject]),
-        },
-        {
-          provide: ModelWrapperService,
-          useFactory: () => new MockModelWrapperService(mockModel, [mockModel]),
-        },
+        mockProjectWrapperServiceProvider(mockProject, [mockProject]),
+        mockModelWrapperServiceProvider(mockModel, [mockModel]),
       ],
     }),
   ],
@@ -78,22 +72,11 @@ export const ExistingGitModel: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: GitModelService,
-          useFactory: () => new MockGitModelService(mockPrimaryGitModel, []),
-        },
-        {
-          provide: ActivatedRoute,
-          useFactory: () =>
-            new MockActivedRoute({
-              'git-model': '-1',
-            }),
-        },
-        {
-          provide: GitInstancesWrapperService,
-          useFactory: () =>
-            new MockGitInstancesService(undefined, [mockGitInstance]),
-        },
+        mockGitModelServiceProvider(mockPrimaryGitModel, []),
+        mockActivatedRouteProvider({
+          'git-model': '-1',
+        }),
+        mockGitInstancesServiceProvider(undefined, [mockGitInstance]),
       ],
     }),
   ],
@@ -110,22 +93,11 @@ export const ExistingGitModelEditing: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: GitModelService,
-          useFactory: () => new MockGitModelService(mockPrimaryGitModel, []),
-        },
-        {
-          provide: ActivatedRoute,
-          useFactory: () =>
-            new MockActivedRoute({
-              'git-model': '-1',
-            }),
-        },
-        {
-          provide: GitInstancesWrapperService,
-          useFactory: () =>
-            new MockGitInstancesService(undefined, [mockGitInstance]),
-        },
+        mockGitModelServiceProvider(mockPrimaryGitModel, []),
+        mockActivatedRouteProvider({
+          'git-model': '-1',
+        }),
+        mockGitInstancesServiceProvider(undefined, [mockGitInstance]),
       ],
     }),
   ],

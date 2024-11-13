@@ -18,9 +18,7 @@ export const mockFeedbackConfig: FeedbackConfigurationOutput = {
   recipients: [],
 };
 
-export class MockFeedbackWrapperService
-  implements Partial<FeedbackWrapperService>
-{
+class MockFeedbackWrapperService implements Partial<FeedbackWrapperService> {
   private _feedbackConfig = new BehaviorSubject<
     FeedbackConfigurationOutput | undefined
   >(undefined);
@@ -31,3 +29,12 @@ export class MockFeedbackWrapperService
     this._feedbackConfig.next(feedbackConfig);
   }
 }
+
+export const mockFeedbackWrapperServiceProvider = (
+  feedbackConfig: FeedbackConfigurationOutput,
+) => {
+  return {
+    provide: FeedbackWrapperService,
+    useValue: new MockFeedbackWrapperService(feedbackConfig),
+  };
+};

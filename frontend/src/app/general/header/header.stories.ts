@@ -4,8 +4,10 @@
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { of } from 'rxjs';
-import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { mockUser, MockOwnUserWrapperService } from 'src/storybook/user';
+import {
+  mockOwnUserWrapperServiceProvider,
+  mockUser,
+} from 'src/storybook/user';
 import { NavBarItem, NavBarService } from '../nav-bar/nav-bar.service';
 import { HeaderComponent } from './header.component';
 
@@ -57,10 +59,7 @@ export const NormalUser: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () => new MockOwnUserWrapperService(mockUser),
-        },
+        mockOwnUserWrapperServiceProvider(mockUser),
         {
           provide: NavBarService,
           useFactory: () => new MockNavbarService(),
@@ -68,9 +67,6 @@ export const NormalUser: Story = {
       ],
     }),
   ],
-  parameters: {
-    chromatic: { viewports: [400, 1920] },
-  },
 };
 
 export const Administrator: Story = {
@@ -78,14 +74,10 @@ export const Administrator: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: OwnUserWrapperService,
-          useFactory: () =>
-            new MockOwnUserWrapperService({
-              ...mockUser,
-              role: 'administrator',
-            }),
-        },
+        mockOwnUserWrapperServiceProvider({
+          ...mockUser,
+          role: 'administrator',
+        }),
         {
           provide: NavBarService,
           useFactory: () => new MockNavbarService(),
@@ -93,7 +85,4 @@ export const Administrator: Story = {
       ],
     }),
   ],
-  parameters: {
-    chromatic: { viewports: [1920] },
-  },
 };
