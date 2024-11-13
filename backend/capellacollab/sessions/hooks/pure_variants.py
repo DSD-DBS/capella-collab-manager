@@ -5,8 +5,6 @@ import logging
 import pathlib
 import typing as t
 
-from sqlalchemy import orm
-
 from capellacollab.core import models as core_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.sessions import models as sessions_models
@@ -26,20 +24,17 @@ class PureVariantsConfigEnvironment(t.TypedDict):
 
 
 class PureVariantsIntegration(interface.HookRegistration):
-    def configuration_hook(  # type: ignore
+    def configuration_hook(
         self,
-        db: orm.Session,
-        user: users_models.DatabaseUser,
-        session_type: sessions_models.SessionType,
-        **kwargs,
+        request: interface.ConfigurationHookRequest,
     ) -> interface.ConfigurationHookResult:
-        if session_type == sessions_models.SessionType.READONLY:
+        if request.session_type == sessions_models.SessionType.READONLY:
             # Skip read-only sessions, no pure::variants integration supported.
             return interface.ConfigurationHookResult()
 
         if (
-            not self._user_has_project_with_pure_variants_model(user)
-            and user.role == users_models.Role.USER
+            not self._user_has_project_with_pure_variants_model(request.user)
+            and request.user.role == users_models.Role.USER
         ):
             warnings = [
                 core_models.Message(
@@ -57,7 +52,9 @@ class PureVariantsIntegration(interface.HookRegistration):
                 warnings=warnings,
             )
 
-        pv_license = purevariants_crud.get_pure_variants_configuration(db)
+        pv_license = purevariants_crud.get_pure_variants_configuration(
+            request.db
+        )
         if not pv_license or pv_license.license_server_url is None:
             warnings = [
                 core_models.Message(

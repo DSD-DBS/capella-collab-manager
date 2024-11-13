@@ -3,34 +3,40 @@
 
 
 import pytest
-from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.models as toolmodels_models
+from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.hooks import jupyter as jupyter_hook
+from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
-from capellacollab.users import models as users_models
 
 
 @pytest.mark.usefixtures("project_user")
 def test_jupyter_successful_volume_mount(
     jupyter_model: toolmodels_models.DatabaseToolModel,
     jupyter_tool: tools_models.DatabaseTool,
-    user: users_models.DatabaseUser,
-    db: orm.Session,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
+
     class MockOperator:
         # pylint: disable=unused-argument
         def persistent_volume_exists(self, name: str) -> bool:
             return True
 
+    configuration_hook_request.operator = MockOperator()  # type: ignore
+    configuration_hook_request.tool = jupyter_tool
+
     result = jupyter_hook.JupyterIntegration().configuration_hook(
-        db=db, user=user, tool=jupyter_tool, operator=MockOperator()
+        configuration_hook_request
     )
 
     assert not result["warnings"]
     assert len(result["volumes"]) == 1
+
+    volume = result["volumes"][0]
+    assert isinstance(volume, operators_models.PersistentVolume)
     assert (
-        result["volumes"][0].volume_name
+        volume.volume_name
         == "shared-workspace-" + jupyter_model.configuration["workspace"]
     )
 
@@ -38,16 +44,18 @@ def test_jupyter_successful_volume_mount(
 @pytest.mark.usefixtures("project_user", "jupyter_model")
 def test_jupyter_volume_mount_not_found(
     jupyter_tool: tools_models.DatabaseTool,
-    user: users_models.DatabaseUser,
-    db: orm.Session,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
     class MockOperator:
         # pylint: disable=unused-argument
         def persistent_volume_exists(self, name: str) -> bool:
             return False
 
+    configuration_hook_request.operator = MockOperator()  # type: ignore
+    configuration_hook_request.tool = jupyter_tool
+
     result = jupyter_hook.JupyterIntegration().configuration_hook(
-        db=db, user=user, tool=jupyter_tool, operator=MockOperator()
+        configuration_hook_request
     )
 
     assert not result["volumes"]
@@ -60,14 +68,12 @@ def test_jupyter_volume_mount_not_found(
 @pytest.mark.usefixtures("jupyter_model")
 def test_jupyter_volume_mount_without_project_access(
     jupyter_tool: tools_models.DatabaseTool,
-    user: users_models.DatabaseUser,
-    db: orm.Session,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
-    class MockOperator:
-        pass
+    configuration_hook_request.tool = jupyter_tool
 
     result = jupyter_hook.JupyterIntegration().configuration_hook(
-        db=db, user=user, tool=jupyter_tool, operator=MockOperator()
+        configuration_hook_request
     )
 
     assert not result["volumes"]

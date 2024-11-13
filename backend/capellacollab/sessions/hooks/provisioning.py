@@ -40,26 +40,29 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     """Takes care of the provisioning of user workspaces."""
 
     @classmethod
-    def configuration_hook(  # type: ignore
-        cls,
-        db: orm.Session,
-        tool: tools_models.DatabaseTool,
-        tool_version: tools_models.DatabaseVersion,
-        user: users_models.DatabaseUser,
-        provisioning: list[sessions_models.SessionProvisioningRequest],
-        **kwargs,
+    def configuration_hook(
+        cls, request: interface.ConfigurationHookRequest
     ) -> interface.ConfigurationHookResult:
-        max_number_of_models = tool.config.provisioning.max_number_of_models
-        if max_number_of_models and len(provisioning) > max_number_of_models:
+        max_number_of_models = (
+            request.tool.config.provisioning.max_number_of_models
+        )
+        if (
+            max_number_of_models
+            and len(request.provisioning) > max_number_of_models
+        ):
             raise sessions_exceptions.TooManyModelsRequestedToProvisionError(
                 max_number_of_models
             )
 
-        resolved_entries = cls._resolve_provisioning_request(db, provisioning)
-        cls._verify_matching_tool_version_and_model(
-            db, tool_version, resolved_entries
+        resolved_entries = cls._resolve_provisioning_request(
+            request.db, request.provisioning
         )
-        cls._verify_model_permissions(db, user, resolved_entries)
+        cls._verify_matching_tool_version_and_model(
+            request.db, request.tool_version, resolved_entries
+        )
+        cls._verify_model_permissions(
+            request.db, request.user, resolved_entries
+        )
 
         init_environment = {
             "CAPELLACOLLAB_PROVISIONING": cls._get_git_repos_json(

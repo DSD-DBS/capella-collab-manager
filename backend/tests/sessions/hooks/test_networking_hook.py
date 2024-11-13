@@ -5,14 +5,13 @@
 import kubernetes.client
 import pytest
 
-from capellacollab.sessions import models as sessions_models
-from capellacollab.sessions import operators
+from capellacollab.sessions.hooks import interface as session_hooks_interface
 from capellacollab.sessions.hooks import networking as networking_hook
-from capellacollab.users import models as users_models
 
 
 def test_network_policy_created(
-    user: users_models.DatabaseUser, monkeypatch: pytest.MonkeyPatch
+    monkeypatch: pytest.MonkeyPatch,
+    post_session_creation_hook_request: session_hooks_interface.PostSessionCreationHookRequest,
 ):
     network_policy_counter = 0
 
@@ -32,16 +31,15 @@ def test_network_policy_created(
     )
 
     networking_hook.NetworkingIntegration().post_session_creation_hook(
-        session_id="test",
-        operator=operators.KubernetesOperator(),
-        user=user,
+        post_session_creation_hook_request
     )
 
     assert network_policy_counter == 1
 
 
 def test_network_policy_deleted(
-    session: sessions_models.DatabaseSession, monkeypatch: pytest.MonkeyPatch
+    monkeypatch: pytest.MonkeyPatch,
+    pre_session_termination_hook_request: session_hooks_interface.PreSessionTerminationHookRequest,
 ):
     network_policy_del_counter = 0
 
@@ -61,8 +59,7 @@ def test_network_policy_deleted(
     )
 
     networking_hook.NetworkingIntegration().pre_session_termination_hook(
-        operator=operators.KubernetesOperator(),
-        session=session,
+        pre_session_termination_hook_request
     )
 
     assert network_policy_del_counter == 1

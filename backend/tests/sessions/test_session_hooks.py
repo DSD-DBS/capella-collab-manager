@@ -44,52 +44,25 @@ class TestSessionHook(hooks_interface.HookRegistration):
     post_termination_hook_counter = 0
 
     def configuration_hook(
-        self,
-        db: orm.Session,
-        operator: operators.KubernetesOperator,
-        user: users_models.DatabaseUser,
-        tool: tools_models.DatabaseTool,
-        tool_version: tools_models.DatabaseVersion,
-        session_type: sessions_models.SessionType,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        provisioning: list[sessions_models.SessionProvisioningRequest],
-        session_id: str,
-        **kwargs,
+        self, request: hooks_interface.ConfigurationHookRequest
     ) -> hooks_interface.ConfigurationHookResult:
         self.configuration_hook_counter += 1
         return hooks_interface.ConfigurationHookResult()
 
     def post_session_creation_hook(
-        self,
-        session_id: str,
-        session: k8s.Session,
-        db_session: sessions_models.DatabaseSession,
-        operator: operators.KubernetesOperator,
-        user: users_models.DatabaseUser,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+        self, request: hooks_interface.PostSessionCreationHookRequest
     ) -> hooks_interface.PostSessionCreationHookResult:
         self.post_session_creation_hook_counter += 1
         return hooks_interface.PostSessionCreationHookResult()
 
     def session_connection_hook(
-        self,
-        db: orm.Session,
-        db_session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        logger: logging.LoggerAdapter,
-        **kwargs,
+        self, request: hooks_interface.SessionConnectionHookRequest
     ) -> hooks_interface.SessionConnectionHookResult:
         self.session_connection_hook_counter += 1
         return hooks_interface.SessionConnectionHookResult()
 
     def pre_session_termination_hook(
-        self,
-        db: orm.Session,
-        operator: operators.KubernetesOperator,
-        session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+        self, request: hooks_interface.PreSessionTerminationHookRequest
     ) -> hooks_interface.PreSessionTerminationHookResult:
         self.post_termination_hook_counter += 1
         return hooks_interface.PreSessionTerminationHookResult()
@@ -99,9 +72,7 @@ class TestSessionHook(hooks_interface.HookRegistration):
 def fixture_session_hook(monkeypatch: pytest.MonkeyPatch) -> TestSessionHook:
     hook = TestSessionHook()
 
-    REGISTER_HOOKS_AUTO_USE: dict[str, hooks_interface.HookRegistration] = {
-        "test": hook,
-    }
+    REGISTER_HOOKS_AUTO_USE: list[hooks_interface.HookRegistration] = [hook]
 
     monkeypatch.setattr(
         sessions_hooks, "REGISTER_HOOKS_AUTO_USE", REGISTER_HOOKS_AUTO_USE
@@ -131,6 +102,7 @@ def test_hook_calls_during_session_request(
     mockoperator: MockOperator,
     session_hook: TestSessionHook,
     tool: tools_models.DatabaseTool,
+    logger: logging.LoggerAdapter,
 ):
     """Test that the relevant session hooks are called
     during a session request.
@@ -156,7 +128,7 @@ def test_hook_calls_during_session_request(
         user,
         db,
         mockoperator,  # type: ignore
-        logging.getLogger("test"),
+        logger,
     )
 
     assert session_hook.configuration_hook_counter == 1
@@ -168,6 +140,7 @@ def test_hook_calls_during_session_request(
 def test_hook_call_during_session_connection(
     db: orm.Session,
     session: sessions_models.DatabaseSession,
+    logger: logging.LoggerAdapter,
 ):
     """Test that the session hook is called when connecting to a session"""
 
@@ -176,7 +149,7 @@ def test_hook_call_during_session_connection(
         db,
         session,
         session.owner,
-        logging.getLogger("test"),
+        logger,
     )
 
 
