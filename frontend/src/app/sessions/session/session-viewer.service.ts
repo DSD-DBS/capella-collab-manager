@@ -61,11 +61,18 @@ export class SessionViewerService {
           ),
         )
         .subscribe((session) => {
-          this.sessionsService
-            .getSessionConnectionInformation(session.id)
-            .subscribe((connectionInfo) => {
-              this._connectToSession(session, connectionInfo.payload);
-            });
+          if (
+            this.sessionService.beautifyState(
+              session.preparation_state,
+              session.state,
+            ).success
+          ) {
+            this.sessionsService
+              .getSessionConnectionInformation(session.id)
+              .subscribe((connectionInfo) => {
+                this._connectToSession(session, connectionInfo.payload);
+              });
+          }
         }),
     );
   }
@@ -85,7 +92,11 @@ export class SessionViewerService {
     }
 
     this.sessionService.setConnectionInformation(connectionInfo);
-    viewerSession.focused = false;
+    if (!this._sessions.value?.length) {
+      viewerSession.focused = true;
+    } else {
+      viewerSession.focused = false;
+    }
     viewerSession.safeResourceURL =
       this.domSanitizer.bypassSecurityTrustResourceUrl(
         connectionInfo.redirect_url,
