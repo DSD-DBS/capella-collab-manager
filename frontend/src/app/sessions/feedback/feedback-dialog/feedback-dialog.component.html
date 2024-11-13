@@ -3,7 +3,11 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<form class="dialog min-w-96" [formGroup]="feedbackForm" (submit)="submit()">
+<form
+  class="dialog w-96 max-w-full"
+  [formGroup]="feedbackForm"
+  (submit)="submit()"
+>
   <h1 class="text-lg font-semibold">
     @if (data.sessions.length === 0) {
       How has your experience been?
@@ -49,7 +53,7 @@
     </div>
 
     @if (feedbackForm.get("rating")?.value) {
-      <mat-form-field class="w-full">
+      <mat-form-field class="!mb-2.5 w-full">
         @if (feedbackForm.get("rating")?.value === "good") {
           <mat-label>What was good?</mat-label>
         } @else {
@@ -65,7 +69,7 @@
             Your feedback can't be longer than 500 characters.
           </mat-error>
         }
-        <mat-hint
+        <mat-hint class="h-[42px]"
           >Try to be specific. What happened? What were you doing?</mat-hint
         >
       </mat-form-field>
