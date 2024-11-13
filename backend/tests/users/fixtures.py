@@ -31,17 +31,19 @@ def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     return name
 
 
-@pytest.fixture(name="unique_username")
-def fixture_unique_username() -> str:
-    return str(uuid.uuid1())
-
-
 @pytest.fixture(name="basic_user")
 def fixture_basic_user(
     db: orm.Session, executor_name: str
 ) -> users_models.DatabaseUser:
     return users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.USER
+    )
+
+
+@pytest.fixture(name="user2")
+def fixture_user2(db: orm.Session) -> users_models.DatabaseUser:
+    return users_crud.create_user(
+        db, "user2", "user2", None, users_models.Role.USER
     )
 
 
