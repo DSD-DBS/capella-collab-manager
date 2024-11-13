@@ -9,18 +9,19 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { LoggingConfigurationInput } from './logging-configuration-input';
-import { PrometheusConfigurationInput } from './prometheus-configuration-input';
 
 
-export interface SessionMonitoringInput { 
+/**
+ * Side-car container to push logs to Grafana Loki
+ */
+export interface LoggingConfigurationOutput { 
     /**
-     * Configuration for monitoring and garbage collection.
+     * If enabled, logs will be pushed to Grafana Loki.
      */
-    prometheus?: PrometheusConfigurationInput;
+    enabled: boolean;
     /**
-     * Configuration for side-car logging container.
+     * Path to the log files, can be a glob string.
      */
-    logging?: LoggingConfigurationInput;
+    path: string;
 }
 

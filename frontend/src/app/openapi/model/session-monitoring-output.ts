@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { LoggingConfigurationOutput } from './logging-configuration-output';
 import { PrometheusConfigurationOutput } from './prometheus-configuration-output';
 
 
@@ -17,5 +18,9 @@ export interface SessionMonitoringOutput {
      * Configuration for monitoring and garbage collection.
      */
     prometheus: PrometheusConfigurationOutput;
+    /**
+     * Configuration for side-car logging container.
+     */
+    logging: LoggingConfigurationOutput;
 }
 

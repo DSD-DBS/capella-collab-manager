@@ -15,6 +15,7 @@ from lxml.html import builder
 from sqlalchemy import orm
 
 from capellacollab import core
+from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.core.database import decorator
@@ -246,10 +247,28 @@ class PrometheusConfiguration(core_pydantic.BaseModel):
     path: str = pydantic.Field(default="/prometheus")
 
 
+class LoggingConfiguration(core_pydantic.BaseModel):
+    """Side-car container to push logs to Grafana Loki"""
+
+    enabled: bool = pydantic.Field(
+        default=config.k8s.promtail.loki_enabled,
+        description="If enabled, logs will be pushed to Grafana Loki.",
+    )
+
+    path: str = pydantic.Field(
+        default="/workspace/**/*.log",
+        description="Path to the log files, can be a glob string.",
+    )
+
+
 class SessionMonitoring(core_pydantic.BaseModel):
     prometheus: PrometheusConfiguration = pydantic.Field(
         default=PrometheusConfiguration(),
         description="Configuration for monitoring and garbage collection.",
+    )
+    logging: LoggingConfiguration = pydantic.Field(
+        default=LoggingConfiguration(),
+        description="Configuration for side-car logging container.",
     )
 
 
