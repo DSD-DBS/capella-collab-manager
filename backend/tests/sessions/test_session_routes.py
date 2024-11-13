@@ -59,7 +59,7 @@ def fixture_kubernetes() -> t.Generator[MockOperator, None, None]:
 
 @pytest.fixture(autouse=True, name="session_hook")
 def fixture_session_hook(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(sessions_hooks, "REGISTER_HOOKS_AUTO_USE", {})
+    monkeypatch.setattr(sessions_hooks, "REGISTER_HOOKS_AUTO_USE", [])
 
 
 @pytest.mark.usefixtures("user", "session")

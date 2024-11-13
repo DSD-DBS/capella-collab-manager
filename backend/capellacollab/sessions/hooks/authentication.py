@@ -13,18 +13,16 @@ from . import interface
 
 
 class PreAuthenticationHook(interface.HookRegistration):
-    def session_connection_hook(  # type: ignore[override]
+    def session_connection_hook(
         self,
-        db_session: sessions_models.DatabaseSession,
-        user: users_models.DatabaseUser,
-        **kwargs,
+        request: interface.SessionConnectionHookRequest,
     ) -> interface.SessionConnectionHookResult:
         """Issue pre-authentication tokens for sessions"""
 
         return interface.SessionConnectionHookResult(
             cookies={
                 "ccm_session_token": self._issue_session_token(
-                    user, db_session
+                    request.user, request.db_session
                 )
             }
         )

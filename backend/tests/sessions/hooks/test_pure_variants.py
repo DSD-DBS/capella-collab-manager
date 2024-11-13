@@ -18,7 +18,6 @@ from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.hooks import pure_variants
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
-from capellacollab.users import models as users_models
 
 
 @pytest.fixture(name="pure_variants_tool")
@@ -51,16 +50,17 @@ def fixture_pure_variants_model(
 
 
 def test_skip_for_read_only_sessions(
-    db: orm.Session,
-    user: users_models.DatabaseUser,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
     """pure::variants has no read-only support
 
     Therefore, the hook also shouldn't do anything for read-only sessions.
     """
-
+    configuration_hook_request.session_type = (
+        sessions_models.SessionType.READONLY
+    )
     result = pure_variants.PureVariantsIntegration().configuration_hook(
-        db, user, sessions_models.SessionType.READONLY
+        configuration_hook_request
     )
 
     assert result == hooks_interface.ConfigurationHookResult()
@@ -69,8 +69,8 @@ def test_skip_for_read_only_sessions(
 @pytest.mark.usefixtures("project_user")
 def test_skip_when_user_has_no_pv_access(
     db: orm.Session,
-    user: users_models.DatabaseUser,
     pure_variants_model: toolmodels_models.DatabaseToolModel,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
     """If a user has no access to a project with a model that
     has the pure::variants restriction enabled, skip loading of the license.
@@ -84,7 +84,7 @@ def test_skip_when_user_has_no_pv_access(
     )
 
     result = pure_variants.PureVariantsIntegration().configuration_hook(
-        db, user, sessions_models.SessionType.PERSISTENT
+        configuration_hook_request
     )
 
     assert "environment" not in result
@@ -95,8 +95,8 @@ def test_skip_when_user_has_no_pv_access(
 @pytest.mark.usefixtures("project_user")
 def test_skip_when_license_server_not_configured(
     db: orm.Session,
-    user: users_models.DatabaseUser,
     pure_variants_model: toolmodels_models.DatabaseToolModel,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
     """If no pure::variants license is configured in the settings,
     skip loading of the license.
@@ -111,7 +111,7 @@ def test_skip_when_license_server_not_configured(
     )
 
     result = pure_variants.PureVariantsIntegration().configuration_hook(
-        db, user, sessions_models.SessionType.PERSISTENT
+        configuration_hook_request
     )
 
     assert "environment" not in result
@@ -122,8 +122,8 @@ def test_skip_when_license_server_not_configured(
 @pytest.mark.usefixtures("project_user", "pure_variants_license")
 def test_inject_pure_variants_license_information(
     db: orm.Session,
-    user: users_models.DatabaseUser,
     pure_variants_model: toolmodels_models.DatabaseToolModel,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
     """Test that the configured license information is properly
     injected in the session container.
@@ -138,7 +138,7 @@ def test_inject_pure_variants_license_information(
     )
 
     result = pure_variants.PureVariantsIntegration().configuration_hook(
-        db, user, sessions_models.SessionType.PERSISTENT
+        configuration_hook_request
     )
 
     assert result["environment"] == {

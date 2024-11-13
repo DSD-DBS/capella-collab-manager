@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import abc
+import dataclasses
 import logging
 import typing as t
 
@@ -15,6 +16,43 @@ from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 
 from .. import models as sessions_models
+
+
+@dataclasses.dataclass()
+class ConfigurationHookRequest:
+    """Request type of the configuration hook
+
+    Attributes
+    ----------
+    db : sqlalchemy.orm.Session
+        Database session. Can be used to access the database
+    operator : operators.KubernetesOperator
+        Operator, which is used to spawn the session
+    user : users_models.DatabaseUser
+        User who has requested the session
+    tool : tools_models.DatabaseTool
+        Tool of the requested session
+    tool_version : tools_models.DatabaseVersion
+        Tool version of the requested session
+    session_type : sessions_models.SessionType
+        Type of the session (persistent, read-only, etc.)
+    connection_method : tools_models.ToolSessionConnectionMethod
+        Requested connection method for the session
+    provisioning : list[sessions_models.SessionProvisioningRequest]
+        List of workspace provisioning requests
+    session_id: str
+        ID of the session to be created
+    """
+
+    db: orm.Session
+    operator: operators.KubernetesOperator
+    user: users_models.DatabaseUser
+    tool: tools_models.DatabaseTool
+    tool_version: tools_models.DatabaseVersion
+    session_type: sessions_models.SessionType
+    connection_method: tools_models.ToolSessionConnectionMethod
+    provisioning: list[sessions_models.SessionProvisioningRequest]
+    session_id: str
 
 
 class ConfigurationHookResult(t.TypedDict):
@@ -42,6 +80,37 @@ class ConfigurationHookResult(t.TypedDict):
     init_environment: t.NotRequired[t.Mapping]
 
 
+@dataclasses.dataclass()
+class PostSessionCreationHookRequest:
+    """Request type of the post session creation hook
+
+    Attributes
+    ----------
+    session_id : str
+        ID of the session
+    session : k8s.Session
+        Session object (contains connection information)
+    db_session : sessions_models.DatabaseSession
+        Collaboration Manager session in the database
+    operator : operators.KubernetesOperator
+        Operator, which is used to spawn the session
+    user : users_models.DatabaseUser
+        User who has requested the session
+    connection_method : tools_models.ToolSessionConnectionMethod
+        Requested connection method for the session
+    db : orm.Session
+        Database session. Can be used to access the database
+    """
+
+    session_id: str
+    session: k8s.Session
+    db_session: sessions_models.DatabaseSession
+    operator: operators.KubernetesOperator
+    user: users_models.DatabaseUser
+    connection_method: tools_models.ToolSessionConnectionMethod
+    db: orm.Session
+
+
 class PostSessionCreationHookResult(t.TypedDict):
     """Return type of the post session creation hook
 
@@ -53,6 +122,31 @@ class PostSessionCreationHookResult(t.TypedDict):
     """
 
     config: t.NotRequired[t.Mapping]
+
+
+@dataclasses.dataclass()
+class SessionConnectionHookRequest:
+    """Request type of the session connection hook
+
+    Attributes
+    ----------
+    db : sqlalchemy.orm.Session
+        Database session. Can be used to access the database
+    db_session : sessions_models.DatabaseSession
+        Collaboration Manager session in the database
+    connection_method : tools_models.ToolSessionConnectionMethod
+        Connection method of the session
+    logger : logging.LoggerAdapter
+        Logger for the specific request
+    user : users_models.DatabaseUser
+        User who is connecting to the session
+    """
+
+    db: orm.Session
+    db_session: sessions_models.DatabaseSession
+    connection_method: tools_models.ToolSessionConnectionMethod
+    logger: logging.LoggerAdapter
+    user: users_models.DatabaseUser
 
 
 class SessionConnectionHookResult(t.TypedDict):
@@ -80,6 +174,28 @@ class SessionConnectionHookResult(t.TypedDict):
     warnings: t.NotRequired[list[core_models.Message]]
 
 
+@dataclasses.dataclass()
+class PreSessionTerminationHookRequest:
+    """Request type of the pre session termination hook
+
+    Attributes
+    ----------
+    db : sqlalchemy.orm.Session
+        Database session. Can be used to access the database
+    operator : operators.KubernetesOperator
+        Operator, which is used to spawn the session
+    session : sessions_models.DatabaseSession
+        Session which is to be terminated
+    connection_method : tools_models.ToolSessionConnectionMethod
+        Connection method of the session
+    """
+
+    db: orm.Session
+    operator: operators.KubernetesOperator
+    session: sessions_models.DatabaseSession
+    connection_method: tools_models.ToolSessionConnectionMethod
+
+
 class PreSessionTerminationHookResult(t.TypedDict):
     """Return type of the pre session termination hook"""
 
@@ -101,146 +217,47 @@ class HookRegistration(metaclass=abc.ABCMeta):
 
     # pylint: disable=unused-argument
     def configuration_hook(
-        self,
-        db: orm.Session,
-        operator: operators.KubernetesOperator,
-        user: users_models.DatabaseUser,
-        tool: tools_models.DatabaseTool,
-        tool_version: tools_models.DatabaseVersion,
-        session_type: sessions_models.SessionType,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        provisioning: list[sessions_models.SessionProvisioningRequest],
-        session_id: str,
-        **kwargs,
+        self, request: ConfigurationHookRequest
     ) -> ConfigurationHookResult:
         """Hook to determine session configuration
 
         This hook is executed before the creation of persistent sessions.
-
-        Parameters
-        ----------
-        db : sqlalchemy.orm.Session
-            Database session. Can be used to access the database
-        operator : operators.KubernetesOperator
-            Operator, which is used to spawn the session
-        user : users_models.DatabaseUser
-            User who has requested the session
-        tool : tools_models.DatabaseTool
-            Tool of the requested session
-        tool_version : tools_models.DatabaseVersion
-            Tool version of the requested session
-        session_type : sessions_models.SessionType
-            Type of the session (persistent, read-only, etc.)
-        connection_method : tools_models.ToolSessionConnectionMethod
-            Requested connection method for the session
-        provisioning : list[sessions_models.SessionProvisioningRequest]
-            List of workspace provisioning requests
-        session_id: str
-            ID of the session to be created
-        Returns
-        -------
-        result : ConfigurationHookResult
         """
 
         return ConfigurationHookResult()
 
+    # pylint: disable=unused-argument
     def post_session_creation_hook(
         self,
-        session_id: str,
-        session: k8s.Session,
-        db_session: sessions_models.DatabaseSession,
-        operator: operators.KubernetesOperator,
-        user: users_models.DatabaseUser,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        db: orm.Session,
-        **kwargs,
+        request: PostSessionCreationHookRequest,
     ) -> PostSessionCreationHookResult:
         """Hook executed after session creation
 
         This hook is executed after a persistent session was created
         by the operator.
-
-        Parameters
-        ----------
-        session_id : str
-            ID of the session
-        session : k8s.Session
-            Session object (contains connection information)
-        db_session : sessions_models.DatabaseSession
-            Collaboration Manager session in the database
-        operator : operators.KubernetesOperator
-            Operator, which is used to spawn the session
-        user : users_models.DatabaseUser
-            User who has requested the session
-        connection_method : tools_models.ToolSessionConnectionMethod
-            Requested connection method for the session
-        db : sqlalchemy.orm.Session
-            Database session. Can be used to access the database
-
-        Returns
-        -------
-        result : PostSessionCreationHookResult
         """
 
         return PostSessionCreationHookResult()
 
     # pylint: disable=unused-argument
     def session_connection_hook(
-        self,
-        db: orm.Session,
-        db_session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        logger: logging.LoggerAdapter,
-        **kwargs,
+        self, request: SessionConnectionHookRequest
     ) -> SessionConnectionHookResult:
         """Hook executed while connecting to a session
 
         The hook is executed each time the
         GET `/sessions/{session_id}/connection` endpoint is called.
-
-        Parameters
-        ----------
-        db : sqlalchemy.orm.Session
-            Database session. Can be used to access the database
-        db_session : sessions_models.DatabaseSession
-            Collaboration Manager session in the database
-        connection_method : tools_models.ToolSessionConnectionMethod
-            Connection method of the session
-        logger : logging.LoggerAdapter
-            Logger for the specific request
-        Returns
-        -------
-        result : SessionConnectionHookResult
         """
 
         return SessionConnectionHookResult()
 
+    # pylint: disable=unused-argument
     def pre_session_termination_hook(
-        self,
-        db: orm.Session,
-        operator: operators.KubernetesOperator,
-        session: sessions_models.DatabaseSession,
-        connection_method: tools_models.ToolSessionConnectionMethod,
-        **kwargs,
+        self, request: PreSessionTerminationHookRequest
     ) -> PreSessionTerminationHookResult:
         """Hook executed directly before session termination
 
         This hook is executed before a read-only or persistent session
         is terminated by the operator.
-
-        Parameters
-        ----------
-        db : sqlalchemy.orm.Session
-            Database session. Can be used to access the database
-        operator : operators.KubernetesOperator
-            Operator, which is used to spawn the session
-        session : sessions_models.DatabaseSession
-            Session which is to be terminated
-        connection_method : tools_models.ToolSessionConnectionMethod
-            Connection method of the session
-
-        Returns
-        -------
-        result : PreSessionTerminationHookResult
         """
         return PreSessionTerminationHookResult()
