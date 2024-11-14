@@ -113,9 +113,8 @@ def test_get_t4c_instances(
         "/api/v1/settings/modelsources/t4c/instances",
     )
 
-    assert len(response.json()) == 2
-
-    assert response.json()[1]["name"] == "test server"
+    assert len(response.json()) == 3
+    assert response.json()[-1]["name"] == "test server"
 
     # Password should not be exposed via API
     assert "password" not in response.json()[1]
