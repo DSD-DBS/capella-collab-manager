@@ -9,6 +9,7 @@ import yaml
 from capellacollab.config import config
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.operators import models as operators_models
+from capellacollab.tools import models as tools_models
 from capellacollab.users.workspaces import crud as users_workspaces_crud
 
 from . import interface
@@ -23,10 +24,7 @@ class LogCollectorIntegration(interface.HookRegistration):
         self,
         request: interface.PostSessionCreationHookRequest,
     ) -> interface.PostSessionCreationHookResult:
-        if (
-            not self._loki_enabled
-            or request.db_session.type == sessions_models.SessionType.READONLY
-        ):
+        if not self._log_collection_enabled(request.db_session):
             return interface.PostSessionCreationHookResult()
 
         workspaces = users_workspaces_crud.get_workspaces_for_user(
@@ -40,7 +38,7 @@ class LogCollectorIntegration(interface.HookRegistration):
             data=self._promtail_configuration(
                 username=request.user.name,
                 session_type=request.db_session.type.value,
-                tool_name=request.db_session.tool.name,
+                tool=request.db_session.tool,
                 version_name=request.db_session.version.name,
             ),
         )
@@ -62,7 +60,7 @@ class LogCollectorIntegration(interface.HookRegistration):
             operators_models.PersistentVolume(
                 name="workspace",
                 read_only=False,
-                container_path=pathlib.PurePosixPath("/var/log/promtail"),
+                container_path=pathlib.PurePosixPath("/workspace"),
                 volume_name=workspaces[0].pvc_name,
             ),
         ]
@@ -84,10 +82,7 @@ class LogCollectorIntegration(interface.HookRegistration):
         self,
         request: interface.PreSessionTerminationHookRequest,
     ) -> interface.PreSessionTerminationHookResult:
-        if (
-            not self._loki_enabled
-            or request.session.type == sessions_models.SessionType.READONLY
-        ):
+        if not self._log_collection_enabled(request.session):
             return interface.PostSessionCreationHookResult()
 
         request.operator._delete_config_map(name=request.session.id)
@@ -95,12 +90,21 @@ class LogCollectorIntegration(interface.HookRegistration):
 
         return interface.PreSessionTerminationHookResult()
 
+    def _log_collection_enabled(
+        self, session: sessions_models.DatabaseSession
+    ) -> bool:
+        return (
+            self._loki_enabled
+            and session.type == sessions_models.SessionType.PERSISTENT
+            and session.tool.config.monitoring.logging.enabled
+        )
+
     @classmethod
     def _promtail_configuration(
         cls,
         username: str,
         session_type: str,
-        tool_name: str,
+        tool: tools_models.DatabaseTool,
         version_name: str,
     ) -> dict:
         cfg = config.k8s.promtail
@@ -121,7 +125,7 @@ class LogCollectorIntegration(interface.HookRegistration):
                         }
                     ],
                     "positions": {
-                        "filename": "/var/log/promtail/positions.yaml"
+                        "filename": f"/workspace/.promtail/positions-tool-{tool.id}.yaml"
                     },
                     "scrape_configs": [
                         {
@@ -139,9 +143,9 @@ class LogCollectorIntegration(interface.HookRegistration):
                                     "labels": {
                                         "username": username,
                                         "session_type": session_type,
-                                        "tool": tool_name,
+                                        "tool": tool.name,
                                         "version": version_name,
-                                        "__path__": "/var/log/promtail/**/*.log",
+                                        "__path__": tool.config.monitoring.logging.path,
                                     },
                                 }
                             ],

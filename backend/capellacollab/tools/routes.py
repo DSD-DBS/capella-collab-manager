@@ -8,9 +8,11 @@ from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.crud as projects_models_crud
 import capellacollab.settings.modelsources.t4c.instance.crud as settings_t4c_crud
+from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.core.logging import exceptions as logging_exceptions
 from capellacollab.users import models as users_models
 
 from . import crud, exceptions, injectables, models
@@ -66,6 +68,12 @@ def create_tool(
     To use this route, the user role `administrator` is required.
     """
 
+    if (
+        body.config.monitoring.logging.enabled
+        and not config.k8s.promtail.loki_enabled
+    ):
+        raise logging_exceptions.GrafanaLokiDisabled()
+
     return crud.create_tool(db, body)
 
 
@@ -85,6 +93,12 @@ def update_tool(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseTool:
+    if (
+        body.config.monitoring.logging.enabled
+        and not config.k8s.promtail.loki_enabled
+    ):
+        raise logging_exceptions.GrafanaLokiDisabled()
+
     return crud.update_tool(db, tool, body)
 
 
