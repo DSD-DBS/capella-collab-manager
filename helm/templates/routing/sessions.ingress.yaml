@@ -24,7 +24,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /session
+          - path: /session/
             pathType: Prefix
             backend:
               service:

@@ -280,7 +280,7 @@ def get_all_sessions(
 )
 def get_session(
     session: models.DatabaseSession = fastapi.Depends(
-        injectables.get_existing_session
+        injectables.get_existing_session_including_shared
     ),
 ):
     return session
