@@ -23,7 +23,7 @@ classifiers = [
 ]
 dependencies = [
   "PyYAML",
-  "alembic==1.13.3",
+  "alembic",
   "appdirs",
   "cachetools",
   "email-validator",
