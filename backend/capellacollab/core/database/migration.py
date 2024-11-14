@@ -166,7 +166,7 @@ def get_eclipse_session_configuration() -> (
                             if not core.LOCAL_DEVELOPMENT_MODE
                             else "http://localhost:8080"
                         )
-                        + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
+                        + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&sharing=1&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
                     ),
                     cookies={},
                     sharing=tools_models.ToolSessionSharingConfiguration(
