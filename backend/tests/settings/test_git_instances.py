@@ -28,7 +28,7 @@ def fixture_git_instance(db: orm.Session) -> git_models.DatabaseGitInstance:
 def test_get_git_instances(client: testclient.TestClient):
     response = client.get("/api/v1/settings/modelsources/git")
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert len(response.json()) == 3
     assert response.json()[-1]["name"] == "test"
 
 

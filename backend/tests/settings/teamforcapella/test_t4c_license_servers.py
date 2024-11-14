@@ -76,11 +76,11 @@ def test_get_t4c_license_servers_admin(
         "/api/v1/settings/modelsources/t4c/license-servers",
     )
 
-    assert len(response.json()) == 2
+    assert len(response.json()) == 3
 
-    assert response.json()[1]["name"] == "test license server"
-    assert response.json()[1]["license_key"] == "test key"
-    assert response.json()[1]["usage_api"] == "http://localhost:8086"
+    assert response.json()[-1]["name"] == "test license server"
+    assert response.json()[-1]["license_key"] == "test key"
+    assert response.json()[-1]["usage_api"] == "http://localhost:8086"
 
 
 @pytest.mark.usefixtures("t4c_license_server")
@@ -97,11 +97,11 @@ def test_get_t4c_license_servers(
         "/api/v1/settings/modelsources/t4c/license-servers",
     )
 
-    assert len(response.json()) == 2
+    assert len(response.json()) == 3
 
-    assert response.json()[1]["name"] == "test license server"
-    assert response.json()[1]["license_key"] == ""
-    assert response.json()[1]["usage_api"] == ""
+    assert response.json()[-1]["name"] == "test license server"
+    assert response.json()[-1]["license_key"] == ""
+    assert response.json()[-1]["usage_api"] == ""
 
 
 def test_get_t4c_license_server(

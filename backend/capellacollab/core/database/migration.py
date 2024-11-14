@@ -23,19 +23,15 @@ from capellacollab.projects.toolmodels.modelsources.git import crud as git_crud
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
-from capellacollab.projects.toolmodels.modelsources.t4c import crud as t4c_crud
-from capellacollab.settings.modelsources.git import crud as modelssources_crud
+from capellacollab.settings.modelsources.git import crud as modelsources_crud
 from capellacollab.settings.modelsources.git import (
-    models as modelssources_models,
+    models as modelsources_models,
 )
 from capellacollab.settings.modelsources.t4c.instance import (
     crud as t4c_instance_crud,
 )
 from capellacollab.settings.modelsources.t4c.instance import (
     models as t4c_instance_models,
-)
-from capellacollab.settings.modelsources.t4c.instance.repositories import (
-    crud as repositories_crud,
 )
 from capellacollab.settings.modelsources.t4c.license_server import (
     crud as t4c_license_server_crud,
@@ -86,7 +82,7 @@ def migrate_db(engine, database_url: str):
 
             create_tools(session)
             create_t4c_instance_and_repositories(session)
-            create_github_instance(session)
+            create_git_instances(session)
             create_default_models(session)
             create_coffee_machine_model(session)
 
@@ -363,49 +359,86 @@ def create_t4c_instance_and_repositories(db):
     assert tool
 
     version = tools_crud.get_version_by_tool_id_version_name(
-        db, tool.id, "6.0.0"
+        db, tool.id, "7.0.0"
     )
     assert version
 
-    default_license_server = (
-        t4c_license_server_models.DatabaseT4CLicenseServer(
-            name="default",
-            usage_api="http://localhost:8086",
-            license_key="placeholder",
-        )
-    )
-    t4c_license_server_crud.create_t4c_license_server(
-        db, default_license_server
-    )
+    _create_local_t4c_environment(db, version)
+    _create_cluster_t4c_environment(db, version)
+    LOGGER.info("Initialized T4C instance and repositories")
 
-    default_instance = t4c_instance_models.DatabaseT4CInstance(
-        name="default",
+
+def _create_local_t4c_environment(
+    db: orm.Session, version: tools_models.DatabaseVersion
+):
+    local_license_server = t4c_license_server_models.DatabaseT4CLicenseServer(
+        name="Local license server",
+        usage_api="http://localhost:8086",
+        license_key="Placeholder",
+    )
+    t4c_license_server_crud.create_t4c_license_server(db, local_license_server)
+
+    local_instance = t4c_instance_models.DatabaseT4CInstance(
+        name="Local server",
         protocol=t4c_instance_models.Protocol.tcp,
         host="localhost",
         port=2036,
         cdo_port=12036,
         http_port=8080,
-        license_server=default_license_server,
+        license_server=local_license_server,
         rest_api="http://localhost:8081/api/v1.0",
         username="admin",
         password="password",
         version=version,
     )
-    t4c_instance_crud.create_t4c_instance(db, default_instance)
-    for t4c_model in t4c_crud.get_t4c_models(db):
-        t4c_model.repository = repositories_crud.create_t4c_repository(
-            db=db, repo_name=t4c_model.name, instance=default_instance
+    t4c_instance_crud.create_t4c_instance(db, local_instance)
+
+
+def _create_cluster_t4c_environment(
+    db: orm.Session, version: tools_models.DatabaseVersion
+):
+    cluster_license_server = (
+        t4c_license_server_models.DatabaseT4CLicenseServer(
+            name="Cluster-internal license server",
+            usage_api="http://dev-license-server.t4c.svc.cluster.local:8086",
+            license_key="Placeholder",
         )
-        db.commit()
-    LOGGER.info("Initialized T4C instance and repositories")
+    )
+    t4c_license_server_crud.create_t4c_license_server(
+        db, cluster_license_server
+    )
+
+    cluster_instance = t4c_instance_models.DatabaseT4CInstance(
+        name="Cluster-internal server",
+        protocol=t4c_instance_models.Protocol.ws,
+        host="dev-server-internal.t4c.svc.cluster.local",
+        port=2036,
+        cdo_port=12036,
+        http_port=8080,
+        license_server=cluster_license_server,
+        rest_api="http://dev-server-internal.t4c.svc.cluster.local:8080/api/v1.0",
+        username="admin",
+        password="password",
+        version=version,
+    )
+    t4c_instance_crud.create_t4c_instance(db, cluster_instance)
 
 
-def create_github_instance(db: orm.Session):
-    modelssources_crud.create_git_instance(
+def create_git_instances(db: orm.Session):
+    modelsources_crud.create_git_instance(
         db=db,
-        body=modelssources_models.PostGitInstance(
-            type=modelssources_models.GitType.GITHUB,
-            name="Github",
+        body=modelsources_models.PostGitInstance(
+            type=modelsources_models.GitType.GITLAB,
+            name="GitLab",
+            url="https://gitlab.com",
+            api_url="https://gitlab.com/api/v4",
+        ),
+    )
+    modelsources_crud.create_git_instance(
+        db=db,
+        body=modelsources_models.PostGitInstance(
+            type=modelsources_models.GitType.GITHUB,
+            name="GitHub",
             url="https://github.com",
             api_url="https://api.github.com",
         ),
