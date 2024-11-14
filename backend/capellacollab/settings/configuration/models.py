@@ -157,6 +157,10 @@ class FeedbackConfiguration(core_pydantic.BaseModelStrict):
         description="Email addresses to send feedback to.",
         examples=[[], ["test@example.com"]],
     )
+    hint_text: str = pydantic.Field(
+        default="Try to be specific. What happened? What were you doing?",
+        description="Text to display as a hint in the feedback form.",
+    )
 
 
 class BetaConfiguration(core_pydantic.BaseModelStrict):

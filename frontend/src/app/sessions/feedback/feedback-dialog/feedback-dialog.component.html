@@ -17,7 +17,7 @@
       How were your sessions?
     }
   </h1>
-  <div class="space-y-4">
+  <div class="space-y-2">
     <div class="flex justify-center space-x-4">
       @for (rating of ratings; track rating) {
         <button
@@ -50,28 +50,27 @@
       }
     </div>
 
-    @if (feedbackForm.get("rating")?.value) {
-      <mat-form-field class="!mb-2.5 w-full">
-        @if (feedbackForm.get("rating")?.value === "good") {
-          <mat-label>What was good?</mat-label>
-        } @else {
-          <mat-label>What can we do better?</mat-label>
-        }
-        <textarea
-          matInput
-          formControlName="feedbackText"
-          data-testid="feedback-text"
-        ></textarea>
-        @if (feedbackForm.controls.feedbackText.hasError("maxlength")) {
-          <mat-error>
-            Your feedback can't be longer than 500 characters.
-          </mat-error>
-        }
-        <mat-hint class="h-[42px]"
-          >Try to be specific. What happened? What were you doing?</mat-hint
-        >
-      </mat-form-field>
-    }
+    <mat-form-field class="w-full" subscriptSizing="dynamic">
+      @if (feedbackForm.get("rating")?.value === "good") {
+        <mat-label>What was good?</mat-label>
+      } @else {
+        <mat-label>What can we do better?</mat-label>
+      }
+
+      <textarea
+        matInput
+        formControlName="feedbackText"
+        data-testid="feedback-text"
+      ></textarea>
+      @if (feedbackForm.controls.feedbackText.hasError("maxlength")) {
+        <mat-error>
+          Your feedback can't be longer than 500 characters.
+        </mat-error>
+      }
+      <mat-hint
+        >{{ (feedbackWrapperService.feedbackConfig$ | async)?.hint_text }}
+      </mat-hint>
+    </mat-form-field>
 
     <mat-checkbox formControlName="shareContact">
       <span data-testid="share-user-information">
