@@ -17,38 +17,28 @@
     }
     @for (session of sortedResolvedHistory; track $index) {
       <button
-        class="flex w-full flex-row items-center justify-between gap-5 rounded border
-          bg-slate-100 p-2"
+        class="flex w-full items-center rounded border bg-slate-100 px-2 py-1"
         (click)="requestSession(session)"
       >
-        <div class="w-full flex-col items-center">
-          <div class="flex w-full flex-row items-center justify-between gap-2">
-            <div class="basis-1/4">
-              <span class="font-bold">Tool</span>
-              <div>{{ session.tool.name }}</div>
-            </div>
-            <div class="basis-1/4">
-              <span class="font-bold">Version</span>
-              <div>{{ session.version.name }}</div>
-            </div>
-            <div class="basis-1/2">
-              <span class="font-bold">Connection Method</span>
-              <div>{{ session.connectionMethod.name }}</div>
-            </div>
+        <div class="grow text-left">
+          <div class="font-bold">
+            {{ session.tool.name }} ({{ session.version.name }})
+            <span class="text-sm font-medium">
+              via
+              {{ session.connectionMethod.name }}
+            </span>
           </div>
+          <div class="text-xs">
+            Last requested
+            <app-relative-time [date]="session.lastTimeRequested" />
+          </div>
+        </div>
 
-          <div class="text-sm italic">
-            Last time requested on
-            {{ session.lastTimeRequested | date: "EE, dd MMM y HH:mm:ss" }}
-          </div>
-        </div>
-        <div class="flex justify-center">
-          @if (session.loading) {
-            <mat-spinner [diameter]="24"></mat-spinner>
-          } @else {
-            <mat-icon>start</mat-icon>
-          }
-        </div>
+        @if (session.loading) {
+          <mat-spinner class="mr-0.5" [diameter]="20"></mat-spinner>
+        } @else {
+          <mat-icon>keyboard_arrow_right</mat-icon>
+        }
       </button>
     }
   </div>

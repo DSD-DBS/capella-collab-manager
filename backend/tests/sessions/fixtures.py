@@ -7,10 +7,10 @@ import uuid
 import pytest
 from sqlalchemy import orm
 
-from capellacollab import __main__
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import injection as sessions_injection
 from capellacollab.sessions import models as sessions_models
+from capellacollab.sessions import models2 as sessions_models2
 from capellacollab.sessions.operators import k8s as k8s_operator
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
@@ -59,7 +59,13 @@ def fixture_test_session(
 @pytest.fixture(name="mock_session_injection")
 def fixture_mock_session_injection(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
-        sessions_injection, "get_last_seen", lambda _: "UNKNOWN"
+        sessions_injection,
+        "get_idle_state",
+        lambda _: sessions_models2.IdleState(
+            available=False,
+            unavailable_reason="Unavailable during testing",
+            terminate_after_minutes=90,
+        ),
     )
     monkeypatch.setattr(
         k8s_operator.KubernetesOperator,

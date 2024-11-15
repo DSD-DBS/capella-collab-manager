@@ -17,11 +17,17 @@ import {
   ConnectionMethod,
   ToolWrapperService,
 } from 'src/app/settings/core/tools-settings/tool.service';
+import { RelativeTimeComponent } from '../../../../general/relative-time/relative-time.component';
 
 @Component({
   selector: 'app-create-session-history',
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    RelativeTimeComponent,
+  ],
   templateUrl: './create-session-history.component.html',
   styles: ``,
 })

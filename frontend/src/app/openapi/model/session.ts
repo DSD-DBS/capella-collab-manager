@@ -14,6 +14,7 @@ import { BaseUser } from './base-user';
 import { SessionType } from './session-type';
 import { Message } from './message';
 import { ToolVersionWithTool } from './tool-version-with-tool';
+import { IdleState } from './idle-state';
 import { SessionPreparationState } from './session-preparation-state';
 import { ToolSessionConnectionMethod } from './tool-session-connection-method';
 import { SessionSharing } from './session-sharing';
@@ -28,7 +29,7 @@ export interface Session {
     preparation_state: SessionPreparationState;
     state: SessionState;
     warnings: Array<Message>;
-    last_seen: string;
+    idle_state: IdleState;
     connection_method_id: string;
     connection_method: ToolSessionConnectionMethod | null;
     shared_with: Array<SessionSharing>;

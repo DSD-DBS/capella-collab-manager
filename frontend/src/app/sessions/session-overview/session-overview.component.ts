@@ -25,8 +25,10 @@ import {
   MatRowDef,
   MatRow,
 } from '@angular/material/table';
+import { subMinutes } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Session, SessionsService } from 'src/app/openapi';
+import { RelativeTimeComponent } from '../../general/relative-time/relative-time.component';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
 
 @Component({
@@ -50,6 +52,7 @@ import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-se
     MatButton,
     DatePipe,
     NgxSkeletonLoaderModule,
+    RelativeTimeComponent,
   ],
 })
 export class SessionOverviewComponent implements OnInit {
@@ -129,4 +132,7 @@ export class SessionOverviewComponent implements OnInit {
 
     return false;
   }
+
+  protected readonly subMinutes = subMinutes;
+  protected readonly Date = Date;
 }

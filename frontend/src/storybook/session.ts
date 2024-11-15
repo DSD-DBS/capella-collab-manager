@@ -27,7 +27,12 @@ export function createPersistentSessionWithState(
   return {
     id: 'vfurvsrldxfwwsqdiqvnufonh',
     created_at: '2024-04-29T15:00:00Z',
-    last_seen: '2024-04-29T15:30:00Z',
+    idle_state: {
+      available: true,
+      terminate_after_minutes: 90,
+      idle_for_minutes: 30,
+      unavailable_reason: null,
+    },
     type: 'persistent',
     version: mockToolVersionWithTool,
     preparation_state: preparationState,

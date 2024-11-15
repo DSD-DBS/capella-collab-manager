@@ -291,6 +291,14 @@ class PipelineConfig(BaseConfig):
     )
 
 
+class SessionsConfig(BaseConfig):
+    timeout: int = pydantic.Field(
+        default=90,
+        description="The timeout (in minutes) for unused and idle sessions.",
+        examples=[60, 90],
+    )
+
+
 class DatabaseConfig(BaseConfig):
     url: str = pydantic.Field(
         default="postgresql://dev:dev@localhost:5432/dev",
@@ -396,4 +404,5 @@ class AppConfig(BaseConfig):
     logging: LoggingConfig = LoggingConfig()
     requests: RequestsConfig = RequestsConfig()
     pipelines: PipelineConfig = PipelineConfig()
+    sessions: SessionsConfig = SessionsConfig()
     smtp: SMTPConfig | None = SMTPConfig()

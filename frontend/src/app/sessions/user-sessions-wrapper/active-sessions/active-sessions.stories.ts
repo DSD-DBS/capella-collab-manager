@@ -8,6 +8,7 @@ import {
   componentWrapperDecorator,
   moduleMetadata,
 } from '@storybook/angular';
+import MockDate from 'mockdate';
 import { Observable, of } from 'rxjs';
 import {
   Session,
@@ -54,6 +55,9 @@ const meta: Meta<ActiveSessionsComponent> = {
       (story) => `<div class="w-full sm:w-[450px]">${story}</div>`,
     ),
   ],
+  beforeEach: () => {
+    MockDate.set(new Date('2024-05-01'));
+  },
 };
 
 export default meta;
@@ -161,6 +165,32 @@ export const SessionRunningState: Story = {
                 SessionState.Running,
               ),
             ),
+        },
+      ],
+    }),
+  ],
+};
+
+export const SessionTerminatingSoon: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService({
+              ...createPersistentSessionWithState(
+                SessionPreparationState.Completed,
+                SessionState.Running,
+              ),
+              idle_state: {
+                available: true,
+                terminate_after_minutes: 90,
+                idle_for_minutes: 80,
+                unavailable_reason: null,
+              },
+            }),
         },
       ],
     }),
@@ -310,6 +340,56 @@ export const SessionSharedWithUser: Story = {
               connection_method: {
                 ...mockHttpConnectionMethod,
                 sharing: { enabled: true },
+              },
+              shared_with: [
+                {
+                  user: {
+                    id: 1,
+                    name: 'user_1',
+                    role: 'administrator',
+                    email: null,
+                    idp_identifier: 'user_1',
+                    beta_tester: false,
+                  },
+                  created_at: '2024-04-29T15:00:00Z',
+                },
+                {
+                  user: {
+                    id: 2,
+                    name: 'user_2',
+                    role: 'user',
+                    email: null,
+                    idp_identifier: 'user_2',
+                    beta_tester: false,
+                  },
+                  created_at: '2024-04-29T15:00:00Z',
+                },
+              ],
+            }),
+        },
+      ],
+    }),
+  ],
+};
+export const SessionSharedWithUserTerminatingSoon: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: UserSessionService,
+          useFactory: () =>
+            new MockUserSessionService({
+              ...mockPersistentSession,
+              connection_method: {
+                ...mockHttpConnectionMethod,
+                sharing: { enabled: true },
+              },
+              idle_state: {
+                available: true,
+                terminate_after_minutes: 90,
+                idle_for_minutes: 80,
+                unavailable_reason: null,
               },
               shared_with: [
                 {
