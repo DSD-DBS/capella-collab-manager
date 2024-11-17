@@ -138,7 +138,7 @@ export class SessionService {
               text: 'Session is pending',
               info: [
                 'The session preparation is completed, but the session is pending.',
-                'Depending on the load and the infrastructure, it may take until all necessary information for the session is available.',
+                'It may take a while until all necessary information for the session is available.',
                 'Take a moment to make some tea and return shortly.',
               ].join(' '),
               css: 'warning',

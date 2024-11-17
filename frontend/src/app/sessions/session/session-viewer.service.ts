@@ -51,27 +51,27 @@ export class SessionViewerService {
       timer(0, 3000)
         .pipe(
           switchMap(() => this.sessionsService.getSession(sessionID)),
-          takeWhile(
+          map(
             (session) =>
-              !this.sessionService.beautifyState(
-                session.preparation_state,
-                session.state,
-              ).success,
-            true,
+              [
+                session,
+                this.sessionService.beautifyState(
+                  session.preparation_state,
+                  session.state,
+                ).success,
+              ] as [Session, boolean],
           ),
+          takeWhile(([_, success]) => !success, true),
         )
-        .subscribe((session) => {
-          if (
-            this.sessionService.beautifyState(
-              session.preparation_state,
-              session.state,
-            ).success
-          ) {
+        .subscribe(([session, success]) => {
+          if (success) {
             this.sessionsService
               .getSessionConnectionInformation(session.id)
               .subscribe((connectionInfo) => {
                 this._connectToSession(session, connectionInfo.payload);
               });
+          } else {
+            this.updateOrInsertSession(session);
           }
         }),
     );
@@ -81,7 +81,7 @@ export class SessionViewerService {
     session: Session,
     connectionInfo: SessionConnectionInformation,
   ): void {
-    const viewerSession = session as ViewerSession;
+    this.sessionService.setConnectionInformation(connectionInfo);
 
     if (!connectionInfo.redirect_url) {
       this.toastService.showError(
@@ -91,24 +91,11 @@ export class SessionViewerService {
       return;
     }
 
-    this.sessionService.setConnectionInformation(connectionInfo);
-    if (!this._sessions.value?.length) {
-      viewerSession.focused = true;
-    } else {
-      viewerSession.focused = false;
-    }
-    viewerSession.safeResourceURL =
-      this.domSanitizer.bypassSecurityTrustResourceUrl(
-        connectionInfo.redirect_url,
-      );
+    const safeResourceURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
+      connectionInfo.redirect_url,
+    );
 
-    if (session.connection_method?.type === 'guacamole') {
-      viewerSession.reloadToResize = true;
-    } else {
-      viewerSession.reloadToResize = false;
-    }
-
-    this.insertViewerSession(viewerSession);
+    this.updateOrInsertSession(session, safeResourceURL);
   }
 
   focusSession(session: Session): void {
@@ -188,10 +175,28 @@ export class SessionViewerService {
     }, 100);
   }
 
-  private insertViewerSession(viewerSession: ViewerSession): void {
+  private updateOrInsertSession(
+    session: Session,
+    safeResourceURL?: SafeResourceUrl,
+  ): void {
     const currentSessions = this._sessions.value;
 
+    const viewerSession: ViewerSession = {
+      ...session,
+      focused: false,
+      safeResourceURL: safeResourceURL,
+      reloadToResize: false,
+      fullscreen: false,
+      disabled: false,
+    };
+
+    if (session.connection_method?.type === 'guacamole') {
+      viewerSession.reloadToResize = true;
+    }
+
     if (currentSessions === undefined) {
+      viewerSession.focused = true;
+
       this._sessions.next([viewerSession]);
     } else {
       const index = currentSessions.findIndex(
@@ -200,7 +205,11 @@ export class SessionViewerService {
       if (index === -1) {
         this._sessions.next([...currentSessions, viewerSession]);
       } else {
-        currentSessions[index] = viewerSession;
+        currentSessions[index] = {
+          ...currentSessions[index],
+          ...session,
+          safeResourceURL,
+        };
         this._sessions.next(currentSessions);
       }
     }
