@@ -203,6 +203,7 @@ def test_feedback_is_updated(
                 "on_session_card": True,
                 "interval": {"enabled": True, "hours_between_prompt": 24},
                 "recipients": ["test@example.com"],
+                "hint_text": "test",
             }
         },
     )
@@ -218,6 +219,7 @@ def test_feedback_is_updated(
         "on_session_card": True,
         "interval": {"enabled": True, "hours_between_prompt": 24},
         "recipients": ["test@example.com"],
+        "hint_text": "test",
     }
 
 

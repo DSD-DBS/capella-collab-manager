@@ -37,5 +37,9 @@ export interface FeedbackConfigurationInput {
      * Email addresses to send feedback to.
      */
     recipients?: Array<string>;
+    /**
+     * Text to display as a hint in the feedback form.
+     */
+    hint_text?: string;
 }
 

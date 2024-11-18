@@ -6,6 +6,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { userEvent, within } from '@storybook/test';
 import { dialogWrapper } from 'src/storybook/decorators';
+import {
+  mockFeedbackConfig,
+  mockFeedbackWrapperServiceProvider,
+} from '../../../../storybook/feedback';
 import { mockPersistentSession } from '../../../../storybook/session';
 import { FeedbackDialogComponent } from './feedback-dialog.component';
 
@@ -27,6 +31,43 @@ export const NoSessions: Story = {
           provide: MAT_DIALOG_DATA,
           useValue: { sessions: [], trigger: 'storybook' },
         },
+      ],
+    }),
+  ],
+};
+
+export const ShortHint: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { sessions: [], trigger: 'storybook' },
+        },
+        mockFeedbackWrapperServiceProvider({
+          ...mockFeedbackConfig,
+          hint_text: 'Hint',
+        }),
+      ],
+    }),
+  ],
+};
+
+export const LongHint: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { sessions: [], trigger: 'storybook' },
+        },
+        mockFeedbackWrapperServiceProvider({
+          ...mockFeedbackConfig,
+          hint_text:
+            'This is a very long hint text that should be displayed in the feedback dialog.',
+        }),
       ],
     }),
   ],
@@ -68,7 +109,7 @@ export const OneSession: Story = {
   ],
 };
 
-export const OneSessionWithUserInformation: Story = {
+export const OneSessionWithoutUserInformation: Story = {
   args: {},
   decorators: [
     moduleMetadata({

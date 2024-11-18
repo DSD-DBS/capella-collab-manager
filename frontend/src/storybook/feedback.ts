@@ -16,6 +16,7 @@ export const mockFeedbackConfig: FeedbackConfigurationOutput = {
     hours_between_prompt: 1,
   },
   recipients: [],
+  hint_text: 'Hint text',
 };
 
 class MockFeedbackWrapperService implements Partial<FeedbackWrapperService> {

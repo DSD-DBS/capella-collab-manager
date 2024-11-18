@@ -95,6 +95,7 @@ feedback:
     recipients: # (1)!
         - test1@example.com
         - test2@example.com
+    hint_text: Try to be specific. What happened? What were you doing?
 ```
 
 Prompts that are associated with a session automatically include anonymized
