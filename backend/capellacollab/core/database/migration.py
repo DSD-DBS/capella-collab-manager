@@ -77,20 +77,19 @@ def migrate_db(engine, database_url: str):
             LOGGER.info("Database structure creation successful")
             command.stamp(alembic_cfg, "head")
             initialize_admin_user(session)
-            initialize_default_project(session)
-            initialize_coffee_machine_project(session)
-
             create_tools(session)
+
+            initialize_capellambse_test_project(session)
+            initialize_coffee_machine_project(session)
+            initialize_ife_project(session)
+
             create_t4c_instance_and_repositories(session)
             create_git_instances(session)
-            create_default_models(session)
-            create_coffee_machine_model(session)
 
     logging.info("Database migrations completed.")
 
 
 def initialize_admin_user(db: orm.Session):
-    LOGGER.info("Initialized adminuser %s", config.initial.admin)
     admin_user = users_crud.create_user(
         db=db,
         username=config.initial.admin,
@@ -98,26 +97,18 @@ def initialize_admin_user(db: orm.Session):
         role=users_models.Role.ADMIN,
     )
     events_crud.create_user_creation_event(db, admin_user)
+    LOGGER.info("Initialized admin user %s", config.initial.admin)
 
 
-def initialize_default_project(db: orm.Session):
-    LOGGER.info("Initialized project 'default'")
-    projects_crud.create_project(
+def initialize_capellambse_test_project(db: orm.Session):
+    project = projects_crud.create_project(
         db=db,
-        name="default",
-        description="",
+        name="Melody Model Test",
+        description="Group of test models of the capellambse Python library",
         visibility=project_models.Visibility.INTERNAL,
     )
-
-
-def initialize_coffee_machine_project(db: orm.Session):
-    LOGGER.info("Initialize project 'Coffee Machine'")
-    projects_crud.create_project(
-        db=db,
-        name="Coffee Machine",
-        description="",
-        visibility=project_models.Visibility.INTERNAL,
-    )
+    create_capellambse_test_models(db, project)
+    LOGGER.info("Initialized project '%s'", project.name)
 
 
 def get_eclipse_session_configuration() -> (
@@ -445,17 +436,16 @@ def create_git_instances(db: orm.Session):
     )
 
 
-def create_default_models(db: orm.Session):
+def create_capellambse_test_models(
+    db: orm.Session, project: project_models.DatabaseProject
+):
     capella_tool = tools_crud.get_tool_by_name(db, "Capella")
     assert capella_tool
-
-    default_project = projects_crud.get_project_by_slug(db, "default")
-    assert default_project
 
     for version in ["5.0.0", "5.2.0", "6.0.0"]:
         capella_model = toolmodels_crud.create_model(
             db=db,
-            project=default_project,
+            project=project,
             post_model=toolmodels_models.PostToolModel(
                 name=f"Melody Model Test {version}",
                 description="",
@@ -479,21 +469,28 @@ def create_default_models(db: orm.Session):
                 password="",
             ),
         )
-    LOGGER.info("Initialized default models")
 
 
-def create_coffee_machine_model(db: orm.Session):
+def initialize_coffee_machine_project(db: orm.Session):
+    project = projects_crud.create_project(
+        db=db,
+        name="Coffee Machine",
+        description="Contains the Capella Coffee Machine sample model",
+        visibility=project_models.Visibility.INTERNAL,
+    )
+    create_coffee_machine_model(db, project)
+    LOGGER.info("Initialized project '%s'", project.name)
+
+
+def create_coffee_machine_model(
+    db: orm.Session, project: project_models.DatabaseProject
+):
     capella_tool = tools_crud.get_tool_by_name(db, "Capella")
     assert capella_tool
 
-    coffee_machine_project = projects_crud.get_project_by_slug(
-        db, "coffee-machine"
-    )
-    assert coffee_machine_project
-
     capella_model = toolmodels_crud.create_model(
         db=db,
-        project=coffee_machine_project,
+        project=project,
         post_model=toolmodels_models.PostToolModel(
             name="Coffee Machine",
             description="An open source model of a coffee machine",
@@ -517,4 +514,51 @@ def create_coffee_machine_model(db: orm.Session):
             password="",
         ),
     )
-    LOGGER.info("Initialized coffee machine model")
+
+
+def initialize_ife_project(db: orm.Session):
+    project = projects_crud.create_project(
+        db=db,
+        name="In-Flight Entertainment",
+        description="Contains the Capella In-Flight Entertainment System sample model",
+        visibility=project_models.Visibility.INTERNAL,
+    )
+    create_ife_model(db, project)
+    LOGGER.info("Initialized project '%s'", project.name)
+
+
+def create_ife_model(db: orm.Session, project: project_models.DatabaseProject):
+    """Add the Capella In-Flight Entertainment project & model."""
+
+    capella_tool = tools_crud.get_tool_by_name(db, "Capella")
+    assert capella_tool
+
+    capella_model = toolmodels_crud.create_model(
+        db=db,
+        project=project,
+        post_model=toolmodels_models.PostToolModel(
+            name="In-Flight Entertainment",
+            description=(
+                "The Capella In-Flight Entertainment System sample model,"
+                " with some modifications"
+            ),
+            tool_id=capella_tool.id,
+        ),
+        tool=capella_tool,
+        version=tools_crud.get_version_by_tool_id_version_name(
+            db, capella_tool.id, "7.0.0"
+        ),
+        nature=tools_crud.get_nature_by_name(db, capella_tool, "model"),
+    )
+
+    git_crud.add_git_model_to_capellamodel(
+        db=db,
+        capella_model=capella_model,
+        post_git_model=git_models.PostGitModel(
+            path="https://github.com/DSD-DBS/Capella-IFE-sample",
+            entrypoint="In-Flight Entertainment System.aird",
+            revision="master",
+            username="",
+            password="",
+        ),
+    )
