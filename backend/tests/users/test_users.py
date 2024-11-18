@@ -142,3 +142,31 @@ def test_fail_update_own_user(
     assert (
         response.json()["detail"]["err_code"] == "CHANGES_NOT_ALLOWED_FOR_ROLE"
     )
+
+
+@pytest.mark.usefixtures("admin")
+def test_get_users(
+    client: testclient.TestClient,
+    executor_name: str,
+):
+    response = client.get("/api/v1/users")
+
+    assert response.status_code == 200
+    assert len(response.json()) >= 2
+    assert any(user["name"] == "admin" for user in response.json())
+    assert any(user["name"] == executor_name for user in response.json())
+
+
+@pytest.mark.usefixtures("admin")
+def test_fail_update_user_no_reason(
+    client: testclient.TestClient,
+    test_user: users_models.DatabaseUser,
+):
+    response = client.patch(
+        f"/api/v1/users/{test_user.id}", json={"role": users_models.Role.ADMIN}
+    )
+
+    assert response.status_code == 403
+    assert (
+        response.json()["detail"]["err_code"] == "ROLE_UPDATE_REQUIRES_REASON"
+    )
