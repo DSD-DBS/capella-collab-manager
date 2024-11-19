@@ -16,7 +16,7 @@ def test_get_alerts(client: TestClient, db: orm.Session, executor_name: str):
     users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.USER
     )
-    notices_crud.create_notice(
+    notice = notices_crud.create_notice(
         db,
         notices_models.CreateNoticeRequest(
             level=notices_models.NoticeLevel.INFO,
@@ -34,6 +34,23 @@ def test_get_alerts(client: TestClient, db: orm.Session, executor_name: str):
         "title": "test title",
         "message": "test message",
     }.items() <= response.json()[0].items()
+
+    single_response = client.get(f"/api/v1/notices/{notice.id}")
+    assert single_response.status_code == 200
+    assert {
+        "level": "info",
+        "title": "test title",
+        "message": "test message",
+    }.items() <= single_response.json().items()
+
+
+def test_get_missing_alert(
+    client: TestClient, db: orm.Session, executor_name: str
+):
+    response = client.get("/api/v1/notices/1")
+
+    assert response.status_code == 404
+    assert response.json()["detail"]["err_code"] == "ANNOUNCEMENT_NOT_FOUND"
 
 
 def test_create_alert2(
