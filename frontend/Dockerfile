@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-ARG BASE_IMAGE=node:18
+ARG BASE_IMAGE=node:22
 FROM $BASE_IMAGE as build
 
 USER root
