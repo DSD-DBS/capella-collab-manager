@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import { FloatingWindowManagerComponent } from './floating-window-manager/floating-window-manager.component';
 import { SessionViewerService } from './session-viewer.service';
 import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-window-manager.component';
@@ -40,7 +39,6 @@ export class SessionViewerComponent implements OnInit, OnDestroy {
   selectedWindowType?: string = undefined;
 
   constructor(
-    public userSessionService: UserSessionService,
     public sessionService: SessionService,
     public sessionViewerService: SessionViewerService,
     public fullscreenService: FullscreenService,

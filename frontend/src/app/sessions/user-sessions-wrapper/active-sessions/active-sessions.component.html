@@ -5,59 +5,45 @@
 
 <h1 class="text-2xl">Active Sessions</h1>
 
-@if ((sessions | async) === undefined) {
-  <ngx-skeleton-loader
-    appearance="circle"
-    [theme]="{
-      'border-radius': '5px',
-      height: '240px',
-      width: '432px',
-      border: '1px solid white',
-      margin: 0,
-      'max-width': '100%',
+<div class="flex flex-col gap-2">
+  <a
+    class="w-full"
+    mat-flat-button
+    color="primary"
+    type="submit"
+    routerLink="/session-viewer"
+    [queryParams]="{
+      'session-id': (selectedSessionIDs$ | async),
+      'window-manager': 'tiling',
     }"
-  ></ngx-skeleton-loader>
-} @else if ((sessions | async)?.length === 0) {
-  <div class="mat-card collab-card w-full">
-    <h2 class="mb-3 text-xl font-medium">No active sessions</h2>
-    <div class="text-sm">
-      There are no active sessions for your user in our system. <br />
+    [disabled]="!(selectedSessionIDs$ | async)?.length"
+  >
+    <div>
+      Open selected sessions
+      <span class="hidden sm:inline">in internal session viewer</span>
     </div>
-  </div>
-} @else if ((sessions | async)?.length !== 0) {
-  <div class="flex flex-col gap-2">
-    <div class="w-full rounded border bg-white p-2">
-      <h2><b>Internal Session Viewer</b></h2>
-      <mat-radio-group [(ngModel)]="selectedWindowManager">
-        <mat-radio-button value="tiling"
-          >Tiling window manager</mat-radio-button
-        >
-        <mat-radio-button value="floating">
-          Floating window manager
-        </mat-radio-button>
-      </mat-radio-group>
+    <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+  </a>
 
-      <a
-        class="w-full"
-        matInput
-        mat-stroked-button
-        color="primary"
-        type="submit"
-        routerLink="/session-viewer"
-        [queryParams]="{
-          'window-manager': selectedWindowManager,
-          'session-id': (selectedSessionIDs$ | async),
-        }"
-        [disabled]="!(selectedSessionIDs$ | async)?.length"
-      >
-        <div>
-          Open selected sessions
-          <span class="hidden sm:inline">in internal session viewer</span>
-        </div>
-        <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
-      </a>
+  @if ((sessions | async) === undefined) {
+    <ngx-skeleton-loader
+      appearance="circle"
+      [theme]="{
+        'border-radius': '5px',
+        height: '150px',
+        width: '100%',
+        border: '1px solid white',
+        margin: 0,
+      }"
+    ></ngx-skeleton-loader>
+  } @else if ((sessions | async)?.length === 0) {
+    <div class="rounded-md border px-3 py-2">
+      <h2 class="text-xl font-medium">No active sessions</h2>
+      <div class="text-sm">
+        There are no active sessions for your user in our system. <br />
+      </div>
     </div>
-
+  } @else if ((sessions | async)?.length !== 0) {
     @for (session of sessions | async; track session.id) {
       <div class="collab-card">
         <div class="flex h-12 items-center justify-between">
@@ -214,5 +200,5 @@
         </div>
       </div>
     }
-  </div>
-}
+  }
+</div>

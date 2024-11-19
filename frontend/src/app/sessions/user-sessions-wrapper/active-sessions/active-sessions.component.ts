@@ -11,7 +11,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -49,7 +48,6 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
     MatIconButton,
     MatTooltip,
     MatCheckboxModule,
-    MatRadioModule,
     FormsModule,
   ],
 })
@@ -65,8 +63,6 @@ export class ActiveSessionsComponent implements OnInit {
     private userWrapperService: OwnUserWrapperService,
     private dialog: MatDialog,
   ) {}
-
-  selectedWindowManager = 'tiling';
 
   sessions = new BehaviorSubject<SessionWithSelection[] | undefined>(undefined);
 
