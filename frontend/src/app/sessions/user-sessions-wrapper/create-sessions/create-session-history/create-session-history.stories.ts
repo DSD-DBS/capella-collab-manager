@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, StoryObj } from '@storybook/angular';
+import MockDate from 'mockdate';
 import {
   mockHttpConnectionMethod,
   mockCapellaTool,
@@ -21,6 +22,9 @@ const meta: Meta<CreateSessionHistoryComponent> = {
       },
       viewports: [],
     },
+  },
+  beforeEach: () => {
+    MockDate.set(new Date('2024-04-01'));
   },
 };
 

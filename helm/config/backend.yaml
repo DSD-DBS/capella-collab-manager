@@ -74,6 +74,9 @@ valkey:
 pipelines:
   timeout: {{ .Values.pipelines.timeout }}
 
+sessions:
+  timeout: {{ .Values.sessions.timeout }}
+
 initial:
   admin: "{{ .Values.database.backend.initialAdmin }}"
 

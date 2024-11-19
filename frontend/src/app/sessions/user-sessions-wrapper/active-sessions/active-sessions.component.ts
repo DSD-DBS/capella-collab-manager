@@ -6,20 +6,19 @@ import { NgClass, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButton, MatIconButton } from '@angular/material/button';
-import { MatCardContent } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
+import { addMinutes, differenceInMinutes } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { BehaviorSubject, map } from 'rxjs';
 import { Session } from 'src/app/openapi';
-import { BeautifyService } from 'src/app/services/beatify/beautify.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/session-sharing-dialog/session-sharing-dialog.component';
+import { RelativeTimeComponent } from '../../../general/relative-time/relative-time.component';
 import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
 import { FeedbackWrapperService } from '../../feedback/feedback.service';
 import {
@@ -41,14 +40,13 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
     RouterLink,
     MatIcon,
     NgClass,
-    MatCardContent,
-    MatProgressBar,
     MatButton,
     AsyncPipe,
     MatIconButton,
     MatTooltip,
     MatCheckboxModule,
     FormsModule,
+    RelativeTimeComponent,
   ],
 })
 export class ActiveSessionsComponent implements OnInit {
@@ -57,7 +55,6 @@ export class ActiveSessionsComponent implements OnInit {
 
   constructor(
     public sessionService: SessionService,
-    public beautifyService: BeautifyService,
     public userSessionService: UserSessionService,
     public feedbackService: FeedbackWrapperService,
     private userWrapperService: OwnUserWrapperService,
@@ -129,6 +126,29 @@ export class ActiveSessionsComponent implements OnInit {
   isSessionShared(session: Session): boolean {
     return session.owner.id != this.userWrapperService.user?.id;
   }
+
+  minutesUntilSessionTermination(session: Session): number | null {
+    if (session.idle_state.available) {
+      if (session.idle_state.idle_for_minutes === -1) {
+        // session was never connected to, use creation time
+        return (
+          session.idle_state.terminate_after_minutes -
+          differenceInMinutes(session.created_at, Date.now())
+        );
+      } else {
+        return (
+          session.idle_state.terminate_after_minutes -
+          session.idle_state.idle_for_minutes!
+        );
+      }
+    } else {
+      return null;
+    }
+  }
+
+  protected readonly Date = Date;
+  protected readonly addMinutes = addMinutes;
+  protected readonly differenceInMinutes = differenceInMinutes;
 }
 
 type SessionWithSelection = Session & { selected: boolean };

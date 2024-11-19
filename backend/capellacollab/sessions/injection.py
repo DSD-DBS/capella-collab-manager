@@ -7,38 +7,47 @@ import requests
 
 from capellacollab import core
 from capellacollab.config import config
+from capellacollab.sessions import models2 as sessions_models2
 
 log = logging.getLogger(__name__)
 
 
-def get_last_seen(sid: str) -> str:
-    """Return project session last seen activity"""
+def get_idle_state(sid: str) -> sessions_models2.IdleState:
     if core.LOCAL_DEVELOPMENT_MODE:
-        return "Disabled in development mode"
+        return sessions_models2.IdleState(
+            available=False,
+            unavailable_reason="Unavailable in local development mode",
+            terminate_after_minutes=config.sessions.timeout,
+        )
 
-    url = f"{config.prometheus.url}/api/v1/query?query=idletime_minutes"
     try:
         response = requests.get(
-            url,
+            f'{config.prometheus.url}/api/v1/query?query=idletime_minutes{{session_id="{sid}"}}',
             timeout=config.requests.timeout,
         )
         response.raise_for_status()
-
-        for session in response.json()["data"]["result"]:
-            if sid == session["metric"]["session_id"]:
-                return _get_last_seen(float(session["value"][1]))
-
-        log.debug("Couldn't find Prometheus metrics for session %s.", sid)
     except Exception:
-        log.exception("Exception during fetching of last seen.")
-    return "UNKNOWN"
+        log.exception("Exception during fetching of idle state.")
+        return sessions_models2.IdleState(
+            available=False,
+            unavailable_reason="Exception during fetching of idle state",
+            terminate_after_minutes=config.sessions.timeout,
+        )
 
+    if len(response.json()["data"]["result"]) > 0:
+        idle_for_minutes = int(
+            response.json()["data"]["result"][0]["value"][1]
+        )
+        return sessions_models2.IdleState(
+            available=True,
+            idle_for_minutes=idle_for_minutes,
+            terminate_after_minutes=config.sessions.timeout,
+        )
+    else:
+        log.debug("Couldn't find Prometheus metrics for session %s.", sid)
 
-def _get_last_seen(idletime: int | float) -> str:
-    if idletime == -1:
-        return "Never connected"
-
-    if (idlehours := idletime / 60) > 1:
-        return f"{round(idlehours, 2)} hrs ago"
-
-    return f"{idletime:.0f} mins ago"
+        return sessions_models2.IdleState(
+            available=False,
+            unavailable_reason="Unknown session",
+            terminate_after_minutes=config.sessions.timeout,
+        )

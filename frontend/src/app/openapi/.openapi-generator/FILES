@@ -82,6 +82,7 @@ model/http-connection-method-output.ts
 model/http-ports-input.ts
 model/http-ports-output.ts
 model/http-validation-error.ts
+model/idle-state.ts
 model/logging-configuration-input.ts
 model/logging-configuration-output.ts
 model/memory-resources-input.ts

@@ -46,19 +46,30 @@
   } @else if ((sessions | async)?.length !== 0) {
     @for (session of sessions | async; track session.id) {
       <div class="collab-card">
-        <div class="flex h-12 items-center justify-between">
+        <div class="ml-[-10px] flex min-h-12 items-center pb-2">
           <mat-checkbox
-            class="left-[-10px]"
             color="primary"
             [(ngModel)]="session.selected"
           ></mat-checkbox>
-          <b class="text-lg">
-            @if (isPersistentSession(session)) {
-              <h2>Persistent workspace session</h2>
-            } @else if (isReadonlySession(session)) {
-              <h2>Read-Only session</h2>
-            }
-          </b>
+          <div class="grow">
+            <h3 class="text-balance font-bold leading-tight">
+              {{ session.version.tool.name }} ({{ session.version.name }})
+              <span class="text-sm font-medium">
+                via
+                {{ session.connection_method?.name }}
+              </span>
+            </h3>
+            <div class="text-pretty text-xs">
+              @if (isPersistentSession(session)) {
+                Persistent workspace session created
+                <app-relative-time [date]="session.created_at" />
+              } @else if (isReadonlySession(session)) {
+                Read-Only session created
+                <app-relative-time [date]="session.created_at" />
+              }
+            </div>
+          </div>
+
           <div>
             @if ((feedbackService.feedbackConfig$ | async)?.on_session_card) {
               <button
@@ -76,7 +87,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="mb-1 space-y-1.5">
           <h3
             class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
             [ngClass]="
@@ -92,12 +103,14 @@
               ).info
             "
           >
-            <mat-icon>{{
-              sessionService.beautifyState(
-                session.preparation_state,
-                session.state
-              ).icon
-            }}</mat-icon>
+            <mat-icon
+              >{{
+                sessionService.beautifyState(
+                  session.preparation_state,
+                  session.state
+                ).icon
+              }}
+            </mat-icon>
             {{
               sessionService.beautifyState(
                 session.preparation_state,
@@ -105,39 +118,55 @@
               ).text
             }}
           </h3>
-          <p class="mt-1.5">
-            The session was created
-            {{ beautifyService.beatifyDate(session.created_at) }}
-          </p>
-          <div>
-            Tool: {{ session.version.tool.name }} ({{ session.version.name }})
-            <br />
-            Connection Method: {{ session.connection_method?.name }}
-          </div>
-          @if (session.shared_with.length > 0 && !isSessionShared(session)) {
-            <div>
-              Shared with:
-              @for (
-                sharedSession of session.shared_with;
-                track sharedSession.user.id
-              ) {
-                <a
-                  class="text-primary"
-                  [routerLink]="['/user/' + sharedSession.user.id]"
-                >
-                  {{ sharedSession.user.name }}
-                </a>
-                @if (!$last) {
-                  +
-                }
-              }
+          @let remainingMinutes = minutesUntilSessionTermination(session);
+          @if (remainingMinutes !== null && remainingMinutes < 30) {
+            <div
+              class="flex items-center gap-2 rounded border border-yellow-400 bg-yellow-300 px-2 py-1
+                shadow"
+            >
+              <mat-icon class="shrink-0">warning</mat-icon>
+              <div>
+                This session will automatically terminate
+                <app-relative-time
+                  [date]="addMinutes(Date.now(), remainingMinutes)"
+                />
+                if you do not interact with it.
+              </div>
             </div>
           }
-          @if (isSessionShared(session)) {
-            <div class="my-1 flex items-center gap-2 rounded border p-1 shadow">
-              <mat-icon>share</mat-icon>
+
+          @if (session.shared_with.length > 0 && !isSessionShared(session)) {
+            <div
+              class="flex items-center gap-2 rounded border px-2 py-1 shadow"
+            >
+              <mat-icon class="shrink-0">share</mat-icon>
               <div>
-                This session is shared with you and was created by <br />
+                You're sharing this session with
+                @for (
+                  sharedSession of session.shared_with;
+                  track sharedSession.user.id
+                ) {
+                  <a
+                    class="text-primary"
+                    [routerLink]="['/user/' + sharedSession.user.id]"
+                  >
+                    {{ sharedSession.user.name }}
+                  </a>
+                  @if (!$last) {
+                    +
+                  }
+                }
+              </div>
+            </div>
+          }
+
+          @if (isSessionShared(session)) {
+            <div
+              class="flex items-center gap-2 rounded border px-2 py-1 shadow"
+            >
+              <mat-icon class="shrink-0">share</mat-icon>
+              <div>
+                This session is shared with you and was created by
                 <a
                   class="text-primary"
                   [routerLink]="['/user/' + session.owner.id]"
@@ -154,7 +183,8 @@
               color="warn"
               (click)="openDeletionDialog([session])"
             >
-              Terminate <mat-icon>close</mat-icon>
+              Terminate
+              <mat-icon>close</mat-icon>
             </button>
           }
 
@@ -169,7 +199,8 @@
               ).success
             "
           >
-            Connect <mat-icon>open_in_browser</mat-icon>
+            Connect
+            <mat-icon>open_in_browser</mat-icon>
           </button>
 
           @if (!isSessionShared(session)) {
@@ -179,7 +210,8 @@
               (click)="openShareDialog(session)"
               [disabled]="!session.connection_method?.sharing?.enabled"
             >
-              Share <mat-icon> screen_share</mat-icon>
+              Share
+              <mat-icon> screen_share</mat-icon>
             </button>
           }
           @if (!isSessionShared(session)) {
@@ -194,7 +226,8 @@
                 ).success
               "
             >
-              File browser <mat-icon> insert_drive_file</mat-icon>
+              File browser
+              <mat-icon>insert_drive_file</mat-icon>
             </button>
           }
         </div>

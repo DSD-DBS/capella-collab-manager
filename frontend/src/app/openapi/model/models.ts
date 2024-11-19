@@ -61,6 +61,7 @@ export * from './http-ports-input';
 export * from './http-ports-output';
 export * from './http-validation-error';
 export * from './history-event';
+export * from './idle-state';
 export * from './logging-configuration-input';
 export * from './logging-configuration-output';
 export * from './memory-resources-input';
