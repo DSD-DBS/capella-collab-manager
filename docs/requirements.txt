@@ -3,3 +3,4 @@
 
 mkdocs-material>=9.4.0
 mkdocs-redirects
+mkdocs-glightbox

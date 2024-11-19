@@ -10,6 +10,23 @@ theme:
     - content.code.copy
     - content.code.annotate
     - navigation.tabs
+    - navigation.instant
+    - navigation.instant.prefetch
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
 
 watch:
   - custom_theme/
@@ -134,6 +151,8 @@ edit_uri: edit/master/docs/docs
 
 plugins:
   - search
+  - glightbox:
+       effect: fade
   - redirects:
       redirect_maps:
         'user/sessions/flows/t4c.md': 'user/tools/capella/teamforcapella/connect/index.md' # The flows section was removed
