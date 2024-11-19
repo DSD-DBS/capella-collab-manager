@@ -210,3 +210,33 @@ class ZIPFileResponse(fastapi.responses.StreamingResponse):
             }
         }
     }
+
+
+class MarkdownResponse(fastapi.responses.Response):
+    """Custom error class for Markdown responses.
+
+    To use the class as response class, pass the following parameters
+    to the fastapi route definition.
+
+    ```python
+    response_class=fastapi.responses.Response
+    responses=responses.MarkdownResponse.responses
+    ```
+
+    Don't use Markdown as response_class as this will also change the
+    media type for all error responses, see:
+    https://github.com/tiangolo/fastapi/discussions/6799
+
+    To return an Markdown response in the route, use:
+
+    ```python
+    return responses.MarkdownResponse(
+        content=b"# Hello World",
+    )
+    ```
+    """
+
+    media_type = "text/markdown"
+    responses: dict[int | str, dict[str, t.Any]] | None = {
+        200: {"content": {"text/markdown": {"schema": {"type": "string"}}}}
+    }

@@ -7,7 +7,7 @@ import slugify
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from capellacollab.projects import models as projects_model
+from capellacollab.projects import models as projects_models
 from capellacollab.tools import models as tools_models
 
 from . import models
@@ -68,7 +68,7 @@ def get_model_by_slugs(
         .options(orm.joinedload(models.DatabaseToolModel.project))
         .where(
             models.DatabaseToolModel.project.has(
-                projects_model.DatabaseProject.slug == project_slug
+                projects_models.DatabaseProject.slug == project_slug
             )
         )
         .where(models.DatabaseToolModel.slug == model_slug)
@@ -77,7 +77,7 @@ def get_model_by_slugs(
 
 def create_model(
     db: orm.Session,
-    project: projects_model.DatabaseProject,
+    project: projects_models.DatabaseProject,
     post_model: models.PostToolModel,
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion | None = None,
@@ -135,7 +135,7 @@ def update_model(
     name: str | None,
     version: tools_models.DatabaseVersion | None,
     nature: tools_models.DatabaseNature | None,
-    project: projects_model.DatabaseProject,
+    project: projects_models.DatabaseProject,
     display_order: int | None,
 ) -> models.DatabaseToolModel:
     model.version = version

@@ -14,6 +14,7 @@ import {
   PatchToolModel,
   PostToolModel,
   ProjectsModelsService,
+  SimpleToolModelWithoutProject,
   ToolModel,
 } from 'src/app/openapi';
 import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
@@ -157,6 +158,8 @@ export class ModelWrapperService {
   }
 }
 
-export function getPrimaryGitModel(model: ToolModel): GetGitModel | undefined {
+export function getPrimaryGitModel(
+  model: SimpleToolModelWithoutProject,
+): GetGitModel | undefined {
   return model.git_models?.find((gitModel) => gitModel.primary);
 }

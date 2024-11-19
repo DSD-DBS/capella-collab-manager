@@ -41,3 +41,13 @@ class InstancePrefixUnmatchedError(core_exceptions.BaseError):
             ),
             err_code="NO_GIT_INSTANCE_WITH_PREFIX_FOUND",
         )
+
+
+class RevisionNotFoundError(core_exceptions.BaseError):
+    def __init__(self, revision: str):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Revision not found in repository",
+            reason=f"The revision '{revision}' is not a valid branch or tag name.",
+            err_code="GIT_REVISION_NOT_FOUND",
+        )

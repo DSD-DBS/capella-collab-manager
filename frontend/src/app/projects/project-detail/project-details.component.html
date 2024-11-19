@@ -7,10 +7,22 @@
   <div class="flex max-w-full grow basis-1 flex-col gap-2">
     <div class="flex flex-wrap items-stretch gap-2">
       <app-project-metadata class="flex-1"></app-project-metadata>
-      <app-create-readonly-session class="flex"></app-create-readonly-session>
+      @if ((projectService.project$ | async)?.type !== "training") {
+        <app-create-readonly-session class="flex"></app-create-readonly-session>
+      }
+      @if (betaTestingService.isBetaTester$ | async) {
+        <app-create-provisioned-session
+          class="w-full"
+        ></app-create-provisioned-session>
+      }
     </div>
 
-    <app-model-overview></app-model-overview>
+    @if ((projectService.project$ | async)?.type === "training") {
+      <app-training-details></app-training-details>
+    } @else {
+      <app-model-overview></app-model-overview>
+    }
+    <app-project-tools></app-project-tools>
   </div>
   @if (projectUserService.verifyRole("manager")) {
     <app-project-user-settings></app-project-user-settings>

@@ -9,6 +9,7 @@ import typing as t
 from sqlalchemy import orm
 
 from capellacollab.core import models as core_models
+from capellacollab.projects import models as projects_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import k8s
 from capellacollab.sessions.operators import models as operators_models
@@ -52,6 +53,7 @@ class ConfigurationHookRequest:
     session_type: sessions_models.SessionType
     connection_method: tools_models.ToolSessionConnectionMethod
     provisioning: list[sessions_models.SessionProvisioningRequest]
+    project_scope: projects_models.DatabaseProject | None
     session_id: str
 
 
@@ -222,6 +224,17 @@ class HookRegistration(metaclass=abc.ABCMeta):
         """Hook to determine session configuration
 
         This hook is executed before the creation of persistent sessions.
+        """
+
+        return ConfigurationHookResult()
+
+    # pylint: disable=unused-argument
+    async def async_configuration_hook(
+        self, request: ConfigurationHookRequest
+    ) -> ConfigurationHookResult:
+        """Hook to determine session configuration
+
+        Same as configuration_hook, but async.
         """
 
         return ConfigurationHookResult()

@@ -11,6 +11,7 @@ from fastapi import testclient
 from sqlalchemy import orm
 
 from capellacollab.__main__ import app
+from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
@@ -251,3 +252,61 @@ def test_own_sessions(
     # Check that environment and config are not exposed
     assert "environment" not in response.json()[0]
     assert "config" not in response.json()[0]
+
+
+@pytest.mark.usefixtures("kubernetes", "user", "mock_session_injection")
+def test_request_session_connection_method_fallback(
+    client: testclient.TestClient,
+    tool_version: tools_models.DatabaseVersion,
+    tool: tools_models.DatabaseTool,
+):
+    """Test missing connection_method_id in the request
+
+    If the connection_method_id is missing in the request,
+    the first applicable connection method of the tool should be used.
+    """
+
+    response = client.post(
+        "/api/v1/sessions",
+        json={
+            "tool_id": tool.id,
+            "version_id": tool_version.id,
+            "session_type": "persistent",
+        },
+    )
+
+    assert response.status_code == 200
+    assert "id" in response.json()
+    assert (
+        response.json()["connection_method_id"]
+        == tool.config.connection.methods[0].id
+    )
+
+
+@pytest.mark.usefixtures("user")
+def test_project_slug_for_unauthorized_project(
+    client: testclient.TestClient,
+    tool_version: tools_models.DatabaseVersion,
+    tool: tools_models.DatabaseTool,
+    project: projects_models.DatabaseProject,
+):
+    """Test project_slug without permission in the request
+
+    Test that a request is declined if the user has no access to the project.
+    """
+
+    response = client.post(
+        "/api/v1/sessions",
+        json={
+            "tool_id": tool.id,
+            "version_id": tool_version.id,
+            "session_type": "persistent",
+            "project_slug": project.slug,
+        },
+    )
+
+    assert response.status_code == 403
+    assert (
+        response.json()["detail"]["err_code"]
+        == "REQUIRED_PROJECT_ROLE_NOT_MET"
+    )

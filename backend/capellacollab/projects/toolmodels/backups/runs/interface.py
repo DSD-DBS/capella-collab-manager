@@ -270,6 +270,7 @@ def _job_is_finished(status: models.PipelineRunStatus):
 
 
 def _refresh_and_trigger_pipeline_jobs():
+    log.debug("Starting to refresh and trigger pipeline jobs...")
     _schedule_pending_jobs()
     with database.SessionLocal() as db:
         for run in crud.get_scheduled_or_running_pipelines(db):
@@ -301,3 +302,4 @@ def _refresh_and_trigger_pipeline_jobs():
                 _terminate_job(run)
 
             db.commit()
+    log.debug("Finished refreshing and triggering of pipeline jobs.")

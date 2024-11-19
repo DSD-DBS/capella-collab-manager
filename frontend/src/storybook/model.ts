@@ -3,7 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { BehaviorSubject } from 'rxjs';
-import { SimpleToolModel, ToolModel } from 'src/app/openapi';
+import {
+  SimpleToolModel,
+  SimpleToolModelWithoutProject,
+  ToolModel,
+} from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { mockProject } from 'src/storybook/project';
 import { mockPrimaryGitModel } from './git';
@@ -34,6 +38,13 @@ export const mockSimpleToolModel: Readonly<SimpleToolModel> = {
   ...mockModel,
   project: mockProject,
 };
+export const mockSimpleToolModelWithoutProject: Readonly<SimpleToolModelWithoutProject> =
+  {
+    id: 1,
+    slug: 'in-flight-entertainment-system',
+    name: 'In-Flight Entertainment System',
+    git_models: [mockPrimaryGitModel],
+  };
 
 class MockModelWrapperService implements Partial<ModelWrapperService> {
   private _model = new BehaviorSubject<ToolModel | undefined>(undefined);

@@ -18,13 +18,6 @@ def fixture_verify(request: pytest.FixtureRequest) -> bool:
     return request.param
 
 
-@pytest.fixture(name="user2")
-def fixture_user2(db: orm.Session) -> users_models.DatabaseUser:
-    return users_crud.create_user(
-        db, "user2", "user2", None, users_models.Role.USER
-    )
-
-
 @pytest.fixture(name="admin2")
 def fixture_admin2(db: orm.Session) -> users_models.DatabaseUser:
     return users_crud.create_user(

@@ -16,6 +16,9 @@ from capellacollab.projects.users import models as project_users_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.toolmodels.models import DatabaseToolModel
+    from capellacollab.projects.tools.models import (
+        DatabaseProjectToolAssociation,
+    )
     from capellacollab.projects.users.models import ProjectUserAssociation
 
 
@@ -132,6 +135,9 @@ class DatabaseProject(database.Base):
         default_factory=list, back_populates="project"
     )
     models: orm.Mapped[list[DatabaseToolModel]] = orm.relationship(
+        default_factory=list, back_populates="project"
+    )
+    tools: orm.Mapped[list[DatabaseProjectToolAssociation]] = orm.relationship(
         default_factory=list, back_populates="project"
     )
 

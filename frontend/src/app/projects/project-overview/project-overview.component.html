@@ -19,14 +19,26 @@
   <div class="-mt-2 flex gap-3">
     <mat-chip-listbox formControlName="projectType">
       <mat-chip-option value="general">Projects</mat-chip-option>
-      <mat-chip-option value="training">Trainings</mat-chip-option>
+      <mat-chip-option value="training">
+        <div class="flex items-center gap-1">
+          <mat-icon inline>school</mat-icon><span>Trainings</span>
+        </div>
+      </mat-chip-option>
     </mat-chip-listbox>
 
     <div class="border-l"></div>
 
     <mat-chip-listbox formControlName="projectVisibility">
-      <mat-chip-option value="internal">Internal</mat-chip-option>
-      <mat-chip-option value="private">Private</mat-chip-option>
+      <mat-chip-option value="internal">
+        <div class="flex items-center gap-1">
+          <mat-icon inline>lock_open</mat-icon><span>Internal</span>
+        </div>
+      </mat-chip-option>
+      <mat-chip-option value="private">
+        <div class="flex items-center gap-1">
+          <mat-icon inline>lock</mat-icon><span>Private</span>
+        </div>
+      </mat-chip-option>
     </mat-chip-listbox>
   </div>
 </form>
@@ -56,9 +68,14 @@
           matRipple
           class="mat-card-overview collab-card !m-0"
         >
-          <div class="header flex-row">
+          <div class="header flex-row items-center gap-2">
             @if (project.type === "training") {
-              <mat-icon class="mr-1">school</mat-icon>
+              <mat-icon>school</mat-icon>
+            }
+            @if (project.visibility === "private") {
+              <mat-icon>lock</mat-icon>
+            } @else {
+              <mat-icon>lock_open</mat-icon>
             }
 
             <span class="">{{ project.name }}</span>
@@ -73,11 +90,8 @@
             </div>
             <div class="fixed bottom-2 right-2 text-right text-stone-500">
               <div>
-                {{
-                  project.visibility === "internal"
-                    ? "Internal project"
-                    : "Private project"
-                }}
+                {{ project.visibility === "internal" ? "Internal" : "Private" }}
+                {{ project.type === "training" ? "training" : "project" }}
               </div>
               <div>
                 {{ project.users.leads }} project admin(s),

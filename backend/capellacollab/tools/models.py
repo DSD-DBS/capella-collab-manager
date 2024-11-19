@@ -289,6 +289,13 @@ class ToolModelProvisioning(core_pydantic.BaseModel):
         ),
         examples=[None, 1],
     )
+    required: bool = pydantic.Field(
+        default=False,
+        description=(
+            "Specifies if a tool requires provisioning."
+            " If enabled and a session without provisioning is requested, it will be declined."
+        ),
+    )
 
 
 class PersistentWorkspaceSessionConfiguration(core_pydantic.BaseModel):

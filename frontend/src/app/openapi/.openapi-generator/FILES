@@ -14,9 +14,12 @@ api/projects-models-backups.service.ts
 api/projects-models-diagrams.service.ts
 api/projects-models-git.service.ts
 api/projects-models-model-complexity-badge.service.ts
+api/projects-models-provisioning.service.ts
+api/projects-models-readme.service.ts
 api/projects-models-restrictions.service.ts
 api/projects-models-t4-c.service.ts
 api/projects-models.service.ts
+api/projects-tools.service.ts
 api/projects.service.ts
 api/sessions.service.ts
 api/settings-modelsources-git.service.ts
@@ -95,6 +98,7 @@ model/minimal-tool-session-connection-method.ts
 model/minimal-tool-version-with-tool.ts
 model/minimal-tool.ts
 model/model-artifact-status.ts
+model/model-provisioning.ts
 model/models.ts
 model/navbar-configuration-input-external-links-inner.ts
 model/navbar-configuration-input.ts
@@ -126,12 +130,14 @@ model/pipeline-run.ts
 model/post-git-instance.ts
 model/post-git-model.ts
 model/post-project-request.ts
+model/post-project-tool-request.ts
 model/post-project-user.ts
 model/post-session-request.ts
 model/post-token.ts
 model/post-tool-model.ts
 model/post-user.ts
 model/project-status.ts
+model/project-tool.ts
 model/project-type.ts
 model/project-user-permission.ts
 model/project-user-role.ts
@@ -169,6 +175,7 @@ model/simple-t4-c-model-with-repository.ts
 model/simple-t4-c-model-with-tool-model.ts
 model/simple-t4-c-repository-with-integrations.ts
 model/simple-t4-c-repository.ts
+model/simple-tool-model-without-project.ts
 model/simple-tool-model.ts
 model/simple-tool-version.ts
 model/status-response.ts

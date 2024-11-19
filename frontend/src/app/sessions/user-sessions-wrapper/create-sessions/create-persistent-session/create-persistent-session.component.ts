@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { AsyncPipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -41,10 +41,8 @@ import { CreateSessionHistoryComponent } from '../create-session-history/create-
     MatFormField,
     MatLabel,
     MatSelect,
-    NgFor,
     MatOption,
     MatError,
-    NgIf,
     MatRadioGroup,
     MatRadioButton,
     MatButton,
@@ -151,7 +149,9 @@ export class CreatePersistentSessionComponent implements OnInit {
     return this.toolWrapperService.tools$.pipe(
       map((tools) =>
         tools?.filter(
-          (tool) => tool.config.persistent_workspaces.mounting_enabled,
+          (tool) =>
+            tool.config.persistent_workspaces.mounting_enabled &&
+            !tool.config.provisioning.required,
         ),
       ),
     );

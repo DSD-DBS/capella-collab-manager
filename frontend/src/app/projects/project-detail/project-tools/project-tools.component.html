@@ -1,0 +1,104 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="mb-2 flex h-9 items-center gap-2">
+  <h2 class="text-xl font-medium">Used Tools</h2>
+  @if (projectUserService.verifyRole("manager")) {
+    <mat-icon
+      [matTooltip]="
+        'The listed tools are used in the project.' +
+        ' Additional tools can be defined if they don’t have a model associated with them. They will be considered for session provisioning.'
+      "
+      >help</mat-icon
+    >
+    <div
+      [matTooltip]="
+        (projectWrapperService.project$ | async)?.is_archived
+          ? 'You cannot add a tool to an archived project'
+          : 'Add a new tool'
+      "
+    >
+      <a
+        mat-stroked-button
+        class="!ml-2"
+        [routerLink]="
+          (projectWrapperService.project$ | async)?.is_archived
+            ? null
+            : [
+                '/project',
+                (projectWrapperService.project$ | async)?.slug,
+                'tools',
+                'link',
+              ]
+        "
+        [disabled]="(projectWrapperService.project$ | async)?.is_archived"
+        ><div class="flex items-center">
+          <mat-icon id="add-icon">add</mat-icon>
+        </div>
+      </a>
+    </div>
+  }
+</div>
+
+<div class="collab-card">
+  @if ((projectToolsWrapperService.projectTools$ | async) === undefined) {
+    <div class="flex flex-col">
+      @for (card of [0, 1]; track card) {
+        <ngx-skeleton-loader
+          appearance="circle"
+          [theme]="{
+            'border-radius': '5px',
+            height: '54px',
+            width: '250px',
+            'max-width': '100%',
+            margin: '0',
+            border: '1px solid white',
+          }"
+        ></ngx-skeleton-loader>
+      }
+    </div>
+  } @else {
+    <table role="presentation" class="w-fit">
+      @for (
+        tool of projectToolsWrapperService.projectTools$ | async;
+        track tool.id
+      ) {
+        <tr class="h-[54px]">
+          <td class="align-middle">
+            <p class="flex justify-center">
+              <mat-icon class="mr-2">check</mat-icon>
+            </p>
+          </td>
+          <td>
+            <p>{{ tool.tool.name }} {{ tool.tool_version.name }}</p>
+          </td>
+          <td>
+            <div class="flex justify-center">
+              @if (tool.used_by.length) {
+                <mat-icon
+                  class="m-3"
+                  matTooltip="The tool was auto-added because it’s used by one of the models in the project."
+                  >info</mat-icon
+                >
+              } @else if (projectUserService.verifyRole("manager") && tool.id) {
+                <button
+                  mat-icon-button
+                  (click)="unlinkTool(tool)"
+                  color="warn"
+                  class="mb-1"
+                  matTooltip="Unlink the selected tool from the project"
+                >
+                  <mat-icon>link_off</mat-icon>
+                </button>
+              }
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        The project doesn't use any tools yet.
+      }
+    </table>
+  }
+</div>

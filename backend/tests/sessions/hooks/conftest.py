@@ -31,14 +31,15 @@ def fixture_configuration_hook_request(
         connection_method=tools_models.GuacamoleConnectionMethod(),
         provisioning=[],
         session_id="nxylxqbmfqwvswlqlcbsirvrt",
+        project_scope=None,
     )
 
 
 @pytest.fixture(name="post_session_creation_hook_request")
 def fixture_post_session_creation_hook_request(
+    db: orm.Session,
     session: sessions_models.DatabaseSession,
     user: users_models.DatabaseUser,
-    db: orm.Session,
 ) -> hooks_interface.PostSessionCreationHookRequest:
     return hooks_interface.PostSessionCreationHookRequest(
         session_id="test",
