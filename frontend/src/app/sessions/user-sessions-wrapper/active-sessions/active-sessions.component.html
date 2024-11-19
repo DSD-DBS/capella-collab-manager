@@ -45,6 +45,9 @@
     </div>
   } @else if ((sessions | async)?.length !== 0) {
     @for (session of sessions | async; track session.id) {
+      @let sessionState =
+        sessionService.beautifyState(session.preparation_state, session.state);
+
       <div class="collab-card">
         <div class="ml-[-10px] flex min-h-12 items-center pb-2">
           <mat-checkbox
@@ -90,33 +93,11 @@
         <div class="mb-1 space-y-1.5">
           <h3
             class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
-            [ngClass]="
-              sessionService.beautifyState(
-                session.preparation_state,
-                session.state
-              ).css
-            "
-            [matTooltip]="
-              sessionService.beautifyState(
-                session.preparation_state,
-                session.state
-              ).info
-            "
+            [ngClass]="sessionState.css"
+            [matTooltip]="sessionState.info"
           >
-            <mat-icon
-              >{{
-                sessionService.beautifyState(
-                  session.preparation_state,
-                  session.state
-                ).icon
-              }}
-            </mat-icon>
-            {{
-              sessionService.beautifyState(
-                session.preparation_state,
-                session.state
-              ).text
-            }}
+            <mat-icon>{{ sessionState.icon }}</mat-icon>
+            {{ sessionState.text }}
           </h3>
           @let remainingMinutes = minutesUntilSessionTermination(session);
           @if (remainingMinutes !== null && remainingMinutes < 30) {
@@ -192,12 +173,7 @@
             mat-button
             color="primary"
             (click)="openConnectDialog(session)"
-            [disabled]="
-              !sessionService.beautifyState(
-                session.preparation_state,
-                session.state
-              ).success
-            "
+            [disabled]="!sessionState.success"
           >
             Connect
             <mat-icon>open_in_browser</mat-icon>
@@ -219,12 +195,7 @@
               mat-button
               color="primary"
               (click)="uploadFileDialog(session)"
-              [disabled]="
-                !sessionService.beautifyState(
-                  session.preparation_state,
-                  session.state
-                ).success
-              "
+              [disabled]="!sessionState.success"
             >
               File browser
               <mat-icon>insert_drive_file</mat-icon>

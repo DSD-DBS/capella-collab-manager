@@ -263,7 +263,7 @@ synchronize-rsa-keys:
 	$(MAKE) -C backend import-rsa-key
 
 	rm /tmp/private.key
-	echo "Please restart the local backend to apply the new RSA key."
+	$(MAKE) -C backend trigger-reload;
 
 openapi:
 	$(MAKE) -C backend openapi

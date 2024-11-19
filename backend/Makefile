@@ -99,6 +99,9 @@ psql:
 
 clear:
 	echo "DROP DATABASE $(DB_NAME); CREATE DATABASE $(DB_NAME);" | docker run -e PGPASSWORD=$(DB_PASSWORD) -i --network host --entrypoint="psql" postgres:latest -h 'localhost' -p $(DB_PORT) -U '$(DB_USER)' postgres
+	$(MAKE) trigger-reload
+
+trigger-reload:
 	touch trigger_reload.yml && rm trigger_reload.yml
 
 load: clear
