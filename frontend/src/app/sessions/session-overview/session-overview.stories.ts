@@ -4,6 +4,7 @@
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { userEvent, within } from '@storybook/test';
+import MockDate from 'mockdate';
 import { of } from 'rxjs';
 import {
   Session,
@@ -22,6 +23,9 @@ import { SessionOverviewComponent } from './session-overview.component';
 const meta: Meta<SessionOverviewComponent> = {
   title: 'Session Components/Session Overview',
   component: SessionOverviewComponent,
+  beforeEach: () => {
+    MockDate.set(new Date('2024-05-01'));
+  },
 };
 
 export default meta;
