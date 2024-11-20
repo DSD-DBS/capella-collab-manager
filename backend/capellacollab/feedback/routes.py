@@ -9,12 +9,9 @@ import typing as t
 import fastapi
 from sqlalchemy import orm
 
-from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core import logging as log
 from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.settings.configuration import core as config_core
-from capellacollab.settings.configuration import models as config_models
 from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as users_models
 
@@ -23,21 +20,8 @@ from . import crud, models, util
 router = fastapi.APIRouter()
 
 
-@router.get(
-    "/configurations/feedback",
-    response_model=config_models.FeedbackConfiguration,
-)
-def get_feedback_configuration(
-    db: orm.Session = fastapi.Depends(database.get_db),
-):
-    feedback = config_core.get_global_configuration(db).feedback
-    if not (config.smtp and config.smtp.enabled):
-        util.disable_feedback(feedback)
-    return feedback
-
-
 @router.post(
-    "/feedback",
+    "",
     status_code=204,
     dependencies=[
         fastapi.Depends(

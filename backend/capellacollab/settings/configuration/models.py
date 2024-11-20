@@ -244,3 +244,23 @@ class GlobalConfiguration(ConfigurationBase):
 NAME_TO_MODEL_TYPE_MAPPING: dict[str, t.Type[ConfigurationBase]] = {
     model()._name: model for model in ConfigurationBase.__subclasses__()
 }
+
+
+class Metadata(core_pydantic.BaseModel):
+    version: str
+    privacy_policy_url: str | None
+    imprint_url: str | None
+    provider: str | None
+    authentication_provider: str | None
+    environment: str | None
+
+    host: str | None
+    port: str | None
+    protocol: str | None
+
+
+class UnifiedConfig(core_pydantic.BaseModel):
+    metadata: Metadata
+    feedback: FeedbackConfiguration
+    navbar: NavbarConfiguration
+    beta: BetaConfiguration

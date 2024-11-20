@@ -5,13 +5,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MetadataService } from 'src/app/general/metadata/metadata.service';
-import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { ConfigurationSettingsService } from 'src/app/settings/core/configuration-settings/configuration-settings.service';
 import { EditorComponent as EditorComponent_1 } from '../../../helpers/editor/editor.component';
-import { FeedbackWrapperService } from '../../../sessions/feedback/feedback.service';
+import { UnifiedConfigWrapperService } from '../../../services/unified-config-wrapper/unified-config-wrapper.service';
 
 @Component({
   selector: 'app-configuration-settings',
@@ -24,9 +22,7 @@ export class ConfigurationSettingsComponent implements OnInit {
   constructor(
     private configurationSettingsService: ConfigurationSettingsService,
     private toastService: ToastService,
-    private metadataService: MetadataService,
-    private navbarService: NavBarService,
-    private feedbackService: FeedbackWrapperService,
+    private unifiedConfigService: UnifiedConfigWrapperService,
   ) {}
 
   ngOnInit(): void {
@@ -52,9 +48,7 @@ export class ConfigurationSettingsComponent implements OnInit {
             'The global configuration has been successfully updated. The metadata will be reloaded.',
           );
           this.fetchConfiguration();
-          this.metadataService.loadBackendMetadata().subscribe();
-          this.navbarService.loadNavbarConfig().subscribe();
-          this.feedbackService.loadFeedbackConfig().subscribe();
+          this.unifiedConfigService.loadUnifiedConfig().subscribe();
         },
       });
   }

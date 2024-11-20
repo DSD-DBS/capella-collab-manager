@@ -6,8 +6,6 @@ api/events.service.ts
 api/feedback.service.ts
 api/health.service.ts
 api/integrations-pure-variants.service.ts
-api/metadata.service.ts
-api/navbar.service.ts
 api/notices.service.ts
 api/projects-events.service.ts
 api/projects-models-backups.service.ts
@@ -215,6 +213,7 @@ model/tool-version-with-tool.ts
 model/tool-version.ts
 model/tool.ts
 model/toolmodel-status.ts
+model/unified-config.ts
 model/user-metadata.ts
 model/user-token-with-password.ts
 model/user-token.ts

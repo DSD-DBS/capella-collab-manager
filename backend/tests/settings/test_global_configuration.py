@@ -128,9 +128,9 @@ def test_metadata_is_updated(
 
     assert response.status_code == 200
 
-    response = client.get("/api/v1/metadata")
+    response = client.get("/api/v1/settings/configurations/unified")
     assert response.status_code == 200
-    assert response.json()["environment"] == "test"
+    assert response.json()["metadata"]["environment"] == "test"
 
 
 @pytest.mark.usefixtures("admin")
@@ -154,9 +154,9 @@ def test_navbar_is_updated(
 
     assert response.status_code == 200
 
-    response = client.get("/api/v1/navbar")
+    response = client.get("/api/v1/settings/configurations/unified")
     assert response.status_code == 200
-    assert response.json()["external_links"][0] == {
+    assert response.json()["navbar"]["external_links"][0] == {
         "name": "Example",
         "href": "https://example.com",
         "role": "user",

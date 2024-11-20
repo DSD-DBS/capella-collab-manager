@@ -27,11 +27,12 @@
   @if (ownUserService.user?.role === "administrator") {
     <app-user-information></app-user-information>
   }
-  @if ((betaConfig$ | async)?.enabled) {
+  @let betaConfig = (unifiedConfigWrapperService.unifiedConfig$ | async)?.beta;
+  @if (betaConfig?.enabled) {
     @if (
       ownUserService.user?.role === "administrator" ||
       (ownUserService.user?.id === (userWrapperService.user$ | async)?.id &&
-        (betaConfig$ | async)?.allow_self_enrollment)
+        betaConfig?.allow_self_enrollment)
     ) {
       <app-beta-testing></app-beta-testing>
     }
