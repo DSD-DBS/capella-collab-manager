@@ -36,7 +36,7 @@ def get_idle_state(sid: str) -> sessions_models2.IdleState:
 
     if len(response.json()["data"]["result"]) > 0:
         idle_for_minutes = int(
-            response.json()["data"]["result"][0]["value"][1]
+            float(response.json()["data"]["result"][0]["value"][1])
         )
         return sessions_models2.IdleState(
             available=True,
