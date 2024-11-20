@@ -158,17 +158,6 @@
           }
         </div>
         <div class="flex flex-wrap justify-between">
-          @if (!isSessionShared(session)) {
-            <button
-              mat-button
-              color="warn"
-              (click)="openDeletionDialog([session])"
-            >
-              Terminate
-              <mat-icon>close</mat-icon>
-            </button>
-          }
-
           <button
             mat-button
             color="primary"
@@ -187,10 +176,9 @@
               [disabled]="!session.connection_method?.sharing?.enabled"
             >
               Share
-              <mat-icon> screen_share</mat-icon>
+              <mat-icon>screen_share</mat-icon>
             </button>
-          }
-          @if (!isSessionShared(session)) {
+
             <button
               mat-button
               color="primary"
@@ -199,6 +187,15 @@
             >
               File browser
               <mat-icon>insert_drive_file</mat-icon>
+            </button>
+
+            <button
+              mat-button
+              color="warn"
+              (click)="openDeletionDialog([session])"
+            >
+              Terminate
+              <mat-icon>close</mat-icon>
             </button>
           }
         </div>
