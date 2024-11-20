@@ -59,7 +59,7 @@ def test_get_idle_status():
                     "resultType": "vector",
                     "result": [
                         {
-                            "value": [1731683497.386, "12"],
+                            "value": [1731683497.386, "12.5"],
                         }
                     ],
                 },
