@@ -16,6 +16,7 @@ import { DateArg } from 'date-fns/types';
 export class RelativeTimeComponent {
   @Input() date?: DateArg<Date>;
   @Input() suffix = true;
+  @Input() showSeconds = true;
 
   get relativeTime(): string {
     if (!this.date) return '';
@@ -24,6 +25,7 @@ export class RelativeTimeComponent {
 
   get absoluteTime(): string {
     if (!this.date) return '';
-    return format(this.date, 'PPpp');
+    if (this.showSeconds) return format(this.date, 'PPpp');
+    return format(this.date, 'PPp');
   }
 }
