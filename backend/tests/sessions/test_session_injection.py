@@ -43,7 +43,7 @@ def test_get_idle_status_unknown_session():
 
         assert injection.get_idle_state("test") == models2_sessions.IdleState(
             available=False,
-            unavailable_reason="Unknown session",
+            unavailable_reason="No metrics found for session",
             terminate_after_minutes=90,
         )
 

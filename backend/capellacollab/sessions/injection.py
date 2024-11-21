@@ -48,6 +48,6 @@ def get_idle_state(sid: str) -> sessions_models2.IdleState:
 
         return sessions_models2.IdleState(
             available=False,
-            unavailable_reason="Unknown session",
+            unavailable_reason="No metrics found for session",
             terminate_after_minutes=config.sessions.timeout,
         )
