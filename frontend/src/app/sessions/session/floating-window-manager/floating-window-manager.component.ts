@@ -2,12 +2,15 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, fromEvent } from 'rxjs';
+import { ToastService } from '../../../helpers/toast/toast.service';
 import { SessionIFrameComponent } from '../session-iframe/session-iframe.component';
 import { SessionViewerService, ViewerSession } from '../session-viewer.service';
 
@@ -22,11 +25,16 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
     MatIcon,
     SessionIFrameComponent,
     AsyncPipe,
+    MatTooltip,
+    CdkCopyToClipboard,
   ],
 })
 @UntilDestroy()
 export class FloatingWindowManagerComponent implements OnInit {
-  constructor(public sessionViewerService: SessionViewerService) {}
+  constructor(
+    public sessionViewerService: SessionViewerService,
+    public toastService: ToastService,
+  ) {}
 
   ngOnInit(): void {
     fromEvent(window, 'resize')

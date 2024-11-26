@@ -28,6 +28,22 @@
         </div>
 
         <div class="flex items-center gap-2">
+          @if (session.t4cToken) {
+            <button
+              class="m-0 flex items-center"
+              matTooltip="Copy TeamForCapella token"
+              [cdkCopyToClipboard]="session.t4cToken"
+              (click)="
+                toastService.showSuccess(
+                  'T4C Token copied',
+                  'The T4C Token was copied to your clipboard.'
+                )
+              "
+            >
+              <mat-icon>key</mat-icon>
+            </button>
+          }
+
           <div class="flex items-center gap-1">
             @if (session.index !== 0) {
               <button class="m-0" (click)="onLeftArrowClick(session)">
