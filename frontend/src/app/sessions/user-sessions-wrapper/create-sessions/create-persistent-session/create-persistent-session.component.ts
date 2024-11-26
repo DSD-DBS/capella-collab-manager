@@ -34,7 +34,6 @@ import { CreateSessionHistoryComponent } from '../create-session-history/create-
   selector: 'app-create-persistent-session',
   templateUrl: './create-persistent-session.component.html',
   styleUrls: ['./create-persistent-session.component.css'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

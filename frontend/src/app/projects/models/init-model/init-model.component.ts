@@ -33,7 +33,6 @@ import { ProjectWrapperService } from '../../service/project.service';
 @Component({
   selector: 'app-init-model',
   templateUrl: './init-model.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

@@ -32,7 +32,6 @@ import { ProjectWrapperService } from '../service/project.service';
 @Component({
   selector: 'app-create-project',
   templateUrl: './create-project.component.html',
-  standalone: true,
   imports: [
     MatStepper,
     MatStep,

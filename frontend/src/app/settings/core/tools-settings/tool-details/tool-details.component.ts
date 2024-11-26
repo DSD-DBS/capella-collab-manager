@@ -23,7 +23,6 @@ import { ToolVersionComponent } from './tool-version/tool-version.component';
   selector: 'app-tool-details',
   templateUrl: './tool-details.component.html',
   styleUrls: ['./tool-details.component.css'],
-  standalone: true,
   imports: [
     ApiDocumentationComponent,
     EditorComponent_1,

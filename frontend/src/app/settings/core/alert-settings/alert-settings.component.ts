@@ -32,7 +32,6 @@ import {
   selector: 'app-alert-settings',
   templateUrl: './alert-settings.component.html',
   styleUrls: ['./alert-settings.component.css'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

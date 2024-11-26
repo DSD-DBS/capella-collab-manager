@@ -10,7 +10,6 @@ import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-404',
-  standalone: true,
   imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: './404.component.html',
   styles: '',

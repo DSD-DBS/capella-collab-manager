@@ -12,7 +12,6 @@ import { UserWrapperService } from '../../user-wrapper/user-wrapper.service';
 
 @Component({
   selector: 'app-beta-testing',
-  standalone: true,
   imports: [MatButton, AsyncPipe, MatIcon],
   templateUrl: './beta-testing.component.html',
 })

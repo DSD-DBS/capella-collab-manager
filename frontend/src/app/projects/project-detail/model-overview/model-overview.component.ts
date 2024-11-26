@@ -36,7 +36,6 @@ import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-co
 @Component({
   selector: 'app-model-overview',
   templateUrl: './model-overview.component.html',
-  standalone: true,
   imports: [
     MatAnchor,
     RouterLink,

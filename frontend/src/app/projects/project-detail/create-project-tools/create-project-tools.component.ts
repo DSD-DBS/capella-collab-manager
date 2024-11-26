@@ -27,7 +27,6 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
 
 @Component({
   selector: 'app-create-project-tools',
-  standalone: true,
   imports: [
     CommonModule,
     MatFormFieldModule,

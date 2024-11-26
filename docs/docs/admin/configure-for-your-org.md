@@ -76,12 +76,12 @@ for learning about any potential issues users may be facing.
 
 There are several different types of feedback prompt:
 
--   After a session: Prompt the user for feedback after they have manually
-    terminated a session.
--   On the session card: Show a feedback button on the session card.
--   In the footer: Show a feedback button in the footer.
--   Interval: Prompt the user for feedback after a certain number of hours have
-    passed since the last prompt.
+- After a session: Prompt the user for feedback after they have manually
+  terminated a session.
+- On the session card: Show a feedback button on the session card.
+- In the footer: Show a feedback button in the footer.
+- Interval: Prompt the user for feedback after a certain number of hours have
+  passed since the last prompt.
 
 ```yaml
 feedback:

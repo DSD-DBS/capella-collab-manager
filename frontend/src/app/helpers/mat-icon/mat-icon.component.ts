@@ -10,7 +10,6 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-mat-icon',
   templateUrl: './mat-icon.component.html',
   styleUrls: ['./mat-icon.component.css'],
-  standalone: true,
   imports: [MatIcon, NgClass],
 })
 export class MatIconComponent implements OnInit {

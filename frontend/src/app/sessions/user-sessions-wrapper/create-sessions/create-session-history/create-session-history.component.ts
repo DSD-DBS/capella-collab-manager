@@ -21,7 +21,6 @@ import { RelativeTimeComponent } from '../../../../general/relative-time/relativ
 
 @Component({
   selector: 'app-create-session-history',
-  standalone: true,
   imports: [
     CommonModule,
     MatIconModule,

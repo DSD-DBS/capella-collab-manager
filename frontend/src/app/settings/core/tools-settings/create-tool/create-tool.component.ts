@@ -14,7 +14,6 @@ import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor
 @Component({
   selector: 'app-create-tool',
   templateUrl: './create-tool.component.html',
-  standalone: true,
   imports: [EditorComponent_1, MatButton, MatIcon],
 })
 export class CreateToolComponent {

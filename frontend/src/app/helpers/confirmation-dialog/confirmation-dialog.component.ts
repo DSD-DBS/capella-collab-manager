@@ -18,7 +18,6 @@ export interface ConfirmationDialogData {
 @Component({
   selector: 'app-confirmation-dialog',
   templateUrl: './confirmation-dialog.component.html',
-  standalone: true,
   imports: [FormsModule, MatFormField, MatInput, MatButton],
 })
 export class ConfirmationDialogComponent implements OnInit {

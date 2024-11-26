@@ -16,7 +16,6 @@ import {
   selector: 'app-pipelines-overview',
   templateUrl: './pipelines-overview.component.html',
   styleUrls: ['./pipelines-overview.component.css'],
-  standalone: true,
   imports: [NgxSkeletonLoaderModule, MatIcon],
 })
 export class PipelinesOverviewComponent implements OnInit {

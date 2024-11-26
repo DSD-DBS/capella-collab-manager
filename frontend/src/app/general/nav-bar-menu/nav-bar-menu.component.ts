@@ -16,7 +16,6 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
   selector: 'app-nav-bar-menu',
   templateUrl: './nav-bar-menu.component.html',
   styleUrls: ['./nav-bar-menu.component.css'],
-  standalone: true,
   imports: [MatList, MatListItem, MatIcon, RouterLink, MatDivider, AsyncPipe],
 })
 export class NavBarMenuComponent {

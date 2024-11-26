@@ -27,13 +27,11 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CreateBackup, ProjectsModelsBackupsService } from 'src/app/openapi';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { MatIconComponent } from '../../../../helpers/mat-icon/mat-icon.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-create-backup',
   templateUrl: './create-backup.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -45,7 +43,6 @@ import { MatIconComponent } from '../../../../helpers/mat-icon/mat-icon.componen
     MatDialogClose,
     AsyncPipe,
     NgxSkeletonLoaderModule,
-    MatIconComponent,
   ],
 })
 export class CreateBackupComponent implements OnInit {

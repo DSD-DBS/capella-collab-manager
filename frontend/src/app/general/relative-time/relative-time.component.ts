@@ -9,7 +9,6 @@ import { DateArg } from 'date-fns/types';
 
 @Component({
   selector: 'app-relative-time',
-  standalone: true,
   imports: [MatTooltip],
   templateUrl: './relative-time.component.html',
 })

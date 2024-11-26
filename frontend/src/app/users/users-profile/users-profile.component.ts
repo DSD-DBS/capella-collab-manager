@@ -4,7 +4,6 @@
  */
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
@@ -19,9 +18,7 @@ import { UserWorkspacesComponent } from './user-workspaces/user-workspaces.compo
 @Component({
   selector: 'app-users-profile',
   templateUrl: './users-profile.component.html',
-  standalone: true,
   imports: [
-    RouterLink,
     DatePipe,
     CommonProjectsComponent,
     UserInformationComponent,

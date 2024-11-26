@@ -28,7 +28,6 @@ import { ManageT4CModelComponent } from '../model-source/t4c/manage-t4c-model/ma
 @Component({
   selector: 'app-create-model',
   templateUrl: './create-model.component.html',
-  standalone: true,
   imports: [
     MatStepper,
     NgClass,

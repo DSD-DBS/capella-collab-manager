@@ -30,7 +30,6 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-se
 @Component({
   selector: 'app-edit-git-settings',
   templateUrl: './edit-git-settings.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

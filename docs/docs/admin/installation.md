@@ -109,24 +109,24 @@ of memory.
 The Collaboration Manager requires two different namespaces. For security and
 overview reasons, they are separated:
 
--   Capella Collaboration Manager control namespace: In this namespace, we run
-    the core application. It has full control over the sessions namespace and
-    consists of the following services:
+- Capella Collaboration Manager control namespace: In this namespace, we run
+  the core application. It has full control over the sessions namespace and
+  consists of the following services:
 
-    -   Frontend
-    -   Backend
-    -   Documentation
-    -   Guacamole
-    -   Prometheus
-    -   Grafana (Loki), can be disabled in the `values.yaml`
+    - Frontend
+    - Backend
+    - Documentation
+    - Guacamole
+    - Prometheus
+    - Grafana (Loki), can be disabled in the `values.yaml`
 
--   Sessions namespace. The namespace is controlled by the control namespace
-    and you won't need to touch it. In the session namespace, the following
-    services run:
-    -   Storage for persistent workspaces
-    -   Storage for Jupyter file-shares
-    -   Pipeline jobs for TeamForCapella to Git synchronization
-    -   Session containers (Capella, Papyrus, Jupyter, pure::variants)
+- Sessions namespace. The namespace is controlled by the control namespace and
+  you won't need to touch it. In the session namespace, the following services
+  run:
+    - Storage for persistent workspaces
+    - Storage for Jupyter file-shares
+    - Pipeline jobs for TeamForCapella to Git synchronization
+    - Session containers (Capella, Papyrus, Jupyter, pure::variants)
 
 ---
 
@@ -264,8 +264,8 @@ If a value is false, check the backend logs for more information.
     Capella Docker images documentation (Only the preparation section is
     needed):
 
-    -   [`capella/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/base/#preparation)
-    -   [`t4c/client/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation)
+    - [`capella/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/base/#preparation)
+    - [`t4c/client/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation)
 
 1.  Set the following environment variables:
 

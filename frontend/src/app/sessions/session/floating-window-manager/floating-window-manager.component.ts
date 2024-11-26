@@ -17,7 +17,6 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
 @Component({
   selector: 'app-floating-window-manager',
   templateUrl: './floating-window-manager.component.html',
-  standalone: true,
   imports: [
     CdkDrag,
     NgClass,

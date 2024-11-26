@@ -35,7 +35,6 @@ import { DisplayValueComponent } from '../../helpers/display-value/display-value
   selector: 'app-token-settings',
   templateUrl: './basic-auth-token.component.html',
   styleUrls: ['./basic-auth-token.component.css'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

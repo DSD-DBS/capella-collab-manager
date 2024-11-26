@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -34,7 +33,6 @@ import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-se
 @Component({
   selector: 'app-session-overview',
   templateUrl: './session-overview.component.html',
-  standalone: true,
   imports: [
     MatCheckbox,
     FormsModule,
@@ -50,7 +48,6 @@ import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-se
     MatRowDef,
     MatRow,
     MatButton,
-    DatePipe,
     NgxSkeletonLoaderModule,
     RelativeTimeComponent,
   ],

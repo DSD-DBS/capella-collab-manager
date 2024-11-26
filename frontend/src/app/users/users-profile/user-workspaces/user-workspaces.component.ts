@@ -10,7 +10,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { BehaviorSubject, of, switchMap } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
-import { DisplayValueComponent } from 'src/app/helpers/display-value/display-value.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { User, UsersService, Workspace } from 'src/app/openapi';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
@@ -18,14 +17,7 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
 
 @Component({
   selector: 'app-user-workspaces',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatDividerModule,
-    DisplayValueComponent,
-    MatButtonModule,
-    MatIconModule,
-  ],
+  imports: [CommonModule, MatDividerModule, MatButtonModule, MatIconModule],
   templateUrl: './user-workspaces.component.html',
   styles: `
     :host {

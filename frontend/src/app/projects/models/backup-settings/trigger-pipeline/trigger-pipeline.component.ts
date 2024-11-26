@@ -5,9 +5,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatIconAnchor, MatButton, MatAnchor } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatRipple } from '@angular/material/core';
+import { MatButton } from '@angular/material/button';
 import {
   MatDialog,
   MatDialogRef,
@@ -29,16 +27,10 @@ import { PipelineWrapperService } from '../service/pipeline.service';
 @Component({
   selector: 'app-trigger-pipeline',
   templateUrl: './trigger-pipeline.component.html',
-  standalone: true,
   imports: [
-    MatIconAnchor,
     MatIcon,
-    MatRipple,
     ReactiveFormsModule,
-    MatCheckbox,
     MatButton,
-    MatAnchor,
-
     AsyncPipe,
     NgxSkeletonLoaderModule,
   ],

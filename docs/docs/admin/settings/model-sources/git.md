@@ -55,8 +55,8 @@ Models are matched with instances with a longest prefix match of the URL.
 
 Let's construct a short example. We have two Git instances:
 
--   Instance one with the URL `https://git.example.com/`
--   Instance two with the URL `https://git.example.com/test`
+- Instance one with the URL `https://git.example.com/`
+- Instance two with the URL `https://git.example.com/test`
 
 A model with the path `https://git.example.com/test/test2.git` is now
 associated with instance two. A model with the path

@@ -9,7 +9,6 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-api-documentation',
   templateUrl: './api-documentation.component.html',
-  standalone: true,
   imports: [MatIcon],
 })
 export class ApiDocumentationComponent {

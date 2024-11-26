@@ -12,7 +12,6 @@ import {
 } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRipple } from '@angular/material/core';
-import { MatDivider } from '@angular/material/divider';
 import {
   MatFormField,
   MatLabel,
@@ -30,7 +29,6 @@ import { ProjectWrapperService } from '../service/project.service';
 @Component({
   selector: 'app-project-overview',
   templateUrl: './project-overview.component.html',
-  standalone: true,
   imports: [
     RouterLink,
     MatRipple,
@@ -46,7 +44,6 @@ import { ProjectWrapperService } from '../service/project.service';
     ReactiveFormsModule,
     FormsModule,
     MatChipsModule,
-    MatDivider,
   ],
 })
 export class ProjectOverviewComponent implements OnInit {

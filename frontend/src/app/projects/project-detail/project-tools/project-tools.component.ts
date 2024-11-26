@@ -20,7 +20,6 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
 @UntilDestroy()
 @Component({
   selector: 'app-project-tools',
-  standalone: true,
   imports: [
     CommonModule,
     RouterLink,

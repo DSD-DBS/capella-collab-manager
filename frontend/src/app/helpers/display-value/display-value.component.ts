@@ -12,7 +12,6 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
 @Component({
   selector: 'app-display-value',
   templateUrl: './display-value.component.html',
-  standalone: true,
   imports: [NgClass, MatTooltip, MatIcon, CdkCopyToClipboard],
 })
 export class DisplayValueComponent {

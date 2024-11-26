@@ -11,7 +11,6 @@ import { T4CLicenseServerWrapperService } from '../../../../services/settings/t4
   selector: 'app-t4c-settings-wrapper',
   templateUrl: './t4c-settings-wrapper.component.html',
   styleUrls: ['./t4c-settings-wrapper.component.css'],
-  standalone: true,
   imports: [RouterOutlet],
 })
 export class T4CSettingsWrapperComponent implements OnInit, OnDestroy {

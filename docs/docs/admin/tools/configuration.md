@@ -10,20 +10,20 @@
 To add a tool to the Collaboration Manager, it must fulfill the following
 requirements:
 
--   The tool must run in a single Docker container (no sidecar containers).
--   The Docker container has to run with a non-root user.
--   The Docker image has to be deployed to a Docker registry, which is
-    accessible from the Collaboration Manager server environment.
--   The tool must be exposed via RDP or HTTP/HTTPS.
--   If the tool is exposed via RDP, it must accept basic authentication. For
-    HTTP-based tools, authentication is handled automatically via
-    pre-authentication.
--   The container must expose a `/metrics` endpoint with an `idletime_minutes`
-    gauge metric in the OpenMetrics format, which returns the time in minutes
-    since the last user interaction. The metric is used to determine if the
-    session is idle and can be terminated.
--   If you want to capture session logs and make them accessible via Grafana
-    Loki, they have to be written to disk (stdout/stderr are not persisted).
+- The tool must run in a single Docker container (no sidecar containers).
+- The Docker container has to run with a non-root user.
+- The Docker image has to be deployed to a Docker registry, which is accessible
+  from the Collaboration Manager server environment.
+- The tool must be exposed via RDP or HTTP/HTTPS.
+- If the tool is exposed via RDP, it must accept basic authentication. For
+  HTTP-based tools, authentication is handled automatically via
+  pre-authentication.
+- The container must expose a `/metrics` endpoint with an `idletime_minutes`
+  gauge metric in the OpenMetrics format, which returns the time in minutes
+  since the last user interaction. The metric is used to determine if the
+  session is idle and can be terminated.
+- If you want to capture session logs and make them accessible via Grafana
+  Loki, they have to be written to disk (stdout/stderr are not persisted).
 
 ## YAML Configuration
 

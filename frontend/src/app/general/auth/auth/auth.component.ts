@@ -17,7 +17,6 @@ import { WelcomeComponent } from '../../welcome/welcome.component';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  standalone: true,
   imports: [
     MatButton,
     AsyncPipe,

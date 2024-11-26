@@ -29,7 +29,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   selector: 'app-model-restrictions',
   templateUrl: './model-restrictions.component.html',
   styleUrls: ['./model-restrictions.component.css'],
-  standalone: true,
   imports: [
     NgIf,
     FormsModule,

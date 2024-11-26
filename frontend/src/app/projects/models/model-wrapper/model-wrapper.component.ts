@@ -17,7 +17,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   selector: 'app-model-wrapper',
   templateUrl: './model-wrapper.component.html',
   styleUrls: ['./model-wrapper.component.css'],
-  standalone: true,
   imports: [NgIf, RouterOutlet, AsyncPipe],
 })
 export class ModelWrapperComponent implements OnInit, OnDestroy {

@@ -31,7 +31,6 @@ import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.serv
 @Component({
   selector: 'create-readonly-session-dialog',
   templateUrl: './create-readonly-session-dialog.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

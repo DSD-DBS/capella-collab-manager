@@ -48,7 +48,6 @@ import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model
 @Component({
   selector: 'app-model-diagram-dialog',
   templateUrl: './model-diagram-dialog.component.html',
-  standalone: true,
   imports: [
     ModelDiagramCodeBlockComponent,
     MatFormField,

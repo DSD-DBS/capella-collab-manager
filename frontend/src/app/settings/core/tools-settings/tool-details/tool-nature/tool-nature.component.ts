@@ -23,7 +23,6 @@ import { ToolWrapperService, CreateToolNature } from '../../tool.service';
   selector: 'app-tool-nature',
   templateUrl: './tool-nature.component.html',
   styleUrls: ['./tool-nature.component.css'],
-  standalone: true,
   imports: [
     ApiDocumentationComponent,
     MatTabGroup,

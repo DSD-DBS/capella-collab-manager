@@ -43,7 +43,6 @@ import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-r
   selector: 'app-t4c-instance-settings',
   templateUrl: './t4c-instance-settings.component.html',
   styleUrls: ['./t4c-instance-settings.component.css'],
-  standalone: true,
   imports: [
     MatButton,
     MatIcon,

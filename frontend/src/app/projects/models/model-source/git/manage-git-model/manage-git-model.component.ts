@@ -69,7 +69,6 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-se
 @Component({
   selector: 'app-manage-git-model',
   templateUrl: './manage-git-model.component.html',
-  standalone: true,
   imports: [
     NgIf,
     FormsModule,

@@ -16,7 +16,6 @@ import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-model-complexity-badge',
-  standalone: true,
   imports: [
     CommonModule,
     MatIconModule,

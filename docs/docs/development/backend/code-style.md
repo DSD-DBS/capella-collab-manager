@@ -8,26 +8,26 @@
 We base our code style on a modified version of the [Google style guide] for
 Python code. The key differences are:
 
--   **Docstrings**: The [Numpy style guide] applies here.
+- **Docstrings**: The [Numpy style guide] applies here.
 
     When writing docstrings for functions, use the imperative style, as per
     [PEP-257]. For example, write "Do X and Y" instead of "Does X and Y".
 
--   **Overridden methods**: If the documentation did not change from the base
-    class (i.e. the base class' method's docstring still applies without
-    modification), do not add a short docstring á la "See base class". This
-    lets automated tools pick up the full base class docstring instead, and is
-    therefore more useful in IDEs etc.
+- **Overridden methods**: If the documentation did not change from the base
+  class (i.e. the base class' method's docstring still applies without
+  modification), do not add a short docstring á la "See base class". This lets
+  automated tools pick up the full base class docstring instead, and is
+  therefore more useful in IDEs etc.
 
--   **Linting**: Use [pylint] for static code analysis, and [mypy] for static
-    type checking.
+- **Linting**: Use [pylint] for static code analysis, and [mypy] for static
+  type checking.
 
--   **Formatting**: Use [black] as code auto-formatter. The maximum line length
-    is 79, as per [PEP-8]. This setting should be automatically picked up from
-    the `pyproject.toml` file. The reason for the shorter line length is that
-    it avoids wrapping and overflows in side-by-side split views (e.g. diffs)
-    if there's also information displayed to the side of it (e.g. a tree view
-    of the modified files).
+- **Formatting**: Use [black] as code auto-formatter. The maximum line length
+  is 79, as per [PEP-8]. This setting should be automatically picked up from
+  the `pyproject.toml` file. The reason for the shorter line length is that it
+  avoids wrapping and overflows in side-by-side split views (e.g. diffs) if
+  there's also information displayed to the side of it (e.g. a tree view of the
+  modified files).
 
     Be aware of the different line length of 72 for docstrings. We currently do
     not have a satisfactory solution to automatically apply or enforce this.
@@ -40,33 +40,31 @@ Python code. The key differences are:
     Use [isort] for automatic sorting of imports. Its settings should
     automatically be picked up from the `pyproject.toml` file as well.
 
--   **Typing**: We do not make an exception for `typing` imports. Instead of
-    writing `from typing import SomeName`, use `import typing as t` and access
-    typing related classes like `t.TypedDict`.
+- **Typing**: We do not make an exception for `typing` imports. Instead of
+  writing `from typing import SomeName`, use `import typing as t` and access
+  typing related classes like `t.TypedDict`.
 
     Use the new syntax and classes for typing introduced with Python 3.10.
 
-    -   Instead of `t.Tuple`, `t.List` etc. use the builtin classes `tuple`,
-        `list` etc.
-    -   For classes that are not builtin (e.g. `Iterable`),
-        `import collections.abc as cabc` and then use them like
-        `cabc.Iterable`.
-    -   Use [PEP-604]-style unions, e.g. `int | float` instead of
-        `t.Union[int, float]`.
-    -   Use `... | None` (with `None` always as the last union member) instead
-        of `t.Optional[...]` and always explicitly annotate where `None` is
-        possible.
+    - Instead of `t.Tuple`, `t.List` etc. use the builtin classes `tuple`,
+      `list` etc.
+    - For classes that are not builtin (e.g. `Iterable`),
+      `import collections.abc as cabc` and then use them like `cabc.Iterable`.
+    - Use [PEP-604]-style unions, e.g. `int | float` instead of
+      `t.Union[int, float]`.
+    - Use `... | None` (with `None` always as the last union member) instead of
+      `t.Optional[...]` and always explicitly annotate where `None` is
+      possible.
 
--   **Python style rules**: For conflicting parts, the [black] code style wins.
-    If you have set up `black` correctly, you don't need to worry about this
-    though :)
--   When working with `dict`s, consider using `t.TypedDict` instead of a more
-    generic `dict[str, float|int|str]`-like annotation where possible, as the
-    latter is much less precise (often requiring additional `assert`s or
-    `isinstance` checks to pass) and can grow unwieldy very quickly.
--   Prefer `t.NamedTuple` over `collections.namedtuple`, because the former
-    uses a more convenient `class ...:` syntax and also supports type
-    annotations.
+- **Python style rules**: For conflicting parts, the [black] code style wins.
+  If you have set up `black` correctly, you don't need to worry about this
+  though :)
+- When working with `dict`s, consider using `t.TypedDict` instead of a more
+  generic `dict[str, float|int|str]`-like annotation where possible, as the
+  latter is much less precise (often requiring additional `assert`s or
+  `isinstance` checks to pass) and can grow unwieldy very quickly.
+- Prefer `t.NamedTuple` over `collections.namedtuple`, because the former uses
+  a more convenient `class ...:` syntax and also supports type annotations.
 
 ## Conventions
 
@@ -105,8 +103,8 @@ Python code. The key differences are:
 
 ### Naming Conventions
 
--   All SQLAlchemy models should have `Database` as a prefix, e.g.,
-    `DatabaseProject` or `DatabaseUser`.
+- All SQLAlchemy models should have `Database` as a prefix, e.g.,
+  `DatabaseProject` or `DatabaseUser`.
 
 [google style guide]: https://google.github.io/styleguide/pyguide.html
 [numpy style guide]: https://numpydoc.readthedocs.io/en/latest/format.html

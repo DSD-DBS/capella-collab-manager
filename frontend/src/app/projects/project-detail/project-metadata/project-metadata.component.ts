@@ -21,7 +21,6 @@ import { ProjectWrapperService } from '../../service/project.service';
 @UntilDestroy()
 @Component({
   selector: 'app-project-metadata',
-  standalone: true,
   imports: [
     MatIconModule,
     NgxSkeletonLoaderModule,

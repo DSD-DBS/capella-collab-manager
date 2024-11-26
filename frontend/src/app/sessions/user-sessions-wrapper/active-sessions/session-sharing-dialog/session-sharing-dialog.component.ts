@@ -23,17 +23,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { catchError, combineLatest, of, tap } from 'rxjs';
-import { DisplayValueComponent } from 'src/app/helpers/display-value/display-value.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Session, SessionsService } from 'src/app/openapi';
 
 @Component({
   selector: 'app-session-sharing-dialog',
-  standalone: true,
   imports: [
     CommonModule,
     MatCheckboxModule,
-    DisplayValueComponent,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,

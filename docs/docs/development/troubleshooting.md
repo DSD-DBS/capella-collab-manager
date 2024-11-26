@@ -12,14 +12,14 @@ fails with errors like "Could not resolve host", `k3d-myregistry.localhost`
 isn't resolved properly to `127.0.0.1`. To resolve this, you can try the
 following options:
 
--   On Debian/Ubuntu based systems, you can install nss-myhostname.
-    `nss-myhostname` resolves all subdomains of localhost to localhost:
+- On Debian/Ubuntu based systems, you can install nss-myhostname.
+  `nss-myhostname` resolves all subdomains of localhost to localhost:
 
     ```sh
     sudo apt install libnss-myhostname
     ```
 
--   Add the following line to the `/etc/hosts` on the host machine:
+- Add the following line to the `/etc/hosts` on the host machine:
     ```
     127.0.0.1 k3d-myregistry.localhost
     ```

@@ -20,7 +20,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatTreeModule } from '@angular/material/tree';
 import { saveAs } from 'file-saver';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
-import { MatIconComponent } from 'src/app/helpers/mat-icon/mat-icon.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Session, SessionsService } from 'src/app/openapi';
 import { PathNode } from 'src/app/sessions/service/session.service';
@@ -28,7 +27,6 @@ import { PathNode } from 'src/app/sessions/service/session.service';
 @Component({
   selector: 'app-file-browser-dialog',
   templateUrl: 'file-browser-dialog.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     MatButtonModule,
@@ -39,7 +37,6 @@ import { PathNode } from 'src/app/sessions/service/session.service';
     MatTreeModule,
     NgClass,
     ReactiveFormsModule,
-    MatIconComponent,
   ],
 })
 export class FileBrowserDialogComponent implements OnInit {

@@ -42,7 +42,6 @@ import { ProjectWrapperService } from '../../service/project.service';
 @Component({
   selector: 'app-project-user-settings',
   templateUrl: './project-user-settings.component.html',
-  standalone: true,
   imports: [
     MatButton,
     MatIcon,

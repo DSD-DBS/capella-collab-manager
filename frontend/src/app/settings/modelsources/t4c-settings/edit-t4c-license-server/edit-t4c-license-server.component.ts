@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { AsyncPipe, JsonPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -12,7 +12,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatRipple } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -24,7 +23,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map, take } from 'rxjs';
 import { BreadcrumbsService } from '../../../../general/breadcrumbs/breadcrumbs.service';
 import { ConfirmationDialogComponent } from '../../../../helpers/confirmation-dialog/confirmation-dialog.component';
-import { MatIconComponent } from '../../../../helpers/mat-icon/mat-icon.component';
 import { ToastService } from '../../../../helpers/toast/toast.service';
 import { SettingsModelsourcesT4CLicenseServersService } from '../../../../openapi';
 import { T4CLicenseServerWrapperService } from '../../../../services/settings/t4c-license-server.service';
@@ -33,7 +31,6 @@ import { T4CLicenseServerWrapperService } from '../../../../services/settings/t4
 @Component({
   selector: 'app-edit-t4c-license-server',
   templateUrl: './edit-t4c-license-server.component.html',
-  standalone: true,
   imports: [
     MatFormField,
     MatLabel,
@@ -44,11 +41,7 @@ import { T4CLicenseServerWrapperService } from '../../../../services/settings/t4
     MatError,
     MatIcon,
     AsyncPipe,
-    NgIf,
-    JsonPipe,
     NgxSkeletonLoaderModule,
-    MatIconComponent,
-    MatRipple,
     RouterLink,
     MatTooltip,
   ],

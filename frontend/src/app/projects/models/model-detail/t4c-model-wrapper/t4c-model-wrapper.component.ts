@@ -16,7 +16,6 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   selector: 'app-t4c-model-wrapper',
   templateUrl: './t4c-model-wrapper.component.html',
   styleUrls: ['./t4c-model-wrapper.component.css'],
-  standalone: true,
   imports: [RouterOutlet],
 })
 export class T4CModelWrapperComponent implements OnInit, OnDestroy {

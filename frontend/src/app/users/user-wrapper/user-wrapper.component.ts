@@ -19,7 +19,6 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
 @UntilDestroy()
 @Component({
   selector: 'app-user-wrapper',
-  standalone: true,
   imports: [CommonModule, RouterOutlet],
   template: `<router-outlet></router-outlet>`,
   changeDetection: ChangeDetectionStrategy.OnPush,

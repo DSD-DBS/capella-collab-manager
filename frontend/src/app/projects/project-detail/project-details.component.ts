@@ -19,7 +19,6 @@ import { ProjectUserSettingsComponent } from './project-users/project-user-setti
 @Component({
   selector: 'app-project-details',
   templateUrl: './project-details.component.html',
-  standalone: true,
   imports: [
     ProjectMetadataComponent,
     CreateReadonlySessionComponent,

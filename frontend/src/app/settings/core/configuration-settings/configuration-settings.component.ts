@@ -16,7 +16,6 @@ import { FeedbackWrapperService } from '../../../sessions/feedback/feedback.serv
 @Component({
   selector: 'app-configuration-settings',
   templateUrl: './configuration-settings.component.html',
-  standalone: true,
   imports: [EditorComponent_1, MatButton, MatIcon],
 })
 export class ConfigurationSettingsComponent implements OnInit {

@@ -15,11 +15,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import {
   MAT_DIALOG_DATA,
-  MatDialogActions,
   MatDialogClose,
-  MatDialogContent,
   MatDialogRef,
-  MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
@@ -41,15 +38,11 @@ interface DialogData {
 
 @Component({
   selector: 'app-feedback',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIcon,
     MatFormFieldModule,
     MatCheckbox,
-    MatDialogTitle,
-    MatDialogContent,
-    MatDialogActions,
     MatInput,
     MatDialogClose,
     ReactiveFormsModule,

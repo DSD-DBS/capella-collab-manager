@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { CommonModule, KeyValuePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -32,14 +32,12 @@ import { SessionService } from 'src/app/sessions/service/session.service';
 @UntilDestroy()
 @Component({
   selector: 'app-create-provisioned-session',
-  standalone: true,
   imports: [
     CommonModule,
     MatIconModule,
     MatButtonModule,
     NgxSkeletonLoaderModule,
     MatIconComponent,
-    KeyValuePipe,
   ],
   templateUrl: './create-provisioned-session.component.html',
   styles: `

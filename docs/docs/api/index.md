@@ -33,12 +33,12 @@ to automate tasks such as creating and managing projects, sessions, and users.
 
 Please use these links to access the API documentation:
 
--   [:octicons-link-external-16: SwaggerUI](swagger.md) (Interactive SwaggerUI
-    documentation)
--   [:octicons-link-external-16: ReDoc](redoc.md) (Interactive ReDoc
-    documentation)
--   [:octicons-link-external-16: OpenAPI Specification, formerly Swagger Specification](openapi.md)
-    (JSON)
+- [:octicons-link-external-16: SwaggerUI](swagger.md) (Interactive SwaggerUI
+  documentation)
+- [:octicons-link-external-16: ReDoc](redoc.md) (Interactive ReDoc
+  documentation)
+- [:octicons-link-external-16: OpenAPI Specification, formerly Swagger Specification](openapi.md)
+  (JSON)
 
 ## Authentication
 

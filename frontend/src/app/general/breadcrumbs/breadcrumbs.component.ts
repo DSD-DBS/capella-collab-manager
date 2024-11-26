@@ -11,7 +11,6 @@ import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.serv
   selector: 'app-breadcrumbs',
   templateUrl: './breadcrumbs.component.html',
   styleUrls: ['./breadcrumbs.component.css'],
-  standalone: true,
   imports: [NgFor, RouterLink, AsyncPipe],
 })
 export class BreadcrumbsComponent {

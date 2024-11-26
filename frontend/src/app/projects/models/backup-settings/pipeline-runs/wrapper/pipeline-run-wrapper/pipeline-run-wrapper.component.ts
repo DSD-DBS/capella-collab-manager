@@ -16,7 +16,6 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   selector: 'app-pipeline-run-wrapper',
   templateUrl: './pipeline-run-wrapper.component.html',
   styleUrls: ['./pipeline-run-wrapper.component.css'],
-  standalone: true,
   imports: [RouterOutlet],
 })
 @UntilDestroy()

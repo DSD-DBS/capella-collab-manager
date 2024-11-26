@@ -26,7 +26,6 @@ import { EventsService } from './service/events.service';
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css'],
-  standalone: true,
   imports: [
     MatTable,
     MatSort,

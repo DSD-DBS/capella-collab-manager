@@ -15,28 +15,27 @@ You can see all existing license servers (if any). To add a new license server,
 click on the "Add a license server" card. You have to enter the following
 information:
 
--   **Name**: Any name to identify the license server
--   **License Server API**: The URL of the license server API
--   **License Key**: License key of your license server
+- **Name**: Any name to identify the license server
+- **License Server API**: The URL of the license server API
+- **License Key**: License key of your license server
 
 ## Define a T4C Instance
 
 You can see all existing instances (if any). To add a new instance, click on
 the "Add an instance" card. You have to enter the following information:
 
--   **Name**: Any name to identify the instance
--   **Capella version**: Capella version that corresponds to the instance
--   **License Server**: Select the license server that should be used for this
-    instance
--   **Protocol**: Protocol that should be used to communicate between capella
-    sessions and the T4C server
--   **Host**: Hostname of the T4C server
--   **Port**, **CDO Port**, and **HTTP Port** Corresponding ports of your
-    server
--   **REST API**: REST API URL of the T4C server
--   **Username**: Username with access to the REST API, required for
-    communication with the REST API
--   **Password**: Password corresponding to username
+- **Name**: Any name to identify the instance
+- **Capella version**: Capella version that corresponds to the instance
+- **License Server**: Select the license server that should be used for this
+  instance
+- **Protocol**: Protocol that should be used to communicate between capella
+  sessions and the T4C server
+- **Host**: Hostname of the T4C server
+- **Port**, **CDO Port**, and **HTTP Port** Corresponding ports of your server
+- **REST API**: REST API URL of the T4C server
+- **Username**: Username with access to the REST API, required for
+  communication with the REST API
+- **Password**: Password corresponding to username
 
 ## Archive a T4C Instance
 

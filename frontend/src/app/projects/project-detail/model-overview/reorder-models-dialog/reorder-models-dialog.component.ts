@@ -24,7 +24,6 @@ import { ModelWrapperService } from 'src/app/projects/models/service/model.servi
     '.cdk-drag-placeholder { opacity: 0; }',
     '.cdk-drag-animating { transition: transform 250ms cubic-bezier(0, 0, 0.2, 1); }',
   ],
-  standalone: true,
   imports: [CdkDropList, CdkDrag, MatIcon, NgIf, MatButton],
 })
 export class ReorderModelsDialogComponent {
