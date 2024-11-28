@@ -9,13 +9,7 @@
   (submit)="submit()"
 >
   <h1 class="text-lg font-semibold">
-    @if (data.sessions.length === 0) {
-      How has your experience been?
-    } @else if (data.sessions.length === 1) {
-      How was your session?
-    } @else {
-      How were your sessions?
-    }
+    {{ promptText }}
   </h1>
   <div class="space-y-2">
     <div class="flex justify-center space-x-4">
