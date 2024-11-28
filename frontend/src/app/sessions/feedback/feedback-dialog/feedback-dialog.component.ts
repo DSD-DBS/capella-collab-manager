@@ -95,6 +95,20 @@ export class FeedbackDialogComponent {
     return Object.values(FeedbackRating);
   }
 
+  get promptText() {
+    if (
+      this.data.sessions.some((session) => session.project?.type === 'training')
+    ) {
+      return 'How was your training experience?';
+    } else if (this.data.sessions.length === 0) {
+      return 'How was your experience?';
+    } else if (this.data.sessions.length === 1) {
+      return 'How was your session?';
+    } else {
+      return 'How were your sessions?';
+    }
+  }
+
   submitButton = {
     disabled: false,
     text: 'Submit',
