@@ -38,7 +38,7 @@
     }
 
     <mat-checkbox
-      class="ml-1"
+      class="ml-[-4px]"
       [formControl]="showHiddenFiles"
       (change)="loadFiles()"
       >Show hidden files</mat-checkbox
@@ -54,45 +54,51 @@
     <mat-tree-node
       *matTreeNodeDef="let node"
       matTreeNodePadding
-      class="!h-8 !min-h-8 !items-end"
+      class="!h-8 !min-h-8"
     >
-      <mat-icon class="mx-3 text-amber-500">
-        @if (node.isNew) {
-          note_add
-        } @else if (node.isModified) {
-          edit_document
-        } @else {
-          insert_drive_file
-        }
-      </mat-icon>
+      <div class="ml-1 mr-2 flex w-6 text-amber-500">
+        <mat-icon>
+          @if (node.isNew) {
+            note_add
+          } @else if (node.isModified) {
+            edit_document
+          } @else {
+            insert_drive_file
+          }
+        </mat-icon>
+      </div>
 
       <p
         [ngClass]="{
           'text-green-700': node.isNew,
           'text-amber-700': node.isModified,
         }"
-        class="mb-0.5"
+        class="whitespace-nowrap"
       >
         {{ node.name }}
       </p>
       @if (node.isNew || node.isModified) {
-        <button
-          matRipple
-          class="ml-1 flex !scale-90 rounded p-[2px] text-blue-900"
-          (click)="removeFile(node)"
-          [disabled]="session.download_in_progress"
-        >
-          <mat-icon>cancel</mat-icon>
-        </button>
+        <div class="ml-1 flex w-8">
+          <button
+            matRipple
+            class="flex !scale-90 rounded p-1 text-blue-900"
+            (click)="removeFile(node)"
+            [disabled]="session.download_in_progress"
+          >
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </div>
       } @else {
-        <button
-          matRipple
-          class="ml-1 flex rounded p-1 text-blue-900"
-          (click)="download(node.path)"
-          [disabled]="session.download_in_progress"
-        >
-          <mat-icon>download_file</mat-icon>
-        </button>
+        <div class="ml-1 flex w-8">
+          <button
+            matRipple
+            class="flex rounded p-1 text-blue-900"
+            (click)="download(node.path)"
+            [disabled]="session.download_in_progress"
+          >
+            <mat-icon>download_file</mat-icon>
+          </button>
+        </div>
       }
     </mat-tree-node>
 
@@ -103,34 +109,39 @@
       [isExpandable]="true"
       class="!h-8 !min-h-8"
     >
-      <button
-        mat-icon-button
-        (click)="node.isExpanded = !node.isExpanded"
-        [attr.aria-label]="
-          (node.isExpanded ? 'Collapse ' : 'Expand ') + node.name
-        "
-        [attr.data-testid]="'folder-button-' + node.name"
-        [attr.data-expanded]="node.isExpanded ? 'true' : 'false'"
-      >
-        <mat-icon class="text-blue-900">
-          @if (node.isExpanded) {
-            folder_open
-          } @else {
-            folder
-          }
-        </mat-icon>
-      </button>
-      <div class="mt-1">
+      <div class="mr-1 flex w-8">
+        <button
+          matRipple
+          class="flex rounded p-1 text-blue-900"
+          (click)="node.isExpanded = !node.isExpanded"
+          [attr.aria-label]="
+            (node.isExpanded ? 'Collapse ' : 'Expand ') + node.name
+          "
+          [attr.data-testid]="'folder-button-' + node.name"
+          [attr.data-expanded]="node.isExpanded ? 'true' : 'false'"
+        >
+          <mat-icon class="text-blue-900">
+            @if (node.isExpanded) {
+              folder_open
+            } @else {
+              folder
+            }
+          </mat-icon>
+        </button>
+      </div>
+      <div class="whitespace-nowrap">
         {{ node.name }}
       </div>
-      <button
-        matRipple
-        class="ml-1 flex rounded p-1 text-blue-900"
-        (click)="download(node.path)"
-        [disabled]="session.download_in_progress"
-      >
-        <mat-icon>download_file</mat-icon>
-      </button>
+      <div class="ml-1 flex w-8">
+        <button
+          matRipple
+          class="flex rounded p-1 text-blue-900"
+          (click)="download(node.path)"
+          [disabled]="session.download_in_progress"
+        >
+          <mat-icon>download_file</mat-icon>
+        </button>
+      </div>
       <div>
         <input
           hidden
