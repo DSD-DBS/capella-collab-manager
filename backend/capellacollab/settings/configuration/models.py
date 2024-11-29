@@ -5,6 +5,7 @@ import abc
 import enum
 import typing as t
 import zoneinfo
+from collections import abc as collections_abc
 
 import pydantic
 from croniter import croniter
@@ -69,40 +70,40 @@ class CustomNavbarLink(NavbarLink):
 
 
 class NavbarConfiguration(core_pydantic.BaseModelStrict):
-    external_links: list[BuiltInNavbarLink | CustomNavbarLink] = (
-        pydantic.Field(
-            default=(
+    external_links: collections_abc.Sequence[
+        BuiltInNavbarLink | CustomNavbarLink
+    ] = pydantic.Field(
+        default=(
+            [
+                BuiltInNavbarLink(
+                    name="Grafana",
+                    service=BuiltInLinkItem.GRAFANA,
+                    role=users_models.Role.ADMIN,
+                ),
+                BuiltInNavbarLink(
+                    name="Prometheus",
+                    service=BuiltInLinkItem.PROMETHEUS,
+                    role=users_models.Role.ADMIN,
+                ),
+                BuiltInNavbarLink(
+                    name="Documentation",
+                    service=BuiltInLinkItem.DOCUMENTATION,
+                    role=users_models.Role.USER,
+                ),
+            ]
+            + (
                 [
                     BuiltInNavbarLink(
-                        name="Grafana",
-                        service=BuiltInLinkItem.GRAFANA,
-                        role=users_models.Role.ADMIN,
-                    ),
-                    BuiltInNavbarLink(
-                        name="Prometheus",
-                        service=BuiltInLinkItem.PROMETHEUS,
-                        role=users_models.Role.ADMIN,
-                    ),
-                    BuiltInNavbarLink(
-                        name="Documentation",
-                        service=BuiltInLinkItem.DOCUMENTATION,
+                        name="SMTP Mock",
+                        service=BuiltInLinkItem.SMTP_MOCK,
                         role=users_models.Role.USER,
-                    ),
+                    )
                 ]
-                + (
-                    [
-                        BuiltInNavbarLink(
-                            name="SMTP Mock",
-                            service=BuiltInLinkItem.SMTP_MOCK,
-                            role=users_models.Role.USER,
-                        )
-                    ]
-                    if core.DEVELOPMENT_MODE
-                    else []
-                )
-            ),
-            description="Links to display in the navigation bar.",
-        )
+                if core.DEVELOPMENT_MODE
+                else []
+            )
+        ),
+        description="Links to display in the navigation bar.",
     )
 
 

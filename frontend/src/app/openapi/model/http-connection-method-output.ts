@@ -16,7 +16,7 @@ import { EnvironmentValue1 } from './environment-value1';
 
 export interface HTTPConnectionMethodOutput { 
     id: string;
-    type: HTTPConnectionMethodOutput.TypeEnum;
+    type: string;
     name: string;
     description: string;
     ports: HTTPPortsOutput;
@@ -31,11 +31,4 @@ export interface HTTPConnectionMethodOutput {
      */
     cookies: { [key: string]: string; };
 }
-export namespace HTTPConnectionMethodOutput {
-    export type TypeEnum = 'http';
-    export const TypeEnum = {
-        Http: 'http' as TypeEnum
-    };
-}
-
 
