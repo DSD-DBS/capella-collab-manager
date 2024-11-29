@@ -95,7 +95,11 @@ export class SessionViewerService {
       connectionInfo.redirect_url,
     );
 
-    this.updateOrInsertSession(session, safeResourceURL);
+    this.updateOrInsertSession(
+      session,
+      safeResourceURL,
+      connectionInfo.t4c_token ?? undefined,
+    );
   }
 
   focusSession(session: Session): void {
@@ -178,6 +182,7 @@ export class SessionViewerService {
   private updateOrInsertSession(
     session: Session,
     safeResourceURL?: SafeResourceUrl,
+    t4cToken?: string,
   ): void {
     const currentSessions = this._sessions.value;
 
@@ -185,6 +190,7 @@ export class SessionViewerService {
       ...session,
       focused: false,
       safeResourceURL: safeResourceURL,
+      t4cToken: t4cToken,
       reloadToResize: false,
       fullscreen: false,
       disabled: false,
@@ -218,6 +224,7 @@ export class SessionViewerService {
 
 export type ViewerSession = Session & {
   safeResourceURL?: SafeResourceUrl;
+  t4cToken?: string;
   focused: boolean;
   reloadToResize: boolean;
   fullscreen: boolean;

@@ -2,11 +2,14 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, NgClass } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
+import { ToastService } from '../../../helpers/toast/toast.service';
 import { SessionIFrameComponent } from '../session-iframe/session-iframe.component';
 import { SessionViewerService, ViewerSession } from '../session-viewer.service';
 
@@ -14,7 +17,14 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
   selector: 'app-tiling-window-manager',
   templateUrl: './tiling-window-manager.component.html',
   standalone: true,
-  imports: [MatIcon, SessionIFrameComponent, NgClass, AsyncPipe],
+  imports: [
+    MatIcon,
+    SessionIFrameComponent,
+    NgClass,
+    AsyncPipe,
+    MatTooltip,
+    CdkCopyToClipboard,
+  ],
 })
 @UntilDestroy()
 export class TilingWindowManagerComponent implements OnInit {
@@ -28,7 +38,10 @@ export class TilingWindowManagerComponent implements OnInit {
 
   private minimumSessionWidth = 0;
 
-  constructor(public sessionViewerService: SessionViewerService) {}
+  constructor(
+    public sessionViewerService: SessionViewerService,
+    public toastService: ToastService,
+  ) {}
 
   ngOnInit(): void {
     this.sessionViewerService.sessions$

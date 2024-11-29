@@ -45,6 +45,7 @@ const mockPersistentViewerSession: ViewerSession = {
   reloadToResize: false,
   fullscreen: false,
   disabled: false,
+  t4cToken: 'token',
 };
 
 const mockReadOnlyViewerSession: ViewerSession = {
