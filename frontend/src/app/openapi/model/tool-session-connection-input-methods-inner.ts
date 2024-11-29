@@ -18,7 +18,7 @@ import { HTTPPortsInput } from './http-ports-input';
 
 export interface ToolSessionConnectionInputMethodsInner { 
     id?: string;
-    type?: ToolSessionConnectionInputMethodsInner.TypeEnum;
+    type?: string;
     name?: string;
     description?: string;
     ports?: HTTPPortsInput;
@@ -33,12 +33,4 @@ export interface ToolSessionConnectionInputMethodsInner {
      */
     cookies?: { [key: string]: string; };
 }
-export namespace ToolSessionConnectionInputMethodsInner {
-    export type TypeEnum = 'guacamole' | 'http';
-    export const TypeEnum = {
-        Guacamole: 'guacamole' as TypeEnum,
-        Http: 'http' as TypeEnum
-    };
-}
-
 

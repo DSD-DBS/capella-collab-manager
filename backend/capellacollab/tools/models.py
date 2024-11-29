@@ -64,15 +64,13 @@ class ToolSessionEnvironment(core_pydantic.BaseModel):
         ),
     )
     value: str = pydantic.Field(
-        default={"RMT_PASSWORD": "{CAPELLACOLLAB_SESSION_TOKEN}"},
+        default="{CAPELLACOLLAB_SESSION_TOKEN}",
         description=(
             "Environment variables, which are mounted into session containers. "
             "You can use f-strings to reference other environment variables in the value. "
         ),
         examples=[
-            {
-                "MY_TOOL_USERNAME_WITH_PREFIX": "test_{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}",
-            }
+            "test_{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}",
         ],
     )
 
