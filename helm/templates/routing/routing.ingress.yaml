@@ -13,6 +13,7 @@ metadata:
     nginx.ingress.kubernetes.io/fastcgi_busy_buffers_size: 16k
     nginx.ingress.kubernetes.io/proxy-buffer-size: 16k
     nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+    nginx.ingress.kubernetes.io/proxy-body-size: "30m"
     {{- if eq .Values.cluster.kind "OpenShift" }}
     route.openshift.io/insecureEdgeTerminationPolicy: Redirect
     route.openshift.io/termination: edge
