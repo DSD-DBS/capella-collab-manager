@@ -6,5 +6,5 @@
     "resolveJsonModule": true
   },
   "include": ["./preview.ts", "../src/polyfills.ts", "../src/**/*.stories.ts"],
-  "files": ["./typings.d.ts"]
+  "files": ["./typings.d.ts", "../vite-env.d.ts"]
 }

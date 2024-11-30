@@ -12,15 +12,16 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { BACKEND_URL } from 'src/app/environment';
 import { BASE_PATH } from 'src/app/openapi';
+import 'zone.js';
 import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
 import { AuthInterceptor } from './app/general/auth/http-interceptor/auth.interceptor';
 import { ErrorHandlingInterceptor } from './app/general/error-handling/error-handling.interceptor';
 import { IconModule } from './app/icon.module';
-import { environment } from './environments/environment';
 
-if (environment.production) {
+if (import.meta.env.PROD) {
   enableProdMode();
 }
 
@@ -51,7 +52,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(withInterceptorsFromDi()),
     {
       provide: BASE_PATH,
-      useValue: environment.backend_url.replace('/api/v1', ''), // The /api/v1 prefix is automatically added by the openapi generator
+      useValue: BACKEND_URL,
     },
   ],
 }).catch((err) => console.error(err));

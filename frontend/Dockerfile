@@ -22,7 +22,7 @@ FROM nginxinc/nginx-unprivileged:latest
 EXPOSE 8080
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /work/dist/capellacollab/browser /usr/share/nginx/html
+COPY --from=build /work/dist/capellacollab /usr/share/nginx/html
 USER root
 RUN chmod -R 777 /var/log/nginx
 USER nginx

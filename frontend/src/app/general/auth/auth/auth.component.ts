@@ -8,10 +8,10 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { DOCS_URL } from 'src/app/environment';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { PageLayoutService } from 'src/app/page-layout/page-layout.service';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
-import { environment } from 'src/environments/environment';
 import { WelcomeComponent } from '../../welcome/welcome.component';
 
 @Component({
@@ -53,6 +53,6 @@ export class AuthComponent implements OnInit {
   }
 
   getDocsURL(): string {
-    return environment.docs_url + '/';
+    return DOCS_URL + '/';
   }
 }

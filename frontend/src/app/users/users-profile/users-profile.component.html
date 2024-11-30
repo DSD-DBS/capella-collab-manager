@@ -6,11 +6,7 @@
 @if (userWrapperService.user$ | async; as user) {
   <div class="mb-5 flex items-center">
     <div class="mx-10">
-      <img
-        src="/assets/profile.svg"
-        alt="Dummy profile picture"
-        class="max-h-28"
-      />
+      <img src="/profile.svg" alt="Dummy profile picture" class="max-h-28" />
     </div>
     <div class="flex flex-col">
       <h2 class="text-xl font-medium">Profile of {{ user?.name }}</h2>

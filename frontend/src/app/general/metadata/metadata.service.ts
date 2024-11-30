@@ -31,7 +31,7 @@ export class MetadataService {
   loadVersion(): void {
     if (!this.version) {
       this.httpClient
-        .get<Version>('assets/version.json')
+        .get<Version>('version.json')
         .subscribe((version: Version) => {
           this.version = version;
         });

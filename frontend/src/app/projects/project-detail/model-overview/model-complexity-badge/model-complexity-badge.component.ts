@@ -9,10 +9,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map, switchMap } from 'rxjs';
+import { DOCS_URL } from 'src/app/environment';
 import { SKIP_ERROR_HANDLING_CONTEXT } from 'src/app/general/error-handling/error-handling.interceptor';
 import { ProjectsModelsModelComplexityBadgeService } from 'src/app/openapi';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-model-complexity-badge',
@@ -81,9 +81,6 @@ export class ModelComplexityBadgeComponent implements OnChanges {
   }
 
   openModelComplexityBadgeDocs() {
-    window.open(
-      environment.docs_url + '/user/projects/models/complexity_badge/',
-      '_blank',
-    );
+    window.open(DOCS_URL + '/user/projects/models/complexity_badge/', '_blank');
   }
 }
