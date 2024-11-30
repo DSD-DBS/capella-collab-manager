@@ -14,10 +14,14 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Tool, ToolNature, ToolsService } from 'src/app/openapi';
+import {
+  CreateToolNatureInput,
+  Tool,
+  ToolNature,
+  ToolsService,
+} from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../../helpers/editor/editor.component';
-import { ToolWrapperService, CreateToolNature } from '../../tool.service';
 
 @Component({
   selector: 'app-tool-nature',
@@ -49,8 +53,8 @@ export class ToolNatureComponent {
         .subscribe((nature) => {
           this.getEditorForContext('new')!.value = nature;
         });
-      this.toolService
-        .getNaturesForTool(this._tool.id)
+      this.toolsService
+        .getToolNatures(this._tool.id)
         .subscribe((natures: ToolNature[]) => {
           this.toolNatures = natures;
         });
@@ -64,7 +68,6 @@ export class ToolNatureComponent {
   toolNatures: ToolNature[] | undefined = undefined;
 
   constructor(
-    private toolService: ToolWrapperService,
     private toastService: ToastService,
     private toolsService: ToolsService,
   ) {}
@@ -99,7 +102,7 @@ export class ToolNatureComponent {
       });
   }
 
-  submittedNewToolNature(value: CreateToolNature) {
+  submittedNewToolNature(value: CreateToolNatureInput) {
     this.toolsService
       .createToolNature(this._tool!.id, value)
       .subscribe((toolNature: ToolNature) => {

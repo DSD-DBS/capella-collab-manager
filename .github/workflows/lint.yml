@@ -48,10 +48,14 @@ jobs:
       - name: Install pre-commit
         run: |-
           python -m pip install pre-commit
-      - name: Install dependencies
+      - name: Install dependencies (backend)
         working-directory: backend/
         run: |-
           python -m pip install '.[dev]'
+      - name: Install dependencies (frontend)
+        working-directory: frontend/
+        run: |-
+          npm ci
       - name: Run pre-commit
         run: |-
           pre-commit run --all-files

@@ -47,12 +47,10 @@ testem.log
 .DS_Store
 Thumbs.db
 
-/src/environments/environment.prod.ts
-
 .angular
 
 
-/src/assets/version.json
+/public/version.json
 
 # Testing
 /test-results/
@@ -66,3 +64,8 @@ documentation.json
 .nx
 
 __screenshots__
+
+.nx/cache
+.nx/workspace-data
+
+**/*.mjs

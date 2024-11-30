@@ -34,6 +34,7 @@ import {
   PatchT4CInstance,
   Protocol,
   SettingsModelsourcesT4CInstancesService,
+  ToolsService,
   ToolVersion,
 } from 'src/app/openapi';
 import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instance.service';
@@ -113,7 +114,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private toastService: ToastService,
-    private toolService: ToolWrapperService,
+    private toolWrapperService: ToolWrapperService,
+    private toolsService: ToolsService,
     private breadcrumbsService: BreadcrumbsService,
     private dialog: MatDialog,
   ) {}
@@ -149,8 +151,8 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
         this.breadcrumbsService.updatePlaceholder({ t4cInstance });
       });
 
-    this.toolService
-      .getVersionsForTool(1, false)
+    this.toolsService
+      .getToolVersions(1)
       .pipe(filter(Boolean))
       .subscribe((capellaVersions) => (this.capellaVersions = capellaVersions));
   }

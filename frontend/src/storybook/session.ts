@@ -17,7 +17,7 @@ import {
 } from './tool';
 import { mockUser } from './user';
 
-export const mockPersistentSession = {
+export const mockPersistentSession: Readonly<Session> = {
   id: 'vfurvsrldxfwwsqdiqvnufonh',
   created_at: '2024-04-29T15:00:00Z',
   idle_state: {

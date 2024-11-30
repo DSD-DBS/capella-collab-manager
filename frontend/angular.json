@@ -17,100 +17,45 @@
           "skipTests": true
         }
       },
-      "root": "",
+      "root": ".",
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@analogjs/platform:vite",
           "options": {
+            "configFile": "vite.config.ts",
+            "main": "src/main.ts",
             "outputPath": "dist/capellacollab",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
-            "polyfills": ["src/polyfills.ts"],
-            "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets", "src/fonts"],
-            "styles": [
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "monaco-editor/min/vs/editor/editor.main.css",
-              "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css",
-              "monaco-editor/min/vs/editor/editor.main.css",
-              "node_modules/highlight.js/styles/default.css"
-            ],
-            "loader": {
-              ".ttf": "file"
-            },
-            "optimization": {
-              "fonts": true
-            }
+            "tsConfig": "tsconfig.app.json"
           },
+          "defaultConfiguration": "production",
           "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "10mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "outputHashing": "all"
-            },
             "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.dev.ts"
-                }
-              ]
+              "mode": "development"
             },
-            "storybook": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "5mb",
-                  "maximumError": "10mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "outputHashing": "all",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.storybook.ts"
-                }
-              ]
+            "production": {
+              "sourcemap": false,
+              "mode": "production"
             }
-          },
-          "defaultConfiguration": "production"
+          }
         },
         "serve": {
-          "builder": "@angular/build:dev-server",
+          "builder": "@analogjs/platform:vite-dev-server",
+          "defaultConfiguration": "development",
+          "options": {
+            "buildTarget": "capellacollab:build",
+            "port": 4200
+          },
           "configurations": {
+            "development": {
+              "buildTarget": "capellacollab:build:development",
+              "hmr": true
+            },
             "production": {
               "buildTarget": "capellacollab:build:production"
-            },
-            "development": {
-              "buildTarget": "capellacollab:build:development"
-            },
-            "playwright": {
-              "buildTarget": "capellacollab:build:development"
             }
-          },
-          "defaultConfiguration": "development"
+          }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
@@ -129,34 +74,18 @@
           "options": {
             "configDir": ".storybook",
             "quiet": true,
-            "browserTarget": "capellacollab:build:development",
             "compodoc": false,
             "port": 6006,
-            "styles": [
-              ".storybook/styles.css",
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "monaco-editor/min/vs/editor/editor.main.css",
-              "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css",
-              "node_modules/highlight.js/styles/default.css"
-            ]
+            "styles": [".storybook/styles.css", "src/styles.css"]
           }
         },
         "build-storybook": {
           "builder": "@storybook/angular:build-storybook",
           "options": {
             "configDir": ".storybook",
-            "browserTarget": "capellacollab:build:storybook",
             "compodoc": false,
             "outputDir": "storybook-static",
-            "styles": [
-              ".storybook/styles.css",
-              "@angular/material/prebuilt-themes/indigo-pink.css",
-              "monaco-editor/min/vs/editor/editor.main.css",
-              "src/styles.css",
-              "node_modules/ngx-toastr/toastr.css",
-              "node_modules/highlight.js/styles/default.css"
-            ]
+            "styles": [".storybook/styles.css", "src/styles.css"]
           }
         }
       }

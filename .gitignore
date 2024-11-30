@@ -17,4 +17,5 @@ certs/*
 /helm/charts/*
 /logs/*
 .env
+!frontend/.env
 autoscaler

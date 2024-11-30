@@ -22,7 +22,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, switchMap, tap } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { ToolNature, ToolVersion } from 'src/app/openapi';
+import { ToolNature, ToolsService, ToolVersion } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
 import { ProjectWrapperService } from '../../service/project.service';
@@ -67,6 +67,7 @@ export class ModelDescriptionComponent implements OnInit {
     public modelService: ModelWrapperService,
     public projectService: ProjectWrapperService,
     private toolWrapperService: ToolWrapperService,
+    private toolService: ToolsService,
     public toastService: ToastService,
     private router: Router,
     private route: ActivatedRoute,
@@ -97,8 +98,8 @@ export class ModelDescriptionComponent implements OnInit {
         }),
         switchMap((model) => {
           return combineLatest([
-            this.toolWrapperService.getNaturesForTool(model.tool.id),
-            this.toolWrapperService.getVersionsForTool(model.tool.id, false),
+            this.toolService.getToolNatures(model.tool.id),
+            this.toolService.getToolVersions(model.tool.id),
           ]);
         }),
       )

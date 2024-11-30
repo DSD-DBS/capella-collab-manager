@@ -13,12 +13,15 @@ import { MarkdownComponent, provideMarkdown } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest } from 'rxjs';
 import { SKIP_ERROR_HANDLING_CONTEXT } from 'src/app/general/error-handling/error-handling.interceptor';
-import { ProjectsModelsREADMEService, ToolModel } from 'src/app/openapi';
+import {
+  GitModel,
+  ProjectsModelsREADMEService,
+  ToolModel,
+} from 'src/app/openapi';
 import {
   getPrimaryGitModel,
   ModelWrapperService,
 } from 'src/app/projects/models/service/model.service';
-import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 
@@ -57,7 +60,7 @@ export class TrainingDetailsComponent implements OnInit {
     return primaryModel ? primaryModel.path : '';
   }
 
-  getPrimaryGitModel(model: ToolModel): GetGitModel | undefined {
+  getPrimaryGitModel(model: ToolModel): GitModel | undefined {
     return getPrimaryGitModel(model);
   }
 

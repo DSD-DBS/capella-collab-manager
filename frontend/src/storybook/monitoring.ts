@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import {
-  GeneralHealth,
   ProjectStatus,
+  StatusResponse,
   ToolmodelStatus,
-} from 'src/app/settings/core/pipelines-overview/service/monitoring.service';
+} from 'src/app/openapi';
 
-export const mockGeneralHealthGood: GeneralHealth = {
+export const mockGeneralHealthGood: StatusResponse = {
   guacamole: true,
   database: true,
   operator: true,
 };
 
-export const mockGeneralHealthBad: GeneralHealth = {
+export const mockGeneralHealthBad: StatusResponse = {
   guacamole: false,
   database: false,
   operator: false,

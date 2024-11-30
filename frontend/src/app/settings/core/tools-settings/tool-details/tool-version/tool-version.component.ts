@@ -14,10 +14,15 @@ import { MatIcon } from '@angular/material/icon';
 import { MatTabGroup, MatTab, MatTabLabel } from '@angular/material/tabs';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Tool, ToolVersion, ToolsService } from 'src/app/openapi';
+import {
+  CreateToolVersionInput,
+  Tool,
+  ToolVersion,
+  ToolsService,
+} from 'src/app/openapi';
 import { ApiDocumentationComponent } from '../../../../../general/api-documentation/api-documentation.component';
 import { EditorComponent as EditorComponent_1 } from '../../../../../helpers/editor/editor.component';
-import { CreateToolVersion, ToolWrapperService } from '../../tool.service';
+import { ToolWrapperService } from '../../tool.service';
 
 @Component({
   selector: 'app-tool-version',
@@ -49,8 +54,8 @@ export class ToolVersionComponent {
         .subscribe((version) => {
           this.getEditorForContext('new')!.value = version;
         });
-      this.toolService
-        .getVersionsForTool(this._tool.id, false)
+      this.toolsService
+        .getToolVersions(this._tool.id)
         .subscribe((versions: ToolVersion[]) => {
           this.toolVersions = versions;
         });
@@ -64,7 +69,7 @@ export class ToolVersionComponent {
   toolVersions: ToolVersion[] | undefined = undefined;
 
   constructor(
-    private toolService: ToolWrapperService,
+    private toolWrapperService: ToolWrapperService,
     private toastService: ToastService,
     private toolsService: ToolsService,
   ) {}
@@ -83,7 +88,7 @@ export class ToolVersionComponent {
 
   submittedValue(toolVersion: ToolVersion, value: ToolVersion) {
     const { id, ...valueWithoutID } = value; // eslint-disable-line @typescript-eslint/no-unused-vars
-    this.toolService
+    this.toolsService
       .updateToolVersion(this._tool!.id, toolVersion.id, valueWithoutID)
       .subscribe((toolVersion: ToolVersion) => {
         this.toastService.showSuccess(
@@ -100,9 +105,9 @@ export class ToolVersionComponent {
       });
   }
 
-  submittedNewToolVersion(value: CreateToolVersion) {
-    this.toolService
-      .createVersionForTool(this._tool!.id, value)
+  submittedNewToolVersion(value: CreateToolVersionInput) {
+    this.toolsService
+      .createToolVersion(this._tool!.id, value)
       .subscribe((toolVersion: ToolVersion) => {
         this.toastService.showSuccess(
           'Tool version created',
@@ -121,8 +126,8 @@ export class ToolVersionComponent {
   }
 
   removeToolVersion(toolVersion: ToolVersion): void {
-    this.toolService
-      .deleteVersionForTool(this._tool!.id, toolVersion)
+    this.toolsService
+      .deleteToolVersion(this._tool!.id, toolVersion.id)
       .subscribe(() => {
         this.toolVersions = this.toolVersions!.filter(
           (version) => version.id !== toolVersion.id,

@@ -7,8 +7,14 @@ HOST ?= localhost
 
 .ONESHELL:
 
-dev:
-	ng serve --host $(HOST) --open
+dev: fetch-version
+	ng serve --open capellacollab
+
+types:
+	npx tsc --noEmit --watch
+
+fetch-version:
+	python fetch-version.py
 
 test:
 	if [ $(shell which chromium) ]; \

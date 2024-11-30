@@ -21,17 +21,19 @@ import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { filter } from 'rxjs';
-import { ToolModel, ToolVersion, Tool } from 'src/app/openapi';
-import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import {
-  Revisions,
-  GitService,
-  existingRevisionValidator,
-} from 'src/app/services/git/git.service';
+  ToolModel,
+  ToolVersion,
+  Tool,
+  ProjectsModelsGitService,
+  GitModel,
+  GetRevisionsResponseModel,
+} from 'src/app/openapi';
+import { existingRevisionValidator } from 'src/app/services/git/git.service';
 
 export interface ModelOptions {
   model: ToolModel;
-  primaryGitModel: GetGitModel;
+  primaryGitModel: GitModel;
   include: boolean;
   revision: string;
   deepClone: boolean;
@@ -65,12 +67,12 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
   @Input() toolVersion!: ToolVersion;
 
   constructor(
-    private gitService: GitService,
+    private gitService: ProjectsModelsGitService,
     private fb: FormBuilder,
   ) {}
 
-  private revisions?: Revisions;
-  public filteredRevisions?: Revisions;
+  private revisions?: GetRevisionsResponseModel;
+  public filteredRevisions?: GetRevisionsResponseModel;
 
   public form = this.fb.group({
     include: [true],
@@ -95,11 +97,11 @@ export class CreateReadonlyModelOptionsComponent implements OnInit {
     });
 
     this.gitService
-      .getPrivateRevision(
-        this.modelOptions.primaryGitModel.path,
+      .getRevisionsWithModelCredentials(
         this.projectSlug,
-        this.modelOptions.model.slug,
         this.modelOptions.primaryGitModel.id,
+        this.modelOptions.model.slug,
+        this.modelOptions.primaryGitModel.path,
       )
       .pipe(filter(Boolean))
       .subscribe((revisions) => {
