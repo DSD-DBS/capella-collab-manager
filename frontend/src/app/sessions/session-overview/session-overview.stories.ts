@@ -13,7 +13,6 @@ import {
   SessionState,
 } from 'src/app/openapi';
 import {
-  createPersistentSessionWithState,
   mockPersistentSession,
   mockReadonlySession,
 } from 'src/storybook/session';
@@ -57,10 +56,9 @@ const sessions = [
   mockPersistentSession,
   { ...mockReadonlySession, id: 'vjmczglcgeltbfcronujtelwx' },
   {
-    ...createPersistentSessionWithState(
-      SessionPreparationState.Failed,
-      SessionState.Pending,
-    ),
+    ...mockPersistentSession,
+    preparation_state: SessionPreparationState.Failed,
+    state: SessionState.Pending,
     owner: {
       ...mockUser,
       name: 'anotherUser',

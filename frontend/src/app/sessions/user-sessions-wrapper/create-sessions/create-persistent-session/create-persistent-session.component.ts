@@ -19,7 +19,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map, Observable } from 'rxjs';
-import { Session, Tool, ToolVersion } from 'src/app/openapi';
+import { Session, SessionType, Tool, ToolVersion } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
@@ -92,13 +92,13 @@ export class CreatePersistentSessionComponent implements OnInit {
     this.requestInProgress = true;
 
     this.sessionService
-      .createSession(
-        this.toolSelectionForm.controls.toolId.value!,
-        this.toolSelectionForm.controls.versionId.value!,
-        this.toolSelectionForm.controls.connectionMethodId.value!,
-        'persistent',
-        [],
-      )
+      .createSession({
+        tool_id: this.toolSelectionForm.controls.toolId.value!,
+        version_id: this.toolSelectionForm.controls.versionId.value!,
+        connection_method_id:
+          this.toolSelectionForm.controls.connectionMethodId.value!,
+        session_type: SessionType.Persistent,
+      })
       .subscribe({
         next: () => {
           this.userSessionService.loadSessions();

@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { SimpleProject } from './simple-project';
 import { SessionState } from './session-state';
 import { BaseUser } from './base-user';
 import { SessionType } from './session-type';
@@ -33,6 +34,7 @@ export interface Session {
     connection_method_id: string;
     connection_method: ToolSessionConnectionMethod | null;
     shared_with: Array<SessionSharing>;
+    project: SimpleProject | null;
 }
 export namespace Session {
 }

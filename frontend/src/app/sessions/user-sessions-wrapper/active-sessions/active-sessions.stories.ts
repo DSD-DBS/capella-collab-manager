@@ -8,23 +8,16 @@ import {
   componentWrapperDecorator,
   moduleMetadata,
 } from '@storybook/angular';
+import { userEvent, within } from '@storybook/test';
 import MockDate from 'mockdate';
 import { Observable, of } from 'rxjs';
+import { Session, SessionState } from 'src/app/openapi';
+import { mockProject } from 'src/storybook/project';
 import {
-  Session,
-  SessionPreparationState,
-  SessionState,
-} from 'src/app/openapi';
-import {
-  mockFeedbackConfig,
-  mockFeedbackWrapperServiceProvider,
-} from 'src/storybook/feedback';
-import {
-  createPersistentSessionWithState,
   mockPersistentSession,
   mockReadonlySession,
+  mockTrainingSession,
 } from 'src/storybook/session';
-import { mockHttpConnectionMethod } from 'src/storybook/tool';
 import {
   mockOwnUserWrapperServiceProvider,
   mockUser,
@@ -35,14 +28,17 @@ import { ActiveSessionsComponent } from './active-sessions.component';
 class MockUserSessionService implements Partial<UserSessionService> {
   public readonly sessions$: Observable<Session[] | undefined> = of(undefined);
 
-  constructor(session?: Session, empty?: boolean) {
-    if (session !== undefined) {
-      this.sessions$ = of([session]);
-    } else if (empty === true) {
-      this.sessions$ = of([]);
-    }
+  constructor(sessions?: Session[]) {
+    this.sessions$ = of(sessions);
   }
 }
+
+const mockUserSessionServiceProvider = (sessions?: Session[]) => {
+  return {
+    provide: UserSessionService,
+    useValue: new MockUserSessionService(sessions),
+  };
+};
 
 const meta: Meta<ActiveSessionsComponent> = {
   title: 'Session Components/Active Sessions',
@@ -67,12 +63,7 @@ export const Loading: Story = {
   args: {},
   decorators: [
     moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () => new MockUserSessionService(),
-        },
-      ],
+      providers: [mockUserSessionServiceProvider()],
     }),
   ],
 };
@@ -81,358 +72,82 @@ export const NoActiveStories: Story = {
   args: {},
   decorators: [
     moduleMetadata({
+      providers: [mockUserSessionServiceProvider([])],
+    }),
+  ],
+};
+
+export const FewActiveSessions: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
       providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () => new MockUserSessionService(undefined, true),
-        },
+        mockUserSessionServiceProvider([
+          mockPersistentSession,
+          mockReadonlySession,
+        ]),
       ],
     }),
   ],
 };
 
-export const SessionNotFoundState: Story = {
+export const GroupedByProjectSessions: Story = {
   args: {},
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.NotFound,
-                SessionState.NotFound,
-              ),
-            ),
-        },
+        mockUserSessionServiceProvider([
+          mockReadonlySession,
+          { ...mockPersistentSession, project: mockProject },
+          {
+            ...mockPersistentSession,
+            project: mockProject,
+          },
+        ]),
       ],
     }),
   ],
 };
 
-export const SessionPreparationPendingState: Story = {
+export const GroupedByTrainingSessions: Story = {
   args: {},
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.Pending,
-                SessionState.Pending,
-              ),
-            ),
-        },
+        mockUserSessionServiceProvider([
+          mockReadonlySession,
+          mockTrainingSession,
+          {
+            ...mockPersistentSession,
+            project: mockProject,
+            state: SessionState.Pending,
+          },
+        ]),
       ],
     }),
   ],
 };
 
-export const SessionPreparationRunningState: Story = {
+export const GroupedByTrainingSessionsExpanded: Story = {
   args: {},
   decorators: [
     moduleMetadata({
       providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.Running,
-                SessionState.Pending,
-              ),
-            ),
-        },
+        mockUserSessionServiceProvider([
+          mockReadonlySession,
+          mockTrainingSession,
+          {
+            ...mockPersistentSession,
+            project: mockProject,
+            state: SessionState.Pending,
+          },
+        ]),
       ],
     }),
   ],
-};
-
-export const SessionRunningState: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.Completed,
-                SessionState.Running,
-              ),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionTerminatingSoon: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService({
-              ...createPersistentSessionWithState(
-                SessionPreparationState.Completed,
-                SessionState.Running,
-              ),
-              idle_state: {
-                available: true,
-                terminate_after_minutes: 90,
-                idle_for_minutes: 80,
-                unavailable_reason: null,
-              },
-            }),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionTerminatedState: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.Completed,
-                SessionState.Terminated,
-              ),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionPendingState: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.Completed,
-                SessionState.Pending,
-              ),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionFailedState: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.Completed,
-                SessionState.Failed,
-              ),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionUnknownState: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService(
-              createPersistentSessionWithState(
-                SessionPreparationState.Completed,
-                SessionState.Unknown,
-              ),
-            ),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionWithFeedbackEnabled: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () => new MockUserSessionService(mockPersistentSession),
-        },
-        mockFeedbackWrapperServiceProvider(mockFeedbackConfig),
-      ],
-    }),
-  ],
-};
-
-export const ReadonlySessionSuccessState: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () => new MockUserSessionService(mockReadonlySession),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionSharingEnabled: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService({
-              ...mockPersistentSession,
-              connection_method: {
-                ...mockHttpConnectionMethod,
-                sharing: { enabled: true },
-              },
-            }),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SessionSharedWithUser: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService({
-              ...mockPersistentSession,
-              connection_method: {
-                ...mockHttpConnectionMethod,
-                sharing: { enabled: true },
-              },
-              shared_with: [
-                {
-                  user: {
-                    id: 1,
-                    name: 'user_1',
-                    role: 'administrator',
-                    email: null,
-                    idp_identifier: 'user_1',
-                    beta_tester: false,
-                  },
-                  created_at: '2024-04-29T15:00:00Z',
-                },
-                {
-                  user: {
-                    id: 2,
-                    name: 'user_2',
-                    role: 'user',
-                    email: null,
-                    idp_identifier: 'user_2',
-                    beta_tester: false,
-                  },
-                  created_at: '2024-04-29T15:00:00Z',
-                },
-              ],
-            }),
-        },
-      ],
-    }),
-  ],
-};
-export const SessionSharedWithUserTerminatingSoon: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () =>
-            new MockUserSessionService({
-              ...mockPersistentSession,
-              connection_method: {
-                ...mockHttpConnectionMethod,
-                sharing: { enabled: true },
-              },
-              idle_state: {
-                available: true,
-                terminate_after_minutes: 90,
-                idle_for_minutes: 80,
-                unavailable_reason: null,
-              },
-              shared_with: [
-                {
-                  user: {
-                    id: 1,
-                    name: 'user_1',
-                    role: 'administrator',
-                    email: null,
-                    idp_identifier: 'user_1',
-                    beta_tester: false,
-                  },
-                  created_at: '2024-04-29T15:00:00Z',
-                },
-                {
-                  user: {
-                    id: 2,
-                    name: 'user_2',
-                    role: 'user',
-                    email: null,
-                    idp_identifier: 'user_2',
-                    beta_tester: false,
-                  },
-                  created_at: '2024-04-29T15:00:00Z',
-                },
-              ],
-            }),
-        },
-      ],
-    }),
-  ],
-};
-
-export const SharedSession: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: UserSessionService,
-          useFactory: () => new MockUserSessionService(mockPersistentSession),
-        },
-        mockOwnUserWrapperServiceProvider({ ...mockUser, id: 2 }),
-      ],
-    }),
-  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const training = canvas.getByTestId('training-expansion-1');
+    await userEvent.click(training);
+  },
 };

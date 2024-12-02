@@ -9,45 +9,47 @@
       Learn how to use the diagram cache with capellambse!
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <div class="mt-2">
-    You can also access the diagrams via our Python library
-    <i>capellambse</i>. Follow the installation instructions on
-    <a
-      target="_blank"
-      rel="noopener"
-      class="text-url"
-      href="https://github.com/DSD-DBS/py-capellambse#installation"
-      >Github<span class="align-middle"
-        ><mat-icon class="scale-75">open_in_new</mat-icon></span
+  <div class="px-3 pb-3">
+    <div>
+      You can also access the diagrams via our Python library
+      <i>capellambse</i>. Follow the installation instructions on
+      <a
+        target="_blank"
+        rel="noopener"
+        class="text-url"
+        href="https://github.com/DSD-DBS/py-capellambse#installation"
+        >Github<span class="align-middle"
+          ><mat-icon class="scale-75">open_in_new</mat-icon></span
+        >
+      </a>
+      and then use the code snippet. To authenticate, you have to insert a
+      personal access token. The token has the same scope as your user. Be
+      careful with it. You can revoke the token in the settings.
+    </div>
+    <pre><code
+      class="language-python my-2 rounded-md border shadow"
+      [innerHTML]="this.codeBlockContent | highlight: 'python'"
+    ></code></pre>
+    <div class="flex flex-wrap gap-2">
+      <button
+        [cdkCopyToClipboard]="this.codeBlockContent"
+        matTooltip="Copy codeblock to clipboard"
+        color="bg-transparent"
+        mat-raised-button
+        (click)="showClipboardMessage()"
       >
-    </a>
-    and then use the code snippet. To authenticate, you have to insert a
-    personal access token. The token has the same scope as your user. Be careful
-    with it. You can revoke the token in the settings.
-  </div>
-  <pre><code
-    class="language-python my-2 rounded-md border shadow"
-    [innerHTML]="this.codeBlockContent | highlight: 'python'"
-  ></code></pre>
-  <div class="flex flex-wrap gap-2">
-    <button
-      [cdkCopyToClipboard]="this.codeBlockContent"
-      matTooltip="Copy codeblock to clipboard"
-      color="bg-transparent"
-      mat-raised-button
-      (click)="showClipboardMessage()"
-    >
-      <mat-icon class="!m-0">content_copy</mat-icon>
-    </button>
-    <button
-      class="mt-auto self-end text-white"
-      (click)="insertToken()"
-      [disabled]="passwordValue"
-      matTooltip="Insert new personal access token for your user"
-      color="primary"
-      mat-raised-button
-    >
-      Insert token
-    </button>
+        <mat-icon class="!m-0">content_copy</mat-icon>
+      </button>
+      <button
+        class="mt-auto self-end text-white"
+        (click)="insertToken()"
+        [disabled]="passwordValue"
+        matTooltip="Insert new personal access token for your user"
+        color="primary"
+        mat-raised-button
+      >
+        Insert token
+      </button>
+    </div>
   </div>
 </mat-expansion-panel>

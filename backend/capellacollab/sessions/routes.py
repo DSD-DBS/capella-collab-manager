@@ -230,6 +230,7 @@ async def request_session(
             },
             created_at=session["created_at"],
             connection_method_id=connection_method.id,
+            project=project_scope,
         ),
     )
 

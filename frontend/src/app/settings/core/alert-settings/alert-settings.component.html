@@ -7,12 +7,14 @@
   <div class="collab-card">
     <h2 class="text-xl font-medium">Create new Alert</h2>
     <form [formGroup]="createAlertForm" class="flex flex-wrap">
-      <div class="flex flex-wrap gap-2">
-        <mat-form-field class="form-field" appearance="fill">
-          <mat-label>Title</mat-label>
-          <input matInput formControlName="title" />
-        </mat-form-field>
-        <mat-form-field class="form-field" appearance="fill">
+      <div class="flex w-full flex-wrap gap-2">
+        <div class="min-w-[200px] flex-1">
+          <mat-form-field class="w-full" appearance="fill">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" />
+          </mat-form-field>
+        </div>
+        <mat-form-field class="w-full sm:w-auto" appearance="fill">
           <mat-label>Level</mat-label>
           <mat-select formControlName="level">
             @for (noticeLevel of noticeLevels; track noticeLevel) {
@@ -36,7 +38,7 @@
       </button>
     </form>
   </div>
-  <div class="collab-card" id="handle-alerts">
+  <div class="collab-card">
     <h2 class="text-xl font-medium">Handle alerts</h2>
     @if ((noticeWrapperService.notices$ | async) === undefined) {
       @for (_ of [0, 1, 2]; track $index) {
@@ -60,20 +62,25 @@
           track notice.id
         ) {
           <mat-expansion-panel>
-            <mat-expansion-panel-header class="expansion-panel">
+            <mat-expansion-panel-header
+              [attr.data-testid]="'alert-' + notice.id"
+            >
               <mat-panel-title> {{ notice.title }} </mat-panel-title>
               <mat-panel-description>
                 {{ notice.level }}
               </mat-panel-description>
             </mat-expansion-panel-header>
-            <p>{{ notice.message }}</p>
-            <button
-              mat-flat-button
-              color="primary"
-              (click)="deleteNotice(notice.id)"
-            >
-              Delete!
-            </button>
+            <div class="p-3">
+              <p>{{ notice.message }}</p>
+              <button
+                mat-flat-button
+                color="primary"
+                class="mt-2"
+                (click)="deleteNotice(notice.id)"
+              >
+                Delete!
+              </button>
+            </div>
           </mat-expansion-panel>
         } @empty {
           There are no existing alerts.
