@@ -165,9 +165,11 @@ export class CreateProvisionedSessionComponent implements OnInit {
         );
       }
       combineLatest(requests).subscribe({
-        next: () => {
+        next: (sessions) => {
           this.provisioningRequestInProgress = false;
-          this.router.navigateByUrl('/');
+          this.router.navigate(['/session-viewer'], {
+            queryParams: { 'session-id': sessions.map((s) => s.id) },
+          });
         },
         error: () => {
           this.provisioningRequestInProgress = false;
