@@ -64,14 +64,14 @@ export class ActiveSessionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.userSessionService.sessions$.subscribe((sessions) => {
-      const selectedSessionIDs = new Set(
-        this.sessions.value?.filter((s) => s.selected).map((s) => s.id) ?? [],
+      const unselectedSessionIDs = new Set(
+        this.sessions.value?.filter((s) => !s.selected).map((s) => s.id) ?? [],
       );
 
       this.sessions.next(
         sessions?.map((s) => ({
           ...s,
-          selected: selectedSessionIDs.has(s.id),
+          selected: !unselectedSessionIDs.has(s.id),
         })),
       );
     });

@@ -78,24 +78,22 @@
         }
       }
 
-      <div class="flex justify-center">
-        <button
-          class="mx-0 w-full items-center"
-          mat-flat-button
-          color="primary"
-          type="submit"
-          [disabled]="requestInProgress"
-        >
-          <span class="hidden items-center gap-1 sm:flex">
-            Request a session with a persistent workspace
-            <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
-          </span>
-          <span class="flex items-center gap-1 sm:hidden">
-            Request session
-            <mat-icon inline>keyboard_arrow_right</mat-icon>
-          </span>
-        </button>
-      </div>
+      <button
+        class="mx-0 w-full items-center"
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="requestInProgress"
+      >
+        <span class="hidden items-center gap-1 sm:flex">
+          Request a session with a persistent workspace
+          <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>
+        </span>
+        <span class="flex items-center gap-1 sm:hidden">
+          Request session
+          <mat-icon inline>keyboard_arrow_right</mat-icon>
+        </span>
+      </button>
     </form>
   </div>
 
