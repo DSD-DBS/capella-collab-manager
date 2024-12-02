@@ -32,7 +32,6 @@ import { T4CModelService } from '../service/t4c-model.service';
 @Component({
   selector: 'app-create-t4c-model-new-repository',
   templateUrl: './create-t4c-model-new-repository.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

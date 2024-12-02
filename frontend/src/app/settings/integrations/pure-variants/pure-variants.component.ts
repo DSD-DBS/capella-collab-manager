@@ -26,7 +26,6 @@ import { FormFieldSkeletonLoaderComponent } from '../../../helpers/skeleton-load
   selector: 'app-pure-variants',
   templateUrl: './pure-variants.component.html',
   styleUrls: ['./pure-variants.component.css'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

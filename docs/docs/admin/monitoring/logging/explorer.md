@@ -60,16 +60,16 @@ tool, version, etc.
 
 You can query logs of different components by selecting the following labels:
 
--   **Management portal logs**: If you want to query the logs of the management
-    portal, make use of the `deployment` label to select a component of the
-    management portal.
--   **Session logs**: If you want to query the logs of a specific session, you
-    can use the `username` label to select the user, and the `session_type`
-    label to select the session type. You can also use the `tool` and `version`
-    labels to further specify the session.
--   **Pipeline logs**: If you want to query the logs of a pipeline, you can use
-    the `pipeline_run_id` label to select the pipeline run. The pipeline run
-    identifiers are listed in the pipeline run overview of a pipeline.
+- **Management portal logs**: If you want to query the logs of the management
+  portal, make use of the `deployment` label to select a component of the
+  management portal.
+- **Session logs**: If you want to query the logs of a specific session, you
+  can use the `username` label to select the user, and the `session_type` label
+  to select the session type. You can also use the `tool` and `version` labels
+  to further specify the session.
+- **Pipeline logs**: If you want to query the logs of a pipeline, you can use
+  the `pipeline_run_id` label to select the pipeline run. The pipeline run
+  identifiers are listed in the pipeline run overview of a pipeline.
 
 Here is an example filter how to select all sessions for version 7.0.0.
 

@@ -34,7 +34,6 @@ import { ProjectWrapperService } from '../../service/project.service';
 @Component({
   selector: 'app-edit-project-metadata',
   templateUrl: './edit-project-metadata.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

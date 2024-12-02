@@ -40,7 +40,6 @@ module.exports = tseslint.config(
         },
       ],
       "@angular-eslint/use-lifecycle-interface": "error",
-      "@angular-eslint/sort-ngmodule-metadata-arrays": ["error"],
       "@typescript-eslint/no-deprecated": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",

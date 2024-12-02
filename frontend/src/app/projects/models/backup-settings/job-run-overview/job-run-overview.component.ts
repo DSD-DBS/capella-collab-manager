@@ -30,7 +30,6 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
   selector: 'app-job-run-overview',
   templateUrl: './job-run-overview.component.html',
   styleUrls: ['./job-run-overview.component.css'],
-  standalone: true,
   imports: [
     NgFor,
     NgIf,

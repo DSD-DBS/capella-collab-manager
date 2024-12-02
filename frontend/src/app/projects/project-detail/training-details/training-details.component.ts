@@ -4,12 +4,7 @@
  */
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  MatAnchor,
-  MatButton,
-  MatMiniFabAnchor,
-  MatMiniFabButton,
-} from '@angular/material/button';
+import { MatAnchor, MatMiniFabAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
@@ -30,17 +25,14 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
 @UntilDestroy()
 @Component({
   selector: 'app-training-details',
-  standalone: true,
   imports: [
     CommonModule,
     MatAnchor,
     RouterLink,
     MatTooltip,
     MatIcon,
-    MatButton,
     NgxSkeletonLoaderModule,
     MatMiniFabAnchor,
-    MatMiniFabButton,
     AsyncPipe,
     MarkdownComponent,
   ],

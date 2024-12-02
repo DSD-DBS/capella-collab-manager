@@ -13,7 +13,6 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
 
 @Component({
   selector: 'app-common-projects',
-  standalone: true,
   imports: [CommonModule, MatDividerModule, RouterLink],
   templateUrl: './common-projects.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

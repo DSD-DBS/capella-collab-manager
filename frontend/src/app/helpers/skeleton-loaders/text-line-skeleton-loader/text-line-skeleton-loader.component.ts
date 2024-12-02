@@ -8,7 +8,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
   selector: 'app-text-line-skeleton-loader',
   templateUrl: './text-line-skeleton-loader.component.html',
-  standalone: true,
   imports: [NgxSkeletonLoaderModule],
 })
 export class TextLineSkeletonLoaderComponent {

@@ -11,7 +11,6 @@ import { UserSessionsWrapperComponent } from './user-sessions-wrapper/user-sessi
 @Component({
   selector: 'app-sesssions',
   templateUrl: './sessions.component.html',
-  standalone: true,
   imports: [
     UserSessionsWrapperComponent,
     CreatePersistentSessionComponent,

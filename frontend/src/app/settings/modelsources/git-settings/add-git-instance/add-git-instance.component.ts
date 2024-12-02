@@ -21,7 +21,6 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-se
 
 @Component({
   selector: 'app-add-git-instance',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatSelectModule,

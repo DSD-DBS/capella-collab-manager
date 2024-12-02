@@ -23,7 +23,6 @@ import { CreateToolVersion, ToolWrapperService } from '../../tool.service';
   selector: 'app-tool-version',
   templateUrl: './tool-version.component.html',
   styleUrls: ['./tool-version.component.css'],
-  standalone: true,
   imports: [
     ApiDocumentationComponent,
     MatTabGroup,

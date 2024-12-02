@@ -41,7 +41,6 @@ export interface ModelOptions {
   selector: 'create-readonly-model-options',
   templateUrl: './create-readonly-model-options.component.html',
   styleUrls: ['./create-readonly-model-options.component.css'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

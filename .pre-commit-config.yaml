@@ -102,8 +102,8 @@ repos:
         types_or: [ts, css, html, markdown]
         exclude: '^frontend/src/app/openapi'
         additional_dependencies:
-          - 'prettier@3.3.3'
-          - 'prettier-plugin-tailwindcss@^0.6.8'
+          - 'prettier@3.4.1'
+          - 'prettier-plugin-tailwindcss@^0.6.9'
           - '@trivago/prettier-plugin-sort-imports@^4.3.0'
           - 'tailwindcss@^3.4.15'
           - 'prettier-plugin-classnames@^0.7.4'
@@ -179,14 +179,14 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - 'eslint@^9.15.0'
-          - '@eslint/js@^9.15.0'
-          - 'angular-eslint@18.4.0'
+          - 'eslint@^9.16.0'
+          - '@eslint/js@^9.16.0'
+          - 'angular-eslint@19.0.0'
           - 'eslint-config-prettier@^9.1.0'
-          - 'typescript-eslint@8.15.0'
+          - 'typescript-eslint@8.16.0'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.17.5'
-          - 'eslint-plugin-storybook@0.11.0'
+          - 'eslint-plugin-storybook@0.11.1'
           - 'tailwindcss@^3.4.15'
         args:
           [

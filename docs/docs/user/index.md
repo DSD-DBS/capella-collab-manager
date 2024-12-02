@@ -24,20 +24,20 @@ since the site is completely responsive it is also usable on smartphones.
 Git is quite in the middle of the modeling lifecycle. We also use its
 automation means (CI/CD) to automate a number of housekeeping activities:
 
--   Automated model-modifications: This includes range of services like
-    human-friendly element ID assignment, change control and versioning of
-    elements, hyperlinked object title update in descriptions and maintenance
-    of model-derived requirements (req-bot).
--   Derived product generation and distribution: generation and publication of
-    model-derived documents and other artifacts (like software interfaces,
-    configurations); caching of diagrams for faster display in linked pages and
-    web-viewer; computation of model metrics for modeling progress dashboards;
-    spell-checking; synchronization with tools like
-    [Simulink](https://mathworks.com/products/simulink.html),
-    [Polarion](https://polarion.plm.automation.siemens.com/),
-    [Codebeamer](https://codebeamer.com/),
-    [Confluence](https://www.atlassian.com/software/confluence) or even
-    [Grafana](https://grafana.com/).
+- Automated model-modifications: This includes range of services like
+  human-friendly element ID assignment, change control and versioning of
+  elements, hyperlinked object title update in descriptions and maintenance of
+  model-derived requirements (req-bot).
+- Derived product generation and distribution: generation and publication of
+  model-derived documents and other artifacts (like software interfaces,
+  configurations); caching of diagrams for faster display in linked pages and
+  web-viewer; computation of model metrics for modeling progress dashboards;
+  spell-checking; synchronization with tools like
+  [Simulink](https://mathworks.com/products/simulink.html),
+  [Polarion](https://polarion.plm.automation.siemens.com/),
+  [Codebeamer](https://codebeamer.com/),
+  [Confluence](https://www.atlassian.com/software/confluence) or even
+  [Grafana](https://grafana.com/).
 
 At this moment Collaboration Manager doesn't provide you with a self-service to
 configure any of these automations, however since now you know these are
@@ -64,16 +64,16 @@ one could run it in a VM).
 
 There are currently 2 session types supported:
 
--   **Read-only session** - in this case Collaboration Manager gets the latest
-    (or user-selected) model version from git and places that into a read-only
-    workspace within Capella. You can "play" with that model and even make
-    changes, however these changes will not be saved and so will do no harm
-    (for instance to agreed / approved contents). When the session is closed
-    the contents of the workspace is gone.
--   **Persistent workspace** - in this mode a user-specific persistent volume
-    is mounted to the Session pod and linked to Capella as the workspace. This
-    enables you to work on projects locally, via git or TeamForCapella as
-    persistent workspace keeps "state" even after the session is closed.
+- **Read-only session** - in this case Collaboration Manager gets the latest
+  (or user-selected) model version from git and places that into a read-only
+  workspace within Capella. You can "play" with that model and even make
+  changes, however these changes will not be saved and so will do no harm (for
+  instance to agreed / approved contents). When the session is closed the
+  contents of the workspace is gone.
+- **Persistent workspace** - in this mode a user-specific persistent volume is
+  mounted to the Session pod and linked to Capella as the workspace. This
+  enables you to work on projects locally, via git or TeamForCapella as
+  persistent workspace keeps "state" even after the session is closed.
 
 We do currently support two different working modes: `TeamForCapella` and
 `Git`. If you want to get more information about it, we have prepared a
@@ -84,18 +84,18 @@ comparison here:
 
 There are 3 roles you can have in a project context:
 
--   **User - read-only** - you can view model snapshots (latest model, any
-    specific release, branch or commit) from git. You may edit the model
-    however your changes will not be saved. (Makes it also useful for training
-    exercises.)
--   **User - read/write** - you start a **Persistent Workspace Session**. Your
-    user account is allowed to clone and commit to a git project — if the
-    project co-working model is git-only — or allowed to connect to a remote
-    repository in a TeamForCapella-based project. Also in this mode you may
-    have many co-working projects open at the same time, given that you have a
-    role in those projects that allows this kind of access.
--   **Model manager** - can do same as both users above but also can invite or
-    remove users from the managed projects and control their access rights.
+- **User - read-only** - you can view model snapshots (latest model, any
+  specific release, branch or commit) from git. You may edit the model however
+  your changes will not be saved. (Makes it also useful for training
+  exercises.)
+- **User - read/write** - you start a **Persistent Workspace Session**. Your
+  user account is allowed to clone and commit to a git project — if the project
+  co-working model is git-only — or allowed to connect to a remote repository
+  in a TeamForCapella-based project. Also in this mode you may have many
+  co-working projects open at the same time, given that you have a role in
+  those projects that allows this kind of access.
+- **Model manager** - can do same as both users above but also can invite or
+  remove users from the managed projects and control their access rights.
 
 You may also [learn more about the roles model here](projects/roles.md).
 
@@ -114,10 +114,10 @@ it yet or can't find the project you need see
 At this point you may want to continue to one of the detailed getting-started
 sections:
 
--   [General introduction to Capella and first steps](tools/capella/introduction.md)
--   [Getting started with a Read-only Session](sessions/types/read-only.md)
--   [Getting started with a TeamForCapella-based Project](sessions/types/persistent.md)
--   [Getting started with a Git-based Project](tools/capella/git/index.md)
+- [General introduction to Capella and first steps](tools/capella/introduction.md)
+- [Getting started with a Read-only Session](sessions/types/read-only.md)
+- [Getting started with a TeamForCapella-based Project](sessions/types/persistent.md)
+- [Getting started with a Git-based Project](tools/capella/git/index.md)
 
 ## Missing Information / Need Support
 

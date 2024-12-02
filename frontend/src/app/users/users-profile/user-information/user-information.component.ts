@@ -21,7 +21,6 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
 
 @Component({
   selector: 'app-user-information',
-  standalone: true,
   imports: [
     CommonModule,
     MatTableModule,

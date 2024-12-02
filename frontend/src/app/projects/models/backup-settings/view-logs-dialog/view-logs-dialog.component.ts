@@ -19,7 +19,6 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
   selector: 'app-view-logs-dialog',
   templateUrl: './view-logs-dialog.component.html',
   styleUrls: ['./view-logs-dialog.component.css'],
-  standalone: true,
   imports: [NgIf, NgFor, TextLineSkeletonLoaderComponent, AsyncPipe],
 })
 export class ViewLogsDialogComponent {

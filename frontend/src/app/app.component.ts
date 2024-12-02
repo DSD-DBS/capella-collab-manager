@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgClass, AsyncPipe } from '@angular/common';
+import { NgClass, AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import {
   MatSidenav,
@@ -25,13 +25,11 @@ import { FullscreenService } from './sessions/service/fullscreen.service';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  standalone: true,
   imports: [
     MatDrawerContainer,
     MatDrawer,
     NavBarMenuComponent,
     MatDrawerContent,
-    NgIf,
     HeaderComponent,
     NgClass,
     NoticeComponent,

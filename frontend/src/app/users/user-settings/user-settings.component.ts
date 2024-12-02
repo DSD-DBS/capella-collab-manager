@@ -24,7 +24,6 @@ import {
 } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { MatListSubheaderCssMatStyler } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -45,7 +44,6 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
-  standalone: true,
   imports: [
     MatFormField,
     MatLabel,
@@ -53,7 +51,6 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
     FormsModule,
     MatIcon,
     MatSuffix,
-    MatListSubheaderCssMatStyler,
     RouterLink,
     MatIconButton,
     MatTooltip,

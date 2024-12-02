@@ -10,7 +10,6 @@ import { NoticeWrapperService } from 'src/app/general/notice/notice.service';
   selector: 'app-notice',
   templateUrl: './notice.component.html',
   styleUrls: ['./notice.component.css'],
-  standalone: true,
   imports: [NgClass, AsyncPipe],
 })
 export class NoticeComponent {

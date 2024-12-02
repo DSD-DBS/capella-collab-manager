@@ -27,7 +27,6 @@ import {
   selector: 't4c-repo-deletion-dialog-dialog',
   templateUrl: './t4c-repo-deletion-dialog.component.html',
   styleUrls: ['./t4c-repo-deletion-dialog.component.css'],
-  standalone: true,
   imports: [
     FormsModule,
     MatFormField,

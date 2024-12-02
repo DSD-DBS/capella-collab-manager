@@ -10,7 +10,6 @@ import { Session, SessionsService } from 'src/app/openapi';
 
 @Component({
   templateUrl: './delete-session-dialog.component.html',
-  standalone: true,
   imports: [MatButton],
 })
 export class DeleteSessionDialogComponent {

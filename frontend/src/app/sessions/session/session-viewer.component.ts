@@ -20,7 +20,6 @@ import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-win
 @Component({
   selector: 'app-session-viewer',
   templateUrl: './session-viewer.component.html',
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     FormsModule,

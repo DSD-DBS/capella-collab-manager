@@ -8,7 +8,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
   selector: 'app-mat-card-overview-skeleton-loader',
   templateUrl: './mat-card-overview-skeleton-loader.component.html',
-  standalone: true,
   imports: [NgxSkeletonLoaderModule],
 })
 export class MatCardOverviewSkeletonLoaderComponent implements OnInit {

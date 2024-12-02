@@ -16,7 +16,6 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
 @Component({
   selector: 'app-tiling-window-manager',
   templateUrl: './tiling-window-manager.component.html',
-  standalone: true,
   imports: [
     MatIcon,
     SessionIFrameComponent,

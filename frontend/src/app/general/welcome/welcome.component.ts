@@ -7,7 +7,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-welcome',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './welcome.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

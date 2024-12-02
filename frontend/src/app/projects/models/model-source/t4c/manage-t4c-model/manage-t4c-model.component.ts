@@ -47,7 +47,6 @@ import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleto
 @Component({
   selector: 'app-manage-t4c-model',
   templateUrl: './manage-t4c-model.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

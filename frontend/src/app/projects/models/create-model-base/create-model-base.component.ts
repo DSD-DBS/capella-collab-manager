@@ -32,7 +32,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   selector: 'app-create-model-base',
   templateUrl: './create-model-base.component.html',
   styleUrls: ['./create-model-base.component.css'],
-  standalone: true,
   imports: [
     NgIf,
     FormsModule,

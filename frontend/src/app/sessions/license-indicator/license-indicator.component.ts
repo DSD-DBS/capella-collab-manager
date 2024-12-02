@@ -10,7 +10,6 @@ import { LicenseUsageWrapperService } from './license-usage.service';
 
 @Component({
   selector: 'app-license-indicator',
-  standalone: true,
   imports: [MatIcon, AsyncPipe, NgClass],
   templateUrl: './license-indicator.component.html',
 })

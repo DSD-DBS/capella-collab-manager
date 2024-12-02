@@ -15,7 +15,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   selector: 'app-choose-source',
   templateUrl: './choose-source.component.html',
   styleUrls: ['./choose-source.component.css'],
-  standalone: true,
   imports: [NgIf, MatDivider, MatAnchor, MatIcon, AsyncPipe],
 })
 export class ChooseSourceComponent {

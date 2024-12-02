@@ -9,7 +9,6 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
   selector: 'app-mat-checkbox-loader',
   templateUrl: './mat-checkbox-loader.component.html',
   styleUrls: ['./mat-checkbox-loader.component.css'],
-  standalone: true,
   imports: [MatProgressSpinner],
 })
 export class MatCheckboxLoaderComponent {}

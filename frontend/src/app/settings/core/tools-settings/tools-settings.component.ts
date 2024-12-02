@@ -16,7 +16,6 @@ import { ToolExtended, ToolWrapperService } from './tool.service';
   selector: 'app-dockerimage-settings',
   templateUrl: './tools-settings.component.html',
   styleUrls: ['./tools-settings.component.css'],
-  standalone: true,
   imports: [RouterLink, MatRipple, MatIconComponent, NgFor, NgIf, MatIcon],
 })
 export class ToolsSettingsComponent {

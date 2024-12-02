@@ -29,7 +29,6 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   selector: 'app-move-model',
   templateUrl: './move-model.component.html',
   styleUrls: ['./move-model.component.css'],
-  standalone: true,
   imports: [
     MatFormField,
     MatLabel,

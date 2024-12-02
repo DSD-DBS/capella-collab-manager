@@ -22,13 +22,13 @@ running for main the tag would be `:main`). All characters matching the regex
 You have to add the following environment variables on repository level. Make
 sure to enable the "Expand variable reference" flag.
 
--   `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
-    `secret.docker.json` file (More about this file [below](#docker-sops-file))
--   Variables specifying how to name each image:
-    -   `FRONTEND_IMAGE_NAME` (defaults to `capella/collab/frontend`)
-    -   `BACKEND_IMAGE_NAME` (default to `capella/collab/backend`)
-    -   `DOCS_IMAGE_NAME` (defaults to `capella/collab/docs`)
-    -   `GUACAMOLE_IMAGE_NAME` (defaults to `capella/collab/guacamole`)
+- `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
+  `secret.docker.json` file (More about this file [below](#docker-sops-file))
+- Variables specifying how to name each image:
+    - `FRONTEND_IMAGE_NAME` (defaults to `capella/collab/frontend`)
+    - `BACKEND_IMAGE_NAME` (default to `capella/collab/backend`)
+    - `DOCS_IMAGE_NAME` (defaults to `capella/collab/docs`)
+    - `GUACAMOLE_IMAGE_NAME` (defaults to `capella/collab/guacamole`)
 
 This is the (minimal) configuration. For more advanced configuration options,
 please refer to the

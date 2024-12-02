@@ -16,7 +16,6 @@ import { T4CLicenseServerWrapperService } from '../../../services/settings/t4c-l
   selector: 'app-t4c-settings',
   templateUrl: './t4c-settings.component.html',
   styleUrls: ['./t4c-settings.component.css'],
-  standalone: true,
   imports: [
     RouterLink,
     MatRipple,

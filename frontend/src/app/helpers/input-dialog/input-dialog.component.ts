@@ -28,7 +28,6 @@ export interface InputDialogResult {
 @Component({
   selector: 'app-input-dialog',
   templateUrl: './input-dialog.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

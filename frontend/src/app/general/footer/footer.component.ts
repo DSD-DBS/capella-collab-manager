@@ -14,7 +14,6 @@ import { FeedbackWrapperService } from '../../sessions/feedback/feedback.service
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
-  standalone: true,
   imports: [AsyncPipe, VersionComponent, MatIconModule],
 })
 export class FooterComponent {

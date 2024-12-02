@@ -16,8 +16,8 @@ can be used as a web-based tool.
 
 Tools can be found in various places on the platform:
 
--   Models in projects are always assigned to a specific tool.
--   Sessions are always started for a specific tool.
+- Models in projects are always assigned to a specific tool.
+- Sessions are always started for a specific tool.
 
 Each tool has different versions and natures, which can be configured
 individually. Since different versions can be enabled in parallel, it helps to

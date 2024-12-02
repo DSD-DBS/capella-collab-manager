@@ -21,7 +21,6 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
   selector: 'app-project-audit-log',
   templateUrl: './project-audit-log.component.html',
   styleUrls: ['./project-audit-log.component.css'],
-  standalone: true,
   imports: [NgFor, TextLineSkeletonLoaderComponent, AsyncPipe, DatePipe],
 })
 @UntilDestroy()

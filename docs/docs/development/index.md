@@ -35,12 +35,12 @@ The k3d cluster is required for the development environment.
 
 ### Requirements
 
--   [`Python`](https://www.python.org/) >= 3.12
--   [`Docker`](https://www.docker.com/)
--   [`GNU Make`](https://www.gnu.org/software/make/)
--   [`Node.js`](https://nodejs.org/en) >= v20.8.0
--   [`npm`](https://www.npmjs.com/) package manager
--   [`Angular CLI`](https://angular.dev/tools/cli/setup-local#install-the-angular-cli)
+- [`Python`](https://www.python.org/) >= 3.12
+- [`Docker`](https://www.docker.com/)
+- [`GNU Make`](https://www.gnu.org/software/make/)
+- [`Node.js`](https://nodejs.org/en) >= v20.8.0
+- [`npm`](https://www.npmjs.com/) package manager
+- [`Angular CLI`](https://angular.dev/tools/cli/setup-local#install-the-angular-cli)
 
 ### Backend Configuration
 
@@ -71,11 +71,11 @@ make dev
 
 If everything went well, the frontend and backend should be running now:
 
--   [Frontend](http://localhost:4200)
--   [Backend healthcheck](http://localhost:8000/healthcheck)
--   [Backend API documentation](http://localhost:8000/docs)
--   [Documentation](http://localhost:8081)
--   [Storybook](http://localhost:6006)
+- [Frontend](http://localhost:4200)
+- [Backend healthcheck](http://localhost:8000/healthcheck)
+- [Backend API documentation](http://localhost:8000/docs)
+- [Documentation](http://localhost:8081)
+- [Storybook](http://localhost:6006)
 
 ### Spawn and Access Sessions in the Cluster
 

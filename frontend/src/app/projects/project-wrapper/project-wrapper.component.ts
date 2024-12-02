@@ -14,7 +14,6 @@ import { ProjectWrapperService } from '../service/project.service';
 @Component({
   selector: 'app-project-wrapper',
   templateUrl: './project-wrapper.component.html',
-  standalone: true,
   imports: [RouterOutlet],
 })
 export class ProjectWrapperComponent implements OnInit, OnDestroy {

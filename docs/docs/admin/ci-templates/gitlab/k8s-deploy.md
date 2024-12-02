@@ -18,11 +18,11 @@ include:
 You have to add the following environment variables on repository level. Make
 sure to enable the "Expand variable reference" flag.
 
--   `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
-    `secret.k8s.json` files.
--   `GRAFANA_HELM_CHART`: (Optional) - This variable is used to set the URL for
-    the Grafana Helm chart. It is useful if your deployment environment has
-    limited access, so you can specify a URL that is accessible for you.
+- `PRIVATE_GPG_PATH`: Path to the private GPG key used to decrypt the
+  `secret.k8s.json` files.
+- `GRAFANA_HELM_CHART`: (Optional) - This variable is used to set the URL for
+  the Grafana Helm chart. It is useful if your deployment environment has
+  limited access, so you can specify a URL that is accessible for you.
 
 ## SOPS configuration
 

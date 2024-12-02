@@ -34,7 +34,6 @@ import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.
     '::ng-deep .mat-expansion-indicator::after { border-color: black; }',
   ],
   templateUrl: './model-diagram-code-block.component.html',
-  standalone: true,
   imports: [
     MatExpansionPanel,
     MatExpansionPanelHeader,

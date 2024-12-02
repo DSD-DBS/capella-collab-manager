@@ -12,7 +12,6 @@ import { ViewerSession } from '../session-viewer.service';
   selector: 'app-session-iframe',
   templateUrl: './session-iframe.component.html',
   styleUrls: ['./session-iframe.component.css'],
-  standalone: true,
   imports: [NgClass, MatIconModule],
 })
 export class SessionIFrameComponent {

@@ -16,13 +16,11 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatOption } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatSelect } from '@angular/material/select';
 import { Observable, map, take } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Project, ProjectUserPermission } from 'src/app/openapi';
@@ -35,7 +33,6 @@ import {
   selector: 'app-add-user-to-project',
   templateUrl: './add-user-to-project.component.html',
   styleUrls: ['./add-user-to-project.component.css'],
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -44,8 +41,6 @@ import {
     MatInput,
     MatRadioModule,
     MatError,
-    MatSelect,
-    MatOption,
     MatButton,
     MatIcon,
     KeyValuePipe,

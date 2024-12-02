@@ -7,4 +7,4 @@
 
 You can customize the frontend by using a custom theme and a custom favicon:
 
--   If you like to use your custom favicon, please copy it to `src/favicon.ico`
+- If you like to use your custom favicon, please copy it to `src/favicon.ico`

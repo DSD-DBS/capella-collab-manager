@@ -11,7 +11,6 @@ import { Tool, ToolsService } from 'src/app/openapi';
   selector: 'app-tool-deletion-dialog',
   templateUrl: './tool-deletion-dialog.component.html',
   styleUrls: ['./tool-deletion-dialog.component.css'],
-  standalone: true,
   imports: [MatButton],
 })
 export class ToolDeletionDialogComponent {

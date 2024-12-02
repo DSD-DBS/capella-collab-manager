@@ -32,7 +32,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   selector: 'app-model-description',
   templateUrl: './model-description.component.html',
   styleUrls: ['./model-description.component.css'],
-  standalone: true,
   imports: [
     NgIf,
     FormsModule,

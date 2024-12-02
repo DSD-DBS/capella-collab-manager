@@ -19,7 +19,6 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-pipeline-deletion-dialog',
-  standalone: true,
   imports: [
     CommonModule,
     MatSlideToggle,

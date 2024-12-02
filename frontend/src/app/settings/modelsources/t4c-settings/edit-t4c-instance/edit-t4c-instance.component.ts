@@ -45,7 +45,6 @@ import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-insta
 @Component({
   selector: 'app-edit-t4c-instance',
   templateUrl: './edit-t4c-instance.component.html',
-  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

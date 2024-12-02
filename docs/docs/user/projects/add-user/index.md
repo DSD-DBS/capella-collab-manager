@@ -36,13 +36,11 @@
 
     You can select from the following options:
 
-    -   Remove a user from the project
-    -   Set role of the user to
-        [project administrator](../../projects/roles.md) or
-        [user](../../projects/roles.md)
-    -   Set permission of the user to
-        [read/write](../../sessions/types/index.md) or
-        [read-only](../../sessions/types/index.md)
+    - Remove a user from the project
+    - Set role of the user to [project administrator](../../projects/roles.md)
+      or [user](../../projects/roles.md)
+    - Set permission of the user to [read/write](../../sessions/types/index.md)
+      or [read-only](../../sessions/types/index.md)
 
     !!! info
 

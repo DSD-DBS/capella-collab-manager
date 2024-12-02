@@ -33,7 +33,6 @@ import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-d
   selector: 'app-active-sessions',
   templateUrl: './active-sessions.component.html',
   styleUrls: ['./active-sessions.component.css'],
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     MatAnchor,

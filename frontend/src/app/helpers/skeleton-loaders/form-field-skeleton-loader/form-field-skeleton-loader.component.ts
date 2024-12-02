@@ -8,7 +8,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 @Component({
   selector: 'app-form-field-skeleton-loader',
   templateUrl: './form-field-skeleton-loader.component.html',
-  standalone: true,
   imports: [NgxSkeletonLoaderModule],
 })
 export class FormFieldSkeletonLoaderComponent {}
