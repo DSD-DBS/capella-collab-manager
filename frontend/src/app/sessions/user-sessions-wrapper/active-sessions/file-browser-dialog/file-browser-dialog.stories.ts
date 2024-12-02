@@ -67,7 +67,7 @@ export const Files: Story = {
             children: [
               {
                 path: '/workspace/directory1/file1',
-                name: 'file1',
+                name: 'thisisaverylongfilename.txt',
                 type: 'file',
                 children: null,
               },
@@ -87,7 +87,7 @@ export const Files: Story = {
           },
           {
             path: '/workspace/directory3',
-            name: 'directory3',
+            name: 'this-is-a-very-long-wrapped-directory-name',
             type: 'directory',
             children: [],
           },
