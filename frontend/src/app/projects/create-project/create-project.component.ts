@@ -18,7 +18,7 @@ import { MatInput } from '@angular/material/input';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { RouterLink } from '@angular/router';
-import { ProjectType, Visibility } from 'src/app/openapi';
+import { ProjectType, ProjectVisibility } from 'src/app/openapi';
 import {
   CreateModelComponent,
   CreateModelStep,
@@ -88,7 +88,7 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         .createProject({
           name: this.form.value.name!,
           description: this.form.value.description!,
-          visibility: this.form.value.visibility! as Visibility,
+          visibility: this.form.value.visibility! as ProjectVisibility,
           type: this.form.value.type! as ProjectType,
         })
         .subscribe((project) => {

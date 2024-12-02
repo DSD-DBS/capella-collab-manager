@@ -11,10 +11,10 @@
 
 
 
-export type Visibility = 'private' | 'internal';
+export type ProjectVisibility = 'private' | 'internal';
 
-export const Visibility = {
-    Private: 'private' as Visibility,
-    Internal: 'internal' as Visibility
+export const ProjectVisibility = {
+    Private: 'private' as ProjectVisibility,
+    Internal: 'internal' as ProjectVisibility
 };
 

@@ -46,7 +46,7 @@ def get_project_user_association_or_raise(
     if project_user := crud.get_project_user_association(db, project, user):
         return project_user
 
-    if project.visibility == projects_models.Visibility.INTERNAL:
+    if project.visibility == projects_models.ProjectVisibility.INTERNAL:
         return models.ProjectUser(
             role=models.ProjectUserRole.USER,
             permission=models.ProjectUserPermission.READ,

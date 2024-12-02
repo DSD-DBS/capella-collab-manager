@@ -10,14 +10,14 @@
  */
 
 import { ProjectType } from './project-type';
-import { Visibility } from './visibility';
+import { ProjectVisibility } from './project-visibility';
 
 
 export interface SimpleProject { 
     id: number;
     name: string;
     slug: string;
-    visibility: Visibility;
+    visibility: ProjectVisibility;
     type: ProjectType;
 }
 export namespace SimpleProject {

@@ -16,7 +16,7 @@ import { RDPPortsInput } from './rdp-ports-input';
 
 export interface GuacamoleConnectionMethodInput { 
     id?: string;
-    type?: string;
+    type?: GuacamoleConnectionMethodInput.TypeEnum;
     name?: string;
     description?: string;
     ports?: RDPPortsInput;
@@ -26,4 +26,11 @@ export interface GuacamoleConnectionMethodInput {
     environment?: { [key: string]: EnvironmentValue; };
     sharing?: ToolSessionSharingConfigurationInput;
 }
+export namespace GuacamoleConnectionMethodInput {
+    export type TypeEnum = 'guacamole';
+    export const TypeEnum = {
+        Guacamole: 'guacamole' as TypeEnum
+    };
+}
+
 

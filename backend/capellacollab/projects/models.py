@@ -28,7 +28,7 @@ class UserMetadata(core_pydantic.BaseModel):
     subscribers: int
 
 
-class Visibility(enum.Enum):
+class ProjectVisibility(enum.Enum):
     PRIVATE = "private"
     INTERNAL = "internal"
 
@@ -43,7 +43,7 @@ class Project(core_pydantic.BaseModel):
     name: str
     slug: str
     description: str | None = None
-    visibility: Visibility
+    visibility: ProjectVisibility
     type: ProjectType
     users: UserMetadata
     is_archived: bool
@@ -94,14 +94,14 @@ class SimpleProject(core_pydantic.BaseModel):
     id: int
     name: str
     slug: str
-    visibility: Visibility
+    visibility: ProjectVisibility
     type: ProjectType
 
 
 class PatchProject(core_pydantic.BaseModel):
     name: str | None = None
     description: str | None = None
-    visibility: Visibility | None = None
+    visibility: ProjectVisibility | None = None
     type: ProjectType | None = None
     is_archived: bool | None = None
 
@@ -109,7 +109,7 @@ class PatchProject(core_pydantic.BaseModel):
 class PostProjectRequest(core_pydantic.BaseModel):
     name: str
     description: str | None = None
-    visibility: Visibility = Visibility.PRIVATE
+    visibility: ProjectVisibility = ProjectVisibility.PRIVATE
     type: ProjectType = ProjectType.GENERAL
 
 
@@ -124,8 +124,8 @@ class DatabaseProject(database.Base):
     slug: orm.Mapped[str] = orm.mapped_column(unique=True, index=True)
 
     description: orm.Mapped[str | None] = orm.mapped_column(default=None)
-    visibility: orm.Mapped[Visibility] = orm.mapped_column(
-        default=Visibility.PRIVATE
+    visibility: orm.Mapped[ProjectVisibility] = orm.mapped_column(
+        default=ProjectVisibility.PRIVATE
     )
     type: orm.Mapped[ProjectType] = orm.mapped_column(
         default=ProjectType.GENERAL

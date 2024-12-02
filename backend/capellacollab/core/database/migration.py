@@ -105,7 +105,7 @@ def initialize_capellambse_test_project(db: orm.Session):
         db=db,
         name="Melody Model Test",
         description="Group of test models of the capellambse Python library",
-        visibility=project_models.Visibility.INTERNAL,
+        visibility=project_models.ProjectVisibility.INTERNAL,
     )
     create_capellambse_test_models(db, project)
     LOGGER.info("Initialized project '%s'", project.name)
@@ -476,7 +476,7 @@ def initialize_coffee_machine_project(db: orm.Session):
         db=db,
         name="Coffee Machine",
         description="Contains the Capella Coffee Machine sample model",
-        visibility=project_models.Visibility.INTERNAL,
+        visibility=project_models.ProjectVisibility.INTERNAL,
     )
     create_coffee_machine_model(db, project)
     LOGGER.info("Initialized project '%s'", project.name)
@@ -521,7 +521,7 @@ def initialize_ife_project(db: orm.Session):
         db=db,
         name="In-Flight Entertainment",
         description="Contains the Capella In-Flight Entertainment System sample model",
-        visibility=project_models.Visibility.INTERNAL,
+        visibility=project_models.ProjectVisibility.INTERNAL,
     )
     create_ife_model(db, project)
     LOGGER.info("Initialized project '%s'", project.name)
