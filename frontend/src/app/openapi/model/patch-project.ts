@@ -10,13 +10,13 @@
  */
 
 import { ProjectType } from './project-type';
-import { Visibility } from './visibility';
+import { ProjectVisibility } from './project-visibility';
 
 
 export interface PatchProject { 
     name?: string | null;
     description?: string | null;
-    visibility?: Visibility | null;
+    visibility?: ProjectVisibility | null;
     type?: ProjectType | null;
     is_archived?: boolean | null;
 }

@@ -18,7 +18,7 @@ import { EnvironmentValue1 } from './environment-value1';
 
 export interface ToolSessionConnectionOutputMethodsInner { 
     id: string;
-    type: string;
+    type: ToolSessionConnectionOutputMethodsInner.TypeEnum;
     name: string;
     description: string;
     ports: HTTPPortsOutput;
@@ -33,4 +33,12 @@ export interface ToolSessionConnectionOutputMethodsInner {
      */
     cookies: { [key: string]: string; };
 }
+export namespace ToolSessionConnectionOutputMethodsInner {
+    export type TypeEnum = 'guacamole' | 'http';
+    export const TypeEnum = {
+        Guacamole: 'guacamole' as TypeEnum,
+        Http: 'http' as TypeEnum
+    };
+}
+
 

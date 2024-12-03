@@ -60,7 +60,8 @@ def get_projects(
         projects = [
             association.project
             for association in user.projects
-            if not association.project.visibility == models.Visibility.INTERNAL
+            if not association.project.visibility
+            == models.ProjectVisibility.INTERNAL
         ]
         projects.extend(crud.get_internal_projects(db))
     else:

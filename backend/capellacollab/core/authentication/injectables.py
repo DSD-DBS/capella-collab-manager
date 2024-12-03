@@ -182,7 +182,7 @@ class ProjectRoleVerification:
         self, project: projects_models.DatabaseProject
     ) -> bool:
         return (
-            project.visibility == projects_models.Visibility.INTERNAL
+            project.visibility == projects_models.ProjectVisibility.INTERNAL
             and self.required_role
             == projects_users_models.ProjectUserRole.USER
             and self.required_permission

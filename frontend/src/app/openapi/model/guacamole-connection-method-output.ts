@@ -16,7 +16,7 @@ import { EnvironmentValue1 } from './environment-value1';
 
 export interface GuacamoleConnectionMethodOutput { 
     id: string;
-    type: string;
+    type: GuacamoleConnectionMethodOutput.TypeEnum;
     name: string;
     description: string;
     ports: RDPPortsOutput;
@@ -26,4 +26,11 @@ export interface GuacamoleConnectionMethodOutput {
     environment: { [key: string]: EnvironmentValue1; };
     sharing: ToolSessionSharingConfigurationOutput;
 }
+export namespace GuacamoleConnectionMethodOutput {
+    export type TypeEnum = 'guacamole';
+    export const TypeEnum = {
+        Guacamole: 'guacamole' as TypeEnum
+    };
+}
+
 

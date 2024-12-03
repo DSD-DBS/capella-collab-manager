@@ -11,7 +11,7 @@
 
 import { ProjectType } from './project-type';
 import { UserMetadata } from './user-metadata';
-import { Visibility } from './visibility';
+import { ProjectVisibility } from './project-visibility';
 
 
 export interface Project { 
@@ -19,7 +19,7 @@ export interface Project {
     name: string;
     slug: string;
     description: string | null;
-    visibility: Visibility;
+    visibility: ProjectVisibility;
     type: ProjectType;
     users: UserMetadata;
     is_archived: boolean;

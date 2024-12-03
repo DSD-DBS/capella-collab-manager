@@ -142,6 +142,7 @@ model/project-type.ts
 model/project-user-permission.ts
 model/project-user-role.ts
 model/project-user.ts
+model/project-visibility.ts
 model/project.ts
 model/prometheus-configuration-input.ts
 model/prometheus-configuration-output.ts
@@ -220,7 +221,6 @@ model/user-token.ts
 model/user.ts
 model/validation-error-loc-inner.ts
 model/validation-error.ts
-model/visibility.ts
 model/workspace.ts
 param.ts
 variables.ts

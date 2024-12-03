@@ -79,7 +79,9 @@ def test_get_projects_as_admin(
     executor_name: str,
 ):
     project = projects_crud.create_project(
-        db, "test project", visibility=projects_models.Visibility.PRIVATE
+        db,
+        "test project",
+        visibility=projects_models.ProjectVisibility.PRIVATE,
     )
     users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.ADMIN
@@ -102,7 +104,9 @@ def test_get_internal_projects_as_user(
     executor_name: str,
 ):
     project = projects_crud.create_project(
-        db, "test project", visibility=projects_models.Visibility.INTERNAL
+        db,
+        "test project",
+        visibility=projects_models.ProjectVisibility.INTERNAL,
     )
     users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.USER
@@ -128,7 +132,9 @@ def test_get_internal_projects_as_user_without_duplicates(
         db, executor_name, executor_name, None, users_models.Role.USER
     )
     project = projects_crud.create_project(
-        db, "test project", visibility=projects_models.Visibility.INTERNAL
+        db,
+        "test project",
+        visibility=projects_models.ProjectVisibility.INTERNAL,
     )
     projects_users_crud.add_user_to_project(
         db,
@@ -217,7 +223,7 @@ def test_update_project_as_admin(
     project = projects_crud.create_project(db, "new project")
 
     assert project.slug == "new-project"
-    assert project.visibility == projects_models.Visibility.PRIVATE
+    assert project.visibility == projects_models.ProjectVisibility.PRIVATE
     assert project.is_archived is False
 
     response = client.patch(

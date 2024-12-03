@@ -16,8 +16,8 @@ import {
   Project,
   ProjectType,
   ProjectUserRole,
+  ProjectVisibility,
   ProjectsService,
-  Visibility,
 } from 'src/app/openapi';
 
 @Injectable({
@@ -109,12 +109,12 @@ export class ProjectWrapperService {
     };
   }
 
-  getProjectVisibilityDescription(visibility: Visibility): string {
+  getProjectVisibilityDescription(visibility: ProjectVisibility): string {
     return ProjectVisibilityDescriptions[visibility];
   }
 
-  getAvailableVisibilities(): Visibility[] {
-    return Object.keys(ProjectVisibilityDescriptions) as Visibility[];
+  getAvailableVisibilities(): ProjectVisibility[] {
+    return Object.keys(ProjectVisibilityDescriptions) as ProjectVisibility[];
   }
 
   getProjectTypeDescription(type: ProjectType): string {

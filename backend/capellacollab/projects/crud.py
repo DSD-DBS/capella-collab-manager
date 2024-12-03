@@ -24,7 +24,8 @@ def get_internal_projects(
     return (
         db.execute(
             sa.select(models.DatabaseProject).where(
-                models.DatabaseProject.visibility == models.Visibility.INTERNAL
+                models.DatabaseProject.visibility
+                == models.ProjectVisibility.INTERNAL
             )
         )
         .scalars()
@@ -88,7 +89,7 @@ def create_project(
     db: orm.Session,
     name: str,
     description: str = "",
-    visibility: models.Visibility = models.Visibility.PRIVATE,
+    visibility: models.ProjectVisibility = models.ProjectVisibility.PRIVATE,
     type: models.ProjectType = models.ProjectType.GENERAL,
 ) -> models.DatabaseProject:
     project = models.DatabaseProject(

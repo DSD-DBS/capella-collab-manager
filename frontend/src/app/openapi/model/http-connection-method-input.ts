@@ -16,7 +16,7 @@ import { HTTPPortsInput } from './http-ports-input';
 
 export interface HTTPConnectionMethodInput { 
     id?: string;
-    type?: string;
+    type?: HTTPConnectionMethodInput.TypeEnum;
     name?: string;
     description?: string;
     ports?: HTTPPortsInput;
@@ -31,4 +31,11 @@ export interface HTTPConnectionMethodInput {
      */
     cookies?: { [key: string]: string; };
 }
+export namespace HTTPConnectionMethodInput {
+    export type TypeEnum = 'http';
+    export const TypeEnum = {
+        Http: 'http' as TypeEnum
+    };
+}
+
 

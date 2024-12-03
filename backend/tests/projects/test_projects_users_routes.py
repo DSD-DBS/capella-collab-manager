@@ -119,7 +119,7 @@ def test_current_user_rights_for_internal_project(
         db,
         project,
         projects_models.PatchProject(
-            visibility=projects_models.Visibility.INTERNAL
+            visibility=projects_models.ProjectVisibility.INTERNAL
         ),
     )
     users_crud.create_user(
@@ -145,7 +145,7 @@ def test_no_user_rights_on_internal_permissions(
         db,
         project,
         projects_models.PatchProject(
-            visibility=projects_models.Visibility.PRIVATE
+            visibility=projects_models.ProjectVisibility.PRIVATE
         ),
     )
     users_crud.create_user(
