@@ -26,7 +26,7 @@ const config: StorybookConfig = {
     builder: {
       name: '@storybook/builder-webpack5',
       options: {
-        lazyCompilation: false, // lazyCompilation breaks Storycap
+        lazyCompilation: true,
       },
     },
   },
