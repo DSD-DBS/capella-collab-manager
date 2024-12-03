@@ -20,12 +20,15 @@ const config: StorybookConfig = {
     name: '@storybook/angular',
     options: {},
   },
-  docs: {
-    autodocs: 'tag',
-  },
   core: {
     disableTelemetry: true,
     enableCrashReports: false,
+    builder: {
+      name: '@storybook/builder-webpack5',
+      options: {
+        lazyCompilation: false, // lazyCompilation breaks Storycap
+      },
+    },
   },
 };
 export default config;

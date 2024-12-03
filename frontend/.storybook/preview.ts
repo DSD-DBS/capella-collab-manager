@@ -8,16 +8,12 @@ import { importProvidersFrom } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { setCompodocJson } from '@storybook/addon-docs/angular';
 import type { AngularRenderer, Preview } from '@storybook/angular';
 import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
 import { DecoratorFunction } from 'storybook/internal/types';
 import { withScreenshot } from 'storycap';
-import docJson from '../documentation.json';
 import { IconModule } from '../src/app/icon.module';
-
-setCompodocJson(docJson);
 
 const preview: Preview = {
   parameters: {
