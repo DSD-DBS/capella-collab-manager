@@ -3,12 +3,12 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-drawer-container class="container-wrapper" [hasBackdrop]="true">
+<mat-drawer-container [hasBackdrop]="true">
   <mat-drawer #sidenav mode="push">
     <app-nav-bar-menu></app-nav-bar-menu>
   </mat-drawer>
 
-  <mat-drawer-content class="overall-wrapper">
+  <mat-drawer-content class="flex min-h-full flex-col">
     @if (
       (fullscreenService.isFullscreen$ | async) === false &&
       pageLayoutService.showNavbar
