@@ -24,7 +24,6 @@ import { FullscreenService } from './sessions/service/fullscreen.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
   imports: [
     MatDrawerContainer,
     MatDrawer,
