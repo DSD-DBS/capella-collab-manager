@@ -130,8 +130,7 @@
             "configDir": ".storybook",
             "quiet": true,
             "browserTarget": "capellacollab:build:development",
-            "compodoc": true,
-            "compodocArgs": ["-e", "json", "-d", "."],
+            "compodoc": false,
             "port": 6006,
             "styles": [
               ".storybook/styles.css",
@@ -148,8 +147,7 @@
           "options": {
             "configDir": ".storybook",
             "browserTarget": "capellacollab:build:storybook",
-            "compodoc": true,
-            "compodocArgs": ["-e", "json", "-d", "."],
+            "compodoc": false,
             "outputDir": "storybook-static",
             "styles": [
               ".storybook/styles.css",
