@@ -18,7 +18,7 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
+import { SessionType, Tool, ToolModel, ToolVersion } from 'src/app/openapi';
 import { getPrimaryGitModel } from 'src/app/projects/models/service/model.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import {
@@ -112,12 +112,13 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
     }
 
     this.sessionService
-      .createSession(
-        this.data.tool.id,
-        this.data.toolVersion.id,
-        this.form.controls.connectionMethodId.value!,
-        'readonly',
-        included.map((m) => {
+      .createSession({
+        tool_id: this.data.tool.id,
+        version_id: this.data.toolVersion.id,
+        connection_method_id: this.form.controls.connectionMethodId.value!,
+        session_type: SessionType.Readonly,
+        project_slug: this.data.projectSlug,
+        provisioning: included.map((m) => {
           return {
             project_slug: this.data.projectSlug,
             model_slug: m.model.slug,
@@ -126,7 +127,7 @@ export class CreateReadonlySessionDialogComponent implements OnInit {
             deep_clone: m.deepClone,
           };
         }),
-      )
+      })
       .subscribe({
         next: (session) => {
           this.dialog.close();

@@ -277,6 +277,19 @@ Angular Material Card Styles
   background-color: black !important;
 }
 
+.mat-expansion-indicator::after {
+  border-color: black;
+  margin-top: -6px;
+}
+
+.mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+.mat-expansion-panel-header {
+  padding: 0 12px !important;
+}
+
 /* https://github.com/angular/components/issues/26176 */
 .mat-mdc-button-touch-target {
   @apply !hidden;

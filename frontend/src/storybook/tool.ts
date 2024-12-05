@@ -65,7 +65,7 @@ export const mockToolNature: Readonly<ToolNature> = {
 
 const defaultToolConfig: ToolSessionConfigurationOutput = {
   connection: {
-    methods: [{ ...mockHttpConnectionMethod, type: 'http', environment: {} }],
+    methods: [mockHttpConnectionMethod],
   },
   provisioning: {
     directory: '/tmp',
@@ -124,3 +124,9 @@ export const mockToolVersionWithTool: Readonly<ToolVersionWithTool> = {
   ...mockCapellaToolVersion,
   tool: mockCapellaTool,
 };
+
+export const mockTrainingControllerVersionWithTool: Readonly<ToolVersionWithTool> =
+  {
+    ...mockOtherToolVersion,
+    tool: mockTrainingControllerTool,
+  };

@@ -6,12 +6,12 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {
   Session,
-  SessionProvisioningRequest,
   SessionsService,
   SessionConnectionInformation,
   FileTree,
   SessionPreparationState,
   SessionState,
+  PostSessionRequest,
 } from 'src/app/openapi';
 import { SessionHistoryService } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-session-history/session-history.service';
 
@@ -32,33 +32,19 @@ export class SessionService {
     private sessionsService: SessionsService,
   ) {}
 
-  createSession(
-    toolId: number,
-    versionId: number,
-    connectionMethodId: string,
-    session_type: 'persistent' | 'readonly',
-    models: SessionProvisioningRequest[],
-  ): Observable<Session> {
-    return this.sessionsService
-      .requestSession({
-        tool_id: toolId,
-        version_id: versionId,
-        connection_method_id: connectionMethodId,
-        session_type: session_type,
-        provisioning: models,
-      })
-      .pipe(
-        tap((session) => {
-          if (isPersistentSession(session)) {
-            this.sessionHistoryService.addSessionRequestToHistory({
-              toolId,
-              versionId,
-              connectionMethodId,
-              lastRequested: new Date(),
-            });
-          }
-        }),
-      );
+  createSession(request: PostSessionRequest): Observable<Session> {
+    return this.sessionsService.requestSession(request).pipe(
+      tap((session) => {
+        if (isPersistentSession(session)) {
+          this.sessionHistoryService.addSessionRequestToHistory({
+            toolId: request.tool_id,
+            versionId: request.version_id,
+            connectionMethodId: session.connection_method_id,
+            lastRequested: new Date(),
+          });
+        }
+      }),
+    );
   }
 
   setConnectionInformation(connectionInfo: SessionConnectionInformation): void {

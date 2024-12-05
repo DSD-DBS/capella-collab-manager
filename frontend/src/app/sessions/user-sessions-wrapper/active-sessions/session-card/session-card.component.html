@@ -1,0 +1,155 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+@let sessionState =
+  sessionService.beautifyState(session.preparation_state, session.state);
+
+<div class="collab-card">
+  <div class="ml-[-10px] flex min-h-12 items-center pb-2">
+    @if (!hideActions) {
+      <mat-checkbox
+        color="primary"
+        [(ngModel)]="session.selected"
+      ></mat-checkbox>
+    }
+    <div class="grow" [class.ml-3]="hideActions">
+      <h3 class="text-balance text-base font-bold leading-tight">
+        {{ session.version.tool.name }} ({{ session.version.name }})
+        <span class="text-sm font-medium">
+          via
+          {{ session.connection_method?.name }}
+        </span>
+      </h3>
+      <div class="text-pretty text-xs">
+        @if (isPersistentSession(session)) {
+          Persistent workspace session created
+          <app-relative-time [date]="session.created_at" />
+        } @else if (isReadonlySession(session)) {
+          Read-Only session created
+          <app-relative-time [date]="session.created_at" />
+        }
+      </div>
+    </div>
+
+    <div>
+      @if (
+        (feedbackService.feedbackConfig$ | async)?.on_session_card &&
+        !hideActions
+      ) {
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="feedbackService.showDialog([session], 'On session card')"
+          matTooltip="Give feedback"
+          matTooltipPosition="above"
+        >
+          <mat-icon>feedback</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="mb-1 space-y-1.5">
+    <h3
+      class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
+      [ngClass]="sessionState.css"
+      [matTooltip]="sessionState.info"
+    >
+      <mat-icon>{{ sessionState.icon }}</mat-icon>
+      {{ sessionState.text }}
+    </h3>
+    @let remainingMinutes = minutesUntilSessionTermination(session);
+    @if (remainingMinutes !== null && remainingMinutes < 30) {
+      <div
+        class="flex items-center gap-2 rounded border border-yellow-400 bg-yellow-300 px-2 py-1
+          shadow"
+      >
+        <mat-icon class="shrink-0">warning</mat-icon>
+        <div>
+          This session will automatically terminate
+          <app-relative-time
+            [date]="addMinutes(Date.now(), remainingMinutes)"
+          />
+          if you do not interact with it.
+        </div>
+      </div>
+    }
+
+    @if (session.shared_with.length > 0 && !isSessionShared(session)) {
+      <div class="flex items-center gap-2 rounded border px-2 py-1 shadow">
+        <mat-icon class="shrink-0">share</mat-icon>
+        <div>
+          You're sharing this session with
+          @for (
+            sharedSession of session.shared_with;
+            track sharedSession.user.id
+          ) {
+            <a
+              class="text-primary"
+              [routerLink]="['/user/' + sharedSession.user.id]"
+            >
+              {{ sharedSession.user.name }}
+            </a>
+            @if (!$last) {
+              +
+            }
+          }
+        </div>
+      </div>
+    }
+
+    @if (isSessionShared(session)) {
+      <div class="flex items-center gap-2 rounded border px-2 py-1 shadow">
+        <mat-icon class="shrink-0">share</mat-icon>
+        <div>
+          This session is shared with you and was created by
+          <a class="text-primary" [routerLink]="['/user/' + session.owner.id]"
+            >{{ session.owner.name }}
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+  @if (!hideActions) {
+    <div class="flex flex-wrap justify-between">
+      <button
+        mat-button
+        color="primary"
+        (click)="openConnectDialog(session)"
+        [disabled]="!sessionState.success"
+      >
+        Connect
+        <mat-icon>open_in_browser</mat-icon>
+      </button>
+
+      @if (!isSessionShared(session)) {
+        <button
+          mat-button
+          color="primary"
+          (click)="openShareDialog(session)"
+          [disabled]="!session.connection_method?.sharing?.enabled"
+        >
+          Share
+          <mat-icon>screen_share</mat-icon>
+        </button>
+
+        <button
+          mat-button
+          color="primary"
+          (click)="uploadFileDialog(session)"
+          [disabled]="!sessionState.success"
+        >
+          File browser
+          <mat-icon>insert_drive_file</mat-icon>
+        </button>
+
+        <button mat-button color="warn" (click)="openDeletionDialog([session])">
+          Terminate
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  }
+</div>

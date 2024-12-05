@@ -2,65 +2,74 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgClass, AsyncPipe } from '@angular/common';
+import { AsyncPipe, KeyValuePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatAnchor, MatButton, MatIconButton } from '@angular/material/button';
+import { MatAnchor, MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterLink } from '@angular/router';
-import { addMinutes, differenceInMinutes } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { BehaviorSubject, map } from 'rxjs';
 import { Session } from 'src/app/openapi';
-import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { ConnectionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
-import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/session-sharing-dialog/session-sharing-dialog.component';
-import { RelativeTimeComponent } from '../../../general/relative-time/relative-time.component';
-import { DeleteSessionDialogComponent } from '../../delete-session-dialog/delete-session-dialog.component';
-import { FeedbackWrapperService } from '../../feedback/feedback.service';
-import {
-  SessionService,
-  isPersistentSession,
-  isReadonlySession,
-} from '../../service/session.service';
+import { DeleteSessionDialogComponent } from 'src/app/sessions/delete-session-dialog/delete-session-dialog.component';
+import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.service';
+import { SessionCardComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/session-card/session-card.component';
+import { SessionService } from '../../service/session.service';
 import { UserSessionService } from '../../service/user-session.service';
-import { FileBrowserDialogComponent } from './file-browser-dialog/file-browser-dialog.component';
 
 @Component({
   selector: 'app-active-sessions',
   templateUrl: './active-sessions.component.html',
-  styleUrls: ['./active-sessions.component.css'],
   imports: [
     NgxSkeletonLoaderModule,
     MatAnchor,
     RouterLink,
     MatIcon,
-    NgClass,
-    MatButton,
     AsyncPipe,
-    MatIconButton,
-    MatTooltip,
     MatCheckboxModule,
     FormsModule,
-    RelativeTimeComponent,
+    KeyValuePipe,
+    SessionCardComponent,
+    MatButtonModule,
+    MatExpansionModule,
+    MatProgressBarModule,
   ],
 })
 export class ActiveSessionsComponent implements OnInit {
-  isReadonlySession = isReadonlySession;
-  isPersistentSession = isPersistentSession;
-
   constructor(
     public sessionService: SessionService,
     public userSessionService: UserSessionService,
-    public feedbackService: FeedbackWrapperService,
-    private userWrapperService: OwnUserWrapperService,
     private dialog: MatDialog,
+    private feedbackService: FeedbackWrapperService,
   ) {}
 
   sessions = new BehaviorSubject<SessionWithSelection[] | undefined>(undefined);
+
+  readySessions(sessions: SessionWithSelection[]) {
+    return sessions.filter(
+      (session) =>
+        this.sessionService.beautifyState(
+          session.preparation_state,
+          session.state,
+        ).success,
+    );
+  }
+
+  // groupBy is not supported by our target browsers
+  sessionsGroupedByName = this.sessions.pipe(
+    map((sessions) =>
+      sessions?.reduce((rv: GroupedSessions, x) => {
+        const projectID = x.project?.id ?? -1;
+        if (!rv[projectID]) rv[projectID] = [];
+        rv[projectID].push(x);
+        return rv;
+      }, {}),
+    ),
+  );
 
   ngOnInit(): void {
     this.userSessionService.sessions$.subscribe((sessions) => {
@@ -77,17 +86,7 @@ export class ActiveSessionsComponent implements OnInit {
     });
   }
 
-  get selectedSessionIDs$() {
-    return this.sessions.pipe(
-      map((sessions) =>
-        sessions
-          ?.filter((session) => session.selected)
-          .map((session) => session.id),
-      ),
-    );
-  }
-
-  openDeletionDialog(sessions: Session[]): void {
+  openTerminationDialog(sessions: Session[]): void {
     const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
       data: sessions,
     });
@@ -106,48 +105,20 @@ export class ActiveSessionsComponent implements OnInit {
     });
   }
 
-  openConnectDialog(session: Session): void {
-    this.dialog.open(ConnectionDialogComponent, {
-      data: session,
-    });
+  get selectedSessionIDs$() {
+    return this.sessions.pipe(
+      map((sessions) =>
+        sessions
+          ?.filter((session) => session.selected)
+          .map((session) => session.id),
+      ),
+    );
   }
 
-  openShareDialog(session: Session): void {
-    this.dialog.open(SessionSharingDialogComponent, {
-      data: session,
-    });
+  sessionIDsForSessions(sessions: SessionWithSelection[]) {
+    return sessions.map((session) => session.id);
   }
-
-  uploadFileDialog(session: Session): void {
-    this.dialog.open(FileBrowserDialogComponent, { data: session });
-  }
-
-  isSessionShared(session: Session): boolean {
-    return session.owner.id != this.userWrapperService.user?.id;
-  }
-
-  minutesUntilSessionTermination(session: Session): number | null {
-    if (session.idle_state.available) {
-      if (session.idle_state.idle_for_minutes === -1) {
-        // session was never connected to, use creation time
-        return (
-          session.idle_state.terminate_after_minutes -
-          differenceInMinutes(session.created_at, Date.now())
-        );
-      } else {
-        return (
-          session.idle_state.terminate_after_minutes -
-          session.idle_state.idle_for_minutes!
-        );
-      }
-    } else {
-      return null;
-    }
-  }
-
-  protected readonly Date = Date;
-  protected readonly addMinutes = addMinutes;
-  protected readonly differenceInMinutes = differenceInMinutes;
 }
 
-type SessionWithSelection = Session & { selected: boolean };
+export type SessionWithSelection = Session & { selected: boolean };
+type GroupedSessions = Record<number, SessionWithSelection[]>;

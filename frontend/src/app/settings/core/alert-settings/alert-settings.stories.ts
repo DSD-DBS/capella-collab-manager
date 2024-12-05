@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import { userEvent, within } from '@storybook/test';
 import {
   mockNotice,
   mockNoticeWrapperServiceProvider,
@@ -42,4 +43,18 @@ export const SomeAlerts: Story = {
       ],
     }),
   ],
+};
+
+export const AlertExpanded: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [mockNoticeWrapperServiceProvider([mockNotice])],
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const alert = canvas.getByTestId('alert-1');
+    await userEvent.click(alert);
+  },
 };

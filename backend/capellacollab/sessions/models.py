@@ -16,6 +16,7 @@ from capellacollab.config import config
 from capellacollab.core import database
 from capellacollab.core import models as core_models
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.projects import models as projects_models
 from capellacollab.sessions import models2 as sessions_models2
 from capellacollab.sessions import operators
 from capellacollab.tools import models as tools_models
@@ -24,6 +25,7 @@ from capellacollab.users import models as users_models
 from . import injection
 
 if t.TYPE_CHECKING:
+    from capellacollab.projects.models import DatabaseProject
     from capellacollab.projects.toolmodels.provisioning.models import (
         DatabaseModelProvisioning,
     )
@@ -131,6 +133,10 @@ class Session(core_pydantic.BaseModel):
 
     shared_with: list[SessionSharing] = pydantic.Field(default=[])
 
+    project: projects_models.SimpleProject | None = pydantic.Field(
+        default=None
+    )
+
     _validate_created_at = pydantic.field_serializer("created_at")(
         core_pydantic.datetime_serializer
     )
@@ -215,6 +221,15 @@ class DatabaseSession(database.Base):
             foreign_keys=[provisioning_id],
             default=None,
         )
+    )
+
+    project_id: orm.Mapped[int | None] = orm.mapped_column(
+        sa.ForeignKey("projects.id"),
+        init=False,
+    )
+    project: orm.Mapped[DatabaseProject | None] = orm.relationship(
+        foreign_keys=[project_id],
+        default=None,
     )
 
     environment: orm.Mapped[dict[str, str]] = orm.mapped_column(

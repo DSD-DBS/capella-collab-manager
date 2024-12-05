@@ -44,162 +44,90 @@
       </div>
     </div>
   } @else if ((sessions | async)?.length !== 0) {
-    @for (session of sessions | async; track session.id) {
-      @let sessionState =
-        sessionService.beautifyState(session.preparation_state, session.state);
+    @for (item of sessionsGroupedByName | async | keyvalue; track item.key) {
+      @let project = item.value[0].project;
 
-      <div class="collab-card">
-        <div class="ml-[-10px] flex min-h-12 items-center pb-2">
-          <mat-checkbox
-            color="primary"
-            [(ngModel)]="session.selected"
-          ></mat-checkbox>
-          <div class="grow">
-            <h3 class="text-balance font-bold leading-tight">
-              {{ session.version.tool.name }} ({{ session.version.name }})
-              <span class="text-sm font-medium">
-                via
-                {{ session.connection_method?.name }}
-              </span>
-            </h3>
-            <div class="text-pretty text-xs">
-              @if (isPersistentSession(session)) {
-                Persistent workspace session created
-                <app-relative-time [date]="session.created_at" />
-              } @else if (isReadonlySession(session)) {
-                Read-Only session created
-                <app-relative-time [date]="session.created_at" />
-              }
-            </div>
+      @if (project) {
+        <div
+          class="flex flex-col justify-between gap-2 rounded border bg-gray-50 p-2 shadow"
+        >
+          <div class="ml-1 mt-1 text-lg">
+            <a
+              target="_blank"
+              [href]="'project/' + project.slug"
+              class="flex gap-1"
+            >
+              <div class="line-clamp-1 break-all">
+                {{ project.type === "training" ? "Training" : "Project" }}
+                <b>{{ project.name }}</b>
+              </div>
+              <mat-icon class="!w-6" inline>open_in_new</mat-icon>
+            </a>
           </div>
-
-          <div>
-            @if ((feedbackService.feedbackConfig$ | async)?.on_session_card) {
-              <button
-                mat-icon-button
-                color="primary"
-                (click)="
-                  feedbackService.showDialog([session], 'On session card')
-                "
-                matTooltip="Give feedback"
-                matTooltipPosition="above"
-              >
-                <mat-icon>feedback</mat-icon>
-              </button>
-            }
-          </div>
-        </div>
-
-        <div class="mb-1 space-y-1.5">
-          <h3
-            class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
-            [ngClass]="sessionState.css"
-            [matTooltip]="sessionState.info"
-          >
-            <mat-icon>{{ sessionState.icon }}</mat-icon>
-            {{ sessionState.text }}
-          </h3>
-          @let remainingMinutes = minutesUntilSessionTermination(session);
-          @if (remainingMinutes !== null && remainingMinutes < 30) {
-            <div
-              class="flex items-center gap-2 rounded border border-yellow-400 bg-yellow-300 px-2 py-1
-                shadow"
-            >
-              <mat-icon class="shrink-0">warning</mat-icon>
-              <div>
-                This session will automatically terminate
-                <app-relative-time
-                  [date]="addMinutes(Date.now(), remainingMinutes)"
-                />
-                if you do not interact with it.
-              </div>
-            </div>
-          }
-
-          @if (session.shared_with.length > 0 && !isSessionShared(session)) {
-            <div
-              class="flex items-center gap-2 rounded border px-2 py-1 shadow"
-            >
-              <mat-icon class="shrink-0">share</mat-icon>
-              <div>
-                You're sharing this session with
-                @for (
-                  sharedSession of session.shared_with;
-                  track sharedSession.user.id
-                ) {
-                  <a
-                    class="text-primary"
-                    [routerLink]="['/user/' + sharedSession.user.id]"
-                  >
-                    {{ sharedSession.user.name }}
-                  </a>
-                  @if (!$last) {
-                    +
-                  }
-                }
-              </div>
-            </div>
-          }
-
-          @if (isSessionShared(session)) {
-            <div
-              class="flex items-center gap-2 rounded border px-2 py-1 shadow"
-            >
-              <mat-icon class="shrink-0">share</mat-icon>
-              <div>
-                This session is shared with you and was created by
-                <a
-                  class="text-primary"
-                  [routerLink]="['/user/' + session.owner.id]"
-                  >{{ session.owner.name }}
-                </a>
-              </div>
-            </div>
-          }
-        </div>
-        <div class="flex flex-wrap justify-between">
-          <button
-            mat-button
-            color="primary"
-            (click)="openConnectDialog(session)"
-            [disabled]="!sessionState.success"
-          >
-            Connect
-            <mat-icon>open_in_browser</mat-icon>
-          </button>
-
-          @if (!isSessionShared(session)) {
-            <button
+          <div class="hidden sm:block">
+            <a
               mat-button
               color="primary"
-              (click)="openShareDialog(session)"
-              [disabled]="!session.connection_method?.sharing?.enabled"
+              type="submit"
+              routerLink="/session-viewer"
+              [queryParams]="{
+                'session-id': sessionIDsForSessions(item.value),
+                'window-manager': 'tiling',
+              }"
+              >Open {{ project.type === "training" ? "Training" : "Sessions" }}
+              <mat-icon>smart_display</mat-icon></a
             >
-              Share
-              <mat-icon>screen_share</mat-icon>
-            </button>
-
-            <button
-              mat-button
-              color="primary"
-              (click)="uploadFileDialog(session)"
-              [disabled]="!sessionState.success"
-            >
-              File browser
-              <mat-icon>insert_drive_file</mat-icon>
-            </button>
-
             <button
               mat-button
               color="warn"
-              (click)="openDeletionDialog([session])"
+              (click)="openTerminationDialog(item.value)"
             >
               Terminate
+              {{ project.type === "training" ? "Training" : "Sessions" }}
               <mat-icon>close</mat-icon>
             </button>
+          </div>
+          @if (project.type === "training") {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header
+                [attr.data-testid]="'training-expansion-' + project.id"
+              >
+                <mat-panel-title>
+                  <div class="mr-2 text-center">
+                    {{ readySessions(item.value).length }}/{{
+                      item.value.length
+                    }}
+                    Ready
+                  </div>
+                  <mat-progress-bar
+                    [value]="
+                      (readySessions(item.value).length / item.value.length) *
+                      100
+                    "
+                  >
+                  </mat-progress-bar>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="flex flex-col gap-2 p-2">
+                @for (session of item.value; track session.id) {
+                  <app-session-card
+                    [session]="session"
+                    [hideActions]="true"
+                  ></app-session-card>
+                }
+              </div>
+            </mat-expansion-panel>
+          } @else {
+            @for (session of item.value; track session.id) {
+              <app-session-card [session]="session"></app-session-card>
+            }
           }
         </div>
-      </div>
+      } @else {
+        @for (session of item.value; track session.id) {
+          <app-session-card [session]="session"></app-session-card>
+        }
+      }
     }
   }
 </div>

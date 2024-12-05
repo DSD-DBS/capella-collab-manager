@@ -7,7 +7,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, filter, take } from 'rxjs';
-import { Tool, ToolVersion } from 'src/app/openapi';
+import { SessionType, Tool, ToolVersion } from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import {
   SessionHistoryService,
@@ -117,13 +117,12 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
   requestSession(session: ResolvedSessionRequestHistory) {
     session.loading = true;
     this.sessionService
-      .createSession(
-        session.tool.id,
-        session.version.id,
-        session.connectionMethod.id!,
-        'persistent',
-        [],
-      )
+      .createSession({
+        tool_id: session.tool.id,
+        version_id: session.version.id,
+        connection_method_id: session.connectionMethod.id!,
+        session_type: SessionType.Persistent,
+      })
       .subscribe({
         next: () => {
           session.loading = false;
