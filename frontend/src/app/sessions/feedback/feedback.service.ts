@@ -4,13 +4,11 @@
  */
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { map, take } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
-import {
-  FeedbackConfigurationOutput,
-  FeedbackService as OpenAPIFeedbackService,
-  Session,
-} from '../../openapi';
+import { FeedbackConfigurationOutput, Session } from '../../openapi';
+import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapper/unified-config-wrapper.service';
 import { FeedbackDialogComponent } from './feedback-dialog/feedback-dialog.component';
 
 @Injectable({
@@ -18,30 +16,28 @@ import { FeedbackDialogComponent } from './feedback-dialog/feedback-dialog.compo
 })
 export class FeedbackWrapperService {
   constructor(
-    private feedbackService: OpenAPIFeedbackService,
     public dialog: MatDialog,
     private authService: AuthenticationWrapperService,
+    public unifiedConfigWrapperService: UnifiedConfigWrapperService,
   ) {
-    this.loadFeedbackConfig().subscribe(() => this.triggerFeedbackPrompt());
+    this.unifiedConfigWrapperService.unifiedConfig$.subscribe(() => {
+      this.triggerFeedbackPrompt();
+    });
   }
 
-  private _feedbackConfig = new BehaviorSubject<
-    FeedbackConfigurationOutput | undefined
-  >(undefined);
-
-  public readonly feedbackConfig$ = this._feedbackConfig.asObservable();
-
-  loadFeedbackConfig(): Observable<FeedbackConfigurationOutput> {
-    return this.feedbackService
-      .getFeedbackConfiguration()
-      .pipe(tap((feedbackConf) => this._feedbackConfig.next(feedbackConf)));
-  }
+  public readonly feedbackConfig$ =
+    this.unifiedConfigWrapperService.unifiedConfig$.pipe(
+      map((unifiedConfig) => unifiedConfig?.feedback),
+    );
 
   triggerFeedbackPrompt(): void {
-    if (this.shouldShowIntervalPrompt() && this.authService.isLoggedIn()) {
-      this.showDialog([], 'On interval');
-      this.saveFeedbackPromptDate();
-    }
+    if (!this.authService.isLoggedIn()) return;
+    this.feedbackConfig$.pipe(filter(Boolean), take(1)).subscribe((config) => {
+      if (this.shouldShowIntervalPrompt(config)) {
+        this.showDialog([], 'On interval');
+        this.saveFeedbackPromptDate();
+      }
+    });
   }
 
   public showDialog(sessions: Session[], trigger: string) {
@@ -51,22 +47,18 @@ export class FeedbackWrapperService {
     });
   }
 
-  public shouldShowIntervalPrompt() {
-    if (!this._feedbackConfig.value?.interval?.enabled) return false;
+  public shouldShowIntervalPrompt(config: FeedbackConfigurationOutput) {
+    if (!config?.interval?.enabled) return false;
     const lastPrompt = localStorage.getItem('feedbackPrompt');
     if (!lastPrompt) {
       return true;
     }
     const lastPromptDate = new Date(parseInt(lastPrompt));
 
-    const hoursInterval =
-      this._feedbackConfig.value.interval.hours_between_prompt;
+    const hoursInterval = config.interval.hours_between_prompt;
     const diff = new Date().getTime() - lastPromptDate.getTime();
     const hours = diff / (1000 * 60 * 60);
-    if (hours >= hoursInterval) {
-      return true;
-    }
-    return false;
+    return hours >= hoursInterval;
   }
 
   public saveFeedbackPromptDate() {
@@ -74,7 +66,7 @@ export class FeedbackWrapperService {
   }
 
   public shouldShowPostSessionPrompt() {
-    if (this._feedbackConfig.value?.after_session) return true;
-    return false;
+    return !!this.unifiedConfigWrapperService.unifiedConfig?.feedback
+      ?.after_session;
   }
 }

@@ -210,9 +210,9 @@ def test_feedback_is_updated(
 
     assert response.status_code == 200
 
-    response = client.get("/api/v1/configurations/feedback")
+    response = client.get("/api/v1/settings/configurations/unified")
     assert response.status_code == 200
-    assert response.json() == {
+    assert response.json()["feedback"] == {
         "enabled": True,
         "after_session": True,
         "on_footer": True,
@@ -262,9 +262,9 @@ def test_activate_feedback_without_recipients(
 
 @pytest.mark.usefixtures("user", "smtp_config_not_set", "feedback_enabled")
 def test_feedback_is_disabled_without_smtp(client: testclient.TestClient):
-    response = client.get("/api/v1/configurations/feedback")
+    response = client.get("/api/v1/settings/configurations/unified")
     assert response.status_code == 200
-    assert response.json()["enabled"] is False
+    assert response.json()["feedback"]["enabled"] is False
 
 
 def test_feedback_metric(db: orm.Session):

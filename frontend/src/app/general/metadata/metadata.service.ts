@@ -5,11 +5,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import {
-  Metadata,
-  MetadataService as OpenAPIMetadataService,
-} from 'src/app/openapi';
+import { map } from 'rxjs';
+import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapper/unified-config-wrapper.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,19 +15,18 @@ export class MetadataService {
   constructor(
     private httpClient: HttpClient,
     public dialog: MatDialog,
-    private metadataService: OpenAPIMetadataService,
+    private unifiedConfigWrapperService: UnifiedConfigWrapperService,
   ) {
     this.loadVersion();
-    this.loadBackendMetadata().subscribe();
   }
 
   public version: Version | undefined;
   public oldVersion: string | undefined;
 
-  private _backendMetadata = new BehaviorSubject<Metadata | undefined>(
-    undefined,
-  );
-  readonly backendMetadata = this._backendMetadata.asObservable();
+  readonly backendMetadata =
+    this.unifiedConfigWrapperService.unifiedConfig$.pipe(
+      map((unifiedConfig) => unifiedConfig?.metadata),
+    );
 
   loadVersion(): void {
     if (!this.version) {
@@ -40,12 +36,6 @@ export class MetadataService {
           this.version = version;
         });
     }
-  }
-
-  loadBackendMetadata(): Observable<Metadata> {
-    return this.metadataService
-      .getMetadata()
-      .pipe(tap((metadata: Metadata) => this._backendMetadata.next(metadata)));
   }
 
   get changedVersion(): boolean {

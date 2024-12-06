@@ -12,16 +12,9 @@ from capellacollab.feedback import util as feedback_util
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
-from . import core, crud, models
+from . import core, crud, models, util
 
 router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
-        )
-    ],
     tags=["Configuration"],
 )
 
@@ -29,8 +22,31 @@ schema_router = fastapi.APIRouter(dependencies=[], tags=["Configuration"])
 
 
 @router.get(
+    "/unified",
+)
+def get_unified_config(
+    db: orm.Session = fastapi.Depends(database.get_db),
+) -> models.UnifiedConfig:
+    cfg = core.get_global_configuration(db)
+
+    return models.UnifiedConfig(
+        metadata=util.get_metadata(cfg),
+        feedback=util.get_feedback(cfg),
+        beta=cfg.beta,
+        navbar=cfg.navbar,
+    )
+
+
+@router.get(
     f"/{models.GlobalConfiguration._name}",
     response_model=models.GlobalConfiguration,
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
+    ],
 )
 async def get_configuration(
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -41,6 +57,13 @@ async def get_configuration(
 @router.put(
     f"/{models.GlobalConfiguration._name}",
     response_model=models.GlobalConfiguration,
+    dependencies=[
+        fastapi.Depends(
+            auth_injectables.RoleVerification(
+                required_role=users_models.Role.ADMIN
+            )
+        )
+    ],
 )
 async def update_configuration(
     body: models.GlobalConfiguration,

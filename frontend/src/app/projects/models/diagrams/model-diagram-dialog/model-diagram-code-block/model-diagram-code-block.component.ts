@@ -47,7 +47,6 @@ import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.
 })
 export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   passwordValue?: string;
-
   metadata?: Metadata;
 
   constructor(

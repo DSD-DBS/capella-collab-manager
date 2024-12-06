@@ -5,10 +5,9 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { BehaviorSubject } from 'rxjs';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
-import { BetaConfigurationOutput, UsersService } from '../../openapi';
+import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapper/unified-config-wrapper.service';
 import { BetaTestingComponent } from './beta-testing/beta-testing.component';
 import { CommonProjectsComponent } from './common-projects/common-projects.component';
 import { UserInformationComponent } from './user-information/user-information.component';
@@ -31,18 +30,6 @@ export class UsersProfileComponent {
   constructor(
     public ownUserService: OwnUserWrapperService,
     public userWrapperService: UserWrapperService,
-    private usersService: UsersService,
-  ) {
-    this.getBetaConfig();
-  }
-
-  readonly betaConfig$ = new BehaviorSubject<
-    BetaConfigurationOutput | undefined
-  >(undefined);
-
-  getBetaConfig() {
-    return this.usersService.getBetaConfig().subscribe((res) => {
-      this.betaConfig$.next(res);
-    });
-  }
+    public unifiedConfigWrapperService: UnifiedConfigWrapperService,
+  ) {}
 }

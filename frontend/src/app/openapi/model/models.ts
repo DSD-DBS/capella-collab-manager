@@ -190,6 +190,7 @@ export * from './tool-version-configuration-input';
 export * from './tool-version-configuration-output';
 export * from './tool-version-with-tool';
 export * from './toolmodel-status';
+export * from './unified-config';
 export * from './user';
 export * from './user-metadata';
 export * from './user-token';

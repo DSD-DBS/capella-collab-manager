@@ -16,7 +16,6 @@ from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.sessions import routes as session_routes
 from capellacollab.settings.configuration import core as config_core
-from capellacollab.settings.configuration import models as config_models
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes
@@ -39,18 +38,6 @@ def get_current_user(
     user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
 ) -> models.DatabaseUser:
     return user
-
-
-@router.get(
-    "/beta",
-    response_model=config_models.BetaConfiguration,
-)
-def get_beta_config(db: orm.Session = fastapi.Depends(database.get_db)):
-    cfg = config_core.get_global_configuration(db)
-
-    return config_models.BetaConfiguration.model_validate(
-        cfg.beta.model_dump()
-    )
 
 
 @router.get(

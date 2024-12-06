@@ -4,37 +4,23 @@
  */
 import { Injectable } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
-import {
-  BuiltInLinkItem,
-  NavbarConfigurationOutput,
-  NavbarService as OpenAPINavbarService,
-  Role,
-} from 'src/app/openapi';
+import { map } from 'rxjs';
+import { BuiltInLinkItem, Role } from 'src/app/openapi';
 import { environment } from 'src/environments/environment';
+import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapper/unified-config-wrapper.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavBarService {
-  constructor(private navbarService: OpenAPINavbarService) {
-    this.loadNavbarConfig().subscribe();
-  }
+  constructor(
+    private unifiedConfigWrapperService: UnifiedConfigWrapperService,
+  ) {}
 
-  loadNavbarConfig(): Observable<NavbarConfigurationOutput> {
-    return this.navbarService
-      .getNavbar()
-      .pipe(tap((navConf) => this._navbarConfig.next(navConf)));
-  }
-
-  private _navbarConfig = new BehaviorSubject<
-    NavbarConfigurationOutput | undefined
-  >(undefined);
-
-  readonly navbarItems$ = this._navbarConfig.pipe(
+  readonly navbarItems$ = this.unifiedConfigWrapperService.unifiedConfig$.pipe(
     map(
-      (navbarConfig): NavBarItem[] =>
-        navbarConfig?.external_links.map((link) => ({
+      (unifiedConfig): NavBarItem[] =>
+        unifiedConfig?.navbar?.external_links.map((link) => ({
           name: link.name,
           href: link.service ? this._linkMap[link.service] : link.href,
           target: '_blank',
