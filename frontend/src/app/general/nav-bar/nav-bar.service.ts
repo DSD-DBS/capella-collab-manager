@@ -31,6 +31,13 @@ export class NavBarService {
     map((items) => [...this.internalNavbarItems, ...items]),
   );
 
+  readonly logoUrl$ = this.unifiedConfigWrapperService.unifiedConfig$.pipe(
+    map((unifiedConfig) => unifiedConfig?.navbar?.logo_url),
+  );
+
+  readonly badge$ = this.unifiedConfigWrapperService.unifiedConfig$.pipe(
+    map((unifiedConfig) => unifiedConfig?.navbar?.badge),
+  );
   sidenav?: MatSidenav;
   toggle(): void {
     this.sidenav?.toggle();

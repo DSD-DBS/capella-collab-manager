@@ -8,6 +8,7 @@ import {
   mockOwnUserWrapperServiceProvider,
   mockUser,
 } from 'src/storybook/user';
+import { BadgeOutput } from '../../openapi';
 import { NavBarItem, NavBarService } from '../nav-bar/nav-bar.service';
 import { HeaderComponent } from './header.component';
 
@@ -52,6 +53,12 @@ class MockNavbarService implements Partial<NavBarService> {
       href: '#',
     },
   ]);
+  readonly logoUrl$ = of<string | undefined>(undefined);
+  readonly badge$ = of<BadgeOutput | undefined>({
+    variant: 'warning',
+    text: 'Storybook',
+    show: true,
+  });
 }
 
 export const NormalUser: Story = {
