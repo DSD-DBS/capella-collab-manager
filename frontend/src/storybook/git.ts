@@ -10,10 +10,7 @@ import {
   GitType,
   ValidationError,
 } from 'src/app/openapi';
-import {
-  GetGitModel,
-  GitModelService,
-} from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 export const mockPrimaryGitModel: Readonly<GitModel> = {
@@ -52,15 +49,13 @@ export const mockGitInstance: Readonly<GitInstance> = {
 };
 
 class MockGitModelService implements Partial<GitModelService> {
-  private _gitModel = new BehaviorSubject<GetGitModel | undefined>(undefined);
-  private _gitModels = new BehaviorSubject<GetGitModel[] | undefined>(
-    undefined,
-  );
+  private _gitModel = new BehaviorSubject<GitModel | undefined>(undefined);
+  private _gitModels = new BehaviorSubject<GitModel[] | undefined>(undefined);
 
   public readonly gitModel$ = this._gitModel.asObservable();
   public readonly gitModels$ = this._gitModels.asObservable();
 
-  constructor(gitModel: GetGitModel, gitModels: GetGitModel[]) {
+  constructor(gitModel: GitModel, gitModels: GitModel[]) {
     this._gitModel.next(gitModel);
     this._gitModels.next(gitModels);
   }
@@ -69,8 +64,8 @@ class MockGitModelService implements Partial<GitModelService> {
 }
 
 export const mockGitModelServiceProvider = (
-  gitModel: GetGitModel,
-  gitModels: GetGitModel[],
+  gitModel: GitModel,
+  gitModels: GitModel[],
 ) => {
   return {
     provide: GitModelService,

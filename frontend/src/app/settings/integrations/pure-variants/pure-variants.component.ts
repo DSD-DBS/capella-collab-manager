@@ -17,9 +17,9 @@ import { MatInput } from '@angular/material/input';
 import { filter, finalize, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
-  PureVariantsConfiguration,
-  PureVariantsService,
-} from 'src/app/settings/integrations/pure-variants/service/pure-variants.service';
+  IntegrationsPureVariantsService,
+  PureVariantsLicensesOutput,
+} from 'src/app/openapi';
 import { FormFieldSkeletonLoaderComponent } from '../../../helpers/skeleton-loaders/form-field-skeleton-loader/form-field-skeleton-loader.component';
 
 @Component({
@@ -38,7 +38,7 @@ import { FormFieldSkeletonLoaderComponent } from '../../../helpers/skeleton-load
   ],
 })
 export class PureVariantsComponent implements OnInit {
-  configuration?: PureVariantsConfiguration = undefined;
+  configuration?: PureVariantsLicensesOutput = undefined;
   loading = false;
   loadingLicenseKey = false;
 
@@ -72,18 +72,18 @@ export class PureVariantsComponent implements OnInit {
   }
 
   constructor(
-    private pureVariantsService: PureVariantsService,
+    private pureVariantsService: IntegrationsPureVariantsService,
     private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
     this.pureVariantsService
-      .getLicenseServerConfiguration()
+      .getLicense()
       .pipe(
-        tap((res: PureVariantsConfiguration) => (this.configuration = res)),
+        tap((res) => (this.configuration = res)),
         filter(Boolean),
       )
-      .subscribe((res: PureVariantsConfiguration) => {
+      .subscribe((res) => {
         this.licenseServerConfigurationForm.controls.licenseServerURL.patchValue(
           res.license_server_url || '',
         );
@@ -93,9 +93,10 @@ export class PureVariantsComponent implements OnInit {
   onLicenseConfigurationSubmit(): void {
     this.loading = true;
     this.pureVariantsService
-      .setLicenseServerURL(
-        this.licenseServerConfigurationForm.value.licenseServerURL!,
-      )
+      .setLicense({
+        license_server_url:
+          this.licenseServerConfigurationForm.value.licenseServerURL!,
+      })
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -116,15 +117,10 @@ export class PureVariantsComponent implements OnInit {
   onLicenseFileUploadSubmit(): void {
     this.loadingLicenseKey = true;
 
-    const formData = new FormData();
-    formData.append(
-      'file',
-      this.licenseKeyUploadForm.controls.licenseFile.value!,
-      this.selectedFile!,
-    );
-
     this.pureVariantsService
-      .uploadLicenseServerFile(formData)
+      .uploadLicenseKeyFile(
+        this.licenseKeyUploadForm.controls.licenseFile.value!,
+      )
       .pipe(
         finalize(() => {
           this.loadingLicenseKey = false;
@@ -142,16 +138,14 @@ export class PureVariantsComponent implements OnInit {
   onLicenseFileDeletionClick(): void {
     this.loadingLicenseKey = true;
     this.pureVariantsService
-      .deleteLicenseServerFile()
+      .deleteLicenseKeyFile()
       .pipe(
-        switchMap(() =>
-          this.pureVariantsService.getLicenseServerConfiguration(),
-        ),
+        switchMap(() => this.pureVariantsService.getLicense()),
         finalize(() => {
           this.loadingLicenseKey = false;
         }),
       )
-      .subscribe((res: PureVariantsConfiguration) => {
+      .subscribe((res) => {
         this.configuration = res;
       });
   }

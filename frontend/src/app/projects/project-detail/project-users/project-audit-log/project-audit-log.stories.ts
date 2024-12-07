@@ -8,10 +8,12 @@ import { BehaviorSubject } from 'rxjs';
 import { dialogWrapper } from '../../../../../storybook/decorators';
 import { mockProject } from '../../../../../storybook/project';
 import { mockUser } from '../../../../../storybook/user';
-import { EventType, HistoryEvent } from '../../../../openapi';
-import { Page, PageWrapper } from '../../../../schemes';
+import { EventType, PageHistoryEvent } from '../../../../openapi';
 import { ProjectAuditLogComponent } from './project-audit-log.component';
-import { ProjectAuditLogService } from './service/project-audit-log.service';
+import {
+  PageHistoryEventWrapper,
+  ProjectAuditLogService,
+} from './project-audit-log.service';
 
 const meta: Meta<ProjectAuditLogComponent> = {
   title: 'Project Components/Audit Log',
@@ -40,7 +42,7 @@ const mockHistoryEventBase = {
   reason: 'Test Reason',
 };
 
-const mockHistoryEvents: Page<HistoryEvent> = {
+const mockHistoryEvents: PageHistoryEvent = {
   items: [
     {
       ...mockHistoryEventBase,
@@ -76,16 +78,15 @@ const mockHistoryEvents: Page<HistoryEvent> = {
 };
 
 class MockProjectAuditLogService implements Partial<ProjectAuditLogService> {
-  private _projectHistoryEventPages = new BehaviorSubject<
-    PageWrapper<HistoryEvent>
-  >({
-    pages: [mockHistoryEvents],
-    total: 1,
-  });
+  private _projectHistoryEventPages =
+    new BehaviorSubject<PageHistoryEventWrapper>({
+      pages: [mockHistoryEvents],
+      total: 1,
+    });
   public readonly projectHistoryEventsPages$ =
     this._projectHistoryEventPages.asObservable();
 
-  constructor(historyEvents: Page<HistoryEvent>) {
+  constructor(historyEvents: PageHistoryEvent) {
     this._projectHistoryEventPages.next({
       pages: [historyEvents],
       total: 1,

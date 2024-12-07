@@ -49,20 +49,20 @@ import {
   hasAbsoluteUrlPrefix,
   hasRelativePathPrefix,
 } from 'src/app/helpers/validators/url-validator';
-import { GitInstance, SettingsModelsourcesGitService } from 'src/app/openapi';
+import {
+  GetRevisionsResponseModel,
+  GitCredentials,
+  GitInstance,
+  GitModel,
+  PostGitModel,
+  ProjectsModelsGitService,
+  PutGitModel,
+  SettingsModelsourcesGitService,
+} from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
-import {
-  CreateGitModel,
-  GetGitModel,
-  GitModelService,
-  PatchGitModel,
-} from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
+import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
-import {
-  Credentials,
-  GitService,
-  Revisions,
-} from 'src/app/services/git/git.service';
+import { GitService } from 'src/app/services/git/git.service';
 import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
 
 @UntilDestroy()
@@ -97,8 +97,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   public availableGitInstances?: GitInstance[];
   public selectedGitInstance?: GitInstance;
 
-  private revisions?: Revisions;
-  public filteredRevisions?: Revisions;
+  private revisions?: GetRevisionsResponseModel;
+  public filteredRevisions?: GetRevisionsResponseModel;
 
   public resultUrl = '';
 
@@ -106,7 +106,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
   private modelSlug?: string = undefined;
 
   private gitModelId?: number;
-  public gitModel?: GetGitModel;
+  public gitModel?: GitModel;
 
   public isEditMode = false;
   public editing = false;
@@ -124,6 +124,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private dialog: MatDialog,
+    private projectsModelsGitService: ProjectsModelsGitService,
   ) {}
 
   public form = this.fb.group({
@@ -253,7 +254,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
       } else {
         this.gitService.loadRevisions(
           this.resultUrl,
-          this.form.value.credentials as Credentials,
+          this.form.value.credentials as GitCredentials,
         );
       }
     }
@@ -302,8 +303,8 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
   onCreateSubmit(): void {
     if (this.form.valid) {
-      this.gitModelService
-        .addGitSource(
+      this.projectsModelsGitService
+        .createGitModel(
           this.projectSlug!,
           this.modelSlug!,
           this.createGitModelFromForm(),
@@ -322,7 +323,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
   onEditSubmit(): void {
     if (this.form.valid) {
-      const patchGitModel = this.createGitModelFromForm() as PatchGitModel;
+      const patchGitModel = this.createGitModelFromForm() as PutGitModel;
       patchGitModel.primary = this.form.controls.primary.value!;
 
       this.gitModelService
@@ -366,8 +367,12 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        this.gitModelService
-          .deleteGitSource(this.projectSlug!, this.modelSlug!, this.gitModel!)
+        this.projectsModelsGitService
+          .deleteGitModelById(
+            this.projectSlug!,
+            this.gitModel!.id,
+            this.modelSlug!,
+          )
           .subscribe({
             next: () => {
               this.toastService.showSuccess(
@@ -384,7 +389,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     });
   }
 
-  private createGitModelFromForm(): CreateGitModel {
+  private createGitModelFromForm(): PostGitModel {
     return {
       path: this.resultUrl,
       revision: this.form.value.revision!,
@@ -394,7 +399,7 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
     };
   }
 
-  private fillFormWithGitModel(gitModel: GetGitModel): void {
+  private fillFormWithGitModel(gitModel: GitModel): void {
     this.urls.inputUrl.setValue(gitModel.path);
 
     const credentials = this.form.controls.credentials.controls;

@@ -2,31 +2,27 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { HistoryEvent } from 'src/app/openapi';
+import { PageHistoryEvent, ProjectsEventsService } from 'src/app/openapi';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
-import { Page, PageWrapper } from 'src/app/schemes';
-import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectAuditLogService {
-  private _projectHistoryEventPages = new BehaviorSubject<
-    PageWrapper<HistoryEvent>
-  >({
-    pages: [],
-    total: undefined,
-  });
+  private _projectHistoryEventPages =
+    new BehaviorSubject<PageHistoryEventWrapper>({
+      pages: [],
+      total: undefined,
+    });
 
   public readonly projectHistoryEventsPages$ =
     this._projectHistoryEventPages.asObservable();
 
   constructor(
-    private http: HttpClient,
     private projectService: ProjectWrapperService,
+    private projectEventService: ProjectsEventsService,
   ) {
     this.resetProjectAuditLogOnPipelineChange();
   }
@@ -39,7 +35,7 @@ export class ProjectAuditLogService {
 
   getProjectHistoryEventPage(
     pageNumber: number,
-  ): Observable<Page<HistoryEvent> | undefined | 'loading'> {
+  ): Observable<PageHistoryEvent | undefined | 'loading'> {
     return this._projectHistoryEventPages.pipe(
       map(
         (projectHistoryEventPages) =>
@@ -68,16 +64,14 @@ export class ProjectAuditLogService {
 
     this.setProjectEventPageStatusToLoading(page);
 
-    this.http
-      .get<
-        Page<HistoryEvent>
-      >(`${environment.backend_url}/projects/${projectSlug}/events?page=${page}&size=${size}`)
+    this.projectEventService
+      .getProjectEvents(projectSlug, page, size)
       .subscribe((projectEvents) => {
         const projectHistoryEventPages =
           this._projectHistoryEventPages.getValue();
         projectHistoryEventPages.pages[page - 1] = projectEvents;
 
-        this.initalizeProjectHistoryEventWrapper(projectHistoryEventPages);
+        this.initializeProjectHistoryEventWrapper(projectHistoryEventPages);
 
         this._projectHistoryEventPages.next(projectHistoryEventPages);
       });
@@ -90,8 +84,8 @@ export class ProjectAuditLogService {
     });
   }
 
-  private initalizeProjectHistoryEventWrapper(
-    pageWrapper: PageWrapper<HistoryEvent>,
+  private initializeProjectHistoryEventWrapper(
+    pageWrapper: PageHistoryEventWrapper,
   ) {
     if (pageWrapper.total !== undefined) {
       // Do nothing, is already initialized
@@ -107,8 +101,13 @@ export class ProjectAuditLogService {
 
     // Set the correct length for the array
     pageWrapper.pages = Array.from(
-      { length: firstPage.pages },
+      { length: firstPage.pages! },
       (_, i) => pageWrapper.pages[i],
     );
   }
+}
+
+export interface PageHistoryEventWrapper {
+  pages: (PageHistoryEvent | undefined | 'loading')[];
+  total: number | undefined;
 }

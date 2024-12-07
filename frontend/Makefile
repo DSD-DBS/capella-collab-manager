@@ -8,7 +8,7 @@ HOST ?= localhost
 .ONESHELL:
 
 dev:
-	ng serve --host $(HOST) --open
+	ng serve --open capellacollab
 
 test:
 	if [ $(shell which chromium) ]; \

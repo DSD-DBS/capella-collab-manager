@@ -4,7 +4,7 @@
  */
 import { Component, Input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { environment } from 'src/environments/environment';
+import { API_DOCS_URL } from 'src/app/environment';
 
 @Component({
   selector: 'app-api-documentation',
@@ -16,6 +16,6 @@ export class ApiDocumentationComponent {
   @Input() hyperlink = '';
 
   getAPIDocsLink() {
-    return `${environment.api_docs_url}/redoc#tag/${this.tag}/operation/${this.hyperlink}`;
+    return `${API_DOCS_URL}/redoc#tag/${this.tag}/operation/${this.hyperlink}`;
   }
 }

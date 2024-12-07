@@ -8,9 +8,9 @@ import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { ToolNature, ToolVersion } from 'src/app/openapi';
+import { ToolNature, ToolsService, ToolVersion } from 'src/app/openapi';
 import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
-import { ToolExtended, ToolWrapperService } from './tool.service';
+import { ToolWrapperService } from './tool.service';
 
 @Component({
   selector: 'app-dockerimage-settings',
@@ -21,13 +21,16 @@ import { ToolExtended, ToolWrapperService } from './tool.service';
 export class ToolsSettingsComponent {
   tools: Record<string, ToolExtended> = {};
 
-  constructor(public toolService: ToolWrapperService) {
+  constructor(
+    public toolService: ToolWrapperService,
+    private toolsService: ToolsService,
+  ) {
     this.tools = {};
     this.toolService.getTools().subscribe(() => {
       for (const tool of this.toolService.tools!.map((tool) => tool.id)) {
         combineLatest([
-          this.toolService.getNaturesForTool(tool),
-          this.toolService.getVersionsForTool(tool, false),
+          this.toolsService.getToolNatures(tool),
+          this.toolsService.getToolVersions(tool),
         ]).subscribe({
           next: (result: [ToolNature[], ToolVersion[]]) => {
             this.tools[tool] = {
@@ -45,4 +48,9 @@ export class ToolsSettingsComponent {
   ): string[] {
     return versionOrNature.map((elem) => elem.name);
   }
+}
+
+interface ToolExtended {
+  natures: ToolNature[];
+  versions: ToolVersion[];
 }

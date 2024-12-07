@@ -19,13 +19,11 @@ import {
   MatRowDef,
   MatRow,
 } from '@angular/material/table';
-import { HistoryEvent } from 'src/app/openapi';
-import { EventsService } from './service/events.service';
+import { EventsService, HistoryEvent } from 'src/app/openapi';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
-  styleUrls: ['./events.component.css'],
   imports: [
     MatTable,
     MatSort,
@@ -64,17 +62,35 @@ export class EventsComponent implements OnInit, AfterViewInit {
   constructor(private eventService: EventsService) {}
 
   ngOnInit(): void {
-    this.eventService.historyEvents.subscribe((historyEvents) => {
+    this.eventService.getEvents().subscribe((historyEvents) => {
       this.historyEventData = historyEvents;
       this.historyEventDataSource.data = this.historyEventData;
     });
-    this.eventService.loadHistoryEvents();
   }
 
   ngAfterViewInit(): void {
     this.historyEventDataSource.paginator = this.paginator;
     this.historyEventDataSource.sortingDataAccessor =
-      this.eventService.customSortingDataAccessor;
+      this.customSortingDataAccessor;
     this.historyEventDataSource.sort = this.sort;
+  }
+
+  customSortingDataAccessor(data: HistoryEvent, sortHeaderId: string): string {
+    switch (sortHeaderId) {
+      case 'eventType':
+        return data.event_type;
+      case 'userName':
+        return data.user.name;
+      case 'executorName':
+        return data.executor ? data.executor.name : 'System';
+      case 'executionTime':
+        return data.execution_time;
+      case 'projectName':
+        return data.project ? data.project.name : '';
+      case 'reason':
+        return data.reason ?? '';
+      default:
+        return '';
+    }
   }
 }

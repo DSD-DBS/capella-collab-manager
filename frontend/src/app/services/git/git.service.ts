@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   AbstractControl,
@@ -11,56 +10,38 @@ import {
   ValidatorFn,
 } from '@angular/forms';
 import { BehaviorSubject, map, Observable, take } from 'rxjs';
-import { environment } from 'src/environments/environment';
-
-export interface Credentials {
-  username: string;
-  password: string;
-}
-
-export interface Revisions {
-  branches: string[];
-  tags: string[];
-}
+import {
+  GetRevisionsResponseModel,
+  GitCredentials,
+  ProjectsModelsGitService,
+  SettingsModelsourcesGitService,
+} from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GitService {
-  BACKEND_URL_PREFIX = environment.backend_url;
-
-  private _revisions = new BehaviorSubject<Revisions | undefined>(undefined);
+  private _revisions = new BehaviorSubject<
+    GetRevisionsResponseModel | undefined
+  >(undefined);
 
   public readonly revisions$ = this._revisions.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private gitSettingsService: SettingsModelsourcesGitService,
+    private gitModelService: ProjectsModelsGitService,
+  ) {}
 
-  loadRevisions(gitUrl: string, credentials: Credentials): void {
-    this.http
-      .post<Revisions>(
-        this.BACKEND_URL_PREFIX + '/settings/modelsources/git/revisions',
-        {
-          credentials: credentials,
-          url: gitUrl,
-        },
-      )
+  loadRevisions(gitUrl: string, credentials: GitCredentials): void {
+    this.gitSettingsService
+      .getRevisions({
+        credentials: credentials,
+        url: gitUrl,
+      })
       .subscribe({
         next: (revisions) => this._revisions.next(revisions),
         error: () => this._revisions.next(undefined),
       });
-  }
-
-  getPrivateRevision(
-    gitUrl: string,
-    projectSlug: string,
-    modelSlug: string,
-    gitModelId: number,
-  ): Observable<Revisions> {
-    return this.http.post<Revisions>(
-      this.BACKEND_URL_PREFIX +
-        `/projects/${projectSlug}/models/${modelSlug}/modelsources/git/${gitModelId}/revisions`,
-      gitUrl,
-    );
   }
 
   loadPrivateRevisions(
@@ -69,15 +50,17 @@ export class GitService {
     modelSlug: string,
     gitModelId: number,
   ): void {
-    this.getPrivateRevision(
-      gitUrl,
-      projectSlug,
-      modelSlug,
-      gitModelId,
-    ).subscribe({
-      next: (revisions) => this._revisions.next(revisions),
-      error: () => this._revisions.next(undefined),
-    });
+    this.gitModelService
+      .getRevisionsWithModelCredentials(
+        projectSlug,
+        gitModelId,
+        modelSlug,
+        gitUrl,
+      )
+      .subscribe({
+        next: (revisions) => this._revisions.next(revisions),
+        error: () => this._revisions.next(undefined),
+      });
   }
 
   clearRevision(): void {
@@ -100,7 +83,9 @@ export class GitService {
   }
 }
 
-export function existingRevisionValidator(revisions: Revisions): ValidatorFn {
+export function existingRevisionValidator(
+  revisions: GetRevisionsResponseModel,
+): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const revision = control.value;
 

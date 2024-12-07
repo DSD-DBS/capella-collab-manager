@@ -6,11 +6,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  MonitoringService,
+  HealthService,
   ProjectStatus,
+  StatusResponse,
   ToolmodelStatus,
-  GeneralHealth,
-} from 'src/app/settings/core/pipelines-overview/service/monitoring.service';
+} from 'src/app/openapi';
 
 @Component({
   selector: 'app-pipelines-overview',
@@ -19,23 +19,23 @@ import {
   imports: [NgxSkeletonLoaderModule, MatIcon],
 })
 export class PipelinesOverviewComponent implements OnInit {
-  constructor(private monitoringService: MonitoringService) {}
+  constructor(private healthService: HealthService) {}
 
   toolmodelStatuses?: ToolmodelStatus[];
   projectStatuses?: ProjectStatus[];
-  generalHealth?: GeneralHealth;
+  generalHealth?: StatusResponse;
 
   ngOnInit(): void {
-    this.monitoringService
-      .fetchGeneralHealth()
+    this.healthService
+      .generalStatus()
       .subscribe((generalHealth) => (this.generalHealth = generalHealth));
 
-    this.monitoringService
-      .fetchProjectHealth()
+    this.healthService
+      .projectStatus()
       .subscribe((projectStatuses) => (this.projectStatuses = projectStatuses));
 
-    this.monitoringService
-      .fetchModelHealth()
+    this.healthService
+      .modelStatus()
       .subscribe(
         (toolmodelStatuses) => (this.toolmodelStatuses = toolmodelStatuses),
       );

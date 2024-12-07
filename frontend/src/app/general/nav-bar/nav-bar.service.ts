@@ -5,9 +5,14 @@
 import { Injectable } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { map } from 'rxjs';
+import {
+  DOCS_URL,
+  GRAFANA_URL,
+  PROMETHEUS_URL,
+  SMTP_MOCK_URL,
+} from 'src/app/environment';
 import { BuiltInLinkItem, Role } from 'src/app/openapi';
-import { environment } from 'src/environments/environment';
-import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapper/unified-config-wrapper.service';
+import { UnifiedConfigWrapperService } from 'src/app/services/unified-config-wrapper/unified-config-wrapper.service';
 
 @Injectable({
   providedIn: 'root',
@@ -55,10 +60,10 @@ export class NavBarService {
   ];
 
   private _linkMap: Record<BuiltInLinkItem, string> = {
-    prometheus: environment.prometheus_url,
-    grafana: environment.grafana_url,
-    smtp_mock: environment.smtp_mock_url,
-    documentation: environment.docs_url + '/',
+    prometheus: PROMETHEUS_URL,
+    grafana: GRAFANA_URL,
+    smtp_mock: SMTP_MOCK_URL,
+    documentation: DOCS_URL + '/',
   };
 }
 
