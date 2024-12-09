@@ -20,7 +20,7 @@ jobs:
           npx storycap http://localhost:6006 --serverCmd "npx -p @angular/cli
           ng run capellacollab:storybook" --flat
         working-directory: ./frontend
-      - uses: reg-viz/reg-actions@v2
+      - uses: reg-viz/reg-actions@v3
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           image-directory-path: './frontend/__screenshots__'
