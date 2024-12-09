@@ -35,6 +35,9 @@ model/anonymized-session.ts
 model/authorization-response.ts
 model/backup-pipeline-run.ts
 model/backup.ts
+model/badge-input.ts
+model/badge-output.ts
+model/badge-variant.ts
 model/base-user.ts
 model/beta-configuration-input.ts
 model/beta-configuration-output.ts
@@ -185,6 +188,7 @@ model/t4-c-license-server-usage.ts
 model/t4-c-license-server.ts
 model/t4-c-repository-status.ts
 model/t4-c-repository.ts
+model/text.ts
 model/token-request.ts
 model/tool-backup-configuration-input.ts
 model/tool-backup-configuration-output.ts

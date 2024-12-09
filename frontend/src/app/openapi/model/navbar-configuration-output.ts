@@ -10,6 +10,7 @@
  */
 
 import { NavbarConfigurationInputExternalLinksInner } from './navbar-configuration-input-external-links-inner';
+import { BadgeOutput } from './badge-output';
 
 
 export interface NavbarConfigurationOutput { 
@@ -17,5 +18,10 @@ export interface NavbarConfigurationOutput {
      * Links to display in the navigation bar.
      */
     external_links: Array<NavbarConfigurationInputExternalLinksInner>;
+    logo_url: string | null;
+    /**
+     * Badge to display in the navigation bar.
+     */
+    badge: BadgeOutput;
 }
 

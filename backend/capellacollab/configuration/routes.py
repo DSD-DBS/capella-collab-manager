@@ -35,7 +35,7 @@ def get_unified_config(
         metadata=util.get_metadata(cfg),
         feedback=util.get_feedback(cfg),
         beta=cfg.beta,
-        navbar=cfg.navbar,
+        navbar=util.get_navbar(cfg),
     )
 
 

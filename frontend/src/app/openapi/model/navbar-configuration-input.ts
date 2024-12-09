@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { BadgeInput } from './badge-input';
 import { NavbarConfigurationInputExternalLinksInner } from './navbar-configuration-input-external-links-inner';
 
 
@@ -17,5 +18,10 @@ export interface NavbarConfigurationInput {
      * Links to display in the navigation bar.
      */
     external_links?: Array<NavbarConfigurationInputExternalLinksInner>;
+    logo_url?: string | null;
+    /**
+     * Badge to display in the navigation bar.
+     */
+    badge?: BadgeInput;
 }
 

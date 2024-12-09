@@ -27,11 +27,11 @@ metadata:
     environment: '-'
 ```
 
-## Navigation Bar
+## Logo and Navigation Bar
 
-You can edit the links in the navigation bar. This can be useful if you want to
-link to external resources or if you are not using the default monitoring
-setup.
+You can edit the logo, badge, and links in the navigation bar. This can be
+useful to brand the Collaboration Manager for your organization, remind users
+which environment they are in, or link to external resources.
 
 ```yaml
 navbar:
@@ -45,6 +45,11 @@ navbar:
         - name: Documentation
           service: documentation
           role: user
+    logo_url: null
+    badge:
+        show: true
+        variant: auto
+        text: auto
 ```
 
 In addition to the default service links, you can add your own by using `href`
@@ -62,6 +67,15 @@ The `role` field and can be one of `user` or `administrator`. While this will
 hide the link from users without the appropriate role, it is not a security
 feature, and you should make sure that the linked service enforces the
 necessary access controls.
+
+To show the logo in the navigation bar, set the `logo_url` field to the URL of
+the image you want to use.
+
+The badge can be used to show the environment the user is in. The `variant`
+field can be set to `auto` (it will be determined by the environment),
+`success`, or `warning`. The `text` field will use the environment name if set
+to `auto`, or you can specify a custom text. If you don't want to show the
+badge, set `show` to `false`.
 
 ## Feedback
 
