@@ -9,6 +9,8 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+export * from './additional-resource-profile-input';
+export * from './additional-resource-profile-output';
 export * from './anonymized-session';
 export * from './authorization-response';
 export * from './backup';
@@ -34,6 +36,8 @@ export * from './create-tool-output';
 export * from './create-tool-version-input';
 export * from './create-tool-version-output';
 export * from './custom-navbar-link';
+export * from './default-resource-profile-input';
+export * from './default-resource-profile-output';
 export * from './diagram-cache-metadata';
 export * from './diagram-metadata';
 export * from './environment-value';

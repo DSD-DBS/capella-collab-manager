@@ -3,8 +3,10 @@
 
 import pytest
 from fastapi import testclient
+from sqlalchemy import orm
 
 from capellacollab.tools import models as tools_models
+from capellacollab.users import crud as users_crud
 
 
 @pytest.fixture(name="tools_json")
@@ -18,8 +20,17 @@ def fixture_tools_json() -> dict:
         },
         "config": {
             "resources": {
-                "cpu": {"limits": 2, "requests": 0.4},
-                "memory": {"limits": "6Gi", "requests": "1.6Gi"},
+                "default_profile": {
+                    "cpu": {"limits": 2, "requests": 0.4},
+                    "memory": {"limits": "6Gi", "requests": "1.6Gi"},
+                },
+                "additional": {
+                    "powerful": {
+                        "cpu": {"limits": 2, "requests": 0.4},
+                        "memory": {"limits": "6Gi", "requests": "1.6Gi"},
+                        "usernames": ["testuser"],
+                    },
+                },
             },
             "connection": {
                 "methods": [
@@ -93,3 +104,32 @@ def test_get_tools(client: testclient.TestClient):
 
     assert response.status_code == 200
     assert "Capella" in (tool["name"] for tool in out)
+
+
+@pytest.mark.usefixtures("admin")
+def test_rename_user(
+    client: testclient.TestClient, db: orm.Session, tools_json: dict
+):
+    user = users_crud.create_user(db, "testuser", "testuser")
+
+    tool_response = client.post("/api/v1/tools", json=tools_json)
+
+    assert tool_response.is_success
+    tool_id = tool_response.json()["id"]
+
+    user_response = client.patch(
+        f"/api/v1/users/{user.id}",
+        json={"name": "new_name"},
+    )
+
+    assert user_response.is_success
+    assert user_response.json()["name"] == "new_name"
+
+    new_tool_response = client.get(f"/api/v1/tools/{tool_id}")
+    assert new_tool_response.is_success
+    assert (
+        "new_name"
+        in new_tool_response.json()["config"]["resources"]["additional"][
+            "powerful"
+        ]["usernames"]
+    )
