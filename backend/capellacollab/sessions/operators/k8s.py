@@ -23,8 +23,8 @@ import typing_extensions as te  # codespell:ignore te
 from kubernetes import client
 from kubernetes.client import exceptions
 
-from capellacollab.config import config
-from capellacollab.config import models as config_models
+from capellacollab.configuration.app import config
+from capellacollab.configuration.app import models as config_models
 from capellacollab.sessions import models as sessions_models
 from capellacollab.tools import models as tools_models
 

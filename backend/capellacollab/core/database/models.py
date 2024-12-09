@@ -4,6 +4,7 @@
 # pylint: disable=unused-import
 # These import statements of the models are required and should not be removed! (SQLAlchemy will not load the models otherwise)
 
+import capellacollab.configuration.models
 import capellacollab.events.models
 import capellacollab.feedback.models
 import capellacollab.notices.models
@@ -18,7 +19,6 @@ import capellacollab.projects.toolmodels.restrictions.models
 import capellacollab.projects.tools.models
 import capellacollab.projects.users.models
 import capellacollab.sessions.models
-import capellacollab.settings.configuration.models
 import capellacollab.settings.integrations.purevariants.models
 import capellacollab.settings.modelsources.git.models
 import capellacollab.settings.modelsources.t4c.instance.models

@@ -15,7 +15,7 @@ CONFIG_FILE_NAME = "config.yaml"
 
 config_locations: list[pathlib.Path] = [
     pathlib.Path(__file__).parents[0] / CONFIG_FILE_NAME,
-    pathlib.Path(__file__).parents[2] / "config" / CONFIG_FILE_NAME,
+    pathlib.Path(__file__).parents[3] / "config" / CONFIG_FILE_NAME,
     pathlib.Path(appdirs.user_config_dir("capellacollab", "db"))
     / CONFIG_FILE_NAME,
     pathlib.Path("/etc/capellacollab") / CONFIG_FILE_NAME,

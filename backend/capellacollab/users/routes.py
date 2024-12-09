@@ -6,6 +6,7 @@ from collections import abc
 import fastapi
 from sqlalchemy import orm
 
+from capellacollab.configuration import core as config_core
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
@@ -15,7 +16,6 @@ from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.sessions import routes as session_routes
-from capellacollab.settings.configuration import core as config_core
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes

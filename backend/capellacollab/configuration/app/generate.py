@@ -15,7 +15,9 @@ def write_config() -> None:
     """Write the default configuration to a config file."""
 
     config_path = (
-        pathlib.Path(__file__).parent.parent.parent / "config" / "config.yaml"
+        pathlib.Path(__file__).parent.parent.parent.parent
+        / "config"
+        / "config.yaml"
     )
 
     config_path.parent.mkdir(parents=True, exist_ok=True)

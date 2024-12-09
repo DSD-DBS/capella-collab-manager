@@ -12,7 +12,7 @@ from alembic import migration
 from sqlalchemy import orm
 
 from capellacollab import core
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.events import crud as events_crud
 from capellacollab.projects import crud as projects_crud

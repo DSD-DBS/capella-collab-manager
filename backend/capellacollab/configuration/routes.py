@@ -18,10 +18,12 @@ router = fastapi.APIRouter(
     tags=["Configuration"],
 )
 
-schema_router = fastapi.APIRouter(dependencies=[], tags=["Configuration"])
+router_without_authentication = fastapi.APIRouter(
+    dependencies=[], tags=["Configuration"]
+)
 
 
-@router.get(
+@router_without_authentication.get(
     "/unified",
 )
 def get_unified_config(
@@ -92,7 +94,7 @@ async def update_configuration(
     ).configuration
 
 
-@schema_router.get(
+@router_without_authentication.get(
     f"/{models.GlobalConfiguration._name}/schema", response_model=t.Any
 )
 async def get_json_schema():

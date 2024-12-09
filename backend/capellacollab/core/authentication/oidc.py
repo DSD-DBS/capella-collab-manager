@@ -8,7 +8,7 @@ import typing as t
 import requests
 from oauthlib import common, oauth2
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 
 from . import exceptions, models
 

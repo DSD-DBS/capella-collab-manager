@@ -7,8 +7,8 @@ import io
 import pytest
 import yaml
 
-from capellacollab.config import exceptions as config_exceptions
-from capellacollab.config import loader
+from capellacollab.configuration.app import exceptions as config_exceptions
+from capellacollab.configuration.app import loader
 
 
 def test_loader_unique_key_loader_succeeds():

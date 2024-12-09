@@ -12,7 +12,7 @@ import pydantic
 import sqlalchemy as sa
 from sqlalchemy import orm
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.core import models as core_models
 from capellacollab.core import pydantic as core_pydantic

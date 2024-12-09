@@ -6,7 +6,7 @@ import pathlib
 
 import yaml
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models

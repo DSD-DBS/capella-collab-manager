@@ -13,10 +13,10 @@ from logging import handlers
 import fastapi
 from starlette.middleware import base
 
-from capellacollab import config
+from capellacollab.configuration.app import config
 from capellacollab.core.authentication import injectables as auth_injectables
 
-LOGGING_LEVEL = config.config.logging.level
+LOGGING_LEVEL = config.logging.level
 
 
 class CustomFormatter(logging.Formatter):

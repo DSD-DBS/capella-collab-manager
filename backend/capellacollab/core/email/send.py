@@ -7,7 +7,7 @@ from email.mime import multipart, text
 
 import pydantic
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 
 from . import exceptions, models
 

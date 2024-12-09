@@ -6,8 +6,8 @@ import logging
 import pytest
 from sqlalchemy import orm
 
-from capellacollab import config
-from capellacollab.config import models as config_models
+from capellacollab.configuration.app import config
+from capellacollab.configuration.app import models as config_models
 from capellacollab.core import models as core_models
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import hooks as sessions_hooks
@@ -97,7 +97,7 @@ def fixture_patch_irrelevant_request_session_calls(
     )
 
     monkeypatch.setattr(
-        config.config,
+        config,
         "general",
         config_models.GeneralConfig(
             host="localhost", port=8080, scheme="http"
