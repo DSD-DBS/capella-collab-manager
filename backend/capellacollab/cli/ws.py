@@ -236,10 +236,10 @@ def restore(
     volume_name: str,
     tarfile: t.Annotated[pathlib.Path, typer.Argument(exists=True)],
     namespace: t.Annotated[str, NamespaceOption],
-    sidecar_path: t.Union[pathlib.Path, None] = None,
+    sidecar_path: pathlib.Path | None = None,
     access_mode: str = "ReadWriteMany",
     storage_class_name: str = "persistent-sessions-csi",
-    user_id: t.Union[str, None] = None,
+    user_id: str | None = None,
 ):
     """Restore a backup to a Kubernetes Persistent Volume.
 

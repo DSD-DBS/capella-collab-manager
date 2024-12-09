@@ -101,7 +101,6 @@ def test_delete_git_instance(
 def test_fetch_revisions(
     client: testclient.TestClient,
 ):
-
     response = client.post(
         "/api/v1/settings/modelsources/git/revisions",
         json={

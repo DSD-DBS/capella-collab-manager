@@ -66,7 +66,6 @@ def fixture_session_connection_hook_request(
     session: sessions_models.DatabaseSession,
     logger: logging.LoggerAdapter,
 ) -> hooks_interface.SessionConnectionHookRequest:
-
     return hooks_interface.SessionConnectionHookRequest(
         db=db,
         db_session=session,

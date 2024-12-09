@@ -15,5 +15,7 @@ def get_model_restrictions(
     ),
 ) -> models.DatabaseToolModelRestrictions | None:
     restrictions = model.restrictions
-    assert restrictions  # restrictions are only None for a short time during creation
+    assert (
+        restrictions
+    )  # restrictions are only None for a short time during creation
     return restrictions

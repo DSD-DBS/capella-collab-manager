@@ -13,7 +13,6 @@ def fixture_cli_runner() -> testing.CliRunner:
 
 
 def test_cli_help(cli_runner: testing.CliRunner):
-
     result = cli_runner.invoke(cli.app, ["--help"])
     assert result.exit_code == 0
 

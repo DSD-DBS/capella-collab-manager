@@ -5,6 +5,12 @@ default_install_hook_types: [commit-msg, pre-commit]
 default_stages: [pre-commit, pre-merge-commit]
 minimum_pre_commit_version: 3.2.0
 repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.2
+    hooks:
+      - id: ruff
+        args: [ --fix ]
+      - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.20.1
     hooks:
@@ -39,24 +45,6 @@ repos:
       - id: codespell
         exclude: 'frontend/package-lock.json'
         args: ['-L', 'AKS']
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.10.0
-    hooks:
-      - id: black
-        files: '^backend/'
-        args:
-          - '--config'
-          - 'backend/pyproject.toml'
-        types: [python]
-      - id: black
-        types: [python]
-        exclude: '^backend/'
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        entry: bash -c "cd backend && isort ."
-        types: [python]
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.3
     hooks:
@@ -217,8 +205,3 @@ repos:
         stages: [commit-msg]
         additional_dependencies:
           - '@commitlint/config-conventional'
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0
-    hooks:
-      - id: pyupgrade
-        args: ['--py311-plus']

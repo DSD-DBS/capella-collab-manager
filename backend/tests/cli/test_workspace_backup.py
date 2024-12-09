@@ -74,9 +74,9 @@ def test_workspace_volumes(
 
     monkeypatch.setattr(
         "kubernetes.client.CoreV1Api.list_namespaced_persistent_volume_claim",
-        lambda self, namespace, watch: kubernetes.client.V1PersistentVolumeClaimList(
-            items=pvcs
-        ),
+        lambda self,
+        namespace,
+        watch: kubernetes.client.V1PersistentVolumeClaimList(items=pvcs),
     )
 
     volumes(namespace="default")
@@ -113,7 +113,9 @@ def test_backup_workspace(
     monkeypatch.setattr(
         kubernetes.client.CoreV1Api,
         "read_namespaced_persistent_volume_claim",
-        lambda self, name, namespace: kubernetes.client.V1PersistentVolumeClaim(
+        lambda self,
+        name,
+        namespace: kubernetes.client.V1PersistentVolumeClaim(
             spec=kubernetes.client.V1PersistentVolumeClaimSpec(
                 resources=kubernetes.client.V1ResourceRequirements(
                     requests={"storage": "1Gi"},

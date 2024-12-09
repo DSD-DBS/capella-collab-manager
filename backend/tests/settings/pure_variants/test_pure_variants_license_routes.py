@@ -90,7 +90,9 @@ class FakeKubernetesSecretClient:
         return secret
 
     def delete_namespaced_secret(
-        self, name: str, namespace: str  # pylint: disable=unused-argument
+        self,
+        name: str,  # pylint: disable=unused-argument
+        namespace: str,  # pylint: disable=unused-argument
     ):
         self.deleted_secrets_counter += 1
         return kubernetes_client.V1Status()

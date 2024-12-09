@@ -19,9 +19,7 @@ from capellacollab.users.workspaces import models as users_workspaces_models
 def test_persistent_workspace_mounting_not_allowed(
     configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
-    configuration_hook_request.tool.config.persistent_workspaces.mounting_enabled = (
-        False
-    )
+    configuration_hook_request.tool.config.persistent_workspaces.mounting_enabled = False
 
     with pytest.raises(sessions_exceptions.WorkspaceMountingNotAllowedError):
         persistent_workspace.PersistentWorkspaceHook().configuration_hook(

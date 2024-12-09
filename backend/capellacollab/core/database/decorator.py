@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-import typing as t
-
 import pydantic
 from sqlalchemy import types
 from sqlalchemy.dialects import postgresql
@@ -26,7 +24,7 @@ class PydanticDecorator(types.TypeDecorator):
 
     cache_ok = True
 
-    def __init__(self, pydantic_model: t.Type[pydantic.BaseModel]):
+    def __init__(self, pydantic_model: type[pydantic.BaseModel]):
         super().__init__()
         self.pydantic_model = pydantic_model
 

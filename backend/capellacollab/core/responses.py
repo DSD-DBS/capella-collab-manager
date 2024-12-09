@@ -18,7 +18,7 @@ from .authentication import exceptions as authentication_exceptions
 
 
 def _construct_union(types: list[type[pydantic.BaseModel]]):
-    return t.Union[tuple(types)]
+    return t.Union[tuple(types)]  # noqa: UP007
 
 
 def _create_pydantic_error_model(exc: exceptions.BaseError):

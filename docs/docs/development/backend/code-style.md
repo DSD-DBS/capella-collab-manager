@@ -22,9 +22,9 @@ Python code. The key differences are:
 - **Linting**: Use [pylint] for static code analysis, and [mypy] for static
   type checking.
 
-- **Formatting**: Use [black] as code auto-formatter. The maximum line length
-  is 79, as per [PEP-8]. This setting should be automatically picked up from
-  the `pyproject.toml` file. The reason for the shorter line length is that it
+- **Formatting**: Use [ruff] as code auto-formatter. The maximum line length is
+  79, as per [PEP-8]. This setting should be automatically picked up from the
+  `pyproject.toml` file. The reason for the shorter line length is that it
   avoids wrapping and overflows in side-by-side split views (e.g. diffs) if
   there's also information displayed to the side of it (e.g. a tree view of the
   modified files).
@@ -36,9 +36,6 @@ Python code. The key differences are:
     requirement to break up long strings into smaller parts. Additionally,
     never break up strings that are presented to the user in e.g. log messages,
     as that makes it significantly harder to grep for them.
-
-    Use [isort] for automatic sorting of imports. Its settings should
-    automatically be picked up from the `pyproject.toml` file as well.
 
 - **Typing**: We do not make an exception for `typing` imports. Instead of
   writing `from typing import SomeName`, use `import typing as t` and access
@@ -56,9 +53,9 @@ Python code. The key differences are:
       `t.Optional[...]` and always explicitly annotate where `None` is
       possible.
 
-- **Python style rules**: For conflicting parts, the [black] code style wins.
-  If you have set up `black` correctly, you don't need to worry about this
-  though :)
+- **Python style rules**: For conflicting parts, the [ruff] code style wins. If
+  you have set up `ruff` correctly, you don't need to worry about this though
+  :)
 - When working with `dict`s, consider using `t.TypedDict` instead of a more
   generic `dict[str, float|int|str]`-like annotation where possible, as the
   latter is much less precise (often requiring additional `assert`s or
@@ -113,6 +110,4 @@ Python code. The key differences are:
 [pep-604]: https://www.python.org/dev/peps/pep-0604/
 [mypy]: https://github.com/python/mypy
 [pylint]: https://github.com/PyCQA/pylint
-[isort]: https://github.com/PyCQA/isort
-[black]:
-    https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html
+[ruff]: https://docs.astral.sh/ruff/
