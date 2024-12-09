@@ -153,7 +153,9 @@ class KubernetesOperator:
     def get_job_by_name(self, name: str) -> client.V1Job:
         return self.v1_batch.read_namespaced_job(name, namespace=namespace)
 
-    def get_session_state(self, session_id: str) -> tuple[
+    def get_session_state(
+        self, session_id: str
+    ) -> tuple[
         sessions_models.SessionPreparationState,
         sessions_models.SessionState,
     ]:

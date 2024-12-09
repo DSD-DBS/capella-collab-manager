@@ -42,13 +42,15 @@ async def get_diagram_metadata(
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     try:
-        job_id, last_updated, diagram_metadata_entries = (
-            await handler.get_file_or_artifact(
-                trusted_file_path="diagram_cache/index.json",
-                logger=logger,
-                job_name="update_capella_diagram_cache",
-                file_revision=f"diagram-cache/{handler.revision}",
-            )
+        (
+            job_id,
+            last_updated,
+            diagram_metadata_entries,
+        ) = await handler.get_file_or_artifact(
+            trusted_file_path="diagram_cache/index.json",
+            logger=logger,
+            job_name="update_capella_diagram_cache",
+            file_revision=f"diagram-cache/{handler.revision}",
         )
     except requests.HTTPError:
         logger.info(

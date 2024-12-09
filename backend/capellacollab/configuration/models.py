@@ -270,7 +270,7 @@ class GlobalConfiguration(ConfigurationBase):
 
 
 # All subclasses of ConfigurationBase are automatically registered using this dict.
-NAME_TO_MODEL_TYPE_MAPPING: dict[str, t.Type[ConfigurationBase]] = {
+NAME_TO_MODEL_TYPE_MAPPING: dict[str, type[ConfigurationBase]] = {
     model()._name: model for model in ConfigurationBase.__subclasses__()
 }
 

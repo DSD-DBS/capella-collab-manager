@@ -224,7 +224,7 @@ def fixture_pod(
 def test_session_state(
     expected: tuple[
         sessions_models.SessionPreparationState, sessions_models.SessionState
-    ]
+    ],
 ):
     assert operators.get_operator().get_session_state("test") == expected
 

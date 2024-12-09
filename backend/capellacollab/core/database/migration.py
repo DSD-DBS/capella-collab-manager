@@ -6,9 +6,8 @@ import logging
 import os
 import pathlib
 
-from alembic import command
+from alembic import command, migration
 from alembic import config as alembic_config
-from alembic import migration
 from sqlalchemy import orm
 
 from capellacollab import core

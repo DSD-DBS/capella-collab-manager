@@ -17,7 +17,6 @@ def test_jupyter_successful_volume_mount(
     jupyter_tool: tools_models.DatabaseTool,
     configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
-
     class MockOperator:
         # pylint: disable=unused-argument
         def persistent_volume_exists(self, name: str) -> bool:
