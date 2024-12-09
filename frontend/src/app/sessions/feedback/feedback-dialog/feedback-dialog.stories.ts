@@ -10,7 +10,10 @@ import {
   mockFeedbackConfig,
   mockFeedbackWrapperServiceProvider,
 } from '../../../../storybook/feedback';
-import { mockPersistentSession } from '../../../../storybook/session';
+import {
+  mockPersistentSession,
+  mockTrainingSession,
+} from '../../../../storybook/session';
 import { FeedbackDialogComponent } from './feedback-dialog.component';
 
 const meta: Meta<FeedbackDialogComponent> = {
@@ -149,6 +152,23 @@ export const TwoSessions: Story = {
           provide: MAT_DIALOG_DATA,
           useValue: {
             sessions: [mockPersistentSession, mockPersistentSession],
+            trigger: 'storybook',
+          },
+        },
+      ],
+    }),
+  ],
+};
+
+export const TrainingSession: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            sessions: [mockPersistentSession, mockTrainingSession],
             trigger: 'storybook',
           },
         },
