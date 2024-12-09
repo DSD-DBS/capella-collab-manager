@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { ProjectAuditLogService } from 'src/app/projects/project-detail/project-users/project-audit-log/service/project-audit-log.service';
+import { ProjectAuditLogService } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.service';
 import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-loaders/text-line-skeleton-loader/text-line-skeleton-loader.component';
 
 @Component({

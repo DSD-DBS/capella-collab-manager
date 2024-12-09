@@ -11,13 +11,13 @@ import {
 import { BehaviorSubject, forkJoin, map, Observable, take, tap } from 'rxjs';
 import slugify from 'slugify';
 import {
+  GitModel,
   PatchToolModel,
   PostToolModel,
   ProjectsModelsService,
   SimpleToolModelWithoutProject,
   ToolModel,
 } from 'src/app/openapi';
-import { GetGitModel } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 
 @Injectable({
   providedIn: 'root',
@@ -160,6 +160,6 @@ export class ModelWrapperService {
 
 export function getPrimaryGitModel(
   model: SimpleToolModelWithoutProject,
-): GetGitModel | undefined {
+): GitModel | undefined {
   return model.git_models?.find((gitModel) => gitModel.primary);
 }

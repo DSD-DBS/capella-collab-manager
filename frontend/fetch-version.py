@@ -15,7 +15,7 @@ def run_git_command(cmd: list[str]):
     ).stdout.decode()
 
 
-(pathlib.Path(__file__).parent / "src" / "assets" / "version.json").write_text(
+(pathlib.Path(__file__).parent / "public" / "version.json").write_text(
     json.dumps(
         {
             "git": {

@@ -6,7 +6,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
-import { environment } from 'src/environments/environment';
+import { DOCS_URL } from 'src/app/environment';
 import { MetadataService } from '../metadata.service';
 
 @Component({
@@ -21,6 +21,6 @@ export class VersionComponent {
   ) {}
 
   get docsURL() {
-    return environment.docs_url;
+    return DOCS_URL;
   }
 }

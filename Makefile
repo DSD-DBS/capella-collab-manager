@@ -47,7 +47,7 @@ backend:
 	docker push -a $(DOCKER_REGISTRY)/$@
 
 frontend:
-	python frontend/fetch-version.py
+	$(MAKE) -C frontend fetch-version
 	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) frontend
 	docker push -a $(DOCKER_REGISTRY)/$@
 

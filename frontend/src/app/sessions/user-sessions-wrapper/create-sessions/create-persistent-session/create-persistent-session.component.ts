@@ -19,7 +19,13 @@ import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelect } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map, Observable } from 'rxjs';
-import { Session, SessionType, Tool, ToolVersion } from 'src/app/openapi';
+import {
+  Session,
+  SessionType,
+  Tool,
+  ToolsService,
+  ToolVersion,
+} from 'src/app/openapi';
 import { SessionService } from 'src/app/sessions/service/session.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import {
@@ -74,6 +80,7 @@ export class CreatePersistentSessionComponent implements OnInit {
     private toolWrapperService: ToolWrapperService,
     private sessionService: SessionService,
     private userSessionService: UserSessionService,
+    private toolsService: ToolsService,
   ) {}
 
   ngOnInit(): void {
@@ -131,8 +138,8 @@ export class CreatePersistentSessionComponent implements OnInit {
 
   getVersionsForTool(toolId: number): void {
     this.versions = [];
-    this.toolWrapperService
-      .getVersionsForTool(toolId, false)
+    this.toolsService
+      .getToolVersions(toolId)
       .subscribe((res: ToolVersion[]) => {
         this.versions = res;
         if (res.length) {

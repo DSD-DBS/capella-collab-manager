@@ -13,6 +13,7 @@ repos:
     rev: v5.0.0
     hooks:
       - id: check-added-large-files
+        exclude: '^frontend/package-lock.json'
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-executables-have-shebangs
@@ -95,6 +96,16 @@ repos:
         exclude: '^backend/capellacollab/alembic/'
   - repo: local
     hooks:
+      - id: tsc
+        name: tsc
+        entry: tsc -noEmit -p ./frontend
+        pass_filenames: false
+        language: node
+        types_or: [ts]
+        additional_dependencies:
+          - 'typescript@^5.7.2'
+  - repo: local
+    hooks:
       - id: prettier
         name: prettier
         entry: prettier --write
@@ -102,10 +113,10 @@ repos:
         types_or: [ts, css, html, markdown]
         exclude: '^frontend/src/app/openapi'
         additional_dependencies:
-          - 'prettier@3.4.1'
+          - 'prettier@^3.4.2'
           - 'prettier-plugin-tailwindcss@^0.6.9'
           - '@trivago/prettier-plugin-sort-imports@^4.3.0'
-          - 'tailwindcss@^3.4.15'
+          - 'tailwindcss@^3.4.16'
           - 'prettier-plugin-classnames@^0.7.4'
           - 'prettier-plugin-merge@^0.7.1'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
@@ -181,13 +192,13 @@ repos:
         additional_dependencies:
           - 'eslint@^9.16.0'
           - '@eslint/js@^9.16.0'
-          - 'angular-eslint@19.0.0'
+          - 'angular-eslint@19.0.1'
           - 'eslint-config-prettier@^9.1.0'
-          - 'typescript-eslint@8.16.0'
+          - 'typescript-eslint@8.17.0'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.17.5'
           - 'eslint-plugin-storybook@0.11.1'
-          - 'tailwindcss@^3.4.15'
+          - 'tailwindcss@^3.4.16'
         args:
           [
             '--config',

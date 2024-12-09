@@ -9,8 +9,8 @@ import {
   ToolSessionConfigurationOutput,
   ToolVersion,
   ToolVersionConfigurationOutput,
+  ToolVersionWithTool,
 } from 'src/app/openapi';
-import { ToolVersionWithTool } from 'src/app/settings/core/tools-settings/tool.service';
 
 export const mockHttpConnectionMethod: Readonly<HTTPConnectionMethodOutput> = {
   id: '1',

@@ -19,15 +19,17 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, filter, Observable } from 'rxjs';
-import { Tool, ToolModel, ToolVersion } from 'src/app/openapi';
+import {
+  Tool,
+  ToolModel,
+  ToolsService,
+  ToolVersion,
+  ToolVersionWithTool,
+} from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { UserSessionService } from 'src/app/sessions/service/user-session.service';
 import { CreateReadonlySessionDialogComponent } from 'src/app/sessions/user-sessions-wrapper/create-sessions/create-readonly-session/create-readonly-session-dialog/create-readonly-session-dialog.component';
-import {
-  ToolWrapperService,
-  ToolVersionWithTool,
-} from 'src/app/settings/core/tools-settings/tool.service';
 
 @UntilDestroy()
 @Component({
@@ -61,12 +63,12 @@ export class CreateReadonlySessionComponent implements OnInit {
   });
 
   constructor(
-    private toolWrapperService: ToolWrapperService,
     private userSessionService: UserSessionService,
     private projectService: ProjectWrapperService,
     private modelService: ModelWrapperService,
     private dialog: MatDialog,
     private fb: FormBuilder,
+    private toolsService: ToolsService,
   ) {}
 
   ngOnInit(): void {
@@ -84,7 +86,7 @@ export class CreateReadonlySessionComponent implements OnInit {
   loadToolsAndModels(): Observable<[ToolModel[], ToolVersionWithTool[]]> {
     return combineLatest([
       this.modelService.models$.pipe(untilDestroyed(this), filter(Boolean)),
-      this.toolWrapperService.getVersionsForTools(),
+      this.toolsService.getVersionsForAllTools(),
     ]);
   }
 

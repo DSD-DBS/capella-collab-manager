@@ -25,10 +25,8 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import {
-  TokenService,
-  Token,
-} from 'src/app/users/basic-auth-service/basic-auth-token.service';
+import { UserToken } from 'src/app/openapi';
+import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.service';
 import { DisplayValueComponent } from '../../helpers/display-value/display-value.component';
 
 @Component({
@@ -101,7 +99,7 @@ export class BasicAuthTokenComponent implements OnInit {
     }
   }
 
-  deleteToken(token: Token) {
+  deleteToken(token: UserToken) {
     this.tokenService.deleteToken(token).subscribe();
     this.toastService.showSuccess(
       'Token deleted',
