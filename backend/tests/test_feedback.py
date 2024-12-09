@@ -8,12 +8,12 @@ import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab.config import config
-from capellacollab.config import models as config_models
+from capellacollab.configuration import crud as configuration_crud
+from capellacollab.configuration.app import config
+from capellacollab.configuration.app import models as config_models
 from capellacollab.feedback import crud as feedback_crud
 from capellacollab.feedback import metrics as feedback_metrics
 from capellacollab.feedback import models as feedback_models
-from capellacollab.settings.configuration import crud as configuration_crud
 from capellacollab.users import models as users_models
 from capellacollab.users import routes as users_routes
 
@@ -194,7 +194,7 @@ def test_feedback_is_updated(
     client: testclient.TestClient,
 ):
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={
             "feedback": {
                 "enabled": True,
@@ -210,7 +210,7 @@ def test_feedback_is_updated(
 
     assert response.status_code == 200
 
-    response = client.get("/api/v1/settings/configurations/unified")
+    response = client.get("/api/v1/configurations/unified")
     assert response.status_code == 200
     assert response.json()["feedback"] == {
         "enabled": True,
@@ -228,7 +228,7 @@ def test_activate_feedback_without_smtp(
     client: testclient.TestClient,
 ):
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={
             "feedback": {
                 "enabled": True,
@@ -245,7 +245,7 @@ def test_activate_feedback_without_recipients(
     client: testclient.TestClient,
 ):
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={
             "feedback": {
                 "enabled": True,
@@ -262,7 +262,7 @@ def test_activate_feedback_without_recipients(
 
 @pytest.mark.usefixtures("user", "smtp_config_not_set", "feedback_enabled")
 def test_feedback_is_disabled_without_smtp(client: testclient.TestClient):
-    response = client.get("/api/v1/settings/configurations/unified")
+    response = client.get("/api/v1/configurations/unified")
     assert response.status_code == 200
     assert response.json()["feedback"]["enabled"] is False
 

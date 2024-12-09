@@ -5,14 +5,12 @@ import logging
 
 from sqlalchemy import orm
 
-from capellacollab.config import config
+from capellacollab.configuration import core as config_core
+from capellacollab.configuration import models as settings_config_models
+from capellacollab.configuration.app import config
 from capellacollab.core.email import exceptions as email_exceptions
 from capellacollab.core.email import models as email_models
 from capellacollab.core.email import send as email_send
-from capellacollab.settings.configuration import core as config_core
-from capellacollab.settings.configuration import (
-    models as settings_config_models,
-)
 from capellacollab.users import models as users_models
 
 from . import exceptions, models

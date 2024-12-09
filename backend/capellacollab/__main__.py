@@ -16,7 +16,7 @@ from fastapi.middleware import cors
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.routes import router

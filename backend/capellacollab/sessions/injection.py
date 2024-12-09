@@ -6,7 +6,7 @@ import logging
 import requests
 
 from capellacollab import core
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.sessions import models2 as sessions_models2
 
 log = logging.getLogger(__name__)

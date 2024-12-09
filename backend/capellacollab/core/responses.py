@@ -8,7 +8,7 @@ import typing as t
 import fastapi
 import pydantic
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import models as users_models

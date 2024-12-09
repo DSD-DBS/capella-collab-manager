@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import capellacollab
-from capellacollab.config import config
-from capellacollab.settings.configuration import models
+from capellacollab.configuration.app import config
+
+from . import models
 
 
 def get_metadata(

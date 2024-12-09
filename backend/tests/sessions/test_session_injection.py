@@ -6,7 +6,7 @@ import responses
 from fastapi import status
 
 from capellacollab import core
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.sessions import injection
 from capellacollab.sessions import models2 as models2_sessions
 

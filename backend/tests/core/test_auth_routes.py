@@ -9,7 +9,7 @@ import responses
 from fastapi import status, testclient
 from sqlalchemy import orm
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core.authentication import api_key_cookie, exceptions, oidc
 from capellacollab.core.authentication import routes as auth_routes
 from capellacollab.users import crud as users_crud

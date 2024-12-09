@@ -9,7 +9,7 @@ from kubernetes import client as k8s_client
 from kubernetes.client import exceptions as k8s_exceptions
 from starlette import concurrency as starlette_concurrency
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.core.logging import loki
 from capellacollab.projects.toolmodels import (

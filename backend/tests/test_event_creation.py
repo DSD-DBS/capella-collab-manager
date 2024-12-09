@@ -8,7 +8,7 @@ import sqlalchemy as sa
 from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab import config
+from capellacollab.configuration.app import config
 from capellacollab.events import models as events_models
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
@@ -25,7 +25,7 @@ def fixture_unique_username() -> str:
 
 
 def test_create_admin_user_by_system(db: orm.Session):
-    user = users_crud.get_user_by_name(db, config.config.initial.admin)
+    user = users_crud.get_user_by_name(db, config.initial.admin)
     assert user is not None
 
     events: list[events_models.DatabaseUserHistoryEvent] = (

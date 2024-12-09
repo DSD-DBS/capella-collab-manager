@@ -6,7 +6,7 @@ import urllib.parse
 import requests
 from requests import auth
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import credentials
 from capellacollab.settings.modelsources.t4c.instance import (
     models as t4c_models,

@@ -15,7 +15,7 @@ import capellacollab.projects.toolmodels.backups.runs.crud as pipeline_runs_crud
 import capellacollab.projects.toolmodels.backups.runs.models as pipeline_runs_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
 from capellacollab.__main__ import app
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core.logging import loki
 from capellacollab.projects.toolmodels.backups.runs import (
     injectables as runs_injectables,

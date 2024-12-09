@@ -9,7 +9,7 @@ import os
 import requests
 from starlette import concurrency
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import database
 
 from . import crud, operators, util

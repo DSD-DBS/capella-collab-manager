@@ -10,12 +10,10 @@ import typing as t
 
 from sqlalchemy import orm
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
-from capellacollab.sessions import hooks
 from capellacollab.sessions.hooks import interface as hooks_interface
-from capellacollab.sessions.operators import k8s
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
 

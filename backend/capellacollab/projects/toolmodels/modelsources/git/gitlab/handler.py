@@ -8,7 +8,7 @@ from urllib import parse
 import aiohttp
 import requests
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 
 from .. import exceptions as git_exceptions
 from ..handler import handler

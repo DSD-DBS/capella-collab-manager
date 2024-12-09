@@ -9,7 +9,7 @@ import jwt
 from fastapi import security
 from jwt import exceptions as jwt_exceptions
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 
 from . import exceptions, oidc
 

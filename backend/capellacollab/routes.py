@@ -6,6 +6,7 @@ import logging
 
 import fastapi
 
+from capellacollab.configuration import routes as configuration_routes
 from capellacollab.core import responses as auth_responses
 from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
@@ -77,5 +78,15 @@ router.include_router(
     settings_routes.router_without_authentication,
     prefix="/settings",
 )
+router.include_router(
+    configuration_routes.router,
+    prefix="/configurations",
+    responses=auth_responses.api_exceptions(include_authentication=True),
+)
+router.include_router(
+    configuration_routes.router_without_authentication,
+    prefix="/configurations",
+)
+
 
 router.include_router(authentication_routes.router, prefix="/authentication")

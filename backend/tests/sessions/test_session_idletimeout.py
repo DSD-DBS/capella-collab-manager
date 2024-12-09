@@ -5,7 +5,7 @@ import pytest
 import requests
 
 import capellacollab.sessions.idletimeout
-from capellacollab.config import models as config_models
+from capellacollab.configuration.app import models as config_models
 from capellacollab.sessions.idletimeout import terminate_idle_session
 
 

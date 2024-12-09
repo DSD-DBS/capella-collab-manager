@@ -10,7 +10,7 @@ import requests
 from requests import auth as requests_auth
 from requests import exceptions as requests_exceptions
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import credentials
 
 from . import interface

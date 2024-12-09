@@ -11,8 +11,8 @@ import typing as t
 import requests
 from requests import auth
 
-from capellacollab.config import config
-from capellacollab.config import models as config_models
+from capellacollab.configuration.app import config
+from capellacollab.configuration.app import models as config_models
 
 from . import exceptions
 

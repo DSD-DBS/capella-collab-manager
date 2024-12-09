@@ -5,7 +5,7 @@
 from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab.settings.configuration import crud as configuration_crud
+from capellacollab.configuration import crud as configuration_crud
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
@@ -137,7 +137,7 @@ def test_disable_beta_un_enroll(
     assert response.status_code == 200
 
     client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={"beta": {"enabled": False}},
     )
 

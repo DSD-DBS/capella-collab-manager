@@ -15,7 +15,7 @@ from lxml.html import builder
 from sqlalchemy import orm
 
 from capellacollab import core
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.core.database import decorator

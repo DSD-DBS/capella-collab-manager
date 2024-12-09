@@ -6,7 +6,7 @@ import pytest
 from fastapi import testclient
 from sqlalchemy import orm
 
-from capellacollab.settings.configuration import crud as configuration_crud
+from capellacollab.configuration import crud as configuration_crud
 
 
 @pytest.mark.usefixtures("admin")
@@ -15,7 +15,7 @@ def test_get_default_configuration(
 ):
     """Test that the default configuration is returned if no configuration is set."""
 
-    response = client.get("/api/v1/settings/configurations/global")
+    response = client.get("/api/v1/configurations/global")
 
     assert response.status_code == 200
     assert response.json()["metadata"]["environment"] == "-"
@@ -34,7 +34,7 @@ def test_get_general_configuration(
         db, "global", {"metadata": {"environment": "test"}}
     )
 
-    response = client.get("/api/v1/settings/configurations/global")
+    response = client.get("/api/v1/configurations/global")
 
     assert response.status_code == 200
     assert response.json()["metadata"]["environment"] == "test"
@@ -47,7 +47,7 @@ def test_get_general_configuration(
 
 @pytest.mark.usefixtures("executor_name")
 def test_get_configuration_schema(client: testclient.TestClient):
-    response = client.get("/api/v1/settings/configurations/global/schema")
+    response = client.get("/api/v1/configurations/global/schema")
 
     assert response.status_code == 200
     assert "$defs" in response.json()
@@ -65,7 +65,7 @@ def test_update_general_configuration(
     }
 
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={
             "metadata": {
                 "provider": "The best team in the world!",
@@ -81,7 +81,7 @@ def test_update_general_configuration(
     )
 
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={
             "metadata": {
                 "provider": "Still the best team in the world!",
@@ -102,7 +102,7 @@ def test_update_general_configuration_additional_properties_fails(
     client: testclient.TestClient,
 ):
     response = client.put(
-        "/api/v1/settings/configurations/global", json={"test": "test"}
+        "/api/v1/configurations/global", json={"test": "test"}
     )
 
     assert response.status_code == 422
@@ -114,7 +114,7 @@ def test_metadata_is_updated(
     client: testclient.TestClient,
 ):
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={
             "metadata": {
                 "privacy_policy_url": "https://example.com/privacy-policy",
@@ -128,7 +128,7 @@ def test_metadata_is_updated(
 
     assert response.status_code == 200
 
-    response = client.get("/api/v1/settings/configurations/unified")
+    response = client.get("/api/v1/configurations/unified")
     assert response.status_code == 200
     assert response.json()["metadata"]["environment"] == "test"
 
@@ -138,7 +138,7 @@ def test_navbar_is_updated(
     client: testclient.TestClient,
 ):
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={
             "navbar": {
                 "external_links": [
@@ -154,7 +154,7 @@ def test_navbar_is_updated(
 
     assert response.status_code == 200
 
-    response = client.get("/api/v1/settings/configurations/unified")
+    response = client.get("/api/v1/configurations/unified")
     assert response.status_code == 200
     assert response.json()["navbar"]["external_links"][0] == {
         "name": "Example",
@@ -168,7 +168,7 @@ def test_global_configuration_invalid_pipelines(
     client: testclient.TestClient,
 ):
     response = client.put(
-        "/api/v1/settings/configurations/global",
+        "/api/v1/configurations/global",
         json={"pipelines": {"cron": "invalid", "timezone": "Berlin"}},
     )
 

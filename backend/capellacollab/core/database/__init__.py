@@ -10,7 +10,7 @@ import valkey
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
 
-from capellacollab.config import config
+from capellacollab.configuration.app import config
 
 engine = sa.create_engine(
     config.database.url,

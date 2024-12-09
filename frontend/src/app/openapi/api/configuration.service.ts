@@ -151,7 +151,7 @@ export class ConfigurationService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/configurations/global`;
+        let localVarPath = `/api/v1/configurations/global`;
         return this.httpClient.request<GlobalConfigurationOutput>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -211,7 +211,7 @@ export class ConfigurationService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/configurations/global/schema`;
+        let localVarPath = `/api/v1/configurations/global/schema`;
         return this.httpClient.request<any>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -236,13 +236,6 @@ export class ConfigurationService {
     public getUnifiedConfig(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
-
-        let localVarCredential: string | undefined;
-        // authentication (PersonalAccessToken) required
-        localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
-        if (localVarCredential) {
-            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
-        }
 
         let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
         if (localVarHttpHeaderAcceptSelected === undefined) {
@@ -278,7 +271,7 @@ export class ConfigurationService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/configurations/unified`;
+        let localVarPath = `/api/v1/configurations/unified`;
         return this.httpClient.request<UnifiedConfig>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -358,7 +351,7 @@ export class ConfigurationService {
             }
         }
 
-        let localVarPath = `/api/v1/settings/configurations/global`;
+        let localVarPath = `/api/v1/configurations/global`;
         return this.httpClient.request<GlobalConfigurationOutput>('put', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

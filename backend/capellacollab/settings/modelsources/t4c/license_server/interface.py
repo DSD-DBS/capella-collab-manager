@@ -3,7 +3,7 @@
 
 import requests
 
-from capellacollab import config
+from capellacollab.configuration.app import config
 from capellacollab.core import pydantic as core_pydantic
 
 from . import exceptions
@@ -18,7 +18,7 @@ def get_t4c_license_server_version(usage_api: str) -> str | None:
     try:
         r = requests.get(
             f"{usage_api}/status/json",
-            timeout=config.config.requests.timeout,
+            timeout=config.requests.timeout,
         )
     except requests.Timeout:
         return None
@@ -36,7 +36,7 @@ def get_t4c_license_server_usage(usage_api: str) -> T4CLicenseServerUsage:
     try:
         r = requests.get(
             f"{usage_api}/status/json",
-            timeout=config.config.requests.timeout,
+            timeout=config.requests.timeout,
         )
     except requests.Timeout:
         raise exceptions.T4CLicenseServerTimeoutError()
