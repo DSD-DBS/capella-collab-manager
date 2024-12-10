@@ -234,7 +234,16 @@ def backup(
 @app.command()
 def restore(
     volume_name: str,
-    tarfile: t.Annotated[pathlib.Path, typer.Argument(exists=True)],
+    tarfile: t.Annotated[
+        pathlib.Path,
+        typer.Argument(
+            exists=True,
+            help=(
+                "gzip compressed file with one top level "
+                "directory named 'workspace'"
+            ),
+        ),
+    ],
     namespace: t.Annotated[str, NamespaceOption],
     sidecar_path: pathlib.Path | None = None,
     access_mode: str = "ReadWriteMany",
