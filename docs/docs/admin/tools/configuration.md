@@ -33,18 +33,31 @@ For a full documentation of all available options, refer to the
 ### Resources
 
 For each tool, you can define the resources which sessions of the tool can use.
-This is a significant option because it impacts cost and performance.
+This is a significant option because it impacts cost and performance. If
+certain users need more resources, you can define different resource profiles
+for different users.
 
 An example configuration looks like this:
 
 ```yaml
 resources:
-    cpu:
-        requests: 0.4
-        limits: 2
-    memory:
-        requests: 1.6Gi
-        limits: 6Gi
+    profiles:
+        default:
+            cpu:
+                requests: 0.4
+                limits: 2
+            memory:
+                requests: 1.6Gi
+                limits: 6Gi
+        extra:
+            cpu:
+                requests: 0.8
+                limits: 4
+            memory:
+                requests: 1.9Gi
+                limits: 8Gi
+            users:
+                - testuser
 ```
 
 The values are Kubernetes resource requests and limits. More information is

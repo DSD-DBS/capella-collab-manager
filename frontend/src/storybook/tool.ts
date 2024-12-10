@@ -76,13 +76,28 @@ const defaultToolConfig: ToolSessionConfigurationOutput = {
     mounting_enabled: true,
   },
   resources: {
-    cpu: {
-      requests: 0.5,
-      limits: 1,
+    default_profile: {
+      cpu: {
+        requests: 0.5,
+        limits: 1,
+      },
+      memory: {
+        requests: '1Gi',
+        limits: '2Gi',
+      },
     },
-    memory: {
-      requests: '1Gi',
-      limits: '2Gi',
+    additional: {
+      max: {
+        cpu: {
+          requests: 0.5,
+          limits: 1,
+        },
+        memory: {
+          requests: '1Gi',
+          limits: '2Gi',
+        },
+        usernames: ['testuser'],
+      },
     },
   },
   environment: {},
