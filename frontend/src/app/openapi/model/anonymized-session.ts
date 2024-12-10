@@ -10,9 +10,11 @@
  */
 
 import { MinimalToolSessionConnectionMethod } from './minimal-tool-session-connection-method';
+import { SessionState } from './session-state';
 import { SessionType } from './session-type';
 import { Message } from './message';
 import { MinimalToolVersionWithTool } from './minimal-tool-version-with-tool';
+import { SessionPreparationState } from './session-preparation-state';
 
 
 export interface AnonymizedSession { 
@@ -20,7 +22,8 @@ export interface AnonymizedSession {
     type: SessionType;
     created_at: string;
     version: MinimalToolVersionWithTool;
-    state?: string;
+    preparation_state?: SessionPreparationState;
+    state?: SessionState;
     warnings?: Array<Message>;
     connection_method?: MinimalToolSessionConnectionMethod | null;
 }
