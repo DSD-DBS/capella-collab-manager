@@ -49,6 +49,14 @@ class DockerConfig(BaseConfig):
         ),
         examples=["docker.io"],
     )
+    github_registry: str = pydantic.Field(
+        default="ghcr.io",
+        description=(
+            "The registry pointing to ghcr.io or an alternative mirror, "
+            "which contains the same content."
+        ),
+        examples=["ghcr.io"],
+    )
 
     tag: str = pydantic.Field(
         default="latest",

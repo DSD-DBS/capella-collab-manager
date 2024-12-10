@@ -168,7 +168,9 @@ def get_eclipse_session_configuration() -> (
     )
 
 
-def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
+def create_capella_tool(
+    db: orm.Session,
+) -> tuple[tools_models.DatabaseTool, list[tools_models.DatabaseVersion]]:
     registry: str = config.docker.sessions_registry
 
     capella = tools_models.CreateTool(
@@ -180,6 +182,7 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
     )
     capella_database = tools_crud.create_tool(db, capella)
 
+    capella_versions = []
     for capella_version_name in ("5.0.0", "5.2.0", "6.0.0", "6.1.0", "7.0.0"):
         # pylint: disable=unsupported-membership-test
         if "localhost" in registry:
@@ -205,16 +208,103 @@ def create_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
                 ),
             ),
         )
-        tools_crud.create_version(
-            db,
-            capella_database,
-            capella_version,
+        capella_versions.append(
+            tools_crud.create_version(
+                db,
+                capella_database,
+                capella_version,
+            )
         )
 
     tools_crud.create_nature(db, capella_database, "model")
     tools_crud.create_nature(db, capella_database, "library")
 
-    return capella_database
+    return capella_database, capella_versions
+
+
+def create_capella_model_explorer_tool(
+    db: orm.Session, capella_version_ids: list[int]
+) -> tools_models.DatabaseTool:
+    model_explorer = tools_models.CreateTool(
+        name="Capella model explorer",
+        config=tools_models.ToolSessionConfiguration(
+            environment={
+                "MODEL_ENTRYPOINT": tools_models.ToolSessionEnvironment(
+                    stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
+                    value="{CAPELLACOLLAB_SESSION_PROVISIONING[0][path]}",
+                ),
+                "ROUTE_PREFIX": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
+            },
+            connection=tools_models.ToolSessionConnection(
+                methods=[
+                    tools_models.HTTPConnectionMethod(
+                        name="Direct Browser connection",
+                        sharing=tools_models.ToolSessionSharingConfiguration(
+                            enabled=True
+                        ),
+                        ports=tools_models.HTTPPorts(http=8000, metrics=8000),
+                        redirect_url=(
+                            (
+                                "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
+                                if not core.LOCAL_DEVELOPMENT_MODE
+                                else "http://localhost:8080"
+                            )
+                            + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
+                        ),
+                    )
+                ]
+            ),
+            monitoring=tools_models.SessionMonitoring(
+                prometheus=tools_models.PrometheusConfiguration(
+                    path="/metrics"
+                )
+            ),
+            provisioning=tools_models.ToolModelProvisioning(
+                directory="/models", max_number_of_models=1, required=False
+            ),
+            persistent_workspaces=tools_models.PersistentWorkspaceSessionConfiguration(
+                mounting_enabled=False,
+            ),
+        ),
+    )
+    model_explorer_database = tools_crud.create_tool(db, model_explorer)
+
+    latest_release = tools_models.CreateToolVersion(
+        name="Latest release",
+        config=tools_models.ToolVersionConfiguration(
+            sessions=tools_models.SessionToolConfiguration(
+                persistent=tools_models.PersistentSessionToolConfiguration(
+                    image=tools_models.PersistentSessionToolConfigurationImages(
+                        regular=f"{config.docker.github_registry}/dsd-dbs/capella-model-explorer/model-explorer:latest",
+                    ),
+                ),
+            ),
+            compatible_versions=capella_version_ids,
+        ),
+    )
+
+    latest_tag = tools_models.CreateToolVersion(
+        name="Current development version",
+        config=tools_models.ToolVersionConfiguration(
+            sessions=tools_models.SessionToolConfiguration(
+                persistent=tools_models.PersistentSessionToolConfiguration(
+                    image=tools_models.PersistentSessionToolConfigurationImages(
+                        regular=f"{config.docker.github_registry}/dsd-dbs/capella-model-explorer/model-explorer:master",
+                    ),
+                ),
+            ),
+            compatible_versions=capella_version_ids,
+        ),
+    )
+
+    for version in (latest_release, latest_tag):
+        tools_crud.create_version(
+            db,
+            model_explorer_database,
+            version,
+        )
+
+    return model_explorer_database
 
 
 def create_papyrus_tool(db: orm.Session) -> tools_models.DatabaseTool:
@@ -335,7 +425,10 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
 
 
 def create_tools(db: orm.Session):
-    create_capella_tool(db)
+    _, capella_versions = create_capella_tool(db)
+    create_capella_model_explorer_tool(
+        db, [version.id for version in capella_versions]
+    )
 
     # pylint: disable=unsupported-membership-test
     if "localhost" in config.docker.sessions_registry:

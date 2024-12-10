@@ -5,6 +5,7 @@ docker:
   registry: "{{ .Values.docker.registry.internal }}"
   externalRegistry: "{{ .Values.docker.registry.external }}"
   sessionsRegistry: "{{ .Values.docker.registry.sessions }}"
+  githubRegistry: "{{ .Values.docker.registry.github }}"
 
   tag: "{{ .Values.docker.tag }}"
 
