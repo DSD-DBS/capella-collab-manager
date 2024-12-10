@@ -199,7 +199,6 @@ def test_environment_resolution_before_stage(logger: logging.LoggerAdapter):
 
 
 def test_environment_resolution_wrong_stage(logger: logging.LoggerAdapter):
-
     environment = {"TEST": [{"test": "test2"}]}
     rules = {
         "TEST2": tools_models.ToolSessionEnvironment(

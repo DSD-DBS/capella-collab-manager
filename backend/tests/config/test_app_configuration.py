@@ -48,14 +48,13 @@ class MockLocation:
 
 @pytest.fixture(name="mock_locations")
 def fixture_mock_locations() -> tuple[MockLocation, MockLocation]:
-
     mock_location_1 = MockLocation()
     mock_location_2 = MockLocation()
     return mock_location_1, mock_location_2
 
 
 def test_loader_does_config_exist_true(
-    mock_locations: tuple[MockLocation, MockLocation]
+    mock_locations: tuple[MockLocation, MockLocation],
 ):
     """Test that does_config_exist returns True when a config file exists in one of the provided locations."""
 
@@ -68,7 +67,7 @@ def test_loader_does_config_exist_true(
 
 
 def test_loader_does_config_exist_false(
-    mock_locations: tuple[MockLocation, MockLocation]
+    mock_locations: tuple[MockLocation, MockLocation],
 ):
     """Test that does_config_exist returns False when a config file does not exist in one of the provided locations."""
 
@@ -94,7 +93,7 @@ def test_load_yaml_exists(mock_locations: tuple[MockLocation, MockLocation]):
 
 
 def test_load_yaml_not_exists(
-    mock_locations: tuple[MockLocation, MockLocation]
+    mock_locations: tuple[MockLocation, MockLocation],
 ):
     """Test that load_yaml raises an exception when no config file is found in provided locations."""
 

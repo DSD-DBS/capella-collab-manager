@@ -155,9 +155,9 @@ def _determine_end_time_from_pipeline_run(
 def _transform_unix_nanoseconds_to_human_readable_format(
     nanoseconds: int,
 ) -> str:
-    return datetime.datetime.fromtimestamp(
-        int(nanoseconds) / 10**9
-    ).strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.fromtimestamp(int(nanoseconds) / 10**9).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
 
 
 @router.get(
@@ -190,9 +190,9 @@ def get_logs(
 
     logs = "\n".join(
         [
-            datetime.datetime.fromtimestamp(
-                int(logline[0]) / 10**9
-            ).strftime("%Y-%m-%d %H:%M:%S")
+            datetime.datetime.fromtimestamp(int(logline[0]) / 10**9).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
             + ": "
             + logline[1]
             for logentry in logs

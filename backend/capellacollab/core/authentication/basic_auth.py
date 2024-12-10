@@ -21,9 +21,9 @@ class HTTPBasicAuth(security.HTTPBasic):
         super().__init__(auto_error=True)
 
     async def __call__(self, request: fastapi.Request) -> str:  # type: ignore
-        credentials: security.HTTPBasicCredentials | None = (
-            await super().__call__(request)
-        )
+        credentials: (
+            security.HTTPBasicCredentials | None
+        ) = await super().__call__(request)
         if not credentials:
             raise exceptions.UnauthenticatedError()
         with database.SessionLocal() as session:

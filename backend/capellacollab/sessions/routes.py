@@ -11,10 +11,9 @@ import jwt
 from fastapi import status
 from sqlalchemy import orm
 
-from capellacollab.core import database
+from capellacollab.core import database, responses
 from capellacollab.core import logging as log
 from capellacollab.core import models as core_models
-from capellacollab.core import responses
 from capellacollab.core.authentication import exceptions as auth_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects import injectables as projects_injectables
@@ -321,9 +320,8 @@ def share_session(
     user_to_share_with = users_crud.get_user_by_name(db, body.username)
     if not user_to_share_with:
         raise users_exceptions.UserNotFoundError(username=body.username)
-    if (
-        session.owner == user_to_share_with
-        or util.is_session_shared_with_user(session, user_to_share_with)
+    if session.owner == user_to_share_with or util.is_session_shared_with_user(
+        session, user_to_share_with
     ):
         raise exceptions.SessionAlreadySharedError(user_to_share_with.name)
 

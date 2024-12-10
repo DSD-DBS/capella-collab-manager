@@ -327,7 +327,6 @@ def delete_tool_nature(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
-
     raise_when_tool_nature_dependency_exist(db, nature)
     crud.delete_nature(db, nature)
 

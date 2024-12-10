@@ -41,7 +41,8 @@ def fixture_tool_nature(
     nature = tools_crud.create_nature(db, tool, "test")
 
     def get_existing_tool_nature(
-        *args, **kwargs  # pylint: disable=unused-argument
+        *args,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> tools_models.DatabaseNature:
         return nature
 

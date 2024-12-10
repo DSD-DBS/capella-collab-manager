@@ -8,6 +8,7 @@ Revises: 86ab7d4d1684
 Create Date: 2024-01-31 17:40:31.743565
 
 """
+
 import typing as t
 
 import sqlalchemy as sa
