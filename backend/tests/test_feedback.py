@@ -96,7 +96,7 @@ def test_send_feedback_with_session(
                             "name": "6.1.0",
                             "tool": {"id": 1, "name": "Capella"},
                         },
-                        "state": "Started",
+                        "state": "Running",
                         "warnings": [],
                         "connection_method": {
                             "id": "xpra",

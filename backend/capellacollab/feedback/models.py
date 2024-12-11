@@ -57,7 +57,12 @@ class AnonymizedSession(core_pydantic.BaseModel):
 
     version: tools_models.MinimalToolVersionWithTool
 
-    state: str = pydantic.Field(default="UNKNOWN")
+    preparation_state: sessions_models.SessionPreparationState = (
+        pydantic.Field(default=sessions_models.SessionPreparationState.UNKNOWN)
+    )
+    state: sessions_models.SessionState = pydantic.Field(
+        default=sessions_models.SessionState.UNKNOWN
+    )
     warnings: list[core_models.Message] = pydantic.Field(default=[])
 
     connection_method: (

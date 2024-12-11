@@ -5,6 +5,7 @@
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { BehaviorSubject } from 'rxjs';
+import { SessionPreparationState, SessionState } from 'src/app/openapi';
 import {
   SessionViewerService,
   ViewerSession,
@@ -116,13 +117,13 @@ export const TwoSessionsTilingPending: Story = {
         mockSessionServiceProvider([
           {
             ...mockPersistentViewerSession,
-            preparation_state: 'Pending',
-            state: 'Pending',
+            preparation_state: SessionPreparationState.Pending,
+            state: SessionState.Pending,
           },
           {
             ...mockReadOnlyViewerSession,
-            preparation_state: 'Completed',
-            state: 'Failed',
+            preparation_state: SessionPreparationState.Completed,
+            state: SessionState.Failed,
           },
         ]),
       ],
@@ -140,8 +141,8 @@ export const OneSessionTilingPending: Story = {
         mockSessionServiceProvider([
           {
             ...mockPersistentViewerSession,
-            preparation_state: 'Completed',
-            state: 'Pending',
+            preparation_state: SessionPreparationState.Completed,
+            state: SessionState.Pending,
           },
         ]),
       ],
