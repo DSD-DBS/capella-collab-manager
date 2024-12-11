@@ -20,6 +20,7 @@ export const mockHttpConnectionMethod: Readonly<HTTPConnectionMethodOutput> = {
   ports: {
     http: 0,
     metrics: 0,
+    additional: {},
   },
   environment: {},
   redirect_url: 'https://example.com',

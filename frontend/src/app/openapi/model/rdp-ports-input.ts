@@ -17,6 +17,10 @@ export interface RDPPortsInput {
      */
     metrics?: number;
     /**
+     * Additional ports in a identifier/port mapping.
+     */
+    additional?: { [key: string]: number; };
+    /**
      * Port of the RDP server in the container.
      */
     rdp?: number;

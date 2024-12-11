@@ -17,6 +17,10 @@ export interface HTTPPortsInput {
      */
     metrics?: number;
     /**
+     * Additional ports in a identifier/port mapping.
+     */
+    additional?: { [key: string]: number; };
+    /**
      * Port of the HTTP server in the container.
      */
     http?: number;

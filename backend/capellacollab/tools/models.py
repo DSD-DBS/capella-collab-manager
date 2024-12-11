@@ -29,6 +29,29 @@ class SessionPorts(core_pydantic.BaseModel):
         default=9118,
         description="Port of the metrics endpoint in the container.",
     )
+    additional: dict[str, int] = pydantic.Field(
+        default={},
+        description="Additional ports in a identifier/port mapping.",
+    )
+
+    @pydantic.model_validator(mode="after")
+    def check_additional_ports(self) -> t.Self:
+        if len(self.additional) != len(set(self.additional.values())):
+            raise ValueError("All additional ports must be unique.")
+        for identifier, port in self.additional.items():
+            if identifier in ("http", "metrics"):
+                raise ValueError(
+                    f"Identifier '{identifier}' is reserved and can't be used as additional identifier."
+                )
+            if port in (self.model_dump().values()):
+                raise ValueError(
+                    f"Port '{port}' of the identifier '{identifier}' is already in use."
+                )
+            if port == 80:
+                raise ValueError(
+                    f"Port '{port}' is reserved and can't be used as additional port."
+                )
+        return self
 
 
 class RDPPorts(SessionPorts):
