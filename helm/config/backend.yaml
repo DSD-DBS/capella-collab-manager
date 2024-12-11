@@ -11,6 +11,9 @@ docker:
 
 k8s:
   namespace: {{ .Values.backend.k8sSessionNamespace }}
+  managementPortalNamespace: {{ .Release.Namespace }}
+  releaseName: {{ .Release.Name }}
+
   {{- if .Values.cluster.namespaces.sessions.ingressClassName }}
   ingressClassName: {{ .Values.cluster.namespaces.sessions.ingressClassName }}
   {{- end }}

@@ -67,6 +67,7 @@ def get_environment(
         ),
         "CAPELLACOLLAB_SESSION_ID": session_id,
         "CAPELLACOLLAB_SESSION_REQUESTER_USERNAME": user.name,
+        "CAPELLACOLLAB_SESSION_REQUESTER_USER_ID": user.id,
         "CAPELLACOLLAB_SESSIONS_BASE_PATH": f"/session/{session_id}",
         "CAPELLACOLLAB_SESSION_CONNECTION_METHOD_TYPE": connection_method.type,
         "CAPELLACOLLAB_ORIGIN_BASE_URL": f"{config.general.scheme}://{config.general.host}:{config.general.port}",
@@ -74,6 +75,7 @@ def get_environment(
         "CAPELLACOLLAB_SESSIONS_HOST": config.general.host,
         "CAPELLACOLLAB_SESSIONS_PORT": str(config.general.port),
         "CAPELLACOLLAB_SESSION_CONTAINER_PORT": str(container_port),
+        "CAPELLACOLLAB_API_BASE_URL": f"http://{config.k8s.release_name}-backend.{config.k8s.management_portal_namespace}.svc.cluster.local/api",
     }
 
 
