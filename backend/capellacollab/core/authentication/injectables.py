@@ -3,11 +3,11 @@
 
 from __future__ import annotations
 
-import dataclasses
 import logging
+import typing as t
 
 import fastapi
-from fastapi.openapi import models as openapi_models
+from fastapi import Request
 from fastapi.security import base as security_base
 from fastapi.security import utils as security_utils
 from sqlalchemy import orm
@@ -22,6 +22,7 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from . import exceptions
 
@@ -46,41 +47,56 @@ class OpenAPIFakeBase(security_base.SecurityBase):
         return hash(self.__class__.__name__)
 
 
-@dataclasses.dataclass()
-class OpenAPIPersonalAccessToken(OpenAPIFakeBase):
-    """Displays the personal access token as authentication method in the OpenAPI docs"""
+class AuthenticationInformationValidation:
+    exceptions = [
+        exceptions.JWTInvalidToken(),
+        exceptions.TokenSignatureExpired(),
+        exceptions.RefreshTokenSignatureExpired(),
+        exceptions.JWTValidationFailed(),
+        exceptions.UnauthenticatedError(),
+        exceptions.InvalidPersonalAccessTokenError(),
+        exceptions.PersonalAccessTokenExpired(),
+        exceptions.UnknownScheme("unknown"),
+    ]
 
-    model = openapi_models.HTTPBase(
-        scheme="basic",
-        description="Can be used to authenticate with an personal access token",
-    )
-    scheme_name = "PersonalAccessToken"
+    async def __call__(
+        self,
+        request,  # OpenAPI breaks if we add a type here
+        db: orm.Session = fastapi.Depends(database.get_db),
+    ) -> tuple[
+        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ]:
+        assert isinstance(request, fastapi.Request)
+        if request.cookies.get("id_token"):
+            username = await api_key_cookie.JWTAPIKeyCookie()(request)
+            user = users_crud.get_user_by_name(db, username)
+            if not user:
+                raise users_exceptions.UserNotFoundError(username)
+            return user, None
 
-    __hash__ = OpenAPIFakeBase.__hash__
+        authorization = request.headers.get("Authorization")
+        scheme, _ = security_utils.get_authorization_scheme_param(
+            authorization
+        )
+
+        match scheme.lower():
+            case "basic":
+                return await basic_auth.HTTPBasicAuth().validate(db, request)
+            case "":
+                raise exceptions.UnauthenticatedError()
+            case _:
+                raise exceptions.UnknownScheme(scheme)
 
 
 async def get_username(
-    request: fastapi.Request,
-    _unused1=fastapi.Depends(OpenAPIPersonalAccessToken()),
+    authentication_information: tuple[
+        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ] = fastapi.Depends(AuthenticationInformationValidation()),
 ) -> str:
-    if request.cookies.get("id_token"):
-        username = await api_key_cookie.JWTAPIKeyCookie()(request)
-        return username
-
-    authorization = request.headers.get("Authorization")
-    scheme, _ = security_utils.get_authorization_scheme_param(authorization)
-
-    match scheme.lower():
-        case "basic":
-            username = await basic_auth.HTTPBasicAuth()(request)
-        case "":
-            raise exceptions.UnauthenticatedError()
-        case _:
-            raise exceptions.UnknownScheme(scheme)
-
-    return username
+    return authentication_information[0].name
 
 
+# TODO: Replace all occurrences of RoleVerification with PermissionValidation
 class RoleVerification:
     def __init__(self, required_role: users_models.Role, verify: bool = True):
         self.required_role = required_role
@@ -108,6 +124,7 @@ class RoleVerification:
         return True
 
 
+# TODO: Replace all occurrences of RoleVerification with ProjectPermissionValidation
 class ProjectRoleVerification:
     roles = [
         projects_users_models.ProjectUserRole.USER,

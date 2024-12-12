@@ -32,9 +32,6 @@ router = fastapi.APIRouter(
             )
         )
     ],
-    responses=responses.api_exceptions(
-        minimum_project_role=projects_users_models.ProjectUserRole.MANAGER
-    ),
 )
 
 
@@ -54,7 +51,7 @@ def list_t4c_models(
 @router.get(
     "/{t4c_model_id}",
     response_model=models.SimpleT4CModelWithRepository,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.T4CIntegrationNotFoundError(-1),
             exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
@@ -116,7 +113,7 @@ def create_t4c_model(
             )
         )
     ],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.T4CIntegrationNotFoundError(-1),
             exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
@@ -160,7 +157,7 @@ def update_t4c_model(
             )
         )
     ],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.T4CIntegrationNotFoundError(-1),
             exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),

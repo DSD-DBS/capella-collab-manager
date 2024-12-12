@@ -18,7 +18,7 @@ from . import api_key_cookie, exceptions, models, oidc
 router = fastapi.APIRouter(tags=["Authentication"])
 
 
-@router.get("")
+@router.get("", responses=[])
 async def get_authorization_url(
     response: fastapi.Response,
 ) -> models.AuthorizationResponse:

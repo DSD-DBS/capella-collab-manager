@@ -41,7 +41,6 @@ router = fastapi.APIRouter(
             )
         )
     ],
-    responses=responses.api_exceptions(include_authentication=True),
 )
 
 router_without_authentication = fastapi.APIRouter()
@@ -60,7 +59,7 @@ users_router = fastapi.APIRouter(
 @router.post(
     "",
     response_model=models.Session,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.UnsupportedSessionTypeError(
                 tool_name="test", session_type=models.SessionType.PERSISTENT
@@ -277,7 +276,7 @@ def get_all_sessions(
 @router.get(
     "/{session_id}",
     response_model=models.Session,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.SessionNotFoundError(session_id="test"),
             exceptions.SessionNotOwnedError(session_id="test"),
@@ -295,7 +294,7 @@ def get_session(
 @router.post(
     "/{session_id}/shares",
     response_model=models.SessionSharing,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.InvalidConnectionMethodIdentifierError(
                 tool_name="test", connection_method_id="default"
@@ -348,7 +347,7 @@ def share_session(
     response_model=core_models.PayloadResponseModel[
         models.SessionConnectionInformation
     ],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.InvalidConnectionMethodIdentifierError(
                 tool_name="test", connection_method_id="default"
@@ -452,7 +451,7 @@ def validate_session_token(
 @router.delete(
     "/{session_id}",
     status_code=204,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.SessionNotFoundError(session_id="test"),
             exceptions.SessionNotOwnedError(session_id="test"),
@@ -475,13 +474,12 @@ router.include_router(router=files_routes.router, prefix="/{session_id}/files")
 @users_router.get(
     "/{user_id}/sessions",
     response_model=list[models.Session],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             users_exceptions.UserNotFoundError(user_id=1),
             exceptions.SessionNotOwnedError(session_id="test"),
             exceptions.SessionForbiddenError(),
         ],
-        minimum_role=users_models.Role.USER,
     ),
 )
 def get_sessions_for_user(

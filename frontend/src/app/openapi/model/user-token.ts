@@ -14,8 +14,8 @@
 export interface UserToken { 
     id: number;
     user_id: number;
-    hash: string;
     expiration_date: string;
+    created_at: string;
     description: string;
     source: string;
 }

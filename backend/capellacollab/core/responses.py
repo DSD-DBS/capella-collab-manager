@@ -38,55 +38,7 @@ def _create_pydantic_error_model(exc: exceptions.BaseError):
     )
 
 
-def api_exceptions(
-    excs: list[exceptions.BaseError] | None = None,
-    include_authentication: bool = False,
-    minimum_role: users_models.Role | None = None,
-    minimum_project_role: projects_users_models.ProjectUserRole | None = None,
-    minimum_project_permission: (
-        projects_users_models.ProjectUserPermission | None
-    ) = None,
-):
-    if os.getenv("CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES", "0") == "1":
-        return {}
-
-    if excs is None:
-        excs = []
-
-    if include_authentication:
-        excs += [
-            authentication_exceptions.JWTInvalidToken(),
-            authentication_exceptions.TokenSignatureExpired(),
-            authentication_exceptions.RefreshTokenSignatureExpired(),
-            authentication_exceptions.JWTValidationFailed(),
-            authentication_exceptions.UnauthenticatedError(),
-            authentication_exceptions.InvalidPersonalAccessTokenError(),
-            authentication_exceptions.PersonalAccessTokenExpired(),
-            authentication_exceptions.UnknownScheme("unknown"),
-        ]
-
-    if minimum_role:
-        excs.append(
-            authentication_exceptions.RequiredRoleNotMetError(minimum_role)
-        )
-
-    if minimum_project_role:
-        excs.append(
-            authentication_exceptions.RequiredProjectRoleNotMetError(
-                minimum_project_role, project_slug="project_slug"
-            )
-        )
-    if minimum_project_permission:
-        excs.append(
-            authentication_exceptions.RequiredProjectPermissionNotMetError(
-                minimum_project_permission, project_slug="project_slug"
-            )
-        )
-
-    return _translate_exceptions_to_openapi_schema(excs)
-
-
-def _translate_exceptions_to_openapi_schema(excs: list[exceptions.BaseError]):
+def translate_exceptions_to_openapi_schema(excs: list[exceptions.BaseError]):
     grouped_by_status_code: dict[int, list[exceptions.BaseError]] = {}
     for exc in excs:
         grouped_by_status_code.setdefault(exc.status_code, []).append(exc)

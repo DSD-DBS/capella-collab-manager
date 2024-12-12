@@ -1,23 +1,24 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+
 import fastapi
-from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.users.tokens import models as tokens_models
 
 from . import crud, exceptions, models
 
 
 def get_own_user(
-    db: orm.Session = fastapi.Depends(database.get_db),
-    username: str = fastapi.Depends(auth_injectables.get_username),
+    authentication_information: tuple[
+        models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ] = fastapi.Depends(
+        auth_injectables.AuthenticationInformationValidation()
+    ),
 ) -> models.DatabaseUser:
-    if user := crud.get_user_by_name(db, username):
-        return user
-
-    raise exceptions.UserNotFoundError(username=username)
+    return authentication_information[0]
 
 
 def get_existing_user(

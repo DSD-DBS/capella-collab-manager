@@ -99,7 +99,7 @@ def get_pipeline_run(
 @router.get(
     "/{pipeline_run_id}/events",
     response_model=str,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             logging_exceptions.GrafanaLokiDisabled(),
             logging_exceptions.TooManyOutStandingRequests(),
@@ -163,7 +163,7 @@ def _transform_unix_nanoseconds_to_human_readable_format(
 @router.get(
     "/{pipeline_run_id}/logs",
     response_model=str,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             logging_exceptions.GrafanaLokiDisabled(),
             logging_exceptions.TooManyOutStandingRequests(),

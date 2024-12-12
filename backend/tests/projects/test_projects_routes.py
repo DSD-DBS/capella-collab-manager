@@ -325,3 +325,7 @@ def test_get_project_per_role_admin(
     response = client.get("/api/v1/projects/?minimum_role=administrator")
     assert response.status_code == 200
     assert len(response.json()) > 0
+
+
+def test_only_return_projects_for_token_access():
+    raise NotImplementedError()

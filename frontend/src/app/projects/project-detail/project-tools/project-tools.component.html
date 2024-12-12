@@ -63,7 +63,7 @@
     <table role="presentation" class="w-fit">
       @for (
         tool of projectToolsWrapperService.projectTools$ | async;
-        track tool.id
+        track tool.tool_version.id
       ) {
         <tr class="h-[54px]">
           <td class="align-middle">

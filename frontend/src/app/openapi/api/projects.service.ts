@@ -345,6 +345,7 @@ export class ProjectsService {
 
     /**
      * Get Common Projects
+     * List all common projects with a user.  If you request with &#x60;admin.projects/GET&#x60; and &#x60;admin.users/GET&#x60; scopes, the API will return all projects of the selected user.
      * @param userId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

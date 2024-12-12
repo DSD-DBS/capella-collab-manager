@@ -41,7 +41,7 @@ def get_workspaces_for_user(
 @router.delete(
     "/{workspace_id}",
     status_code=204,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
             exceptions.WorkspaceNotFound("test", 0),
             users_exceptions.UserNotFoundError("test"),

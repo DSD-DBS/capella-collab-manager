@@ -33,7 +33,6 @@ router = fastapi.APIRouter(
             )
         )
     ],
-    responses=responses.api_exceptions(minimum_role=users_models.Role.ADMIN),
 )
 def get_events(
     db: orm.Session = fastapi.Depends(database.get_db),
