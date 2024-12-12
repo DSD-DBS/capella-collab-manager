@@ -45,14 +45,11 @@ def get_projects(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    username: str = fastapi.Depends(auth_injectables.get_username),
     log: logging.LoggerAdapter = fastapi.Depends(
         core_logging.get_request_logger
     ),
 ) -> list[models.DatabaseProject]:
-    if auth_injectables.RoleVerification(
-        required_role=users_models.Role.ADMIN, verify=False
-    )(username, db):
+    if user.role == users_models.Role.ADMIN:
         log.debug("Fetching all projects")
         return list(crud.get_projects(db))
 
@@ -70,7 +67,7 @@ def get_projects(
             for association in user.projects
             if auth_injectables.ProjectRoleVerification(
                 minimum_role, verify=False
-            )(association.project.slug, username, db)
+            )(association.project.slug, user.name, db)
         ]
 
     return projects
@@ -93,7 +90,9 @@ def update_project(
     project: models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
-    username: str = fastapi.Depends(auth_injectables.get_username),
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseProject:
     if patch_project.name:
@@ -102,7 +101,7 @@ def update_project(
         if project.slug != new_slug and crud.get_project_by_slug(db, new_slug):
             raise exceptions.ProjectAlreadyExistsError(project.slug)
     if patch_project.is_archived:
-        _delete_all_pipelines_for_project(db, project, username)
+        _delete_all_pipelines_for_project(db, project, user)
     return crud.update_project(db, project, patch_project)
 
 
@@ -185,13 +184,15 @@ def delete_project(
 
 
 def _delete_all_pipelines_for_project(
-    db: orm.Session, project: models.DatabaseProject, username: str
+    db: orm.Session,
+    project: models.DatabaseProject,
+    user: users_models.DatabaseUser,
 ):
     pipelines: list[backups_models.DatabaseBackup] = []
     for model in project.models:
         pipelines.extend(backups_crud.get_pipelines_for_tool_model(db, model))
     for pipeline in pipelines:
-        backups_core.delete_pipeline(db, pipeline, username, True)
+        backups_core.delete_pipeline(db, pipeline, user, True)
 
 
 router.include_router(
