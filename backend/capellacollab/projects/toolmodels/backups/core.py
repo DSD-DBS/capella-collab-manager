@@ -8,7 +8,6 @@ import logging
 import requests
 from sqlalchemy import orm
 
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
@@ -64,7 +63,7 @@ def get_environment(
 def delete_pipeline(
     db: orm.Session,
     pipeline: models.DatabaseBackup,
-    username: str,
+    user: users_models.DatabaseUser,
     force: bool,
 ):
     try:
@@ -80,12 +79,7 @@ def delete_pipeline(
             exc_info=True,
         )
 
-        if not (
-            force
-            and auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN, verify=False
-            )(username=username, db=db)
-        ):
+        if not (force and user.role == users_models.Role.ADMIN):
             raise exceptions.PipelineOperationFailedT4CServerUnreachable(
                 exceptions.PipelineOperation.DELETE
             )

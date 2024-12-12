@@ -28,6 +28,8 @@ from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as t4c_repository_interface,
 )
 from capellacollab.tools import crud as tools_crud
+from capellacollab.users import injectables as users_injectables
+from capellacollab.users import models as users_models
 
 from .. import exceptions as toolmodels_exceptions
 from . import core, crud, exceptions, injectables, models
@@ -74,7 +76,6 @@ def create_backup(
         toolmodels_injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    username: str = fastapi.Depends(auth_injectables.get_username),
 ):
     git_model = git_injectables.get_existing_git_model(
         body.git_model_id, toolmodel, db
@@ -148,10 +149,12 @@ def delete_pipeline(
         injectables.get_existing_pipeline
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    username: str = fastapi.Depends(auth_injectables.get_username),
+    user: users_models.DatabaseUser = fastapi.Depends(
+        users_injectables.get_own_user
+    ),
     force: bool = False,
 ):
-    core.delete_pipeline(db, pipeline, username, force)
+    core.delete_pipeline(db, pipeline, user, force)
 
 
 router.include_router(

@@ -159,3 +159,17 @@ def test_no_user_rights_on_internal_permissions(
     assert response.status_code == 404
     assert "detail" in response.json()
     assert "reason" in response.json()["detail"]
+
+
+@pytest.mark.usefixtures("admin")
+def test_get_current_project_user_as_admin(
+    client: testclient.TestClient,
+    project: projects_models.DatabaseProject,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/users/current",
+    )
+
+    assert response.status_code == 200
+    assert response.json()["role"] == "administrator"
+    assert response.json()["permission"] == "write"

@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import uuid
+
 import pytest
 from sqlalchemy import orm
 
@@ -47,8 +49,8 @@ def fixture_pipeline(
         t4c_model=t4c_model,
         created_by=executor_name,
         model=capella_model,
-        t4c_username="no",
-        t4c_password="no",
+        t4c_username="techuser-" + str(uuid.uuid4()),
+        t4c_password="password",
         include_commit_history=include_commit_history,
         run_nightly=run_nightly,
     )
