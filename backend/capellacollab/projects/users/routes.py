@@ -6,11 +6,17 @@ import pydantic
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
 from capellacollab.events import models as events_models
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
@@ -21,6 +27,7 @@ from . import crud, exceptions, models, util
 router = fastapi.APIRouter()
 
 
+# TODO: Remove this function
 def check_user_not_admin(user: users_models.DatabaseUser) -> bool:
     """
     Administrators have access to all projects.
@@ -68,7 +75,9 @@ def get_current_project_user(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.ProjectUserAssociation | models.ProjectUser:
+    # TODO: Replace with permissions
     if user.role == users_models.Role.ADMIN:
+        # TODO: Replace with permissions
         return models.ProjectUser(
             role=models.ProjectUserRole.ADMIN,
             permission=models.ProjectUserPermission.WRITE,
@@ -82,8 +91,10 @@ def get_current_project_user(
     response_model=list[models.ProjectUser],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    project_users={permissions_models.UserTokenVerb.GET}
+                )
             )
         )
     ],
@@ -97,6 +108,7 @@ def get_users_for_project(
     return pydantic.TypeAdapter(list[models.ProjectUser]).validate_python(
         project.users
     ) + [
+        # TODO: Replace with permissions
         models.ProjectUser(
             role=models.ProjectUserRole.ADMIN,
             permission=models.ProjectUserPermission.WRITE,
@@ -111,8 +123,10 @@ def get_users_for_project(
     response_model=models.ProjectUser,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    project_users={permissions_models.UserTokenVerb.CREATE}
+                )
             )
         )
     ],
@@ -133,6 +147,7 @@ def add_user_to_project(
         raise users_exceptions.UserNotFoundError(
             username=post_project_user.username
         )
+    # TODO: Replace with permissions
     check_user_not_admin(user)
     check_user_not_in_project(project, user)
 
@@ -154,8 +169,10 @@ def add_user_to_project(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    project_users={permissions_models.UserTokenVerb.UPDATE}
+                )
             )
         )
     ],
@@ -173,6 +190,7 @@ def update_project_user(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+    # TODO: Replace with permissions
     check_user_not_admin(user)
     if role := patch_project_user.role:
         crud.change_role_of_user_in_project(db, project, user, role)
@@ -215,8 +233,10 @@ def update_project_user(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    project_users={permissions_models.UserTokenVerb.DELETE}
+                )
             )
         )
     ],
@@ -234,6 +254,7 @@ def remove_user_from_project(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+    # TODO: Replace with permissions
     check_user_not_admin(user)
 
     crud.delete_user_from_project(db, project, user)

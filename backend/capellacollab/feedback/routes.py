@@ -11,7 +11,8 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import logging as log
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as users_models
 
@@ -25,9 +26,13 @@ router = fastapi.APIRouter()
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.USER
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        feedback={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
         )
     ],
 )

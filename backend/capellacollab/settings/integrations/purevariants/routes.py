@@ -6,26 +6,33 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import k8s
-from capellacollab.users import models as users_models
 
 from . import crud, models
 
 router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
-        )
-    ],
     tags=["Integrations - PureVariants"],
 )
 
 
-@router.get("", response_model=models.PureVariantsLicenses | None)
+@router.get(
+    "",
+    response_model=models.PureVariantsLicenses | None,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        pv_configuration={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
+)
 def get_license(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabasePureVariantsLicenses | None:
@@ -35,6 +42,19 @@ def get_license(
 @router.patch(
     "",
     response_model=models.PureVariantsLicenses,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        pv_configuration={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
 )
 def set_license(
     body: models.PureVariantsLicenses,
@@ -46,6 +66,19 @@ def set_license(
 @router.post(
     "/license-keys",
     response_model=models.PureVariantsLicenses,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        pv_configuration={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
 )
 def upload_license_key_file(
     file: fastapi.UploadFile,
@@ -58,7 +91,22 @@ def upload_license_key_file(
     return crud.set_license_key_filename(db, value=file.filename)
 
 
-@router.delete("/license-keys/0")
+@router.delete(
+    "/license-keys/0",
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        pv_configuration={
+                            permissions_models.UserTokenVerb.DELETE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
+)
 def delete_license_key_file(
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
     db: orm.Session = fastapi.Depends(database.get_db),

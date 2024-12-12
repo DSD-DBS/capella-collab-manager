@@ -15,6 +15,10 @@ class T4CIntegrationNotFoundError(core_exceptions.BaseError):
             reason=f"The TeamForCapella project integration with the id {integration_id} doesn't exist in our database.",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CIntegrationNotFoundError":
+        return cls(-1)
+
 
 class T4CIntegrationDoesntBelongToModel(core_exceptions.BaseError):
     def __init__(self, integration_id: int, model_slug: str):
@@ -24,6 +28,10 @@ class T4CIntegrationDoesntBelongToModel(core_exceptions.BaseError):
             title="TeamForCapella project integration doesn't belong to requested model",
             reason=f"The TeamForCapella project integration with the id {integration_id} doesn't belong to the model '{model_slug}'.",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CIntegrationDoesntBelongToModel":
+        return cls(-1, "coffee-machine")
 
 
 class T4CIntegrationAlreadyExists(core_exceptions.BaseError):
@@ -35,18 +43,26 @@ class T4CIntegrationAlreadyExists(core_exceptions.BaseError):
             reason="The same TeamForCapella project integration already exists.",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CIntegrationAlreadyExists":
+        return cls()
+
 
 class T4CIntegrationUsedInPipelines(core_exceptions.BaseError):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            title="TeamForCapella project inegration used in pipelines",
+            title="TeamForCapella project integration used in pipelines",
             reason=(
                 "The TeamForCapella integration is currently used in pipelines. "
                 "Please remove the pipeline first."
             ),
             err_code="T4C_INTEGRATION_USED_IN_PIPELINES",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CIntegrationUsedInPipelines":
+        return cls()
 
 
 class T4CIntegrationWrongCapellaVersion(core_exceptions.BaseError):
@@ -71,6 +87,10 @@ class T4CIntegrationWrongCapellaVersion(core_exceptions.BaseError):
             err_code="T4C_INTEGRATION_WRONG_CAPELLA_VERSION",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CIntegrationWrongCapellaVersion":
+        return cls("PROD", "coffee-machine", "7.0.0", -1, "Coffee Machine", -1)
+
 
 class T4CIntegrationVersionRequired(core_exceptions.BaseError):
     def __init__(self, toolmodel_slug: str):
@@ -83,3 +103,7 @@ class T4CIntegrationVersionRequired(core_exceptions.BaseError):
             ),
             err_code="T4C_INTEGRATION_NO_VERSION",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CIntegrationVersionRequired":
+        return cls("coffee-machine")

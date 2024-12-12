@@ -5,27 +5,46 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.users import models as users_models
 
 from . import crud, exceptions, injectables, models
 
-router = fastapi.APIRouter(
+router = fastapi.APIRouter()
+
+
+@router.get(
+    "",
+    response_model=models.ToolModelRestrictions,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        users={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        ),
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    restrictions={permissions_models.UserTokenVerb.GET}
+                )
             )
-        )
+        ),
     ],
 )
-
-
-@router.get("", response_model=models.ToolModelRestrictions)
 def get_restrictions(
     restrictions: models.DatabaseToolModelRestrictions = fastapi.Depends(
         injectables.get_model_restrictions
@@ -34,7 +53,28 @@ def get_restrictions(
     return restrictions
 
 
-@router.patch("", response_model=models.ToolModelRestrictions)
+@router.patch(
+    "",
+    response_model=models.ToolModelRestrictions,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        users={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
+        ),
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    restrictions={permissions_models.UserTokenVerb.UPDATE}
+                )
+            )
+        ),
+    ],
+)
 def update_restrictions(
     body: models.ToolModelRestrictions,
     restrictions: models.DatabaseToolModelRestrictions = fastapi.Depends(

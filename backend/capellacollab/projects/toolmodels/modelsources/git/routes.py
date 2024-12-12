@@ -7,13 +7,18 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.settings.modelsources.git import core as instances_git_core
 from capellacollab.settings.modelsources.git import models as git_models
 from capellacollab.settings.modelsources.git import util as git_util
@@ -25,7 +30,19 @@ router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 
-@router.get("", response_model=list[models.GitModel])
+@router.get(
+    "",
+    response_model=list[models.GitModel],
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
+)
 def get_git_models(
     capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
@@ -39,8 +56,10 @@ def get_git_models(
     response_model=models.GitModel,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.GET}
+                )
             )
         )
     ],
@@ -58,8 +77,10 @@ def get_git_model_by_id(
     response_model=git_models.GetRevisionsResponseModel,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.GET}
+                )
             )
         )
     ],
@@ -82,8 +103,10 @@ async def get_revisions_of_primary_git_model(
     response_model=git_models.GetRevisionsResponseModel,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.GET}
+                )
             )
         )
     ],
@@ -104,8 +127,10 @@ async def get_revisions_with_model_credentials(
     response_model=models.GitModel,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.CREATE}
+                )
             )
         )
     ],
@@ -130,8 +155,10 @@ def create_git_model(
     response_model=models.GitModel,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.UPDATE}
+                )
             )
         )
     ],
@@ -148,7 +175,18 @@ def update_git_model_by_id(
     return crud.update_git_model(db, db_git_model, put_git_model)
 
 
-@router.delete("/cache")
+@router.delete(
+    "/cache",
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
+)
 def empty_cache(
     git_model: models.DatabaseGitModel = fastapi.Depends(
         injectables.get_existing_primary_git_model
@@ -162,8 +200,10 @@ def empty_cache(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    git_model_links={permissions_models.UserTokenVerb.DELETE}
+                )
             )
         )
     ],

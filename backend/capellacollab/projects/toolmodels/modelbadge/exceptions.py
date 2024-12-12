@@ -17,3 +17,7 @@ class ModelBadgeNotConfiguredProperlyError(core_exceptions.BaseError):
             ),
             err_code="MODEL_COMPLEXITY_BADGE_NOT_CONFIGURED_PROPERLY",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ModelBadgeNotConfiguredProperlyError":
+        return cls()

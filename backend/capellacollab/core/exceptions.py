@@ -1,13 +1,15 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import abc
+
 import fastapi
 import pydantic
 from fastapi import status
 
 
 @pydantic.dataclasses.dataclass
-class BaseError(fastapi.HTTPException):
+class BaseError(fastapi.HTTPException, abc.ABC):
     status_code: int = pydantic.Field(
         description="The HTTP status code of an exception, accepts any int but passed as fastapi.status.DESIRED_STATUS_CODE for code readability",
         examples=[status.HTTP_404_NOT_FOUND],
@@ -37,6 +39,10 @@ class BaseError(fastapi.HTTPException):
             headers=self.headers,
         )
 
+    @classmethod
+    @abc.abstractmethod
+    def openapi_example(cls) -> "BaseError": ...
+
 
 class ExistingDependenciesError(BaseError):
     def __init__(
@@ -52,6 +58,10 @@ class ExistingDependenciesError(BaseError):
             err_code="EXISTING_DEPENDENCIES_PREVENT_DELETE",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ExistingDependenciesError":
+        return cls("Project", "project", ["Tool model with slug 'test'"])
+
 
 class ResourceAlreadyExistsError(BaseError):
     def __init__(
@@ -65,3 +75,7 @@ class ResourceAlreadyExistsError(BaseError):
             reason=f"A {resource_name} with a similar {identifier_name} already exists.",
             err_code="RESOURCE_NAME_ALREADY_IN_USE",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ResourceAlreadyExistsError":
+        return cls("resource", "example")

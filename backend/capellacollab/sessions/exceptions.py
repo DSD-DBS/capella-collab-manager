@@ -16,6 +16,10 @@ class SessionNotFoundError(core_exceptions.BaseError):
             err_code="SESSION_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "SessionNotFoundError":
+        return cls("qhrhipmlyjawgtwqlijdtwpbm")
+
 
 class SessionNotOwnedError(core_exceptions.BaseError):
     def __init__(self, session_id: str):
@@ -29,6 +33,10 @@ class SessionNotOwnedError(core_exceptions.BaseError):
             err_code="SESSION_NOT_OWNED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "SessionNotOwnedError":
+        return cls("qhrhipmlyjawgtwqlijdtwpbm")
+
 
 class SessionAlreadySharedError(core_exceptions.BaseError):
     def __init__(self, username: str):
@@ -38,6 +46,10 @@ class SessionAlreadySharedError(core_exceptions.BaseError):
             reason=(f"The session is already shared with user '{username}'. "),
             err_code="SESSION_ALREADY_SHARED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "SessionAlreadySharedError":
+        return cls("johndoe")
 
 
 class SessionForbiddenError(core_exceptions.BaseError):
@@ -51,6 +63,10 @@ class SessionForbiddenError(core_exceptions.BaseError):
             ),
             err_code="SESSION_FORBIDDEN",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "SessionForbiddenError":
+        return cls()
 
 
 class UnsupportedSessionTypeError(core_exceptions.BaseError):
@@ -68,6 +84,10 @@ class UnsupportedSessionTypeError(core_exceptions.BaseError):
             err_code="SESSION_TYPE_UNSUPPORTED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "UnsupportedSessionTypeError":
+        return cls("Capella", sessions_models.SessionType.PERSISTENT)
+
 
 class SessionSharingNotSupportedError(core_exceptions.BaseError):
     def __init__(self, tool_name: str, connection_method_name: str):
@@ -79,6 +99,10 @@ class SessionSharingNotSupportedError(core_exceptions.BaseError):
             ),
             err_code="SESSION_SHARING_UNSUPPORTED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "SessionSharingNotSupportedError":
+        return cls("Capella", "Xpra")
 
 
 class ConflictingSessionError(core_exceptions.BaseError):
@@ -97,6 +121,10 @@ class ConflictingSessionError(core_exceptions.BaseError):
             err_code="EXISTING_SESSION",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ConflictingSessionError":
+        return cls("Capella", "7.0.0")
+
 
 class ToolAndModelMismatchError(core_exceptions.BaseError):
     def __init__(
@@ -114,6 +142,10 @@ class ToolAndModelMismatchError(core_exceptions.BaseError):
             err_code="MODEL_VERSION_MISMATCH",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ToolAndModelMismatchError":
+        return cls("Capella", "7.0.0", "coffee-machine")
+
 
 class ProjectAndModelMismatchError(core_exceptions.BaseError):
     def __init__(
@@ -129,6 +161,10 @@ class ProjectAndModelMismatchError(core_exceptions.BaseError):
             ),
             err_code="MODEL_PROJECT_MISMATCH",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ProjectAndModelMismatchError":
+        return cls("coffee-machine", "Coffee Machine")
 
 
 class InvalidConnectionMethodIdentifierError(core_exceptions.BaseError):
@@ -146,6 +182,10 @@ class InvalidConnectionMethodIdentifierError(core_exceptions.BaseError):
             err_code="CONNECTION_METHOD_UNKNOWN",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "InvalidConnectionMethodIdentifierError":
+        return cls("Capella", "7.0.0")
+
 
 class WorkspaceMountingNotAllowedError(core_exceptions.BaseError):
     def __init__(
@@ -161,6 +201,10 @@ class WorkspaceMountingNotAllowedError(core_exceptions.BaseError):
             err_code="WORKSPACE_MOUNTING_NOT_ALLOWED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "WorkspaceMountingNotAllowedError":
+        return cls("Capella")
+
 
 class TooManyModelsRequestedToProvisionError(core_exceptions.BaseError):
     def __init__(self, max_number_of_models: int):
@@ -173,6 +217,10 @@ class TooManyModelsRequestedToProvisionError(core_exceptions.BaseError):
             err_code="TOO_MANY_MODELS_REQUESTED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "TooManyModelsRequestedToProvisionError":
+        return cls(2)
+
 
 class ProvisioningUnsupportedError(core_exceptions.BaseError):
     def __init__(self):
@@ -182,6 +230,10 @@ class ProvisioningUnsupportedError(core_exceptions.BaseError):
             reason="Provisioning is not supported for persistent sessions.",
             err_code="PROVISIONING_UNSUPPORTED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ProvisioningUnsupportedError":
+        return cls()
 
 
 class ProvisioningRequiredError(core_exceptions.BaseError):
@@ -193,6 +245,10 @@ class ProvisioningRequiredError(core_exceptions.BaseError):
             err_code="PROVISIONING_REQUIRED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ProvisioningRequiredError":
+        return cls()
+
 
 class ProjectScopeRequiredError(core_exceptions.BaseError):
     def __init__(self):
@@ -202,3 +258,7 @@ class ProjectScopeRequiredError(core_exceptions.BaseError):
             reason="Persistent provisioning requires a project scope.",
             err_code="PROJECT_SCOPE_REQUIRED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ProjectScopeRequiredError":
+        return cls()

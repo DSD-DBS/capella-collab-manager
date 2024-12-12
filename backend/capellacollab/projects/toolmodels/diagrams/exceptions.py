@@ -18,6 +18,10 @@ class DiagramCacheNotConfiguredProperlyError(core_exceptions.BaseError):
             err_code="DIAGRAM_CACHE_NOT_CONFIGURED_PROPERLY",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "DiagramCacheNotConfiguredProperlyError":
+        return cls()
+
 
 class FileExtensionNotSupportedError(core_exceptions.BaseError):
     def __init__(self, fileextension: str):
@@ -27,3 +31,7 @@ class FileExtensionNotSupportedError(core_exceptions.BaseError):
             reason=f"The file extension {fileextension} is not supported.",
             err_code="FILE_EXTENSION_NOT_SUPPORTED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "FileExtensionNotSupportedError":
+        return cls("png")

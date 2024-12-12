@@ -10,17 +10,22 @@ import fastapi_pagination
 from sqlalchemy import orm
 
 from capellacollab.core import database, responses
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.logging import exceptions as logging_exceptions
 from capellacollab.core.logging import loki
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import exceptions as projects_exceptions
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import (
     exceptions as toolmodels_exceptions,
 )
 from capellacollab.projects.toolmodels.backups import (
     exceptions as backups_exceptions,
 )
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as user_models
 
@@ -28,21 +33,22 @@ from .. import injectables as pipeline_injectables
 from .. import models as pipeline_models
 from . import crud, exceptions, helper, injectables, interface, models
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
-            )
-        )
-    ]
-)
+router = fastapi.APIRouter()
 
 
 @router.post(
     "",
     status_code=200,
     response_model=models.PipelineRun,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipeline_runs={permissions_models.UserTokenVerb.CREATE}
+                )
+            )
+        )
+    ],
 )
 def create_pipeline_run(
     body: models.BackupPipelineRun,
@@ -73,6 +79,15 @@ def create_pipeline_run(
 @router.get(
     "",
     status_code=200,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipeline_runs={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_pipeline_runs(
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -87,6 +102,15 @@ def get_pipeline_runs(
     "/{pipeline_run_id}",
     status_code=200,
     response_model=models.PipelineRun,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipeline_runs={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_pipeline_run(
     pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
@@ -99,16 +123,25 @@ def get_pipeline_run(
 @router.get(
     "/{pipeline_run_id}/events",
     response_model=str,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            logging_exceptions.GrafanaLokiDisabled(),
-            logging_exceptions.TooManyOutStandingRequests(),
-            projects_exceptions.ProjectNotFoundError("test"),
-            toolmodels_exceptions.ToolModelNotFound("test", "test"),
-            backups_exceptions.PipelineNotFoundError(-1),
-            exceptions.PipelineRunNotFoundError(-1),
+            logging_exceptions.GrafanaLokiDisabled,
+            logging_exceptions.TooManyOutStandingRequests,
+            projects_exceptions.ProjectNotFoundError,
+            toolmodels_exceptions.ToolModelNotFound,
+            backups_exceptions.PipelineNotFoundError,
+            exceptions.PipelineRunNotFoundError,
         ]
     ),
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipeline_runs={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_pipeline_run_events(
     pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
@@ -163,16 +196,25 @@ def _transform_unix_nanoseconds_to_human_readable_format(
 @router.get(
     "/{pipeline_run_id}/logs",
     response_model=str,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            logging_exceptions.GrafanaLokiDisabled(),
-            logging_exceptions.TooManyOutStandingRequests(),
-            projects_exceptions.ProjectNotFoundError("test"),
-            toolmodels_exceptions.ToolModelNotFound("test", "test"),
-            backups_exceptions.PipelineNotFoundError(-1),
-            exceptions.PipelineRunNotFoundError(-1),
+            logging_exceptions.GrafanaLokiDisabled,
+            logging_exceptions.TooManyOutStandingRequests,
+            projects_exceptions.ProjectNotFoundError,
+            toolmodels_exceptions.ToolModelNotFound,
+            backups_exceptions.PipelineNotFoundError,
+            exceptions.PipelineRunNotFoundError,
         ]
     ),
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipeline_runs={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_logs(
     pipeline_run: models.DatabasePipelineRun = fastapi.Depends(
@@ -206,7 +248,7 @@ def get_logs(
     ]
     masked_values_generated = []
 
-    # Also mask derivated, e.g. base64 encoded credentials
+    # Also mask derived, e.g. base64 encoded credentials
     for value in masked_values:
         masked_values_generated.append(
             base64.b64encode(value.encode("utf-8")).decode("utf-8")

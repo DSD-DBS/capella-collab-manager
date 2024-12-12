@@ -62,6 +62,8 @@ def test_get_projects_as_user_with_project(
     client: testclient.TestClient,
     project: projects_models.DatabaseProject,
 ):
+    """Test that a user can see their private projects"""
+
     response = client.get("/api/v1/projects")
 
     assert response.status_code == 200
@@ -69,8 +71,8 @@ def test_get_projects_as_user_with_project(
     data = response.json()
 
     assert len(data) > 0
-    assert data[0]["slug"] == project.slug
-    assert data[0]["visibility"] == "private"
+    assert data[-1]["slug"] == project.slug
+    assert data[-1]["visibility"] == "private"
 
 
 def test_get_projects_as_admin(
@@ -325,3 +327,9 @@ def test_get_project_per_role_admin(
     response = client.get("/api/v1/projects/?minimum_role=administrator")
     assert response.status_code == 200
     assert len(response.json()) > 0
+
+
+def test_only_return_projects_for_token_access():
+    """Test that only projects for which a PAT is issued are returned"""
+
+    # TODO: Implement this test

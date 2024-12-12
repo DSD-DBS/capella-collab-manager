@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import functools
+import json
 import typing as t
 
 import pydantic
@@ -12,11 +13,23 @@ from sqlalchemy.dialects import postgresql
 
 from capellacollab.configuration.app import config
 
+
+def json_serializer(value):
+    def _default(val):
+        if isinstance(val, set):
+            return list(val)
+
+        raise TypeError(f"Object of type {type(val)} is not JSON serializable")
+
+    return json.dumps(value, default=_default)
+
+
 engine = sa.create_engine(
     config.database.url,
     connect_args={"connect_timeout": 5, "options": "-c timezone=utc"},
     pool_size=20,
     pool_timeout=5,
+    json_serializer=json_serializer,
 )
 SessionLocal = orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

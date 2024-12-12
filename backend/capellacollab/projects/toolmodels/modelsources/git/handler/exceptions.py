@@ -15,6 +15,10 @@ class GitInstanceUnsupportedError(core_exceptions.BaseError):
             err_code="GIT_INSTANCE_UNSUPPORTED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "GitInstanceUnsupportedError":
+        return cls("GitHub")
+
 
 class NoMatchingGitInstanceError(core_exceptions.BaseError):
     def __init__(self):
@@ -28,6 +32,10 @@ class NoMatchingGitInstanceError(core_exceptions.BaseError):
             err_code="NO_MATCHING_GIT_INSTANCE",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "NoMatchingGitInstanceError":
+        return cls()
+
 
 class GitInstanceAPIEndpointNotFoundError(core_exceptions.BaseError):
     def __init__(self):
@@ -40,3 +48,7 @@ class GitInstanceAPIEndpointNotFoundError(core_exceptions.BaseError):
             ),
             err_code="GIT_INSTANCE_NO_API_ENDPOINT_DEFINED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "GitInstanceAPIEndpointNotFoundError":
+        return cls()

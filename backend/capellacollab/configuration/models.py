@@ -99,12 +99,12 @@ class NavbarConfiguration(core_pydantic.BaseModelStrict):
                 BuiltInNavbarLink(
                     name="Grafana",
                     service=BuiltInLinkItem.GRAFANA,
-                    role=users_models.Role.ADMIN,
+                    role=users_models.Role.ADMIN,  # TODO: Replace with permissions
                 ),
                 BuiltInNavbarLink(
                     name="Prometheus",
                     service=BuiltInLinkItem.PROMETHEUS,
-                    role=users_models.Role.ADMIN,
+                    role=users_models.Role.ADMIN,  # TODO: Replace with permissions
                 ),
                 BuiltInNavbarLink(
                     name="Documentation",

@@ -10,27 +10,33 @@ import fastapi
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
 from capellacollab.core import logging as log
 from capellacollab.core import responses
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels.modelsources.git.handler import handler
-from capellacollab.projects.users import models as projects_users_models
 
 from . import exceptions
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER
-            )
-        )
-    ],
-)
+router = fastapi.APIRouter()
 
 
 @router.get(
     "",
     response_class=fastapi.responses.Response,
     responses=responses.SVGResponse.responses,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    tool_models={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 async def get_model_complexity_badge(
     git_handler: handler.GitHandler = fastapi.Depends(

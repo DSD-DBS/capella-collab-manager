@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { BehaviorSubject, of, switchMap } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { User, UsersService, Workspace } from 'src/app/openapi';
+import { User, UsersWorkspacesService, Workspace } from 'src/app/openapi';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
 
@@ -35,7 +35,7 @@ export class UserWorkspacesComponent implements OnInit {
       .pipe(
         switchMap((user) => {
           if (!user) return of(undefined);
-          return this.usersService.getWorkspacesForUser(user.id);
+          return this.usersWorkspaceService.getWorkspacesForUser(user.id);
         }),
       )
       .subscribe({
@@ -49,7 +49,7 @@ export class UserWorkspacesComponent implements OnInit {
   constructor(
     public ownUserService: OwnUserWrapperService,
     public userWrapperService: UserWrapperService,
-    private usersService: UsersService,
+    private usersWorkspaceService: UsersWorkspacesService,
     private dialog: MatDialog,
     private toastService: ToastService,
   ) {}
@@ -70,16 +70,18 @@ export class UserWorkspacesComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        this.usersService.deleteWorkspace(workspace.id, user.id).subscribe({
-          next: () => {
-            this.toastService.showSuccess(
-              'Workspace deleted successfully.',
-              `The workspace ${workspace.id} of user '${user.name}' was deleted.`,
-            );
+        this.usersWorkspaceService
+          .deleteWorkspace(workspace.id, user.id)
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'Workspace deleted successfully.',
+                `The workspace ${workspace.id} of user '${user.name}' was deleted.`,
+              );
 
-            this.loadWorkspaces();
-          },
-        });
+              this.loadWorkspaces();
+            },
+          });
       }
     });
   }

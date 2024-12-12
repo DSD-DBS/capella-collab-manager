@@ -17,6 +17,10 @@ class UserNotFoundError(core_exceptions.BaseError):
             err_code="USER_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "UserNotFoundError":
+        return cls("johndoe")
+
 
 class NoProjectsInCommonError(core_exceptions.BaseError):
     def __init__(self, user_id: int):
@@ -29,6 +33,10 @@ class NoProjectsInCommonError(core_exceptions.BaseError):
             err_code="NO_PROJECTS_IN_COMMON",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "NoProjectsInCommonError":
+        return cls(-1)
+
 
 class RoleUpdateRequiresReasonError(core_exceptions.BaseError):
     def __init__(self):
@@ -38,6 +46,10 @@ class RoleUpdateRequiresReasonError(core_exceptions.BaseError):
             reason=("You must provide a reason for updating the users roles."),
             err_code="ROLE_UPDATE_REQUIRES_REASON",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "RoleUpdateRequiresReasonError":
+        return cls()
 
 
 class ChangesNotAllowedForOtherUsersError(core_exceptions.BaseError):
@@ -49,6 +61,10 @@ class ChangesNotAllowedForOtherUsersError(core_exceptions.BaseError):
             err_code="CHANGES_NOT_ALLOWED_FOR_OTHER_USERS",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ChangesNotAllowedForOtherUsersError":
+        return cls()
+
 
 class ChangesNotAllowedForRoleError(core_exceptions.BaseError):
     def __init__(self):
@@ -58,6 +74,10 @@ class ChangesNotAllowedForRoleError(core_exceptions.BaseError):
             reason="Your role does not allow you to make these changes.",
             err_code="CHANGES_NOT_ALLOWED_FOR_ROLE",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ChangesNotAllowedForRoleError":
+        return cls()
 
 
 class BetaTestingDisabledError(core_exceptions.BaseError):
@@ -69,6 +89,10 @@ class BetaTestingDisabledError(core_exceptions.BaseError):
             err_code="BETA_TESTING_DISABLED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "BetaTestingDisabledError":
+        return cls()
+
 
 class BetaTestingSelfEnrollmentNotAllowedError(core_exceptions.BaseError):
     def __init__(self):
@@ -78,3 +102,7 @@ class BetaTestingSelfEnrollmentNotAllowedError(core_exceptions.BaseError):
             reason="You do not have permission to enroll yourself in beta testing.",
             err_code="BETA_TESTING_SELF_ENROLLMENT_NOT_ALLOWED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "BetaTestingSelfEnrollmentNotAllowedError":
+        return cls()

@@ -23,10 +23,3 @@ router.include_router(
     prefix="/license-servers",
     tags=["Settings - Modelsources - T4C - License Servers"],
 )
-
-
-router.include_router(
-    settings_t4c_license_server_routes.admin_router,
-    prefix="/license-servers",
-    tags=["Settings - Modelsources - T4C - License Servers"],
-)

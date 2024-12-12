@@ -6,21 +6,13 @@ from collections import abc
 import fastapi
 from sqlalchemy import orm
 
-from capellacollab.core import database, responses
-from capellacollab.core.authentication import injectables as auth_injectables
-from capellacollab.users import models as users_models
+from capellacollab.core import database
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 
 from . import crud, models
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.USER
-            )
-        )
-    ]
-)
+router = fastapi.APIRouter()
 
 
 @router.get(
@@ -28,12 +20,15 @@ router = fastapi.APIRouter(
     response_model=list[models.HistoryEvent],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        events={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
         )
     ],
-    responses=responses.api_exceptions(minimum_role=users_models.Role.ADMIN),
 )
 def get_events(
     db: orm.Session = fastapi.Depends(database.get_db),

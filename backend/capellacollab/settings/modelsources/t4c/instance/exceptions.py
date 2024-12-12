@@ -16,6 +16,10 @@ class T4CInstanceIsArchivedError(core_exceptions.BaseError):
             err_code="T4C_INSTANCE_IS_ARCHIVED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CInstanceIsArchivedError":
+        return cls(-1)
+
 
 class T4CInstanceNotFoundError(core_exceptions.BaseError):
     def __init__(self, t4c_instance_id: int):
@@ -25,6 +29,10 @@ class T4CInstanceNotFoundError(core_exceptions.BaseError):
             reason=f"The T4C instance with id {t4c_instance_id} was not found.",
             err_code="T4C_INSTANCE_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CInstanceNotFoundError":
+        return cls(-1)
 
 
 class T4CInstanceWithNameAlreadyExistsError(

@@ -8,7 +8,6 @@ import logging
 import fastapi
 from sqlalchemy import orm
 
-import capellacollab.core.authentication.injectables as auth_injectables
 import capellacollab.core.logging as core_logging
 import capellacollab.projects.crud as projects_crud
 import capellacollab.projects.toolmodels.backups.validation as pipelines_validation
@@ -18,8 +17,9 @@ import capellacollab.projects.toolmodels.modelbadge.validation as modelbadge_val
 import capellacollab.projects.toolmodels.modelsources.git.validation as git_validation
 import capellacollab.projects.toolmodels.validation as toolmodels_validation
 import capellacollab.projects.validation as projects_validation
-import capellacollab.users.models as users_models
 from capellacollab.core import database
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.hooks import guacamole
@@ -43,9 +43,13 @@ def general_status(db: orm.Session = fastapi.Depends(database.get_db)):
     response_model=list[models.ToolmodelStatus],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        monitoring={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -89,9 +93,13 @@ async def model_status(
     response_model=list[models.ProjectStatus],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        monitoring={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
         )
     ],
 )

@@ -15,6 +15,10 @@ class TooManyOutStandingRequests(core_exceptions.BaseError):
             err_code="LOKI_TOO_MANY_OUTSTANDING_REQUESTS",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "TooManyOutStandingRequests":
+        return cls()
+
 
 class GrafanaLokiDisabled(core_exceptions.BaseError):
     def __init__(self):
@@ -24,3 +28,7 @@ class GrafanaLokiDisabled(core_exceptions.BaseError):
             reason="To use this feature, ask your system administrator to enable Grafana Loki.",
             err_code="LOKI_DISABLED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "GrafanaLokiDisabled":
+        return cls()

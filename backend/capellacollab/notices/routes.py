@@ -6,14 +6,14 @@ from sqlalchemy import orm
 
 import capellacollab.notices.crud as notices
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.notices.injectables import get_existing_notice
 from capellacollab.notices.models import (
     CreateNoticeRequest,
     DatabaseNotice,
     NoticeResponse,
 )
-from capellacollab.users.models import Role
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 
 router = fastapi.APIRouter()
 
@@ -37,7 +37,13 @@ def get_notice_by_id(
     "",
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=Role.ADMIN)
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        announcements={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -53,7 +59,13 @@ def create_notice(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=Role.ADMIN)
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        announcements={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
         )
     ],
 )

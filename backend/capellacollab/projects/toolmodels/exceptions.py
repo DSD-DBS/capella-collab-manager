@@ -16,6 +16,10 @@ class VersionIdNotSetError(core_exceptions.BaseError):
             err_code="VERSION_ID_NOT_SET",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "VersionIdNotSetError":
+        return cls(-1)
+
 
 class ToolModelNotFound(core_exceptions.BaseError):
     def __init__(self, project_slug: str, model_slug: str):
@@ -25,6 +29,10 @@ class ToolModelNotFound(core_exceptions.BaseError):
             reason=f"The model with the slug '{model_slug}' of the project '{project_slug}' was not found.",
             err_code="TOOLMODEL_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ToolModelNotFound":
+        return cls("test", "test")
 
 
 class ToolModelAlreadyExistsError(core_exceptions.BaseError):
@@ -36,6 +44,10 @@ class ToolModelAlreadyExistsError(core_exceptions.BaseError):
             err_code="TOOLMODEL_ALREADY_EXISTS",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ToolModelAlreadyExistsError":
+        return cls("test", "test")
+
 
 class ProjectTypeNotSupportedByToolModel(core_exceptions.BaseError):
     def __init__(self, project_slug: str, model_slug: str):
@@ -45,3 +57,7 @@ class ProjectTypeNotSupportedByToolModel(core_exceptions.BaseError):
             reason=f"The project type of the project '{project_slug}' is not supported by the toolmodel '{model_slug}'.",
             err_code="PROJECT_TYPE_NOT_SUPPORTED_BY_TOOLMODEL",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ProjectTypeNotSupportedByToolModel":
+        return cls("test", "test")

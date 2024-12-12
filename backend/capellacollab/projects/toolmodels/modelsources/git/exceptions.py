@@ -19,6 +19,10 @@ class GitRepositoryNotFoundError(core_exceptions.BaseError):
             err_code="GIT_REPOSITORY_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "GitRepositoryNotFoundError":
+        return cls(-1, "coffee-machine")
+
 
 class NoGitRepositoryAssignedToModelError(core_exceptions.BaseError):
     def __init__(self, tool_model_slug: str):
@@ -30,6 +34,10 @@ class NoGitRepositoryAssignedToModelError(core_exceptions.BaseError):
             ),
             err_code="NO_GIT_REPOSITORY_ASSIGNED_TO_MODEL",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "NoGitRepositoryAssignedToModelError":
+        return cls("coffee-machine")
 
 
 class GitRepositoryUsedInPipelines(core_exceptions.BaseError):
@@ -43,6 +51,10 @@ class GitRepositoryUsedInPipelines(core_exceptions.BaseError):
             ),
             err_code="GIT_REPOSITORY_USED_IN_PIPELINES",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "GitRepositoryUsedInPipelines":
+        return cls(-1)
 
 
 class AccessDeniedError(core_exceptions.BaseError, metaclass=abc.ABCMeta):
@@ -70,6 +82,10 @@ class GitRepositoryFileNotFoundError(core_exceptions.BaseError):
             err_code="FILE_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "GitRepositoryFileNotFoundError":
+        return cls("README.md")
+
 
 class GitPipelineJobNotFoundError(core_exceptions.BaseError):
     def __init__(self, job_name: str, revision: str):
@@ -82,6 +98,10 @@ class GitPipelineJobNotFoundError(core_exceptions.BaseError):
             ),
             err_code="PIPELINE_JOB_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "GitPipelineJobNotFoundError":
+        return cls("update_capella_diagram_cache", "main")
 
 
 class GitPipelineJobUnsuccessfulError(core_exceptions.BaseError):
@@ -98,6 +118,10 @@ class GitPipelineJobUnsuccessfulError(core_exceptions.BaseError):
             err_code="UNSUCCESSFUL_JOB_STATE_ERROR",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "GitPipelineJobUnsuccessfulError":
+        return cls("update_capella_diagram_cache", "failed")
+
 
 class GithubArtifactExpiredError(core_exceptions.BaseError):
     def __init__(self):
@@ -110,3 +134,7 @@ class GithubArtifactExpiredError(core_exceptions.BaseError):
             ),
             err_code="ARTIFACT_EXPIRED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "GithubArtifactExpiredError":
+        return cls()

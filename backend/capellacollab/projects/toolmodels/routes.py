@@ -10,13 +10,20 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels.modelsources.t4c import util as t4c_util
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.tools import injectables as tools_injectables
-from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from . import crud, exceptions, injectables, models, workspace
 from .backups import routes as backups_routes
@@ -27,19 +34,22 @@ from .provisioning import routes as provisioning_routes
 from .readme import routes as readme_routes
 from .restrictions import routes as restrictions_routes
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER
-            )
-        )
-    ],
-)
+router = fastapi.APIRouter()
 
 
 @router.get(
-    "", response_model=list[models.ToolModel], tags=["Projects - Models"]
+    "",
+    response_model=list[models.ToolModel],
+    tags=["Projects - Models"],
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    tool_models={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_models(
     project: projects_models.DatabaseProject = fastapi.Depends(
@@ -53,6 +63,15 @@ def get_models(
     "/{model_slug}",
     response_model=models.ToolModel,
     tags=["Projects - Models"],
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    tool_models={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_model_by_slug(
     model: models.DatabaseToolModel = fastapi.Depends(
@@ -67,8 +86,10 @@ def get_model_by_slug(
     response_model=models.ToolModel,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    tool_models={permissions_models.UserTokenVerb.CREATE}
+                )
             )
         )
     ],
@@ -111,8 +132,10 @@ def create_new_tool_model(
     response_model=models.ToolModel,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    tool_models={permissions_models.UserTokenVerb.UPDATE}
+                )
             )
         )
     ],
@@ -127,10 +150,23 @@ def patch_tool_model(
         injectables.get_existing_capella_model
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    user: users_models.DatabaseUser = fastapi.Depends(
-        users_injectables.get_own_user
+    authentication_information: tuple[
+        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ] = fastapi.Depends(
+        auth_injectables.AuthenticationInformationValidation()
+    ),
+    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
     ),
 ) -> models.DatabaseToolModel:
+    """Update or move a tool model.
+
+    A model can be moved to another project by patching the project_slug attribute.
+
+    If a model is moved to another project,
+    the `tool_models:create` permission is required in the target project.
+    """
+
     if body.name:
         new_slug = slugify.slugify(body.name)
 
@@ -164,7 +200,10 @@ def patch_tool_model(
 
     if body.project_slug:
         new_project = determine_new_project_to_move_model(
-            body.project_slug, db, user
+            body.project_slug,
+            db,
+            authentication_information,
+            global_scope,
         )
         raise_if_model_exists_in_project(model, new_project)
     else:
@@ -187,8 +226,10 @@ def patch_tool_model(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    tool_models={permissions_models.UserTokenVerb.DELETE}
+                )
             )
         )
     ],
@@ -228,13 +269,28 @@ def delete_tool_model(
 
 
 def determine_new_project_to_move_model(
-    project_slug: str, db: orm.Session, user: users_models.DatabaseUser
+    project_slug: str,
+    db: orm.Session,
+    authentication_information: tuple[
+        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ],
+    global_scope: permissions_models.GlobalScopes,
 ) -> projects_models.DatabaseProject:
+    """Find the project to move the model to.
+
+    Also check that the permissions are correct.
+    """
+
     new_project = projects_injectables.get_existing_project(project_slug, db)
 
-    auth_injectables.ProjectRoleVerification(
-        required_role=projects_users_models.ProjectUserRole.MANAGER
-    )(project_slug, user.name, db)
+    project_scope = projects_permissions_injectables.get_scope(
+        authentication_information, global_scope, new_project, db
+    )
+    projects_permissions_injectables.ProjectPermissionValidation(
+        required_scope=projects_permissions_models.ProjectUserScopes(
+            tool_models={permissions_models.UserTokenVerb.CREATE}
+        )
+    )(project_scope, new_project)
 
     return new_project
 
@@ -269,7 +325,7 @@ router.include_router(
 router.include_router(
     complexity_badge_routes.router,
     prefix="/{model_slug}/badges/complexity",
-    tags=["Projects - Models - Model complexity badge"],
+    tags=["Projects - Models - Model Complexity Badge"],
 )
 router.include_router(
     provisioning_routes.router,

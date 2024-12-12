@@ -4,46 +4,6 @@
 from fastapi import status
 
 from capellacollab.core import exceptions as core_exceptions
-from capellacollab.projects.users import models as projects_users_models
-from capellacollab.users import models as users_models
-
-
-class RequiredRoleNotMetError(core_exceptions.BaseError):
-    def __init__(self, required_role: users_models.Role):
-        super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN,
-            title="Minimum role not met",
-            reason=f"The role {required_role.value} is required for this transaction.",
-            err_code="REQUIRED_ROLE_NOT_MET",
-        )
-
-
-class RequiredProjectRoleNotMetError(core_exceptions.BaseError):
-    def __init__(
-        self,
-        required_role: projects_users_models.ProjectUserRole,
-        project_slug: str,
-    ):
-        super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN,
-            title="Minimum project role not met",
-            reason=f"The role {required_role.value} in the project '{project_slug}' is required for this transaction.",
-            err_code="REQUIRED_PROJECT_ROLE_NOT_MET",
-        )
-
-
-class RequiredProjectPermissionNotMetError(core_exceptions.BaseError):
-    def __init__(
-        self,
-        required_permission: projects_users_models.ProjectUserPermission,
-        project_slug: str,
-    ):
-        super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN,
-            title="Minimum project permission not met",
-            reason=f"The permission {required_permission.value} in the project '{project_slug}' is required for this transaction.",
-            err_code="REQUIRED_PROJECT_PERMISSION_NOT_MET",
-        )
 
 
 class UnknownScheme(core_exceptions.BaseError):
@@ -58,6 +18,10 @@ class UnknownScheme(core_exceptions.BaseError):
             err_code="UNKNOWN_SCHEME",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "UnknownScheme":
+        return cls("bearer")
+
 
 class TokenSignatureExpired(core_exceptions.BaseError):
     def __init__(self):
@@ -67,6 +31,10 @@ class TokenSignatureExpired(core_exceptions.BaseError):
             reason="The Signature of the token is expired. Please refresh the token or request a new access token.",
             err_code="TOKEN_SIGNATURE_EXPIRED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "TokenSignatureExpired":
+        return cls()
 
 
 class RefreshTokenSignatureExpired(core_exceptions.BaseError):
@@ -78,6 +46,10 @@ class RefreshTokenSignatureExpired(core_exceptions.BaseError):
             err_code="REFRESH_TOKEN_EXPIRED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "RefreshTokenSignatureExpired":
+        return cls()
+
 
 class JWTValidationFailed(core_exceptions.BaseError):
     def __init__(self):
@@ -87,6 +59,10 @@ class JWTValidationFailed(core_exceptions.BaseError):
             reason="The validation of the access token failed. Please contact your administrator.",
             err_code="JWT_TOKEN_VALIDATION_FAILED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "JWTValidationFailed":
+        return cls()
 
 
 class JWTInvalidToken(core_exceptions.BaseError):
@@ -98,6 +74,10 @@ class JWTInvalidToken(core_exceptions.BaseError):
             err_code="JWT_TOKEN_INVALID",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "JWTInvalidToken":
+        return cls()
+
 
 class UnauthenticatedError(core_exceptions.BaseError):
     def __init__(self):
@@ -107,6 +87,10 @@ class UnauthenticatedError(core_exceptions.BaseError):
             reason="Not authenticated",
             err_code="UNAUTHENTICATED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "UnauthenticatedError":
+        return cls()
 
 
 class InvalidPersonalAccessTokenError(core_exceptions.BaseError):
@@ -118,6 +102,10 @@ class InvalidPersonalAccessTokenError(core_exceptions.BaseError):
             err_code="BASIC_TOKEN_INVALID",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "InvalidPersonalAccessTokenError":
+        return cls()
+
 
 class NonceMismatchError(core_exceptions.BaseError):
     def __init__(self):
@@ -127,6 +115,10 @@ class NonceMismatchError(core_exceptions.BaseError):
             reason="The nonce value provided in the identity token does not match the generated nonce value.",
             err_code="NONCE_VALUE_MISMATCH",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "NonceMismatchError":
+        return cls()
 
 
 class RefreshTokenCookieMissingError(core_exceptions.BaseError):
@@ -138,6 +130,10 @@ class RefreshTokenCookieMissingError(core_exceptions.BaseError):
             err_code="NO_REFRESH_TOKEN_COOKIE",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "RefreshTokenCookieMissingError":
+        return cls()
+
 
 class PersonalAccessTokenExpired(core_exceptions.BaseError):
     def __init__(self):
@@ -146,7 +142,11 @@ class PersonalAccessTokenExpired(core_exceptions.BaseError):
             title="PAT expired",
             reason=(
                 "The personal access token is expired."
-                "Please request a new access token."
+                " Please request a new access token."
             ),
             err_code="PAT_EXPIRED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "PersonalAccessTokenExpired":
+        return cls()
