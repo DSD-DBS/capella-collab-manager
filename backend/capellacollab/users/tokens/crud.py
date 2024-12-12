@@ -9,6 +9,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import credentials
+from capellacollab.permissions import models as permissions_models
 from capellacollab.users import models as users_models
 
 from . import models
@@ -17,6 +18,7 @@ from . import models
 def create_token(
     db: orm.Session,
     user: users_models.DatabaseUser,
+    scope: permissions_models.GlobalScopes,
     description: str,
     expiration_date: datetime.date | None,
     source: str,
@@ -28,9 +30,11 @@ def create_token(
     db_token = models.DatabaseUserToken(
         user=user,
         hash=ph.hash(password),
+        created_at=datetime.datetime.now(datetime.UTC),
         expiration_date=expiration_date,
         description=description,
         source=source,
+        scope=scope,
     )
     db.add(db_token)
     db.commit()

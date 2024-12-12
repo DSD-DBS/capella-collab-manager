@@ -5,6 +5,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HttpClientModule } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';

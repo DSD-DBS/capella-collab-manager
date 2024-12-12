@@ -9,11 +9,13 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { FineGrainedResource } from './fine-grained-resource';
 
 
 export interface PostToken { 
     expiration_date: string;
     description: string;
     source: string;
+    scopes: FineGrainedResource;
 }
 

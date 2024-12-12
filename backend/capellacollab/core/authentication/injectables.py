@@ -22,6 +22,7 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from . import exceptions
 
@@ -59,28 +60,39 @@ class OpenAPIPersonalAccessToken(OpenAPIFakeBase):
     __hash__ = OpenAPIFakeBase.__hash__
 
 
-async def get_username(
+async def validate_authentication_information(
     request: fastapi.Request,
+    db: orm.Session = fastapi.Depends(database.get_db),
     _unused1=fastapi.Depends(OpenAPIPersonalAccessToken()),
-) -> str:
+) -> tuple[users_models.DatabaseUser, tokens_models.DatabaseUserToken | None]:
     if request.cookies.get("id_token"):
         username = await api_key_cookie.JWTAPIKeyCookie()(request)
-        return username
+        user = users_crud.get_user_by_name(db, username)
+        if not user:
+            raise users_exceptions.UserNotFoundError(username)
+        return user, None
 
     authorization = request.headers.get("Authorization")
     scheme, _ = security_utils.get_authorization_scheme_param(authorization)
 
     match scheme.lower():
         case "basic":
-            username = await basic_auth.HTTPBasicAuth()(request)
+            return await basic_auth.HTTPBasicAuth().validate(db, request)
         case "":
             raise exceptions.UnauthenticatedError()
         case _:
             raise exceptions.UnknownScheme(scheme)
 
-    return username
+
+async def get_username(
+    authentication_information: tuple[
+        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ] = fastapi.Depends(validate_authentication_information),
+) -> str:
+    return authentication_information[0].name
 
 
+# TODO: Replace all occurrences of RoleVerification with PermissionValidation
 class RoleVerification:
     def __init__(self, required_role: users_models.Role, verify: bool = True):
         self.required_role = required_role
@@ -108,6 +120,7 @@ class RoleVerification:
         return True
 
 
+# TODO: Replace all occurrences of RoleVerification with ProjectPermissionValidation
 class ProjectRoleVerification:
     roles = [
         projects_users_models.ProjectUserRole.USER,

@@ -13,6 +13,7 @@ from capellacollab.events import routes as events_router
 from capellacollab.feedback import routes as feedback_routes
 from capellacollab.health import routes as health_routes
 from capellacollab.notices import routes as notices_routes
+from capellacollab.permissions import routes as permissions_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
 from capellacollab.settings import routes as settings_routes
@@ -49,6 +50,10 @@ router.include_router(
     responses=auth_responses.api_exceptions(include_authentication=True),
 )
 router.include_router(
+    projects_routes.router_without_authentication,
+    prefix="/projects",
+)
+router.include_router(
     tools_routes.router,
     prefix="/tools",
     responses=auth_responses.api_exceptions(include_authentication=True),
@@ -59,6 +64,11 @@ router.include_router(
     prefix="/users",
     responses=auth_responses.api_exceptions(include_authentication=True),
     tags=["Users"],
+)
+router.include_router(
+    permissions_routes.router_without_authentication,
+    prefix="/permissions",
+    tags=["Permissions"],
 )
 router.include_router(
     events_router.router,

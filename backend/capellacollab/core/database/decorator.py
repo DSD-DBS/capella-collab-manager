@@ -17,6 +17,17 @@ class PydanticDecorator(types.TypeDecorator):
     Replace:
         - `json_column` with the name of the column in the database
         - `pydantic.BaseModel` with the pydantic model you want to use
+
+    When auto-generating a migration, replace the unresolved PydaticDecorator with:
+    ```py
+    from sqlalchemy.dialects import postgresql
+
+        sa.Column(
+            "json_column",
+            postgresql.JSONB(astext_type=sa.Text()),
+            nullable=False,
+        )
+    ```
     """
 
     impl = postgresql.JSONB

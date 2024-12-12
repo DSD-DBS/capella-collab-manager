@@ -9,6 +9,8 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+export * from './admin-scopes-input';
+export * from './admin-scopes-output';
 export * from './anonymized-session';
 export * from './authorization-response';
 export * from './backup';
@@ -47,6 +49,7 @@ export * from './feedback-interval-configuration-output';
 export * from './feedback-rating';
 export * from './file-tree';
 export * from './file-type';
+export * from './fine-grained-resource';
 export * from './get-revision-model';
 export * from './get-revisions-response-model';
 export * from './git-credentials';
@@ -56,6 +59,8 @@ export * from './git-model-status';
 export * from './git-type';
 export * from './global-configuration-input';
 export * from './global-configuration-output';
+export * from './global-scopes-input';
+export * from './global-scopes-output';
 export * from './guacamole-connection-method-input';
 export * from './guacamole-connection-method-output';
 export * from './http-connection-method-input';
@@ -121,6 +126,7 @@ export * from './project-type';
 export * from './project-user';
 export * from './project-user-permission';
 export * from './project-user-role';
+export * from './project-user-scopes';
 export * from './project-visibility';
 export * from './prometheus-configuration-input';
 export * from './prometheus-configuration-output';
@@ -197,6 +203,8 @@ export * from './toolmodel-status';
 export * from './unified-config';
 export * from './user';
 export * from './user-metadata';
+export * from './user-scopes-input';
+export * from './user-scopes-output';
 export * from './user-token';
 export * from './user-token-with-password';
 export * from './validation-error';

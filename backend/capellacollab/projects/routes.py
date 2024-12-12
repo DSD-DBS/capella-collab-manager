@@ -14,6 +14,9 @@ from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.events import routes as projects_events_routes
+from capellacollab.projects.permissions import (
+    routes as projects_permissions_routes,
+)
 from capellacollab.projects.toolmodels import routes as toolmodels_routes
 from capellacollab.projects.toolmodels.backups import core as backups_core
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
@@ -36,6 +39,9 @@ router = fastapi.APIRouter(
         )
     ]
 )
+
+
+router_without_authentication = fastapi.APIRouter()
 
 
 @router.get("", response_model=list[models.Project], tags=["Projects"])
@@ -213,4 +219,9 @@ router.include_router(
     projects_tools_routes.router,
     prefix="/{project_slug}/tools",
     tags=["Projects - Tools"],
+)
+router_without_authentication.include_router(
+    projects_permissions_routes.router,
+    prefix="/-/permissions",
+    tags=["Projects - Permissions"],
 )
