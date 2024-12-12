@@ -14,3 +14,7 @@ class TokenNotFoundError(core_exceptions.BaseError):
             title="Token not found",
             reason=f"The token with id {token_id} was not found.",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "TokenNotFoundError":
+        return cls(-1)

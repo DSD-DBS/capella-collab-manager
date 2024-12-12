@@ -7,6 +7,7 @@ api/feedback.service.ts
 api/health.service.ts
 api/integrations-pure-variants.service.ts
 api/notices.service.ts
+api/permissions.service.ts
 api/projects-events.service.ts
 api/projects-models-backups.service.ts
 api/projects-models-diagrams.service.ts
@@ -17,6 +18,7 @@ api/projects-models-readme.service.ts
 api/projects-models-restrictions.service.ts
 api/projects-models-t4-c.service.ts
 api/projects-models.service.ts
+api/projects-permissions.service.ts
 api/projects-tools.service.ts
 api/projects.service.ts
 api/sessions.service.ts
@@ -24,6 +26,7 @@ api/settings-modelsources-git.service.ts
 api/settings-modelsources-t4-c-instances.service.ts
 api/settings-modelsources-t4-c-license-servers.service.ts
 api/tools.service.ts
+api/users-permissions.service.ts
 api/users-sessions.service.ts
 api/users-token.service.ts
 api/users-workspaces.service.ts
@@ -31,6 +34,8 @@ api/users.service.ts
 configuration.ts
 encoder.ts
 index.ts
+model/admin-scopes-input.ts
+model/admin-scopes-output.ts
 model/anonymized-session.ts
 model/authorization-response.ts
 model/backup-pipeline-run.ts
@@ -69,6 +74,8 @@ model/feedback-rating.ts
 model/feedback.ts
 model/file-tree.ts
 model/file-type.ts
+model/fine-grained-resource-input.ts
+model/fine-grained-resource-output.ts
 model/get-revision-model.ts
 model/get-revisions-response-model.ts
 model/git-credentials.ts
@@ -78,6 +85,7 @@ model/git-model.ts
 model/git-type.ts
 model/global-configuration-input.ts
 model/global-configuration-output.ts
+model/global-scopes.ts
 model/guacamole-connection-method-input.ts
 model/guacamole-connection-method-output.ts
 model/history-event.ts
@@ -142,6 +150,8 @@ model/project-tool.ts
 model/project-type.ts
 model/project-user-permission.ts
 model/project-user-role.ts
+model/project-user-scopes-input.ts
+model/project-user-scopes-output.ts
 model/project-user.ts
 model/project-visibility.ts
 model/project.ts
@@ -219,6 +229,8 @@ model/tool.ts
 model/toolmodel-status.ts
 model/unified-config.ts
 model/user-metadata.ts
+model/user-scopes-input.ts
+model/user-scopes-output.ts
 model/user-token-with-password.ts
 model/user-token.ts
 model/user.ts

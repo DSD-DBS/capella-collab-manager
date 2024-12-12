@@ -153,6 +153,7 @@ async def test_tool_model_mismatch(
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("project_user")
 async def test_read_only_provisioning_session_with_compatible_tool_versions(
     db: orm.Session,
     tool_version: tools_models.DatabaseVersion,

@@ -11,24 +11,26 @@ import capellacollab.settings.modelsources.t4c.instance.crud as settings_t4c_cru
 from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.core import exceptions as core_exceptions
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.core.logging import exceptions as logging_exceptions
-from capellacollab.users import models as users_models
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 
 from . import crud, exceptions, injectables, models
 
-router = fastapi.APIRouter(
+router = fastapi.APIRouter()
+
+
+@router.get(
+    "",
+    response_model=list[models.Tool],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.USER
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
         )
-    ]
+    ],
 )
-
-
-@router.get("", response_model=list[models.Tool])
 def get_tools(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseTool]:
@@ -40,7 +42,17 @@ def get_default_tool() -> models.CreateTool:
     return models.CreateTool()
 
 
-@router.get("/{tool_id}", response_model=models.Tool)
+@router.get(
+    "/{tool_id}",
+    response_model=models.Tool,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
+)
 def get_tool_by_id(
     tool=fastapi.Depends(injectables.get_existing_tool),
 ) -> models.DatabaseTool:
@@ -52,9 +64,13 @@ def get_tool_by_id(
     response_model=models.Tool,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -64,8 +80,6 @@ def create_tool(
     """
     Creates a new tool, which can be used for tool models in projects and for
     sessions.
-
-    To use this route, the user role `administrator` is required.
     """
 
     if (
@@ -82,9 +96,13 @@ def create_tool(
     response_model=models.Tool,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -107,9 +125,13 @@ def update_tool(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -123,14 +145,34 @@ def delete_tool(
     crud.delete_tool(db, tool)
 
 
-@router.get("/*/versions", response_model=list[models.ToolVersionWithTool])
+@router.get(
+    "/*/versions",
+    response_model=list[models.ToolVersionWithTool],
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
+)
 def get_versions_for_all_tools(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseVersion]:
     return crud.get_versions(db)
 
 
-@router.get("/{tool_id}/versions", response_model=list[models.ToolVersion])
+@router.get(
+    "/{tool_id}/versions",
+    response_model=list[models.ToolVersion],
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
+)
 def get_tool_versions(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -148,9 +190,13 @@ def get_default_tool_version(_tool_id: int) -> models.CreateToolVersion:
     response_model=models.ToolVersion,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -170,6 +216,13 @@ def create_tool_version(
 @router.get(
     "/{tool_id}/versions/{version_id}",
     response_model=models.ToolVersion,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
 )
 def get_tool_version(
     version: models.DatabaseVersion = fastapi.Depends(
@@ -184,9 +237,13 @@ def get_tool_version(
     response_model=models.ToolVersion,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -222,9 +279,13 @@ def validate_version_doesnt_reference_itself(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -239,7 +300,17 @@ def delete_tool_version(
     crud.delete_tool_version(db, version)
 
 
-@router.get("/{tool_id}/natures", response_model=list[models.ToolNature])
+@router.get(
+    "/{tool_id}/natures",
+    response_model=list[models.ToolNature],
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
+)
 def get_tool_natures(
     tool: models.DatabaseTool = fastapi.Depends(injectables.get_existing_tool),
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -257,9 +328,13 @@ def get_default_tool_nature(_tool_id: int) -> models.CreateToolNature:
     response_model=models.ToolNature,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -276,6 +351,13 @@ def create_tool_nature(
 @router.get(
     "/{tool_id}/natures/{nature_id}",
     response_model=models.ToolNature,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
 )
 def get_tool_nature(
     nature: models.DatabaseNature = fastapi.Depends(
@@ -290,9 +372,13 @@ def get_tool_nature(
     response_model=models.ToolNature,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -315,9 +401,13 @@ def update_tool_nature(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        tools={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
         )
     ],
 )

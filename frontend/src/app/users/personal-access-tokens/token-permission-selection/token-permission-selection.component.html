@@ -1,0 +1,55 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<table class="w-fit border-collapse [&_td]:border-t [&_td]:border-dashed">
+  <thead>
+    <tr class="text-xs sm:text-base">
+      <th class="w-[500px] text-left text-base">Permission</th>
+      <th class="w-20">GET</th>
+      <th class="w-20">CREATE</th>
+      <th class="w-20">UPDATE</th>
+      <th class="w-20">DELETE</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (permission of tokenPermissions() | keyvalue; track permission.key) {
+      <tr>
+        <td class="py-2 leading-none">
+          {{ permission.value.title }} <br />
+          <span class="text-xs">{{ permission.value.description }}</span>
+        </td>
+        @for (verb of userTokenVerbs; track verb) {
+          <td>
+            @if (
+              permission.value.items.const === verb ||
+              permission.value.items.enum?.includes(verb)
+            ) {
+              <div class="flex justify-center">
+                <mat-checkbox
+                  (change)="
+                    selectionChange.emit({
+                      scope: scope(),
+                      verb: verb,
+                      permission: permission.key,
+                      checked: $event.checked,
+                    })
+                  "
+                  class="m-auto"
+                  color="primary"
+                  ><div
+                    [attr.data-testId]="
+                      'checkbox-' + scope() + '-' + permission.key + '-' + verb
+                    "
+                  ></div
+                ></mat-checkbox>
+              </div>
+            }
+          </td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>

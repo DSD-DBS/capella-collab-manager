@@ -9,10 +9,18 @@ import pytest
 from sqlalchemy import orm
 
 from capellacollab.__main__ import app
-from capellacollab.core.authentication.api_key_cookie import JWTAPIKeyCookie
+from capellacollab.core.authentication import api_key_cookie
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import crud as project_permissions_crud
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.users import crud as users_crud
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import crud as tokens_crud
+from capellacollab.users.tokens import models as tokens_models
 from capellacollab.users.workspaces import crud as users_workspaces_crud
 from capellacollab.users.workspaces import models as users_workspaces_models
 
@@ -25,8 +33,12 @@ def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     async def cookie_passthrough(self, request: fastapi.Request):
         return name
 
-    monkeypatch.setattr(JWTAPIKeyCookie, "__init__", lambda self: None)
-    monkeypatch.setattr(JWTAPIKeyCookie, "__call__", cookie_passthrough)
+    monkeypatch.setattr(
+        api_key_cookie.JWTAPIKeyCookie, "__init__", lambda self: None
+    )
+    monkeypatch.setattr(
+        api_key_cookie.JWTAPIKeyCookie, "__call__", cookie_passthrough
+    )
 
     return name
 
@@ -63,20 +75,10 @@ def fixture_user(
 
 @pytest.fixture(name="admin")
 def fixture_admin(
-    db: orm.Session, executor_name: str
-) -> t.Generator[users_models.DatabaseUser, None, None]:
-    admin = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
-    def get_mock_own_user():
-        return admin
-
-    app.dependency_overrides[users_injectables.get_own_user] = (
-        get_mock_own_user
-    )
-    yield admin
-    del app.dependency_overrides[users_injectables.get_own_user]
+    user: users_models.DatabaseUser,
+) -> users_models.DatabaseUser:
+    user.role = users_models.Role.ADMIN
+    return user
 
 
 @pytest.fixture(name="test_user")
@@ -96,3 +98,52 @@ def fixture_user_workspace(
             "mock-workspace", "20Gi", test_user
         ),
     )
+
+
+@pytest.fixture(
+    name="pat_scope",
+    params=[
+        (
+            permissions_models.GlobalScopes(),
+            projects_permissions_models.ProjectUserScopes(),
+        )
+    ],
+)
+def fixture_pat_scope(
+    request: pytest.FixtureRequest,
+) -> tuple[
+    permissions_models.GlobalScopes | None,
+    projects_permissions_models.ProjectUserScopes | None,
+]:
+    return request.param
+
+
+@pytest.fixture(name="pat")
+def fixture_pat(
+    db: orm.Session,
+    user: users_models.DatabaseUser,
+    pat_scope: tuple[
+        permissions_models.GlobalScopes | None,
+        projects_permissions_models.ProjectUserScopes,
+    ],
+    project: projects_models.DatabaseProject,
+) -> tuple[tokens_models.DatabaseUserToken, str]:
+    global_scope, project_scope = pat_scope
+    if global_scope is None:
+        global_scope = permissions_models.GlobalScopes()
+
+    token, password = tokens_crud.create_token(
+        db,
+        user,
+        scope=global_scope,
+        description="test",
+        expiration_date=None,
+        source="test",
+    )
+
+    if project_scope:
+        project_permissions_crud.create_personal_access_token_link(
+            db, project, token, project_scope
+        )
+
+    return token, password

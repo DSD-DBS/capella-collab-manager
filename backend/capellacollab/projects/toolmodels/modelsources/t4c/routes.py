@@ -7,40 +7,43 @@ import fastapi
 from sqlalchemy import exc, orm
 
 from capellacollab.core import database, responses
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.settings.modelsources.t4c.instance import (
     injectables as settings_t4c_injectables,
 )
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     injectables as settings_t4c_repositories_injectables,
 )
-from capellacollab.users import models as users_models
 
 from . import crud, exceptions, injectables, models, util
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
-            )
-        )
-    ],
-    responses=responses.api_exceptions(
-        minimum_project_role=projects_users_models.ProjectUserRole.MANAGER
-    ),
-)
+router = fastapi.APIRouter()
 
 
 @router.get(
     "",
     response_model=list[models.SimpleT4CModelWithRepository],
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    t4c_model_links={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def list_t4c_models(
     model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
@@ -54,12 +57,21 @@ def list_t4c_models(
 @router.get(
     "/{t4c_model_id}",
     response_model=models.SimpleT4CModelWithRepository,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.T4CIntegrationNotFoundError(-1),
-            exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
+            exceptions.T4CIntegrationNotFoundError,
+            exceptions.T4CIntegrationDoesntBelongToModel,
         ],
     ),
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    t4c_model_links={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_t4c_model(
     t4c_model: models.DatabaseT4CModel = fastapi.Depends(
@@ -74,10 +86,23 @@ def get_t4c_model(
     response_model=models.SimpleT4CModelWithRepository,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        ),
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    t4c_model_links={permissions_models.UserTokenVerb.CREATE}
+                )
             )
-        )
+        ),
     ],
 )
 def create_t4c_model(
@@ -111,15 +136,28 @@ def create_t4c_model(
     response_model=models.SimpleT4CModelWithRepository,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        ),
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    t4c_model_links={permissions_models.UserTokenVerb.UPDATE}
+                )
             )
-        )
+        ),
     ],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.T4CIntegrationNotFoundError(-1),
-            exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
+            exceptions.T4CIntegrationNotFoundError,
+            exceptions.T4CIntegrationDoesntBelongToModel,
         ],
     ),
 )
@@ -155,15 +193,28 @@ def update_t4c_model(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        ),
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    t4c_model_links={permissions_models.UserTokenVerb.DELETE}
+                )
             )
-        )
+        ),
     ],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.T4CIntegrationNotFoundError(-1),
-            exceptions.T4CIntegrationDoesntBelongToModel(-1, "test"),
+            exceptions.T4CIntegrationNotFoundError,
+            exceptions.T4CIntegrationDoesntBelongToModel,
         ],
     ),
 )

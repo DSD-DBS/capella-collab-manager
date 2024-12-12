@@ -15,6 +15,10 @@ class ProjectToolBelongsToOtherProject(core_exceptions.BaseError):
             err_code="PROJECT_TOOL_DOES_NOT_BELONG_TO_PROJECT",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ProjectToolBelongsToOtherProject":
+        return cls(-1, "in-flight-entertainment")
+
 
 class ProjectToolNotFound(core_exceptions.BaseError):
     def __init__(self, project_tool_id: int):
@@ -25,6 +29,10 @@ class ProjectToolNotFound(core_exceptions.BaseError):
             err_code="PROJECT_TOOL_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ProjectToolNotFound":
+        return cls(-1)
+
 
 class ToolAlreadyLinkedToProjectError(core_exceptions.BaseError):
     def __init__(self):
@@ -34,3 +42,7 @@ class ToolAlreadyLinkedToProjectError(core_exceptions.BaseError):
             reason="The specific version of the tool is already linked to the project.",
             err_code="TOOL_ALREADY_EXISTS_IN_PROJECT",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ToolAlreadyLinkedToProjectError":
+        return cls()

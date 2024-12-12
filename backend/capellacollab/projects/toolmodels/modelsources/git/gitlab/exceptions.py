@@ -19,6 +19,10 @@ class GitlabAccessDeniedError(git_exceptions.AccessDeniedError):
             err_code="GITLAB_ACCESS_DENIED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "GitlabAccessDeniedError":
+        return cls()
+
 
 class GitlabProjectNotFoundError(git_exceptions.RepositoryNotFoundError):
     def __init__(self, project_name: str):
@@ -32,3 +36,7 @@ class GitlabProjectNotFoundError(git_exceptions.RepositoryNotFoundError):
             ),
             err_code="PROJECT_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "GitlabProjectNotFoundError":
+        return cls("group/repository-name")

@@ -6,6 +6,7 @@ from collections import abc
 import sqlalchemy as sa
 from sqlalchemy import orm
 
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.t4c import (
@@ -49,6 +50,7 @@ def get_user_t4c_repositories(
     db: orm.Session,
     tool_version: tools_models.DatabaseVersion,
     user: users_models.DatabaseUser,
+    global_scope: permissions_models.GlobalScopes,
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
     tool_versions = [
         tool_version
@@ -56,8 +58,11 @@ def get_user_t4c_repositories(
         db, tool_version=tool_version
     )
 
-    if user.role == users_models.Role.ADMIN:
-        return _get_admin_t4c_repositories(db, tool_versions)
+    if (
+        permissions_models.UserTokenVerb.GET
+        in global_scope.admin.t4c_repositories
+    ):
+        return _get_all_matching_t4c_repositories(db, tool_versions)
     return _get_user_write_t4c_repositories(db, tool_versions, user)
 
 
@@ -87,6 +92,8 @@ def _get_user_write_t4c_repositories(
     tool_versions: list[tools_models.DatabaseVersion],
     user: users_models.DatabaseUser,
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
+    """Get all T4C repositories for a list of tool_versions and a user"""
+
     stmt = (
         sa.select(models.DatabaseT4CRepository)
         .join(models.DatabaseT4CRepository.integrations)
@@ -109,9 +116,11 @@ def _get_user_write_t4c_repositories(
     return db.execute(stmt).scalars().all()
 
 
-def _get_admin_t4c_repositories(
+def _get_all_matching_t4c_repositories(
     db: orm.Session, tool_versions: list[tools_models.DatabaseVersion]
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
+    """Get all T4C repositories for a list of tool_versions"""
+
     stmt = (
         sa.select(models.DatabaseT4CRepository)
         .join(models.DatabaseT4CRepository.integrations)

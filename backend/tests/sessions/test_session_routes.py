@@ -217,19 +217,22 @@ def test_get_session_by_id(
     assert response.json()["id"] == session.id
 
 
-@pytest.mark.usefixtures("mock_session_injection")
-def test_own_sessions(
+@pytest.fixture(name="another_user")
+def fixture_another_user(
     db: orm.Session,
-    client: testclient.TestClient,
-    user: users_models.DatabaseUser,
-    tool: tools_models.DatabaseTool,
-    session: sessions_models.DatabaseSession,
-    tool_version: tools_models.DatabaseVersion,
-):
-    another_user = users_crud.create_user(
+) -> users_models.DatabaseUser:
+    return users_crud.create_user(
         db, "other-user", "other-user", None, users_models.Role.USER
     )
 
+
+@pytest.fixture(name="session_of_other_user")
+def fixture_session_of_other_user(
+    db: orm.Session,
+    tool: tools_models.DatabaseTool,
+    tool_version: tools_models.DatabaseVersion,
+    another_user: users_models.DatabaseUser,
+) -> sessions_models.DatabaseSession:
     session_of_other_user = sessions_models.DatabaseSession(
         str(uuid.uuid1()),
         created_at=datetime.datetime.now(),
@@ -240,8 +243,20 @@ def test_own_sessions(
         version=tool_version,
         connection_method_id=tool.config.connection.methods[0].id,
     )
-    sessions_crud.create_session(db, session_of_other_user)
 
+    return sessions_crud.create_session(db, session_of_other_user)
+
+
+@pytest.mark.usefixtures("mock_session_injection", "session_of_other_user")
+def test_own_sessions(
+    client: testclient.TestClient,
+    user: users_models.DatabaseUser,
+    session: sessions_models.DatabaseSession,
+):
+    """Test that only sessions of the own user are returned
+
+    Create a session of another user and check that it is not returned.
+    """
     response = client.get(f"/api/v1/users/{user.id}/sessions")
 
     assert response.is_success
@@ -252,6 +267,31 @@ def test_own_sessions(
     # Check that environment and config are not exposed
     assert "environment" not in response.json()[0]
     assert "config" not in response.json()[0]
+
+
+@pytest.mark.usefixtures("mock_session_injection", "admin")
+def test_get_sessions_of_other_user(
+    client: testclient.TestClient,
+    another_user: users_models.DatabaseUser,
+    session_of_other_user: sessions_models.DatabaseSession,
+):
+    response = client.get(f"/api/v1/users/{another_user.id}/sessions")
+
+    assert response.is_success
+    assert len(response.json()) == 1
+    assert response.json()[0]["id"] == session_of_other_user.id
+
+
+@pytest.mark.usefixtures("mock_session_injection", "user")
+def test_get_sessions_of_other_user_insufficient_permission(
+    client: testclient.TestClient,
+    another_user: users_models.DatabaseUser,
+):
+    """Test to fetch a session from another user without permission"""
+    response = client.get(f"/api/v1/users/{another_user.id}/sessions")
+
+    assert response.status_code == 403
+    assert response.json()["detail"]["err_code"] == "SESSION_FORBIDDEN"
 
 
 @pytest.mark.usefixtures("kubernetes", "user", "mock_session_injection")
@@ -308,5 +348,5 @@ def test_project_slug_for_unauthorized_project(
     assert response.status_code == 403
     assert (
         response.json()["detail"]["err_code"]
-        == "REQUIRED_PROJECT_ROLE_NOT_MET"
+        == "INSUFFICIENT_PROJECT_PERMISSION"
     )

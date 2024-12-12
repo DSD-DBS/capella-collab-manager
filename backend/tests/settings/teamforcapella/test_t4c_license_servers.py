@@ -89,6 +89,8 @@ def test_get_t4c_license_servers(
     db: orm.Session,
     executor_name: str,
 ):
+    """Test that the license server data is anonymized without permissions"""
+
     users_crud.create_user(
         db, executor_name, executor_name, None, users_models.Role.USER
     )

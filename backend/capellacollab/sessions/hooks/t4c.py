@@ -10,14 +10,13 @@ from sqlalchemy import orm
 
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     crud as repo_crud,
 )
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as repo_interface,
 )
-from capellacollab.users import models as users_models
 
 from .. import models as sessions_models
 from . import interface
@@ -45,7 +44,7 @@ class T4CIntegration(interface.HookRegistration):
         warnings: list[core_models.Message] = []
 
         t4c_repositories = repo_crud.get_user_t4c_repositories(
-            request.db, request.tool_version, user
+            request.db, request.tool_version, user, request.global_scope
         )
 
         t4c_json = json.dumps(
@@ -85,9 +84,8 @@ class T4CIntegration(interface.HookRegistration):
                     repository.name,
                     username=user.name,
                     password=environment["T4C_PASSWORD"],
-                    is_admin=auth_injectables.RoleVerification(
-                        required_role=users_models.Role.ADMIN, verify=False
-                    )(user.name, request.db),
+                    is_admin=permissions_models.UserTokenVerb.UPDATE
+                    in request.global_scope.admin.t4c_repositories,
                 )
             except requests.RequestException:
                 warnings.append(
@@ -116,7 +114,9 @@ class T4CIntegration(interface.HookRegistration):
         self, request: interface.PreSessionTerminationHookRequest
     ):
         if request.session.type == sessions_models.SessionType.PERSISTENT:
-            self._revoke_session_tokens(request.db, request.session)
+            self._revoke_session_tokens(
+                request.db, request.session, request.global_scope
+            )
 
     def session_connection_hook(
         self,
@@ -137,9 +137,10 @@ class T4CIntegration(interface.HookRegistration):
         self,
         db: orm.Session,
         session: sessions_models.DatabaseSession,
+        global_scope: permissions_models.GlobalScopes,
     ):
         for repository in repo_crud.get_user_t4c_repositories(
-            db, session.version, session.owner
+            db, session.version, session.owner, global_scope
         ):
             try:
                 repo_interface.remove_user_from_repository(

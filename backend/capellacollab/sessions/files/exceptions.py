@@ -15,6 +15,10 @@ class SessionFileLoadingFailedError(core_exceptions.BaseError):
             err_code="FILES_LOADING_FAILED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "SessionFileLoadingFailedError":
+        return cls()
+
 
 class FileSizeExceededError(core_exceptions.BaseError):
     def __init__(self):
@@ -24,3 +28,7 @@ class FileSizeExceededError(core_exceptions.BaseError):
             reason="The summed file size must not exceed 30MB.",
             err_code="FILE_SIZE_EXCEEDED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "FileSizeExceededError":
+        return cls()

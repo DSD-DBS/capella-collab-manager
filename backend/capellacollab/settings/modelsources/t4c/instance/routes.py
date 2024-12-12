@@ -7,7 +7,8 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     routes as settings_t4c_repositories_routes,
 )
@@ -19,22 +20,27 @@ from capellacollab.settings.modelsources.t4c.license_server import (
 )
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import exceptions as tools_exceptions
-from capellacollab.users import models as users_models
 
 from . import crud, exceptions, injectables, models
 
-router = fastapi.APIRouter(
+router = fastapi.APIRouter()
+
+
+@router.get(
+    "",
+    response_model=list[models.T4CInstance],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_servers={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
         )
     ],
 )
-
-
-@router.get("", response_model=list[models.T4CInstance])
 def get_t4c_instances(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseT4CInstance]:
@@ -44,6 +50,17 @@ def get_t4c_instances(
 @router.get(
     "/{t4c_instance_id}",
     response_model=models.T4CInstance,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_servers={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def get_t4c_instance(
     instance: models.DatabaseT4CInstance = fastapi.Depends(
@@ -56,6 +73,17 @@ def get_t4c_instance(
 @router.post(
     "",
     response_model=models.T4CInstance,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_servers={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def create_t4c_instance(
     body: models.CreateT4CInstance,
@@ -90,6 +118,17 @@ def create_t4c_instance(
 @router.patch(
     "/{t4c_instance_id}",
     response_model=models.T4CInstance,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_servers={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def edit_t4c_instance(
     body: models.PatchT4CInstance,
@@ -113,6 +152,17 @@ def edit_t4c_instance(
 @router.delete(
     "/{t4c_instance_id}",
     status_code=204,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_servers={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def delete_t4c_instance(
     instance: models.DatabaseT4CInstance = fastapi.Depends(

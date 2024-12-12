@@ -19,6 +19,10 @@ class GitRepositoryAccessError(core_exceptions.BaseError):
             err_code="GIT_REPOSITORY_ACCESS_ERROR",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "GitRepositoryAccessError":
+        return cls()
+
 
 class GitServerNotFound(core_exceptions.BaseError):
     def __init__(self, git_server_instance_id: int):
@@ -28,6 +32,10 @@ class GitServerNotFound(core_exceptions.BaseError):
             reason=f"The Git server with id {git_server_instance_id} was not found.",
             err_code="GIT_SERVER_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "GitServerNotFound":
+        return cls(-1)
 
 
 class InstancePrefixUnmatchedError(core_exceptions.BaseError):
@@ -42,6 +50,10 @@ class InstancePrefixUnmatchedError(core_exceptions.BaseError):
             err_code="NO_GIT_INSTANCE_WITH_PREFIX_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "InstancePrefixUnmatchedError":
+        return cls()
+
 
 class RevisionNotFoundError(core_exceptions.BaseError):
     def __init__(self, revision: str):
@@ -51,3 +63,7 @@ class RevisionNotFoundError(core_exceptions.BaseError):
             reason=f"The revision '{revision}' is not a valid branch or tag name.",
             err_code="GIT_REVISION_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "RevisionNotFoundError":
+        return cls("main")

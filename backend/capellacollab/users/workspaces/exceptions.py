@@ -14,3 +14,7 @@ class WorkspaceNotFound(core_exceptions.BaseError):
             reason=f"The workspace with ID {workspace_id} doesn't exist for user '{username}'.",
             err_code="USER_WORKSPACE_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "WorkspaceNotFound":
+        return cls("johndoe", -1)

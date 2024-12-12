@@ -129,6 +129,7 @@ nav:
       - Introduction: development/index.md
       - Backend:
           - Code Style: development/backend/code-style.md
+          - Access Control: development/backend/access-control.md
           - Profiling: development/backend/profiling.md
           - Technology Overview: development/backend/technology.md
           - Extension Modules: development/backend/extensions.md
@@ -152,7 +153,7 @@ edit_uri: edit/master/docs/docs
 plugins:
   - search
   - glightbox:
-       effect: fade
+      effect: fade
   - redirects:
       redirect_maps:
         'user/sessions/flows/t4c.md': 'user/tools/capella/teamforcapella/connect/index.md' # The flows section was removed

@@ -7,9 +7,15 @@ import typing as t
 from sqlalchemy import orm
 
 from capellacollab.core import models as core_models
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
@@ -26,7 +32,6 @@ from capellacollab.projects.toolmodels.provisioning import (
 from capellacollab.projects.toolmodels.provisioning import (
     models as provisioning_models,
 )
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import models as sessions_models
 from capellacollab.settings.modelsources.git import core as instances_git_core
@@ -36,6 +41,7 @@ from capellacollab.settings.modelsources.git import (
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from . import interface
 
@@ -71,7 +77,11 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             request.db, request.tool_version, resolved_entries
         )
         cls._verify_model_permissions(
-            request.db, request.user, resolved_entries
+            request.db,
+            resolved_entries,
+            request.user,
+            request.pat,
+            request.global_scope,
         )
 
         init_environment: dict[str, str] = {}
@@ -281,16 +291,22 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     def _verify_model_permissions(
         cls,
         db: orm.Session,
-        user: users_models.DatabaseUser,
         resolved_entries: list[ResolvedSessionProvisioning],
+        user: users_models.DatabaseUser,
+        pat: tokens_models.DatabaseUserToken | None,
+        global_scope: permissions_models.GlobalScopes,
     ):
         """Verify the user has the required permissions for the requested models"""
 
         for entry in resolved_entries:
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER,
-                required_permission=projects_users_models.ProjectUserPermission.READ,
-            )(project_slug=entry["project"].slug, username=user.name, db=db)
+            project_scope = projects_permissions_injectables.get_scope(
+                (user, pat), global_scope, entry["project"], db
+            )
+            projects_permissions_injectables.ProjectPermissionValidation(
+                projects_permissions_models.ProjectUserScopes(
+                    provisioning={permissions_models.UserTokenVerb.GET}
+                )
+            )(project_scope, entry["project"])
 
     @classmethod
     def _get_git_repos_json(

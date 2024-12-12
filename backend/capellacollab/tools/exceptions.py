@@ -16,6 +16,10 @@ class ToolNotFoundError(core_exceptions.BaseError):
             err_code="TOOL_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ToolNotFoundError":
+        return cls(-1)
+
 
 class ToolVersionNotFoundError(core_exceptions.BaseError):
     def __init__(self, version_id: int, tool_id: int | None = None):
@@ -29,6 +33,10 @@ class ToolVersionNotFoundError(core_exceptions.BaseError):
             ),
             err_code="TOOL_VERSION_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ToolVersionNotFoundError":
+        return cls(-1, -1)
 
 
 class ToolNatureNotFoundError(core_exceptions.BaseError):
@@ -44,6 +52,10 @@ class ToolNatureNotFoundError(core_exceptions.BaseError):
             err_code="TOOL_NATURE_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ToolNatureNotFoundError":
+        return cls(-1, -1)
+
 
 class ToolImageNotFoundError(core_exceptions.BaseError):
     def __init__(self, tool_id: int, image_name: str):
@@ -55,6 +67,10 @@ class ToolImageNotFoundError(core_exceptions.BaseError):
             reason=f"The tool with id {tool_id} doesn't have a {image_name} image.",
             err_code="TOOL_IMAGE_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ToolImageNotFoundError":
+        return cls(-1, "backup")
 
 
 class ReferencedOwnToolVersionError(core_exceptions.BaseError):
@@ -69,6 +85,10 @@ class ReferencedOwnToolVersionError(core_exceptions.BaseError):
             err_code="COMPATIBLE_TOOL_VERSION_CANT_REFERENCE_OWN_TOOL_VERSION",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ReferencedOwnToolVersionError":
+        return cls(-1)
+
 
 class ReferencedToolVersionNotFoundError(core_exceptions.BaseError):
     def __init__(self, tool_version_id: int):
@@ -81,3 +101,7 @@ class ReferencedToolVersionNotFoundError(core_exceptions.BaseError):
             ),
             err_code="COMPATIBLE_TOOL_VERSION_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ReferencedToolVersionNotFoundError":
+        return cls(-1)

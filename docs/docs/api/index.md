@@ -47,20 +47,20 @@ To authenticate against the API you can use Personal Access Tokens (PAT).
 ### PAT Creation
 
 To create a personal access token (PAT) you can go to `Menu` > `Tokens`. Every
-token requires a description and expiration date.
+token requires a description and expiration date. In addition, the token only
+has access to the provided scope. In the API documentation you'll find the
+required permissions for each route.
 
 !!! info
 
     The token which is generated will disappear after leaving the page.
     Make sure you save it - you won't be able to access it again.
 
-### PAT Scope
+!!! important
 
-Personal access tokens have the same scope as the user who created it. It is
-therefore important that you do not share them with others or publish them. All
-requests are made in the name of the user who issued the token and are logged
-accordingly. If you lose, share, or publish a token you must revoke it
-immediately and inform your system administrator team.
+    All requests are made in the name of the user who issued the token
+    and are logged accordingly. If you lose, share, or publish a token
+    you must revoke it immediately and inform your system administrator team.
 
 ### Revoke a PAT
 

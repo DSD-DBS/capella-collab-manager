@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 from uuid import uuid1
 
 import pytest
@@ -12,7 +13,9 @@ from capellacollab.users import models as users_models
 
 
 @pytest.fixture(name="unauthenticated_user")
-def fixture_unauthenticated_user(db):
+def fixture_unauthenticated_user(
+    db,
+) -> t.Generator[users_models.DatabaseUser, None, None]:
     user = users_crud.create_user(
         db, str(uuid1()), str(uuid1()), None, users_models.Role.USER
     )

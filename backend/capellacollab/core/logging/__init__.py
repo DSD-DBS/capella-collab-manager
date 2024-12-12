@@ -14,6 +14,7 @@ import fastapi
 from starlette.middleware import base
 
 from capellacollab.configuration.app import config
+from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 
 LOGGING_LEVEL = config.logging.level
@@ -80,7 +81,14 @@ class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
         call_next: base.RequestResponseEndpoint,
     ):
         try:
-            username = await auth_injectables.get_username(request)
+            with database.SessionLocal() as session:
+                (
+                    user,
+                    _,
+                ) = await auth_injectables.AuthenticationInformationValidation()(
+                    request, session
+                )
+            username = user.name
         except fastapi.HTTPException:
             username = "anonymous"
 

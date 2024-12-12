@@ -11,6 +11,7 @@ from starlette import concurrency
 
 from capellacollab.configuration.app import config
 from capellacollab.core import database
+from capellacollab.permissions import injectables as permissions_injectables
 
 from . import crud, operators, util
 
@@ -35,7 +36,12 @@ def terminate_idle_session():
             with database.SessionLocal() as db:
                 if session := crud.get_session_by_id(db, session_id):
                     util.terminate_session(
-                        db, session, operators.get_operator()
+                        db,
+                        session,
+                        operators.get_operator(),
+                        permissions_injectables.get_scope(
+                            (session.owner, None)
+                        ),
                     )
                 else:
                     log.error(

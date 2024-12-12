@@ -14,6 +14,10 @@ import capellacollab.projects.users.crud as projects_users_crud
 import capellacollab.projects.users.models as projects_users_models
 import capellacollab.users.crud as users_crud
 import capellacollab.users.models as users_models
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import (
     models as pipelines_models,
@@ -62,6 +66,8 @@ def test_get_projects_as_user_with_project(
     client: testclient.TestClient,
     project: projects_models.DatabaseProject,
 ):
+    """Test that a user can see their private projects"""
+
     response = client.get("/api/v1/projects")
 
     assert response.status_code == 200
@@ -69,8 +75,8 @@ def test_get_projects_as_user_with_project(
     data = response.json()
 
     assert len(data) > 0
-    assert data[0]["slug"] == project.slug
-    assert data[0]["visibility"] == "private"
+    assert data[-1]["slug"] == project.slug
+    assert data[-1]["visibility"] == "private"
 
 
 def test_get_projects_as_admin(
@@ -249,18 +255,14 @@ def test_update_project_as_admin(
 @pytest.mark.parametrize(
     ("run_nightly, include_commit_history"), [(True, True)]
 )
+@pytest.mark.usefixtures("admin")
 def test_delete_pipeline_called_when_archiving_project(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
     project: projects_models.DatabaseProject,
     capella_model: toolmodels_models.DatabaseToolModel,
     pipeline: pipelines_models.DatabaseBackup,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     with (
         mock.patch(
             "capellacollab.projects.routes.backups_core.delete_pipeline",
@@ -282,7 +284,10 @@ def test_delete_pipeline_called_when_archiving_project(
             db, capella_model
         )
         mock_delete_pipeline.assert_called_once_with(
-            db, pipeline, mock.ANY, True
+            db,
+            pipeline,
+            True,
+            mock.ANY,
         )
 
 
@@ -325,3 +330,38 @@ def test_get_project_per_role_admin(
     response = client.get("/api/v1/projects/?minimum_role=administrator")
     assert response.status_code == 200
     assert len(response.json()) > 0
+
+
+@pytest.mark.usefixtures("project_user")
+def test_dont_return_project_without_pat_access(
+    client_pat: testclient.TestClient, project: projects_models.DatabaseProject
+):
+    """Test that a project without PAT scope isn't returned"""
+
+    response = client_pat.get("/api/v1/projects")
+
+    assert response.status_code == 200
+    assert project.slug not in [project["slug"] for project in response.json()]
+
+
+@pytest.mark.usefixtures("project_user")
+@pytest.mark.parametrize(
+    "pat_scope",
+    [
+        (
+            None,
+            projects_permissions_models.ProjectUserScopes(
+                root={permissions_models.UserTokenVerb.GET}
+            ),
+        )
+    ],
+)
+def test_return_project_with_pat_access(
+    client_pat: testclient.TestClient, project: projects_models.DatabaseProject
+):
+    """Test that a project with PAT scope is returned"""
+
+    response = client_pat.get("/api/v1/projects")
+
+    assert response.status_code == 200
+    assert project.slug in [project["slug"] for project in response.json()]
