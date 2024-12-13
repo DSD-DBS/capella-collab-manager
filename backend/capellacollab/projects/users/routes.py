@@ -67,11 +67,8 @@ def get_current_project_user(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    username: str = fastapi.Depends(auth_injectables.get_username),
 ) -> models.ProjectUserAssociation | models.ProjectUser:
-    if auth_injectables.RoleVerification(
-        required_role=users_models.Role.ADMIN, verify=False
-    )(username, db):
+    if user.role == users_models.Role.ADMIN:
         return models.ProjectUser(
             role=models.ProjectUserRole.ADMIN,
             permission=models.ProjectUserPermission.WRITE,

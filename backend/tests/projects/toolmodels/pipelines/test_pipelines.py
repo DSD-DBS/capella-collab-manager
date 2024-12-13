@@ -7,6 +7,7 @@ import string
 
 import pytest
 import requests.exceptions
+import responses
 from fastapi import testclient
 from sqlalchemy import orm
 
@@ -164,9 +165,9 @@ def test_pipeline_creation_fails_if_t4c_server_not_available(
     )
 
 
+@responses.activate
 @pytest.mark.usefixtures(
     "project_manager",
-    "mockoperator",
 )
 def test_delete_pipeline(
     db: orm.Session,
@@ -174,22 +175,14 @@ def test_delete_pipeline(
     capella_model: toolmodels_models.ToolModel,
     pipeline: pipelines_models.DatabaseBackup,
     client: testclient.TestClient,
-    monkeypatch: pytest.MonkeyPatch,
     mockoperator: MockOperator,
     run_nightly: bool,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
-    def mock_remove_user_from_repository(
-        # pylint: disable=unused-argument
-        instance: t4c_models.DatabaseT4CInstance,
-        repository_name: str,
-        username: str,
-    ):
-        return
-
-    monkeypatch.setattr(
-        t4c_repositories_interface,
-        "remove_user_from_repository",
-        mock_remove_user_from_repository,
+    responses.delete(
+        f"{t4c_instance.rest_api}/users/{pipeline.t4c_username}?repositoryName={pipeline.t4c_model.repository.name}",
+        json={},
+        status=200,
     )
 
     response = client.delete(
@@ -202,3 +195,57 @@ def test_delete_pipeline(
 
     if run_nightly:
         assert mockoperator.cronjob_counter == -1
+
+
+@responses.activate
+@pytest.mark.usefixtures(
+    "project_manager",
+    "mockoperator",
+)
+def test_delete_pipeline_server_unreachable(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    pipeline: pipelines_models.DatabaseBackup,
+    client: testclient.TestClient,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+):
+    responses.delete(
+        f"{t4c_instance.rest_api}/users/{pipeline.t4c_username}?repositoryName={pipeline.t4c_model.repository.name}",
+        status=500,
+    )
+
+    response = client.delete(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}",
+    )
+
+    assert response.status_code == 422
+    assert (
+        response.json()["detail"]["err_code"]
+        == "PIPELINE_OPERATION_FAILED_T4C_SERVER_UNREACHABLE"
+    )
+
+
+@responses.activate
+@pytest.mark.usefixtures(
+    "admin",
+    "mockoperator",
+)
+def test_delete_pipeline_server_unreachable_force(
+    db: orm.Session,
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    pipeline: pipelines_models.DatabaseBackup,
+    client: testclient.TestClient,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+):
+    responses.delete(
+        f"{t4c_instance.rest_api}/users/{pipeline.t4c_username}?repositoryName={pipeline.t4c_model.repository.name}",
+        status=500,
+    )
+
+    response = client.delete(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}?force=True",
+    )
+
+    assert response.status_code == 204
+    assert not pipelines_crud.get_pipeline_by_id(db, pipeline.id)
