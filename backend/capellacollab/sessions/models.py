@@ -42,6 +42,7 @@ class SessionEnvironment(t.TypedDict):
     CAPELLACOLLAB_SESSION_TOKEN: str
     CAPELLACOLLAB_SESSION_ID: str
     CAPELLACOLLAB_SESSION_REQUESTER_USERNAME: str
+    CAPELLACOLLAB_SESSION_REQUESTER_USER_ID: int
     CAPELLACOLLAB_SESSION_CONNECTION_METHOD_TYPE: str
     CAPELLACOLLAB_SESSION_CONTAINER_PORT: str
 
@@ -51,6 +52,7 @@ class SessionEnvironment(t.TypedDict):
     CAPELLACOLLAB_SESSIONS_BASE_PATH: str
 
     CAPELLACOLLAB_ORIGIN_BASE_URL: str
+    CAPELLACOLLAB_API_BASE_URL: str
 
 
 class SessionProvisioningRequest(core_pydantic.BaseModel):
@@ -130,6 +132,12 @@ class Session(core_pydantic.BaseModel):
 
     connection_method_id: str
     connection_method: tools_models.ToolSessionConnectionMethod | None = None
+
+    @pydantic.computed_field  # type: ignore[misc]
+    @property
+    def internal_endpoint(self) -> str:
+        """Internal DNS endpoint of the session for inter-session communication."""
+        return f"{self.id}.{config.k8s.namespace}.svc.cluster.local"
 
     shared_with: list[SessionSharing] = pydantic.Field(default=[])
 

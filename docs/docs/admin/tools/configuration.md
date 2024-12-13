@@ -91,6 +91,11 @@ variables can be used by the tool:
         <td>The username of the user who has requested the session.</td>
     </tr>
     <tr>
+        <td>`CAPELLACOLLAB_SESSION_REQUESTER_USER_ID`</td>
+        <td>`123`</td>
+        <td>The ID of the user who has requested the session.</td>
+    </tr>
+    <tr>
         <td>`CAPELLACOLLAB_SESSION_CONTAINER_PORT`</td>
         <td>`8080`</td>
         <td>
@@ -165,6 +170,13 @@ variables can be used by the tool:
         <td>
             The origin host of the Collaboration Manager.
             The tool has to set the `Content-Security-Policy` header to `frame-ancestors self {CAPELLACOLLAB_ORIGIN_HOST}`. Otherwise, the session viewer can't be used with the tool!
+        </td>
+    </tr>
+    <tr>
+        <td>`CAPELLACOLLAB_API_BASE_URL`</td>
+        <td>`http://dev-backend.collab-manager.svc.cluster.local:/api`</td>
+        <td>
+            The API URL of the Collaboration Manager. The URL is only available from the session itself.
         </td>
     </tr>
     <tr>

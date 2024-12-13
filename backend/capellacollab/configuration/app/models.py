@@ -191,6 +191,16 @@ class K8sConfig(BaseConfig):
         description="The name of the IngressClass to use.",
         examples=["traefik", "nginx"],
     )
+    management_portal_namespace: str = pydantic.Field(
+        default="collab-manager",
+        description="The namespace where the management portal is deployed in.",
+        examples=["collab-manager"],
+    )
+    release_name: str = pydantic.Field(
+        default="dev",
+        description="The release name of the Helm chart",
+        examples=["dev", "prod", "test123"],
+    )
 
 
 class GeneralConfig(BaseConfig):

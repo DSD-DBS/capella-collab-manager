@@ -35,6 +35,10 @@ export interface Session {
     connection_method: ToolSessionConnectionMethod | null;
     shared_with: Array<SessionSharing>;
     project: SimpleProject | null;
+    /**
+     * Internal DNS endpoint of the session for inter-session communication.
+     */
+    readonly internal_endpoint: string;
 }
 export namespace Session {
 }

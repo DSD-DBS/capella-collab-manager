@@ -32,6 +32,8 @@ export const mockPersistentSession: Readonly<Session> = {
   state: SessionState.Running,
   owner: mockUser,
   connection_method: { ...mockHttpConnectionMethod, name: 'Xpra' },
+  internal_endpoint:
+    'vfurvsrldxfwwsqdiqvnufonh.collab-sessions.svc.cluster.local',
   warnings: [],
   connection_method_id: 'default',
   shared_with: [],
