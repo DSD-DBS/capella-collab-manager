@@ -73,6 +73,9 @@ export class FileBrowserDialogComponent implements OnInit {
           treeNode.isExpanded = true;
           this.dataSource.data = [treeNode];
         },
+        error: () => {
+          this.dialogRef.close();
+        },
         complete: () => {
           this.loadingFiles = false;
         },

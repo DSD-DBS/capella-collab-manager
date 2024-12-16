@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
-import typing as t
 
 import fastapi
 import requests
@@ -21,7 +20,7 @@ from . import crud, exceptions, injectables, interface, models, models2
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
-T4CRepositoriesResponseModel: t.TypeAlias = core_models.PayloadResponseModel[
+type T4CRepositoriesResponseModel = core_models.PayloadResponseModel[
     list[models2.SimpleT4CRepositoryWithIntegrations]
 ]
 
@@ -61,7 +60,7 @@ def list_t4c_repositories(
             exc_info=True,
         )
 
-        return T4CRepositoriesResponseModel(
+        return core_models.PayloadResponseModel(
             payload=repositories,
             warnings=[
                 core_models.Message(
@@ -79,7 +78,7 @@ def list_t4c_repositories(
         instance=instance,
     )
 
-    return T4CRepositoriesResponseModel(payload=repositories)
+    return core_models.PayloadResponseModel(payload=repositories)
 
 
 @router.post(

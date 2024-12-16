@@ -22,7 +22,7 @@ jobs:
         with:
           cache: pip
           cache-dependency-path: ./backend/pyproject.toml
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install dependencies
         working-directory: ./backend
         run: python -m venv .venv && .venv/bin/pip install -e ".[dev]"
@@ -61,7 +61,7 @@ jobs:
         with:
           cache: pip
           cache-dependency-path: ./backend/pyproject.toml
-          python-version: '3.11'
+          python-version: '3.12'
       - name: Install dependencies
         working-directory: ./backend
         run: python -m venv .venv && .venv/bin/pip install -e ".[dev]"

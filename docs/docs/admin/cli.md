@@ -16,7 +16,7 @@ sessions.
 ## Installation
 
 In order to use the CLI tooling, you'll need to have a local copy of the
-collab-manager application and Python 3.11 installed.
+collab-manager application and Python 3.12 installed.
 
 ```bash
 git clone https://github.com/DSD-DBS/capella-collab-manager.git

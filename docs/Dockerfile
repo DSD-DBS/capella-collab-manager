@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-ARG BASE_IMAGE=python:3.11-bookworm
+ARG BASE_IMAGE=python:3.12-slim-bookworm
 FROM $BASE_IMAGE as build
 
 USER root

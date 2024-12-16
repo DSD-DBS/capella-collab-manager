@@ -92,6 +92,7 @@ ROLE_MAPPING = {
             },
             t4c_repositories={
                 models.UserTokenVerb.GET,
+                models.UserTokenVerb.CREATE,
                 models.UserTokenVerb.UPDATE,
                 models.UserTokenVerb.DELETE,
             },
