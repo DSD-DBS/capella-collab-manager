@@ -29,7 +29,23 @@ export class SessionViewerService {
     private domSanitizer: DomSanitizer,
     private toastService: ToastService,
     private sessionsService: SessionsService,
-  ) {}
+  ) {
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+
+      if (event.data.type === 'setFullscreen') {
+        const session = this._sessions.value?.find(
+          (session) => session.id === event.data.sessionId,
+        );
+
+        if (session && event.data.fullscreen !== session.fullscreen) {
+          this.toggleFullscreen(session);
+        }
+      }
+    });
+  }
 
   private _sessions = new BehaviorSubject<ViewerSession[] | undefined>(
     undefined,
