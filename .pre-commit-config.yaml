@@ -6,13 +6,13 @@ default_stages: [pre-commit, pre-merge-commit]
 minimum_pre_commit_version: 3.2.0
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.2
+    rev: v0.8.3
     hooks:
       - id: ruff
         args: [ --fix ]
       - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks.git
-    rev: v8.20.1
+    rev: v8.21.2
     hooks:
       - id: gitleaks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -46,11 +46,11 @@ repos:
         exclude: 'frontend/package-lock.json'
         args: ['-L', 'AKS']
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.3
+    rev: v1.7.4
     hooks:
       - id: actionlint-docker
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
+    rev: v1.13.0
     hooks:
       - id: mypy
         types_or: [python, spec]
@@ -91,7 +91,7 @@ repos:
         language: node
         types_or: [ts]
         additional_dependencies:
-          - 'typescript@^5.7.2'
+          - 'typescript@^5.6.3'
   - repo: local
     hooks:
       - id: prettier
@@ -103,10 +103,10 @@ repos:
         additional_dependencies:
           - 'prettier@^3.4.2'
           - 'prettier-plugin-tailwindcss@^0.6.9'
-          - '@trivago/prettier-plugin-sort-imports@^4.3.0'
+          - '@trivago/prettier-plugin-sort-imports@^5.2.0'
           - 'tailwindcss@^3.4.16'
-          - 'prettier-plugin-classnames@^0.7.4'
-          - 'prettier-plugin-merge@^0.7.1'
+          - 'prettier-plugin-classnames@^0.7.5'
+          - 'prettier-plugin-merge@^0.7.2'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
@@ -170,19 +170,19 @@ repos:
           - --comment-style
           - '{/*|   |*/}'
   - repo: https://github.com/fsfe/reuse-tool
-    rev: 782b6ea025d089a06ab072f2d0b4bb99c1629e89
+    rev: v5.0.2
     hooks:
       - id: reuse-lint-file
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.12.0
+    rev: v9.17.0
     hooks:
       - id: eslint
         additional_dependencies:
-          - 'eslint@^9.16.0'
-          - '@eslint/js@^9.16.0'
-          - 'angular-eslint@19.0.1'
+          - 'eslint@^9.17.0'
+          - '@eslint/js@^9.17.0'
+          - 'angular-eslint@19.0.2'
           - 'eslint-config-prettier@^9.1.0'
-          - 'typescript-eslint@8.17.0'
+          - 'typescript-eslint@8.18.1'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.17.5'
           - 'eslint-plugin-storybook@0.11.1'
@@ -199,7 +199,7 @@ repos:
         exclude: '.+\.spec(-helper)?\.ts$|^frontend/src/app/openapi'
         types_or: ['html', 'ts']
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: v9.18.0
+    rev: v9.20.0
     hooks:
       - id: commitlint
         stages: [commit-msg]
