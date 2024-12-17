@@ -24,6 +24,7 @@ from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.tools import exceptions as tools_exceptions
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
+from capellacollab.tools import util as tools_util
 from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
@@ -205,7 +206,7 @@ async def request_session(
         tool=tool,
         environment=environment,
         init_environment=init_environment,
-        ports=connection_method.ports.model_dump(),
+        ports=tools_util.resolve_tool_ports(connection_method.ports),
         volumes=volumes,
         init_volumes=init_volumes,
         annotations=annotations,

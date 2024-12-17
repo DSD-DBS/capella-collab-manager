@@ -16,5 +16,9 @@ export interface SessionPorts {
      * Port of the metrics endpoint in the container.
      */
     metrics: number;
+    /**
+     * Additional ports in a identifier/port mapping.
+     */
+    additional: { [key: string]: number; };
 }
 
