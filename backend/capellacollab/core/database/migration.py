@@ -45,6 +45,12 @@ from capellacollab.users import models as users_models
 
 LOGGER = logging.getLogger(__name__)
 
+DEFAULT_REDIRECT_URL = (
+    "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
+    if not core.LOCAL_DEVELOPMENT_MODE
+    else "http://localhost:8080"
+)
+
 
 def migrate_db(engine, database_url: str):
     if os.getenv("ALEMBIC_CONTEXT") == "1":
@@ -147,11 +153,7 @@ def get_eclipse_session_configuration() -> (
                         "XPRA_CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                     },
                     redirect_url=(
-                        (
-                            "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
-                            if not core.LOCAL_DEVELOPMENT_MODE
-                            else "http://localhost:8080"
-                        )
+                        DEFAULT_REDIRECT_URL
                         + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/?floating_menu=0&sharing=1&path={CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
                     ),
                     cookies={},
@@ -243,11 +245,7 @@ def create_capella_model_explorer_tool(
                         ),
                         ports=tools_models.HTTPPorts(http=8000, metrics=8000),
                         redirect_url=(
-                            (
-                                "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
-                                if not core.LOCAL_DEVELOPMENT_MODE
-                                else "http://localhost:8080"
-                            )
+                            DEFAULT_REDIRECT_URL
                             + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/"
                         ),
                     )
@@ -363,21 +361,18 @@ def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
                 "JUPYTER_TOKEN": "{CAPELLACOLLAB_SESSION_TOKEN}",
                 "CSP_ORIGIN_HOST": "{CAPELLACOLLAB_ORIGIN_BASE_URL}",
                 "JUPYTER_BASE_URL": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
+                "JUPYTER_ALLOW_ORIGIN": DEFAULT_REDIRECT_URL,
             },
             connection=tools_models.ToolSessionConnection(
                 methods=[
                     tools_models.HTTPConnectionMethod(
                         id="jupyter-direct",
-                        name="Direct Jupyter connection (Browser)",
+                        name="Browser",
                         description="The only available connection method for Jupyter.",
                         ports=tools_models.HTTPPorts(http=8888, metrics=9118),
                         redirect_url=(
-                            (
-                                "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
-                                if not core.LOCAL_DEVELOPMENT_MODE
-                                else "http://localhost:8080"
-                            )
-                            + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/lab?token={CAPELLACOLLAB_SESSION_TOKEN}"
+                            DEFAULT_REDIRECT_URL
+                            + "{CAPELLACOLLAB_SESSIONS_BASE_PATH}/lab"
                         ),
                         sharing=tools_models.ToolSessionSharingConfiguration(
                             enabled=True
