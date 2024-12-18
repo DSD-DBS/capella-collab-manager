@@ -15,6 +15,7 @@ import {
   AsyncValidatorFn,
 } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatChipListbox, MatChipOption } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatFormField,
@@ -59,11 +60,11 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
     MatButton,
     AsyncPipe,
     NgxSkeletonLoaderModule,
+    MatChipListbox,
+    MatChipOption,
   ],
 })
 export class UserSettingsComponent implements OnInit {
-  search = '';
-
   public readonly roleMapping = {
     user: 'Global User',
     administrator: 'Global Administrator',
@@ -78,6 +79,11 @@ export class UserSettingsComponent implements OnInit {
       validators: Validators.required,
       asyncValidators: this.asyncUserIdPIdentifierAlreadyExistsValidator(),
     }),
+  });
+
+  form = new FormGroup({
+    search: new FormControl<string>(''),
+    userType: new FormControl<string | null>(null),
   });
 
   constructor(
@@ -252,10 +258,15 @@ export class UserSettingsComponent implements OnInit {
     users: User[] | null | undefined,
     role: UserRole,
   ): User[] | undefined {
-    return users?.filter(
-      (user) =>
-        user.role == role &&
-        user.name.toLowerCase().includes(this.search.toLowerCase()),
-    );
+    return users?.filter((user) => {
+      const roleMatches = user.role == role;
+      const searchMatches = user.name
+        .toLowerCase()
+        .includes(this.form.value.search?.toLowerCase() || '');
+      const userTypeMatches =
+        this.form.value.userType == null ||
+        user.beta_tester == (this.form.value.userType == 'beta');
+      return roleMatches && searchMatches && userTypeMatches;
+    });
   }
 }
