@@ -37,6 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: 'frontend/package.json'
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -54,7 +57,7 @@ jobs:
       - name: Install dependencies (frontend)
         working-directory: frontend/
         run: |-
-          npm ci
+          pnpm install
       - name: Run pre-commit
         run: |-
           uvx --with pre-commit-uv pre-commit run --all-files

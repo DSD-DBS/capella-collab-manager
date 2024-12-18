@@ -26,6 +26,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: 'frontend/package.json'
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -38,10 +41,10 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: Chromatic
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
         working-directory: ./frontend
       - name: Build Storybook
-        run: npm run build-storybook
+        run: pnpm run build-storybook
         working-directory: ./frontend
       - name: Run Chromatic
         id: chromatic
