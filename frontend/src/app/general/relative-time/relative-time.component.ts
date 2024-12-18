@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, Input } from '@angular/core';
+import { Component, input, Input } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { formatDistanceToNow, format } from 'date-fns';
 import { DateArg } from 'date-fns/types';
@@ -15,7 +15,8 @@ import { DateArg } from 'date-fns/types';
 export class RelativeTimeComponent {
   @Input() date?: DateArg<Date>;
   @Input() suffix = true;
-  @Input() showSeconds = true;
+
+  dateFormat = input<string>('PPpp');
 
   get relativeTime(): string {
     if (!this.date) return '';
@@ -24,7 +25,6 @@ export class RelativeTimeComponent {
 
   get absoluteTime(): string {
     if (!this.date) return '';
-    if (this.showSeconds) return format(this.date, 'PPpp');
-    return format(this.date, 'PPp');
+    return format(this.date, this.dateFormat());
   }
 }

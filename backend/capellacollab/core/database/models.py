@@ -9,6 +9,7 @@ import capellacollab.events.models
 import capellacollab.feedback.models
 import capellacollab.notices.models
 import capellacollab.projects.models
+import capellacollab.projects.permissions.models
 import capellacollab.projects.toolmodels.backups.models
 import capellacollab.projects.toolmodels.backups.runs.models
 import capellacollab.projects.toolmodels.models

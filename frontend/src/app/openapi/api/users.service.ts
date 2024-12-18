@@ -19,6 +19,10 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
+import { GlobalScopesInput } from '../model/global-scopes-input';
+// @ts-ignore
+import { GlobalScopesOutput } from '../model/global-scopes-output';
+// @ts-ignore
 import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
 import { HistoryEvent } from '../model/history-event';
@@ -195,6 +199,7 @@ export class UsersService {
 
     /**
      * Create User
+     * Create a user.  This is usually not needed since users are auto-created on login.  Requires scope &#x60;admin.users/CREATE&#x60;.
      * @param postUser 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -347,6 +352,7 @@ export class UsersService {
 
     /**
      * Delete User
+     * Delete a user irrevocably.  The user will be removed from all projects, all events the user was involved in will be deleted, all workspaces of the user will be deleted, and all feedback of the user will be anonymized.  Requires scope &#x60;admin.users/DELETE&#x60;.
      * @param userId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -492,6 +498,91 @@ export class UsersService {
     }
 
     /**
+     * Get Actual Permissions
+     * @param userId 
+     * @param globalScopesInput 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getActualPermissions(userId: number, globalScopesInput: GlobalScopesInput, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<GlobalScopesOutput>;
+    public getActualPermissions(userId: number, globalScopesInput: GlobalScopesInput, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<GlobalScopesOutput>>;
+    public getActualPermissions(userId: number, globalScopesInput: GlobalScopesInput, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<GlobalScopesOutput>>;
+    public getActualPermissions(userId: number, globalScopesInput: GlobalScopesInput, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (userId === null || userId === undefined) {
+            throw new Error('Required parameter userId was null or undefined when calling getActualPermissions.');
+        }
+        if (globalScopesInput === null || globalScopesInput === undefined) {
+            throw new Error('Required parameter globalScopesInput was null or undefined when calling getActualPermissions.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarCredential: string | undefined;
+        // authentication (PersonalAccessToken) required
+        localVarCredential = this.configuration.lookupCredential('PersonalAccessToken');
+        if (localVarCredential) {
+            localVarHeaders = localVarHeaders.set('Authorization', 'Basic ' + localVarCredential);
+        }
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+        let localVarTransferCache: boolean | undefined = options && options.transferCache;
+        if (localVarTransferCache === undefined) {
+            localVarTransferCache = true;
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/api/v1/users/${this.configuration.encodeParam({name: "userId", value: userId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/permissions`;
+        return this.httpClient.request<GlobalScopesOutput>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: globalScopesInput,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                transferCache: localVarTransferCache,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Get All Tokens Of User
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -560,6 +651,7 @@ export class UsersService {
 
     /**
      * Get Common Projects
+     * List all common projects with a user.  If you request with &#x60;admin.projects/GET&#x60; and &#x60;admin.users/GET&#x60; scopes, the API will return all projects of the selected user.
      * @param userId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -631,6 +723,7 @@ export class UsersService {
 
     /**
      * Get Current User
+     * Return the user that is currently logged in. No scope required.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -769,6 +862,7 @@ export class UsersService {
 
     /**
      * Get User
+     * Return the user.  Requires scope &#x60;admin.users/GET&#x60; or at least one common project with the user.
      * @param userId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -840,6 +934,7 @@ export class UsersService {
 
     /**
      * Get User Events
+     * List all events for the user.  Requires scopes &#x60;admin.users/GET&#x60; and &#x60;admin.events/GET&#x60;.
      * @param userId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -911,6 +1006,7 @@ export class UsersService {
 
     /**
      * Get Users
+     * Get all users.  Requires scope &#x60;admin.users/GET&#x60;.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
@@ -1049,6 +1145,7 @@ export class UsersService {
 
     /**
      * Update User
+     * Update the user.  The &#x60;reason&#x60; field is required when updating the role. When changing the role to &#x60;ADMIN&#x60;, the explicit membership in all projects will be removed and will be replaced with an implicit membership in all projects.  The &#x60;beta_user&#x60; field can only be updated when &#x60;beta.enabled&#x60; is activated in the global configuration.  The &#x60;beta_user&#x60; field can be updated for the own user when &#x60;beta.allow_self_enrollment&#x60; is activated in the global configuration. All other fields can only be updated with the &#x60;admin.users/UPDATE&#x60; scope.
      * @param userId 
      * @param patchUser 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

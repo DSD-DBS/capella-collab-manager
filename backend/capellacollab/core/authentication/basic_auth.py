@@ -6,10 +6,12 @@ import logging
 
 import fastapi
 from fastapi import security
+from sqlalchemy import orm
 
-from capellacollab.core import database
 from capellacollab.users import crud as user_crud
+from capellacollab.users import models as users_models
 from capellacollab.users.tokens import crud as token_crud
+from capellacollab.users.tokens import models as tokens_models
 
 from . import exceptions
 
@@ -20,29 +22,31 @@ class HTTPBasicAuth(security.HTTPBasic):
     def __init__(self):
         super().__init__(auto_error=True)
 
-    async def __call__(self, request: fastapi.Request) -> str:  # type: ignore
+    async def validate(
+        self, db: orm.Session, request: fastapi.Request
+    ) -> tuple[users_models.DatabaseUser, tokens_models.DatabaseUserToken]:
         credentials: (
             security.HTTPBasicCredentials | None
         ) = await super().__call__(request)
         if not credentials:
             raise exceptions.UnauthenticatedError()
-        with database.SessionLocal() as session:
-            user = user_crud.get_user_by_name(session, credentials.username)
-            db_token = (
-                token_crud.get_token_by_token_and_user(
-                    session, credentials.password, user.id
-                )
-                if user
-                else None
+
+        user = user_crud.get_user_by_name(db, credentials.username)
+        if not user:
+            logger.info(
+                "User with username '%s' not found.", credentials.username
             )
-            if not db_token:
-                logger.info("Token invalid for user %s", credentials.username)
-                raise exceptions.InvalidPersonalAccessTokenError()
+            raise exceptions.InvalidPersonalAccessTokenError()
+        db_token = token_crud.get_token_by_token_and_user(
+            db, credentials.password, user.id
+        )
 
-            if db_token.expiration_date < datetime.date.today():
-                logger.info("Token expired for user %s", credentials.username)
-                raise exceptions.PersonalAccessTokenExpired()
-        return self.get_username(credentials)
+        if not db_token:
+            logger.info("Token invalid for user %s", credentials.username)
+            raise exceptions.InvalidPersonalAccessTokenError()
 
-    def get_username(self, credentials: security.HTTPBasicCredentials) -> str:
-        return credentials.username
+        if db_token.expiration_date < datetime.date.today():
+            logger.info("Token expired for user %s", credentials.username)
+            raise exceptions.PersonalAccessTokenExpired()
+
+        return user, db_token

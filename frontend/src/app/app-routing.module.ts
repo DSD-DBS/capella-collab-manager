@@ -18,7 +18,7 @@ import { ConfigurationSettingsComponent } from 'src/app/settings/core/configurat
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
 import { AddGitInstanceComponent } from 'src/app/settings/modelsources/git-settings/add-git-instance/add-git-instance.component';
-import { BasicAuthTokenComponent } from 'src/app/users/basic-auth-token/basic-auth-token.component';
+import { PersonalAccessTokensComponent } from 'src/app/users/personal-access-tokens/personal-access-tokens.component';
 import { UserWrapperComponent } from 'src/app/users/user-wrapper/user-wrapper.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
 import { EventsComponent } from './events/events.component';
@@ -547,7 +547,7 @@ export const routes: Routes = [
       {
         path: 'tokens',
         data: { breadcrumb: 'Tokens' },
-        component: BasicAuthTokenComponent,
+        component: PersonalAccessTokensComponent,
       },
     ],
   },

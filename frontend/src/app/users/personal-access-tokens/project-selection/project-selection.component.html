@@ -1,0 +1,38 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog">
+  <mat-form-field>
+    <mat-label>Select a project</mat-label>
+    <mat-select [(ngModel)]="selectedProject">
+      @for (
+        project of projectWrapperService.projects$ | async;
+        track project.id
+      ) {
+        @if (!data.excludeProjects.includes(project.slug)) {
+          <mat-option [value]="project">{{ project.name }}</mat-option>
+        }
+      }
+    </mat-select>
+  </mat-form-field>
+  <div class="flex justify-between gap-2">
+    <button
+      mat-flat-button
+      type="button"
+      (click)="matDialogRef.close(undefined)"
+    >
+      Cancel
+    </button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="!selectedProject"
+      (click)="matDialogRef.close(selectedProject)"
+    >
+      Select
+    </button>
+  </div>
+</div>
