@@ -468,7 +468,7 @@
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 0,
-            "gradientMode": "none",
+            "gradientMode": "scheme",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -561,6 +561,6 @@
   "timezone": "",
   "title": "Feedback",
   "uid": "edzhg6sv97lz4c",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
