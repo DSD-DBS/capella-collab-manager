@@ -86,7 +86,6 @@ frontend:
     - IMAGE=${DOCKER_REGISTRY}/${FRONTEND_IMAGE_NAME:?}
     - *docker
     - mv ../favicon.ico frontend/src
-    - npm i undici
     - python frontend/fetch-version.py
     - >
       docker build ${DOCKER_BUILD_ARGS} \
