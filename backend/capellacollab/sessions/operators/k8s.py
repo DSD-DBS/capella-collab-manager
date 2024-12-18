@@ -12,7 +12,6 @@ import logging
 import random
 import shlex
 import string
-import subprocess
 import typing as t
 
 import kubernetes
@@ -70,9 +69,7 @@ class KubernetesOperator:
         self.v1_policy = client.PolicyV1Api(api_client=self.client)
 
     def load_config(self) -> None:
-        self.kubectl_arguments = []
         if cfg.context:
-            self.kubectl_arguments += ["--context", cfg.context]
             kubernetes.config.load_config(context=cfg.context)
         else:
             kubernetes.config.load_incluster_config()
@@ -977,47 +974,51 @@ class KubernetesOperator:
             )
 
         source = helper.get_source_of_python_function(print_file_tree_as_json)
-
-        # We have to use subprocess to get it running until this issue is solved:
-        # https://github.com/kubernetes/kubernetes/issues/89899
-        # Python doesn't start evaluating the code before EOF, but there is no way to close stdin
+        encoded = base64.b64encode(source.encode("utf-8")).decode("utf-8")
 
         try:
-            response = subprocess.run(
-                ["kubectl"]
-                + self.kubectl_arguments
-                + [
-                    "--namespace",
-                    namespace,
-                    "exec",
-                    "--stdin",
-                    session_id,
-                    "--container",
-                    "session",
-                    "--",
-                    "python",
-                    "-",
-                    directory,
-                    json.dumps(show_hidden),
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                session_id,
+                container="session",
+                namespace=namespace,
+                command=[
+                    "bash",
+                    "-c",
+                    f'echo "{encoded}" | base64 --decode | python - {directory} {json.dumps(show_hidden)}',
                 ],
-                input=source.encode(),
-                capture_output=True,
-                check=True,
+                stderr=True,
+                stdin=False,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
             )
-        except subprocess.CalledProcessError as e:
-            log.error(
-                "Loading files of session '%s' failed - STDOUT: %s",
-                session_id,
-                e.stdout.decode(),
-            )
-            log.error(
-                "Loading files of session '%s' failed - STDERR: %s",
-                session_id,
-                e.stderr.decode(),
+
+            stream.update(timeout=15)
+
+            stdout = ""
+
+            if stream.peek_stdout():
+                stdout = stream.read_stdout()
+                log.debug(
+                    "Loading files of session '%s' - STDOUT: %s",
+                    session_id,
+                    stdout,
+                )
+            if stream.peek_stderr():
+                stderr = stream.read_stderr()
+                log.debug(
+                    "Loading files of session '%s' - STDERR: %s",
+                    session_id,
+                    stderr,
+                )
+        except exceptions.ApiException:
+            log.exception(
+                "Exception when copying file to the pod with id %s", id
             )
             raise
 
-        return json.loads(response.stdout)
+        return json.loads(stdout)
 
     def upload_files(
         self,
