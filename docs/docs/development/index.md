@@ -38,8 +38,7 @@ The k3d cluster is required for the development environment.
 - [`Python`](https://www.python.org/) >= 3.12
 - [`Docker`](https://www.docker.com/)
 - [`GNU Make`](https://www.gnu.org/software/make/)
-- [`Node.js`](https://nodejs.org/en) >= v20.8.0
-- [`npm`](https://www.npmjs.com/) package manager
+- [`Node.js`](https://nodejs.org/en) >= v22
 - [`Angular CLI`](https://angular.dev/tools/cli/setup-local#install-the-angular-cli)
 
 ### Backend Configuration
@@ -58,8 +57,9 @@ To get started, run the following command in the root of the repository for the
 initial setup (only required once):
 
 ```zsh
+corepack enable
 (cd backend && make install)
-(cd frontend && npm i)
+(cd frontend && pnpm i)
 (cd docs && make install)
 ```
 
