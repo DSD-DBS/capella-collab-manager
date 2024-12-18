@@ -113,7 +113,7 @@ class KubernetesOperator:
             ports=ports,
             volumes=volumes,
             init_volumes=init_volumes,
-            tool_resources=tool.config.resources,
+            tool_resources_profile=tool.config.resources.get_profile(username),
             annotations=annotations,
             labels=labels,
         )
@@ -270,7 +270,10 @@ class KubernetesOperator:
         image: str,
         command: str,
         labels: dict[str, str],
-        tool_resources: tools_models.Resources,
+        tool_resources: (
+            tools_models.DefaultResourceProfile
+            | tools_models.AdditionalResourceProfile
+        ),
         environment: dict[str, str | None],
         schedule="* * * * *",
         timezone="UTC",
@@ -312,7 +315,10 @@ class KubernetesOperator:
         command: str,
         labels: dict[str, str],
         environment: dict[str, str | None],
-        tool_resources: tools_models.Resources,
+        tool_resources: (
+            tools_models.DefaultResourceProfile
+            | tools_models.AdditionalResourceProfile
+        ),
         timeout: int = 18000,
     ) -> str:
         _id = self._generate_id()
@@ -555,7 +561,10 @@ class KubernetesOperator:
         ports: dict[str, int],
         volumes: list[models.Volume],
         init_volumes: list[models.Volume],
-        tool_resources: tools_models.Resources,
+        tool_resources_profile: (
+            tools_models.DefaultResourceProfile
+            | tools_models.AdditionalResourceProfile
+        ),
         annotations: dict[str, str],
         labels: dict[str, str],
     ) -> client.V1Pod:
@@ -569,12 +578,12 @@ class KubernetesOperator:
 
         resources = client.V1ResourceRequirements(
             limits={
-                "cpu": tool_resources.cpu.limits,
-                "memory": tool_resources.memory.limits,
+                "cpu": tool_resources_profile.cpu.limits,
+                "memory": tool_resources_profile.memory.limits,
             },
             requests={
-                "cpu": tool_resources.cpu.requests,
-                "memory": tool_resources.memory.requests,
+                "cpu": tool_resources_profile.cpu.requests,
+                "memory": tool_resources_profile.memory.requests,
             },
         )
 
@@ -781,7 +790,10 @@ class KubernetesOperator:
         image: str,
         job_labels: dict[str, str],
         environment: dict[str, str | None],
-        tool_resources: tools_models.Resources,
+        tool_resources: (
+            tools_models.DefaultResourceProfile
+            | tools_models.AdditionalResourceProfile
+        ),
         args: list[str] | None = None,
         timeout: int = 18000,
     ) -> client.V1JobSpec:
