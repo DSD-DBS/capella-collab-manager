@@ -86,7 +86,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "jsdom": "^25.0.1",
     "mockdate": "^3.0.5",
-    "npm-check-updates": "^17.1.11",
+    "npm-check-updates": "^17.1.13",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "prettier-plugin-classnames": "^0.7.5",
