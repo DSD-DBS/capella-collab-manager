@@ -158,6 +158,33 @@ export class FileBrowserDialogComponent implements OnInit {
     this.removeFileFromTree(node);
   }
 
+  deleteFile(node: PathNode): void {
+    const deleteDialog = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: node.type === 'directory' ? 'Delete directory' : 'Delete file',
+        text:
+          node.type === 'directory'
+            ? `Do you want to delete the directory '${node.name}' and all its contents?`
+            : `Do you want to delete the file '${node.name}'?`,
+      },
+    });
+    deleteDialog.afterClosed().subscribe((response) => {
+      if (response) {
+        this.sessionsService.deleteFile(this.session.id, node.path).subscribe({
+          next: () => {
+            this.removeFile(node);
+          },
+          error: () => {
+            this.toastService.showError(
+              'Error deleting file',
+              `An error occurred while deleting the file '${node.name}'`,
+            );
+          },
+        });
+      }
+    });
+  }
+
   private _removeElementByPath(path: string): void {
     // Remove the element using path traversal
 

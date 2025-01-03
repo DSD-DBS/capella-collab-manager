@@ -32,3 +32,17 @@ class FileSizeExceededError(core_exceptions.BaseError):
     @classmethod
     def openapi_example(cls) -> "FileSizeExceededError":
         return cls()
+
+
+class FileDeletionNotAllowedError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="File deletion not allowed",
+            reason="Files outside of /workspace cannot be deleted.",
+            err_code="FILE_DELETION_NOT_ALLOWED",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "FileDeletionNotAllowedError":
+        return cls()

@@ -9,6 +9,7 @@ import datetime
 import http
 import json
 import logging
+import os.path
 import random
 import shlex
 import string
@@ -26,6 +27,7 @@ from kubernetes.client import exceptions
 from capellacollab.configuration.app import config
 from capellacollab.configuration.app import models as config_models
 from capellacollab.sessions import models as sessions_models
+from capellacollab.sessions.files import exceptions as files_exceptions
 from capellacollab.tools import models as tools_models
 
 from . import helper, models
@@ -1112,6 +1114,17 @@ class KubernetesOperator:
                 "Exception when copying file to the pod with id %s", session_id
             )
             raise
+
+    def delete_file(self, session_id: str, path: str):
+        normalized_path = os.path.normpath(path)
+        if not normalized_path.startswith("/workspace/"):
+            raise files_exceptions.FileDeletionNotAllowedError()
+
+        self._open_session_stream(
+            session_id,
+            ["rm", "-rf", path],
+            None,
+        )
 
 
 def lazy_b64decode(reader):

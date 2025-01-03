@@ -97,6 +97,30 @@ def upload_files(
     operators.get_operator().upload_files(session.id, tar_bytes)
 
 
+@router.delete(
+    "",
+    status_code=204,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
+        )
+    ],
+)
+def delete_file(
+    path: str,
+    session: sessions_models.DatabaseSession = fastapi.Depends(
+        sessions_injectables.get_existing_session
+    ),
+):
+    operators.get_operator().delete_file(session.id, path)
+
+
 @router.get(
     "/download",
     response_class=responses.StreamingResponse,
