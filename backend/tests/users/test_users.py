@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import kubernetes
+import prometheus_client.samples
 import pytest
 from fastapi import testclient
 from sqlalchemy import orm
@@ -12,6 +13,7 @@ from capellacollab.events import models as events_models
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.users import crud as users_crud
+from capellacollab.users import metrics as users_metrics
 from capellacollab.users import models as users_models
 from capellacollab.users.workspaces import crud as user_workspace_crud
 from capellacollab.users.workspaces import models as user_workspace_models
@@ -142,6 +144,40 @@ def test_fail_update_own_user(
     assert (
         response.json()["detail"]["err_code"] == "CHANGES_NOT_ALLOWED_FOR_ROLE"
     )
+
+
+def test_user_metrics(db: orm.Session):
+    """Test that user metrics correctly count beta and non-beta users."""
+
+    def get_metric() -> tuple[
+        prometheus_client.samples.Sample, prometheus_client.samples.Sample
+    ]:
+        collector = users_metrics.UserCountCollector()
+        data = list(collector.collect())
+        metric = data[0]
+
+        beta_sample = next(
+            s for s in metric.samples if s.labels["beta"] == "true"
+        )
+        non_beta_sample = next(
+            s for s in metric.samples if s.labels["beta"] == "false"
+        )
+
+        return beta_sample, non_beta_sample
+
+    base_beta, base_non_beta = get_metric()
+
+    user1 = users_crud.create_user(db, "regular_user1", "regular_user1")
+
+    new_beta, new_non_beta = get_metric()
+    assert new_beta.value == base_beta.value
+    assert new_non_beta.value == base_non_beta.value + 1
+
+    users_crud.update_user(db, user1, users_models.PatchUser(beta_tester=True))
+
+    new_beta, new_non_beta = get_metric()
+    assert new_beta.value == base_beta.value + 1
+    assert new_non_beta.value == base_non_beta.value
 
 
 @pytest.mark.usefixtures("admin")
