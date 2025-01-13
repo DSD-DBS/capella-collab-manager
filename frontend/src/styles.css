@@ -13,7 +13,6 @@
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
 @import "monaco-editor/min/vs/editor/editor.main.css";
 @import "./../node_modules/ngx-toastr/toastr.css";
-@import "highlight.js/styles/default.css";
 
 @tailwind base;
 @tailwind components;

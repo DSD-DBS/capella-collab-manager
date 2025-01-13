@@ -26,10 +26,11 @@
       personal access token. The token has the same scope as your user. Be
       careful with it. You can revoke the token in the settings.
     </div>
-    <pre><code
-      class="language-python my-2 rounded-md border shadow"
-      [innerHTML]="this.codeBlockContent | highlight: 'python'"
-    ></code></pre>
+    <div
+      class="my-2 [&>pre]:overflow-x-auto [&>pre]:rounded-md [&>pre]:border [&>pre]:p-3
+        [&>pre]:shadow"
+      [innerHTML]="highlightedCodeBlockContent"
+    ></div>
     <div class="flex flex-wrap gap-2">
       <button
         [cdkCopyToClipboard]="this.codeBlockContent"
