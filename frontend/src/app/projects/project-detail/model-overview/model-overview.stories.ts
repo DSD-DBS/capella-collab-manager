@@ -63,6 +63,11 @@ export const AsProjectAdmin: Story = {
       providers: [
         mockModelWrapperServiceProvider(mockModel, [
           { ...mockModel, name: 'mockModel1' },
+          {
+            ...mockModel,
+            name: 'Capella model',
+            tool: { ...mockModel.tool, name: 'Capella' },
+          },
         ]),
         mockProjectUserServiceProvider('manager', 'write'),
       ],
@@ -77,6 +82,11 @@ export const AsGlobalAdmin: Story = {
       providers: [
         mockModelWrapperServiceProvider(mockModel, [
           { ...mockModel, name: 'mockModel1' },
+          {
+            ...mockModel,
+            name: 'Capella model',
+            tool: { ...mockModel.tool, name: 'Capella' },
+          },
         ]),
         mockProjectUserServiceProvider('manager', 'write'),
         mockOwnUserWrapperServiceProvider({
