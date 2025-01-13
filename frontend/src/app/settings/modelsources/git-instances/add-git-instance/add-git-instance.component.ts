@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { absoluteUrlValidator } from 'src/app/helpers/validators/url-validator';
 import { PostGitInstance } from 'src/app/openapi';
-import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
+import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-instances/service/git-instances.service';
 
 @Component({
   selector: 'app-add-git-instance',

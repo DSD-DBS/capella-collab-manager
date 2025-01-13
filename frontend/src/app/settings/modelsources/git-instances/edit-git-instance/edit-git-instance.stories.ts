@@ -8,15 +8,15 @@ import {
   mockGitInstance,
   mockGitInstancesServiceProvider,
 } from 'src/storybook/git';
-import { EditGitSettingsComponent } from './edit-git-settings.component';
+import { EditGitInstanceComponent } from './edit-git-instance.component';
 
-const meta: Meta<EditGitSettingsComponent> = {
+const meta: Meta<EditGitInstanceComponent> = {
   title: 'Settings Components/Modelsources/Git/Edit Instance',
-  component: EditGitSettingsComponent,
+  component: EditGitInstanceComponent,
 };
 
 export default meta;
-type Story = StoryObj<EditGitSettingsComponent>;
+type Story = StoryObj<EditGitInstanceComponent>;
 
 export const General: Story = {
   args: {},
