@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgTemplateOutlet, AsyncPipe } from '@angular/common';
+import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormControl,
@@ -28,7 +28,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   selector: 'app-model-restrictions',
   templateUrl: './model-restrictions.component.html',
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatCheckboxLoaderComponent,

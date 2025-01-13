@@ -4,30 +4,35 @@
  -->
 
 @if ((projectService.project$ | async) && (modelService.model$ | async)) {
-  <div class="flex justify-center">
-    <div class="collab-card w-[350px] sm:min-w-[420px]">
+  <div class="wrapper">
+    <div class="collab-card w-full sm:w-fit sm:min-w-[420px]">
       <form [formGroup]="form">
         <div formGroupName="urls">
-          <div *ngIf="availableGitInstances?.length">
-            <mat-form-field appearance="fill" class="w-full">
-              <mat-label>Base integration URL</mat-label>
-              <mat-select
-                matInput
-                formControlName="baseUrl"
-                (selectionChange)="onBaseIntegrationUrlSelect($event.value)"
-                [value]="selectedGitInstance"
-              >
-                <mat-option
-                  *ngFor="let gitInstance of availableGitInstances"
-                  [value]="gitInstance"
-                  >{{ gitInstance.url }}</mat-option
+          @if (availableGitInstances?.length) {
+            <div>
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Base integration URL</mat-label>
+                <mat-select
+                  matInput
+                  formControlName="baseUrl"
+                  (selectionChange)="onBaseIntegrationUrlSelect($event.value)"
+                  [value]="selectedGitInstance"
                 >
-              </mat-select>
-              <mat-error *ngIf="urls.baseUrl.errors?.required">
-                A base integration URL is required
-              </mat-error>
-            </mat-form-field>
-          </div>
+                  @for (
+                    gitInstance of availableGitInstances;
+                    track gitInstance.id
+                  ) {
+                    <mat-option [value]="gitInstance">{{
+                      gitInstance.url
+                    }}</mat-option>
+                  }
+                </mat-select>
+                @if (urls.baseUrl.errors?.required) {
+                  <mat-error> A base integration URL is required </mat-error>
+                }
+              </mat-form-field>
+            </div>
+          }
           <div>
             <mat-form-field class="w-full" appearance="fill">
               <mat-label
@@ -42,13 +47,13 @@
                 (ngModelChange)="onUrlInputChange($event)"
                 formControlName="inputUrl"
               />
-              <mat-error
-                *ngIf="
-                  urls.inputUrl.errors?.urlSchemeError && urls.inputUrl.value
-                "
-              >
-                {{ urls.inputUrl.errors?.urlSchemeError }}
-              </mat-error>
+              @if (
+                urls.inputUrl.errors?.urlSchemeError && urls.inputUrl.value
+              ) {
+                <mat-error>
+                  {{ urls.inputUrl.errors?.urlSchemeError }}
+                </mat-error>
+              }
             </mat-form-field>
           </div>
           <div>
@@ -71,9 +76,9 @@
             <mat-form-field class="w-full" appearance="fill">
               <mat-label>Git password or token</mat-label>
               <input matInput formControlName="password" type="password" />
-              <mat-hint *ngIf="isEditMode">
-                If empty password gets not updated
-              </mat-hint>
+              @if (isEditMode) {
+                <mat-hint> If empty password gets not updated </mat-hint>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -87,34 +92,33 @@
               [matAutocomplete]="auto"
               (focus)="onRevisionFocus()"
             />
-            <mat-error *ngIf="form.controls.revision.errors?.required">
-              A revision is required
-            </mat-error>
-            <mat-error
-              *ngIf="
-                form.controls.revision.errors?.revisionNotFoundError &&
-                form.controls.revision.value
-              "
-            >
-              {{ form.controls.revision.errors?.revisionNotFoundError }}
-            </mat-error>
+            @if (form.controls.revision.errors?.required) {
+              <mat-error> A revision is required </mat-error>
+            }
+
+            @if (
+              form.controls.revision.errors?.revisionNotFoundError &&
+              form.controls.revision.value
+            ) {
+              <mat-error>
+                {{ form.controls.revision.errors?.revisionNotFoundError }}
+              </mat-error>
+            }
           </mat-form-field>
           <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
             <mat-optgroup label="branch">
-              <mat-option
-                *ngFor="let branch of filteredRevisions?.branches"
-                [value]="branch"
-              >
-                {{ branch }}
-              </mat-option>
+              @for (branch of filteredRevisions?.branches; track branch) {
+                <mat-option [value]="branch">
+                  {{ branch }}
+                </mat-option>
+              }
             </mat-optgroup>
             <mat-optgroup label="tag">
-              <mat-option
-                *ngFor="let tag of filteredRevisions?.tags"
-                [value]="tag"
-              >
-                {{ tag }}
-              </mat-option>
+              @for (tag of filteredRevisions?.tags; track tag) {
+                <mat-option [value]="tag">
+                  {{ tag }}
+                </mat-option>
+              }
             </mat-optgroup>
           </mat-autocomplete>
         </div>
@@ -122,42 +126,43 @@
           <mat-form-field class="w-full" appearance="fill">
             <mat-label>Entry point</mat-label>
             <input type="text" matInput formControlName="entrypoint" />
-            <mat-error *ngIf="form.controls.entrypoint.errors?.required">
-              An endpoint is required
-            </mat-error>
-            <mat-error *ngIf="form.controls.entrypoint.errors?.pattern">
-              Entrypoint must end with ".aird" in case of a capella model
-            </mat-error>
+            @if (form.controls.entrypoint.errors?.required) {
+              <mat-error> An endpoint is required </mat-error>
+            }
+
+            @if (form.controls.entrypoint.errors?.pattern) {
+              <mat-error>
+                Entrypoint must end with ".aird" in case of a capella model
+              </mat-error>
+            }
           </mat-form-field>
         </div>
-        <div class="mb-5" *ngIf="!asStepper && isEditMode">
-          <mat-slide-toggle formControlName="primary">
-            Primary Git repository</mat-slide-toggle
-          >
-        </div>
-        <div
-          *ngIf="asStepper; else notFromStepper"
-          class="flex justify-between"
-        >
-          <div></div>
-          <button
-            mat-raised-button
-            color="primary"
-            [disabled]="!form.valid"
-            type="submit"
-            (click)="onCreateSubmit()"
-          >
-            Add source
-            <mat-icon iconPositionEnd class="mat-icon-position right"
-              >navigate_next</mat-icon
+        @if (!asStepper && isEditMode) {
+          <div class="mb-5">
+            <mat-slide-toggle formControlName="primary">
+              Primary Git repository</mat-slide-toggle
             >
-          </button>
-        </div>
-        <ng-template #notFromStepper>
-          <ng-container
-            class="flex justify-between"
-            *ngIf="!isEditMode; else editGitModel"
-          >
+          </div>
+        }
+
+        @if (asStepper) {
+          <div class="flex justify-between">
+            <div></div>
+            <button
+              mat-raised-button
+              color="primary"
+              [disabled]="!form.valid"
+              type="submit"
+              (click)="onCreateSubmit()"
+            >
+              Add source
+              <mat-icon iconPositionEnd class="mat-icon-position right"
+                >navigate_next</mat-icon
+              >
+            </button>
+          </div>
+        } @else if (!isEditMode) {
+          <div class="flex justify-between">
             <div></div>
             <button
               mat-raised-button
@@ -172,10 +177,9 @@
                 >arrow_forward</mat-icon
               >
             </button>
-          </ng-container>
-        </ng-template>
-        <ng-template #editGitModel>
-          <div class="flex justify-between" *ngIf="editing">
+          </div>
+        } @else if (editing) {
+          <div class="flex justify-between">
             <button mat-raised-button (click)="cancelEditing()">Cancel</button>
 
             <button
@@ -188,30 +192,25 @@
               Apply changes
             </button>
           </div>
-          <div *ngIf="!editing">
-            <div class="flex justify-between">
-              <div></div>
-              <div>
-                <button
-                  mat-raised-button
-                  color="warn"
-                  (click)="unlinkGitModel()"
-                >
-                  Unlink
-                </button>
-                &nbsp;&nbsp;
-                <button
-                  mat-raised-button
-                  color="primary"
-                  (click)="enableEditing()"
-                  data-testid="edit"
-                >
-                  Edit
-                </button>
-              </div>
+        } @else {
+          <div class="flex justify-between">
+            <div></div>
+            <div>
+              <button mat-raised-button color="warn" (click)="unlinkGitModel()">
+                Unlink
+              </button>
+              &nbsp;&nbsp;
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="enableEditing()"
+                data-testid="edit"
+              >
+                Edit
+              </button>
             </div>
           </div>
-        </ng-template>
+        }
       </form>
     </div>
   </div>
