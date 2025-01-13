@@ -9,12 +9,12 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { MatIconComponent } from 'src/app/helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewSkeletonLoaderComponent } from 'src/app/helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
-import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
+import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-instances/service/git-instances.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-git-settings',
-  templateUrl: './git-settings.component.html',
+  selector: 'app-git-instances',
+  templateUrl: './git-instances.component.html',
   imports: [
     RouterLink,
     FormsModule,
@@ -24,7 +24,7 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-se
     MatCardOverviewSkeletonLoaderComponent,
   ],
 })
-export class GitSettingsComponent implements OnInit {
+export class GitInstancesComponent implements OnInit {
   constructor(public gitInstancesService: GitInstancesWrapperService) {}
 
   ngOnInit(): void {
