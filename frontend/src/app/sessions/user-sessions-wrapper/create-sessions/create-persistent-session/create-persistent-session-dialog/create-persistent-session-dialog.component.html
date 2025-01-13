@@ -1,0 +1,53 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog space-y-2">
+  <h2 class="text-xl font-medium">Start a Persistent Workspace Session</h2>
+
+  <p>
+    Start a persistent workspace session using {{ this.data.tool.name }} ({{
+      this.data.toolVersion.name
+    }}).<br />
+    All changes you make to models will be saved.
+  </p>
+
+  @if (this.data.tool.config.connection.methods.length > 1) {
+    <div>
+      <span class="text-sm">Connection method:</span> <br />
+      <mat-radio-group
+        class="flex gap-2"
+        [(ngModel)]="selectedConnectionMethod"
+      >
+        @for (
+          connectionMethod of this.data.tool.config.connection.methods;
+          track connectionMethod.id
+        ) {
+          <mat-radio-button [value]="connectionMethod">{{
+            connectionMethod.name
+          }}</mat-radio-button>
+        }
+      </mat-radio-group>
+    </div>
+
+    @if (this.selectedConnectionMethod.description) {
+      <div class="border p-2 text-sm shadow">
+        {{ this.selectedConnectionMethod.description }}
+      </div>
+    }
+  }
+
+  <div class="flex justify-between">
+    <button mat-stroked-button mat-dialog-close type="button">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="requestInProgress"
+      (click)="requestPersistentSession()"
+    >
+      {{ requestInProgress ? "Requesting..." : "Request session" }}
+    </button>
+  </div>
+</div>

@@ -122,71 +122,25 @@
           }
         </div>
         <div class="m-2.5">
-          @if (userService.user?.role === "administrator") {
-            <a
-              mat-mini-fab
-              color="primary"
-              matTooltip="Model restrictions"
-              class="!m-1.5"
-              [routerLink]="['model', model.slug, 'restrictions']"
-            >
-              <mat-icon>key</mat-icon>
-            </a>
-          }
-          @if (projectUserService.verifyRole("manager")) {
-            <a
-              mat-mini-fab
-              color="primary"
-              matTooltip="Configure model"
-              class="!m-1.5"
-              [routerLink]="['model', model.slug, 'metadata']"
-            >
-              <mat-icon>settings</mat-icon>
-            </a>
+          @if (
+            !project?.is_archived &&
+            project?.type !== "training" &&
+            model.t4c_models &&
+            projectUserService.verifyPermission("write") &&
+            model.version
+          ) {
             <button
               mat-mini-fab
               color="primary"
-              matTooltip="Move model to different project"
+              matTooltip="Request persistent session"
               class="!m-1.5"
-              (click)="openMoveToProjectDialog(model)"
+              (click)="openPersistentSessionDialog(model)"
             >
-              <mat-icon>drive_file_move</mat-icon>
+              <mat-icon>screen_share</mat-icon>
             </button>
-            <a
-              mat-mini-fab
-              color="primary"
-              matTooltip="Configure model sources"
-              class="!m-1.5"
-              [routerLink]="['model', model.slug, 'modelsources']"
-            >
-              <mat-icon>link</mat-icon>
-            </a>
-            @if (!project?.is_archived && project?.type !== "training") {
-              <a
-                mat-mini-fab
-                color="primary"
-                matTooltip="Start synchronization"
-                class="!m-1.5"
-                (click)="openPipelineDialog(model)"
-              >
-                <mat-icon>sync</mat-icon>
-              </a>
-            }
           }
 
           @if (model.git_models) {
-            <a
-              mat-mini-fab
-              color="primary"
-              matTooltip="Open Git repository"
-              class="!m-1.5"
-              target="_blank"
-              rel="noopener"
-              [disabled]="!getPrimaryGitModelURL(model)"
-              [href]="getPrimaryGitModelURL(model)"
-            >
-              <mat-icon>open_in_new</mat-icon>
-            </a>
             @if (model.tool.name === "Capella") {
               <button
                 mat-mini-fab
@@ -199,24 +153,81 @@
                 <mat-icon>image_search</mat-icon>
               </button>
             }
+
+            <a
+              mat-mini-fab
+              color="primary"
+              matTooltip="Open Git repository"
+              class="!m-1.5"
+              target="_blank"
+              rel="noopener"
+              [disabled]="!getPrimaryGitModelURL(model)"
+              [href]="getPrimaryGitModelURL(model)"
+            >
+              <mat-icon>open_in_new</mat-icon>
+            </a>
           }
 
           @if (
+            projectUserService.verifyRole("manager") &&
             !project?.is_archived &&
-            project?.type !== "training" &&
-            model.t4c_models &&
-            projectUserService.verifyPermission("write")
+            project?.type !== "training"
           ) {
             <a
               mat-mini-fab
               color="primary"
-              matTooltip="Request persistent session"
               class="!m-1.5"
-              routerLink="/sessions"
+              matTooltip="Start synchronization"
+              (click)="openPipelineDialog(model)"
             >
-              <mat-icon>screen_share</mat-icon>
+              <mat-icon>sync</mat-icon>
             </a>
           }
+
+          @if (
+            userService.user?.role === "administrator" ||
+            projectUserService.verifyRole("manager")
+          ) {
+            <button
+              mat-mini-fab
+              color="primary"
+              matTooltip="More Options"
+              class="!m-1.5"
+              [matMenuTriggerFor]="menu"
+              [attr.data-testid]="'more-options-' + model.id"
+            >
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+          }
+          <mat-menu #menu="matMenu">
+            @if (userService.user?.role === "administrator") {
+              <a
+                mat-menu-item
+                [routerLink]="['model', model.slug, 'restrictions']"
+              >
+                <mat-icon>key</mat-icon>
+                <span>Model restrictions</span>
+              </a>
+            }
+
+            @if (projectUserService.verifyRole("manager")) {
+              <a mat-menu-item [routerLink]="['model', model.slug, 'metadata']">
+                <mat-icon>settings</mat-icon>
+                <span>Configure model</span>
+              </a>
+              <button mat-menu-item (click)="openMoveToProjectDialog(model)">
+                <mat-icon>drive_file_move</mat-icon>
+                Move model to different project
+              </button>
+              <a
+                mat-menu-item
+                [routerLink]="['model', model.slug, 'modelsources']"
+              >
+                <mat-icon>link</mat-icon>
+                <span>Configure model sources</span>
+              </a>
+            }
+          </mat-menu>
         </div>
       </div>
     </div>

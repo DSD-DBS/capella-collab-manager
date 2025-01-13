@@ -12,8 +12,9 @@ import {
 } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { first, filter } from 'rxjs';
@@ -28,6 +29,7 @@ import { ReorderModelsDialogComponent } from 'src/app/projects/project-detail/mo
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
+import { CreatePersistentSessionDialogComponent } from '../../../sessions/user-sessions-wrapper/create-sessions/create-persistent-session/create-persistent-session-dialog/create-persistent-session-dialog.component';
 import { TriggerPipelineComponent } from '../../models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { ProjectWrapperService } from '../../service/project.service';
 import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-complexity-badge.component';
@@ -47,6 +49,7 @@ import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-co
     MatMiniFabAnchor,
     MatMiniFabButton,
     AsyncPipe,
+    MatMenuModule,
   ],
 })
 export class ModelOverviewComponent implements OnInit {
@@ -59,6 +62,7 @@ export class ModelOverviewComponent implements OnInit {
     public projectUserService: ProjectUserService,
     public userService: OwnUserWrapperService,
     public projectService: ProjectWrapperService,
+    private router: Router,
     private dialog: MatDialog,
   ) {}
 
@@ -121,6 +125,20 @@ export class ModelOverviewComponent implements OnInit {
       maxWidth: '100vw',
       maxHeight: '200vw',
       data: { projectSlug: this.project?.slug, model: model },
+    });
+  }
+
+  openPersistentSessionDialog(model: ToolModel): void {
+    const dialogRef = this.dialog.open(CreatePersistentSessionDialogComponent, {
+      data: {
+        toolVersion: model.version,
+        tool: model.tool,
+      },
+    });
+    dialogRef.afterClosed().subscribe((success) => {
+      if (success) {
+        this.router.navigate(['/']);
+      }
     });
   }
 
