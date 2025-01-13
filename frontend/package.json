@@ -33,7 +33,6 @@
     "@panzoom/panzoom": "^4.5.1",
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
-    "highlight.js": "^11.11.0",
     "http-status-codes": "^2.3.0",
     "marked": "^15.0.4",
     "marked-highlight": "^2.2.1",
@@ -92,6 +91,7 @@
     "prettier-plugin-classnames": "^0.7.5",
     "prettier-plugin-merge": "^0.7.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
+    "shiki": "^2.1.0",
     "storybook": "^8.4.7",
     "tailwindcss": "^3.4.16",
     "typescript": "^5.6.3",
@@ -103,6 +103,9 @@
   "overrides": {
     "marked-gfm-heading-id": {
       "marked": "$marked"
+    },
+    "@analogjs/platform": {
+      "shiki": "$shiki"
     }
   },
   "type": "module"
