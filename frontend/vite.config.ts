@@ -4,6 +4,7 @@
  */
 import analog from '@analogjs/platform';
 import { defineConfig } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
@@ -23,6 +24,14 @@ export default defineConfig(() => {
         prerender: {
           routes: [],
         },
+      }),
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'node_modules/monaco-editor/**/*',
+            dest: 'assets/monaco',
+          },
+        ],
       }),
       viteTsConfigPaths(),
     ],

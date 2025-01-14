@@ -52,7 +52,7 @@ export class ToolVersionComponent {
       this.toolsService
         .getDefaultToolVersion(this._tool!.id)
         .subscribe((version) => {
-          this.getEditorForContext('new')!.value = version;
+          this.getEditorForContext('new')!.setValue(version);
         });
       this.toolsService
         .getToolVersions(this._tool.id)
@@ -75,7 +75,7 @@ export class ToolVersionComponent {
   ) {}
 
   getEditorForContext(context: string) {
-    return this.editorRefs?.find((editor) => editor.context === context);
+    return this.editorRefs?.find((editor) => editor.context() === context);
   }
 
   resetValue(context: string) {
@@ -100,8 +100,9 @@ export class ToolVersionComponent {
         );
 
         this.toolVersions![versionIdx!] = toolVersion;
-        this.getEditorForContext(toolVersion.id.toString())!.value =
-          toolVersion;
+        this.getEditorForContext(toolVersion.id.toString())!.setValue(
+          toolVersion,
+        );
       });
   }
 

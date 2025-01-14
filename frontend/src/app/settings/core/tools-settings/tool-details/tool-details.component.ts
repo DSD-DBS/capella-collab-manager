@@ -58,7 +58,7 @@ export class ToolDetailsComponent {
         next: (tool) => {
           this.breadcrumbsService.updatePlaceholder({ tool });
           this.selectedTool = tool;
-          this.editor!.value = this.selectedTool;
+          this.editor!.setValue(this.selectedTool);
         },
       });
   }
@@ -73,7 +73,7 @@ export class ToolDetailsComponent {
             'Tool updated',
             `The configuration of the tool '${tool.name}' has been updated successfully.`,
           );
-          this.editor!.value = tool;
+          this.editor!.setValue(tool);
           this.breadcrumbsService.updatePlaceholder({ tool });
         }),
       )

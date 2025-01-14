@@ -3,71 +3,93 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import {
-  AfterViewInit,
   Component,
+  computed,
+  effect,
   ElementRef,
   EventEmitter,
   HostListener,
-  Input,
-  NgZone,
+  input,
+  model,
   Output,
-  ViewChild,
+  signal,
 } from '@angular/core';
-import * as monaco from 'monaco-editor';
+import { FormsModule } from '@angular/forms';
+import { type editor } from 'monaco-editor';
+import { MonacoEditorModule, NgxEditorModel } from 'ngx-monaco-editor-v2';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { v4 as uuidv4 } from 'uuid';
+import { URI } from 'vscode-uri';
 import { stringify, parse, YAMLParseError } from 'yaml';
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   standalone: true,
+  imports: [MonacoEditorModule, FormsModule],
 })
-export class EditorComponent implements AfterViewInit {
-  @Input()
-  height = '400px';
-
-  @Input()
-  lineWidth = 55;
-
-  @Input()
+export class EditorComponent {
+  height = input('400px');
+  lineWidth = input(55);
   // Helps to identify the editor in the DOM
-  context = uuidv4();
+  context = input(uuidv4());
+  value = input<unknown>();
+  editor = signal<editor.IStandaloneCodeEditor | null>(null);
 
-  private editor?: monaco.editor.IStandaloneCodeEditor = undefined;
-  intialValue = 'Loading...';
+  type = input<'globalconfig' | 'tool' | 'toolnature' | 'toolversion'>();
 
-  @ViewChild('editorRef') editorRef: ElementRef | undefined;
+  initialValue = signal('Loading...');
+  code = model(this.initialValue());
+
+  options: editor.IStandaloneEditorConstructionOptions = {
+    language: 'yaml',
+    minimap: { enabled: false },
+    overviewRulerBorder: false,
+    scrollBeyondLastLine: false,
+    automaticLayout: true,
+    tabSize: 2,
+    fixedOverflowWidgets: true,
+  };
+
+  editorModel = computed<NgxEditorModel>(() => ({
+    value: this.initialValue(),
+    language: 'yaml',
+    uri: URI.parse(`file:///${this.context()}.${this.type()}.yaml`),
+  }));
 
   @Output()
   submitted = new EventEmitter();
 
   constructor(
-    private ngZone: NgZone,
     private toastService: ToastService,
     private el: ElementRef,
-  ) {}
-
-  ngAfterViewInit(): void {
-    this.ngZone.runOutsideAngular(() => {
-      this.initMonaco();
+  ) {
+    effect(() => {
+      this.setValue(this.value());
     });
   }
 
-  @Input()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set value(data: any) {
-    const yaml = stringify(data, { indent: 2, lineWidth: this.lineWidth });
-    this.intialValue = yaml;
-    this.editor?.setValue(yaml);
+  onInit(editor: editor.IStandaloneCodeEditor) {
+    this.editor.set(editor);
+  }
+
+  public setValue(data: unknown) {
+    if (!data) return;
+    const yaml = stringify(data, { indent: 2, lineWidth: this.lineWidth() });
+    if (this.initialValue() === 'Loading...') {
+      this.initialValue.set(yaml);
+    }
+    this.code.set(yaml);
+    this.editor()?.setValue(yaml);
   }
 
   resetValue() {
-    this.editor?.setValue(this.intialValue);
+    this.code.set(this.initialValue());
+    this.editor()?.setValue(this.initialValue());
   }
 
   submitValue() {
-    const editorValue = this.editor?.getValue();
+    const editorValue = this.code();
 
     if (!editorValue) {
       this.toastService.showError(
@@ -102,21 +124,6 @@ export class EditorComponent implements AfterViewInit {
     }
 
     this.submitted.emit(jsonValue);
-  }
-
-  private initMonaco() {
-    const configModel = monaco.editor.createModel(this.intialValue, 'yaml');
-
-    this.editor = monaco.editor.create(this.editorRef?.nativeElement, {
-      value: 'Loading...',
-      language: 'yaml',
-      minimap: { enabled: false },
-      overviewRulerBorder: false,
-      scrollBeyondLastLine: false,
-      model: configModel,
-      automaticLayout: true,
-      tabSize: 2,
-    });
   }
 
   @HostListener('document:keydown', ['$event'])

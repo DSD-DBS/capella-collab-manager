@@ -8,7 +8,12 @@
 >
   <div>
     <h2 class="text-lg font-medium">Common</h2>
-    <app-editor height="500px" (submitted)="submitValue($event)" #editor />
+    <app-editor
+      height="500px"
+      (submitted)="submitValue($event)"
+      #editor
+      type="tool"
+    />
   </div>
   <div class="mt-2 flex flex-wrap justify-between gap-2">
     <button mat-stroked-button (click)="editor.resetValue()">
