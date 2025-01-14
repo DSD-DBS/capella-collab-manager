@@ -51,7 +51,7 @@ export class ToolNatureComponent {
       this.toolsService
         .getDefaultToolNature(this._tool!.id)
         .subscribe((nature) => {
-          this.getEditorForContext('new')!.value = nature;
+          this.getEditorForContext('new')!.setValue(nature);
         });
       this.toolsService
         .getToolNatures(this._tool.id)
@@ -73,7 +73,7 @@ export class ToolNatureComponent {
   ) {}
 
   getEditorForContext(context: string) {
-    return this.editorRefs?.find((editor) => editor.context === context);
+    return this.editorRefs?.find((editor) => editor.context() === context);
   }
 
   resetValue(context: string) {
@@ -98,7 +98,9 @@ export class ToolNatureComponent {
         );
 
         this.toolNatures![natureIdx!] = toolNature;
-        this.getEditorForContext(toolNature.id.toString())!.value = toolNature;
+        this.getEditorForContext(toolNature.id.toString())!.setValue(
+          toolNature,
+        );
       });
   }
 

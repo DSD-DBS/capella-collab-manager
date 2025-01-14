@@ -26,7 +26,7 @@ export class CreateToolComponent {
     private route: ActivatedRoute,
   ) {
     this.toolsService.getDefaultTool().subscribe((tool) => {
-      this.editor!.value = tool;
+      this.editor!.setValue(tool);
     });
   }
 
