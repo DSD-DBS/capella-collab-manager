@@ -70,15 +70,15 @@
         >
           <div class="header flex-row items-center gap-2">
             @if (project.type === "training") {
-              <mat-icon>school</mat-icon>
+              <mat-icon class="shrink-0">school</mat-icon>
             }
             @if (project.visibility === "private") {
-              <mat-icon>lock</mat-icon>
+              <mat-icon class="shrink-0">lock</mat-icon>
             } @else {
-              <mat-icon>lock_open</mat-icon>
+              <mat-icon class="shrink-0">lock_open</mat-icon>
             }
 
-            <span class="">{{ project.name }}</span>
+            <span class="line-clamp-1">{{ project.name }}</span>
           </div>
           <div class="p-3">
             <div class="line-clamp-4">
