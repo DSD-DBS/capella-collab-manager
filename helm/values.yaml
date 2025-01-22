@@ -140,7 +140,7 @@ database:
     external:
       ###### IF database.backend.deploy == False ######
 
-      # Provide URI to the datebase in the format: postgresql://user:password@url:port/db_name
+      # Provide URI to the database in the format: postgresql://user:password@url:port/db_name
       uri: postgresql://user:password@url:port/db_name
 
 valkey:

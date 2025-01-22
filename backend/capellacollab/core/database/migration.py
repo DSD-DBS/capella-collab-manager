@@ -550,7 +550,7 @@ def create_capellambse_test_models(
             capella_model=capella_model,
             post_git_model=git_models.PostGitModel(
                 path="https://github.com/DSD-DBS/py-capellambse",
-                entrypoint=f'/tests/data/melodymodel/{version[:3].replace(".", "_")}/Melody Model Test.aird',
+                entrypoint=f"/tests/data/melodymodel/{version[:3].replace('.', '_')}/Melody Model Test.aird",
                 revision="master",
                 username="",
                 password="",

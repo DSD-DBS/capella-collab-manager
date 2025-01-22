@@ -89,7 +89,7 @@ def upgrade():
         license_server_id = bind.execute(
             t_license_servers.insert()
             .values(
-                name=f"License server {idx+1}",
+                name=f"License server {idx + 1}",
                 usage_api=usage_api,
                 license_key=license_key,
             )
