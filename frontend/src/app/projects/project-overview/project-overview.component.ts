@@ -10,6 +10,7 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { MatIconButton } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRipple } from '@angular/material/core';
 import {
@@ -25,6 +26,7 @@ import { switchMap } from 'rxjs/operators';
 import { MatIconComponent } from '../../helpers/mat-icon/mat-icon.component';
 import { MatCardOverviewSkeletonLoaderComponent } from '../../helpers/skeleton-loaders/mat-card-overview-skeleton-loader/mat-card-overview-skeleton-loader.component';
 import { ProjectWrapperService } from '../service/project.service';
+import { ProjectFavoritesService } from './project-favorites.service';
 
 @Component({
   selector: 'app-project-overview',
@@ -44,6 +46,7 @@ import { ProjectWrapperService } from '../service/project.service';
     ReactiveFormsModule,
     FormsModule,
     MatChipsModule,
+    MatIconButton,
   ],
 })
 export class ProjectOverviewComponent implements OnInit {
@@ -90,13 +93,34 @@ export class ProjectOverviewComponent implements OnInit {
           project.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
         ),
       ),
-      map((projects) => projects?.sort((a, b) => a.name.localeCompare(b.name))),
+      map((projects) => {
+        if (!projects) return projects;
+        return projects.sort((a, b) => {
+          // Sort by favorite status first
+          const aFav = this.projectFavoritesService.isFavorite(a.id);
+          const bFav = this.projectFavoritesService.isFavorite(b.id);
+          if (aFav !== bFav) return aFav ? -1 : 1;
+          // Then by name
+          return a.name.localeCompare(b.name);
+        });
+      }),
     );
   }
 
-  constructor(public projectService: ProjectWrapperService) {}
+  constructor(
+    public projectService: ProjectWrapperService,
+    public projectFavoritesService: ProjectFavoritesService,
+  ) {}
 
   ngOnInit() {
+    this.projectService.loadProjects();
+    this.projectFavoritesService.loadFavorites();
+  }
+
+  toggleFavorite(event: Event, projectId: number) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.projectFavoritesService.toggleFavorite(projectId);
     this.projectService.loadProjects();
   }
 }
