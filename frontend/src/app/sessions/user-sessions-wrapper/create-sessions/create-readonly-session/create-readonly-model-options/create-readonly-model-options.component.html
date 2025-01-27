@@ -56,7 +56,12 @@
         </mat-optgroup>
       </mat-autocomplete>
       <mat-slide-toggle formControlName="deepClone">
-        <span class="ml-1">Deep clone</span>
+        <div class="ml-2">
+          <div>Include change history</div>
+          <div class="text-xs text-gray-600">
+            Session startup takes longer when change history is enabled
+          </div>
+        </div>
       </mat-slide-toggle>
     </fieldset>
   }
