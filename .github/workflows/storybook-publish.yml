@@ -41,7 +41,7 @@ jobs:
         run: npm ci
         working-directory: ./frontend
       - name: Build Storybook
-        run: npx -p @angular/cli ng run capellacollab:build-storybook
+        run: npm run build-storybook
         working-directory: ./frontend
       - name: Run Chromatic
         id: chromatic

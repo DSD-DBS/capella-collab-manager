@@ -15,10 +15,12 @@ jobs:
       - name: Install dependencies
         run: npm install storycap puppeteer http-server
         working-directory: ./frontend
+      - name: Build Storybook
+        run: npm run build-storybook
+        working-directory: ./frontend
       - name: Capture screenshots
         run:
-          npx storycap http://localhost:6006 --serverCmd "npx -p @angular/cli
-          ng run capellacollab:storybook" --flat
+          npx storycap --serverCmd "npx http-server storybook-static -p 9001" http://localhost:9001
         working-directory: ./frontend
       - uses: reg-viz/reg-actions@v2
         with:
