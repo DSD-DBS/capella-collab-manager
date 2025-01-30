@@ -24,12 +24,12 @@ import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.serv
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { GitInstance, PostGitInstance } from 'src/app/openapi';
-import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
+import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-instances/service/git-instances.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-edit-git-settings',
-  templateUrl: './edit-git-settings.component.html',
+  selector: 'app-edit-git-instance',
+  templateUrl: './edit-git-instance.component.html',
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -42,7 +42,7 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-se
     MatIconModule,
   ],
 })
-export class EditGitSettingsComponent implements OnInit, OnDestroy {
+export class EditGitInstanceComponent implements OnInit, OnDestroy {
   gitInstanceForm = this.fb.group({
     type: ['', Validators.required],
     name: ['', Validators.required],

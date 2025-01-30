@@ -9,15 +9,15 @@ import {
   mockGitInstancesServiceProvider,
   mockGitLabInstance,
 } from 'src/storybook/git';
-import { GitSettingsComponent } from './git-settings.component';
+import { GitInstancesComponent } from './git-instances.component';
 
-const meta: Meta<GitSettingsComponent> = {
+const meta: Meta<GitInstancesComponent> = {
   title: 'Settings Components/Modelsources/Git/Instances',
-  component: GitSettingsComponent,
+  component: GitInstancesComponent,
 };
 
 export default meta;
-type Story = StoryObj<GitSettingsComponent>;
+type Story = StoryObj<GitInstancesComponent>;
 
 export const Loading: Story = {
   args: {},

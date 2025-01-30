@@ -63,7 +63,7 @@ import { ModelWrapperService } from 'src/app/projects/models/service/model.servi
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { GitService } from 'src/app/services/git/git.service';
-import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
+import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-instances/service/git-instances.service';
 
 @UntilDestroy()
 @Component({
