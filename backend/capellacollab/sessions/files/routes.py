@@ -67,6 +67,16 @@ def upload_files(
     operators.get_operator().upload_files(session.id, tar_bytes)
 
 
+@router.delete("")
+def delete_file(
+    path: str,
+    session: sessions_models.DatabaseSession = fastapi.Depends(
+        sessions_injectables.get_existing_session
+    ),
+):
+    operators.get_operator().delete_file(session.id, path)
+
+
 @router.get(
     "/download",
     response_class=responses.StreamingResponse,

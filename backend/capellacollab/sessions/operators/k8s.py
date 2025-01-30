@@ -9,6 +9,7 @@ import datetime
 import http
 import json
 import logging
+import os.path
 import random
 import shlex
 import string
@@ -1091,6 +1092,47 @@ class KubernetesOperator:
         except kubernetes.client.exceptions.ApiException:
             log.exception(
                 "Exception when copying file to the pod with id %s", session_id
+            )
+            raise
+
+    def delete_file(self, session_id: str, path: str):
+        normalized_path = os.path.normpath(path)
+        if normalized_path == "/workspace":
+            log.warning("Cannot delete the workspace directory")
+            raise ValueError("Cannot delete the workspace directory")
+
+        try:
+            exec_command = ["rm", "-rf", path]
+            stream = kubernetes.stream.stream(
+                self.v1_core.connect_get_namespaced_pod_exec,
+                session_id,
+                container="session",
+                namespace=cfg.namespace,
+                command=exec_command,
+                stderr=True,
+                stdin=False,
+                stdout=True,
+                tty=False,
+                _preload_content=False,
+            )
+
+            if stream.peek_stdout():
+                log.debug(
+                    "Delete file from %s - STDOUT: %s",
+                    session_id,
+                    stream.read_stdout(),
+                )
+            if stream.peek_stderr():
+                log.debug(
+                    "Delete file from %s - STDERR: %s",
+                    session_id,
+                    stream.read_stderr(),
+                )
+
+        except kubernetes.client.exceptions.ApiException:
+            log.exception(
+                "Exception when deleting file to the pod with id %s",
+                session_id,
             )
             raise
 
