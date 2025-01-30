@@ -4,28 +4,30 @@
  -->
 
 <div class="wrapper">
-  <div class="collab-card" *ngIf="modelService.model$ | async">
-    <h2>Restrictions for models</h2>
-    <form
-      *ngIf="(modelService.model$ | async)!.tool.integrations.pure_variants"
-      [formGroup]="restrictionsForm"
-    >
-      <ng-template #pureVariants>
-        Allow the usage of pure::variants
-      </ng-template>
-
-      <app-mat-checkbox-loader *ngIf="loading">
-        <ng-template [ngTemplateOutlet]="pureVariants"> </ng-template>
-      </app-mat-checkbox-loader>
-      <mat-checkbox formControlName="pureVariants" *ngIf="!loading">
-        <ng-template [ngTemplateOutlet]="pureVariants"> </ng-template>
-      </mat-checkbox>
-    </form>
-    <div
-      *ngIf="!(modelService.model$ | async)!.tool.integrations.pure_variants"
-    >
-      This model has no restrictions. Please check the documentation for more
-      information.
+  @if (modelService.model$ | async) {
+    <div class="collab-card w-full sm:w-fit sm:min-w-96">
+      <h2 class="mb-2 text-xl font-medium">Restrictions for models</h2>
+      @if ((modelService.model$ | async)!.tool.integrations.pure_variants) {
+        <form [formGroup]="restrictionsForm">
+          <ng-template #pureVariants>
+            Allow the usage of pure::variants
+          </ng-template>
+          @if (loading) {
+            <app-mat-checkbox-loader>
+              <ng-template [ngTemplateOutlet]="pureVariants"> </ng-template>
+            </app-mat-checkbox-loader>
+          } @else {
+            <mat-checkbox formControlName="pureVariants">
+              <ng-template [ngTemplateOutlet]="pureVariants"> </ng-template>
+            </mat-checkbox>
+          }
+        </form>
+      } @else {
+        <div>
+          This model has no restrictions. Please check the documentation for
+          more information.
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>

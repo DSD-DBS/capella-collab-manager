@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -70,13 +70,11 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-se
   selector: 'app-manage-git-model',
   templateUrl: './manage-git-model.component.html',
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
     MatSelect,
-    NgFor,
     MatOption,
     MatError,
     MatInput,
