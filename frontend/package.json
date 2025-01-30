@@ -40,7 +40,7 @@
     "marked-mangle": "^1.1.10",
     "monaco-editor": "^0.52.2",
     "ngx-markdown": "^19.0.0",
-    "ngx-skeleton-loader": "^9.0.0",
+    "ngx-skeleton-loader": "^10.0.0",
     "ngx-toastr": "^19.0.0",
     "npm": "^11.0.0",
     "prismjs": "^1.29.0",
