@@ -20,6 +20,7 @@
         #editorRef
         context="new"
         height="calc(500px - 48px)"
+        type="toolversion"
         (submitted)="submittedNewToolVersion($event)"
       />
       <div class="mt-2 flex flex-wrap justify-between gap-2">
@@ -46,6 +47,7 @@
           [context]="version.id.toString()"
           height="calc(500px - 48px)"
           [value]="version"
+          type="toolversion"
         />
         <div class="mt-2 flex flex-wrap justify-between gap-2">
           <button

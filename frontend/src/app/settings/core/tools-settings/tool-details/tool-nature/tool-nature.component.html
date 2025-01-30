@@ -21,6 +21,7 @@
         context="new"
         height="calc(500px - 48px)"
         (submitted)="submittedNewToolNature($event)"
+        type="toolnature"
       />
       <div class="mt-2 flex flex-wrap justify-between gap-2">
         <div class="w-[100px]"></div>
@@ -46,6 +47,7 @@
           [context]="nature.id.toString()"
           height="calc(500px - 48px)"
           [value]="nature"
+          type="toolnature"
         />
         <div class="mt-2 flex flex-wrap justify-between gap-2">
           <button
