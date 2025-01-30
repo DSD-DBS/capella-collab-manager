@@ -4,6 +4,17 @@
  */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { z } from 'zod';
+
+const sessionRequestHistorySchema = z.object({
+  toolId: z.number(),
+  versionId: z.number(),
+  connectionMethodId: z.string(),
+  lastRequested: z.coerce.date(),
+});
+
+const sessionHistoryArraySchema = z.array(sessionRequestHistorySchema);
+export type SessionRequestHistory = z.infer<typeof sessionRequestHistorySchema>;
 
 @Injectable({
   providedIn: 'root',
@@ -17,52 +28,26 @@ export class SessionHistoryService {
   );
 
   getSessionRequestHistory(): SessionRequestHistory[] {
-    let localStorageHistory: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-
     const currentSessionHistory = localStorage.getItem(
       this.LOCAL_STORAGE_SESSION_HISTORY_KEY,
     );
-
-    if (currentSessionHistory === null) {
+    if (!currentSessionHistory) {
       return [];
     }
 
     try {
-      localStorageHistory = JSON.parse(currentSessionHistory);
+      const result = sessionHistoryArraySchema.safeParse(
+        JSON.parse(currentSessionHistory),
+      );
+      return result.success ? result.data : [];
     } catch (e) {
       console.error(e);
       return [];
     }
-
-    if (!(localStorageHistory instanceof Array)) {
-      return [];
-    }
-
-    const validSessionHistoryEntries: SessionRequestHistory[] = [];
-    for (const entry of localStorageHistory) {
-      if (this.isSessionRequestHistoryType(entry)) {
-        entry.lastRequested = new Date(entry.lastRequested);
-        validSessionHistoryEntries.push(entry);
-      }
-    }
-
-    return validSessionHistoryEntries;
   }
 
   loadSessionRequestHistory() {
     this.sessionHistory.next(this.getSessionRequestHistory());
-  }
-
-  private isSessionRequestHistoryType(
-    item: any, // eslint-disable-line @typescript-eslint/no-explicit-any
-  ): item is SessionRequestHistory {
-    return (
-      typeof item === 'object' &&
-      typeof item.toolId === 'number' &&
-      typeof item.versionId === 'number' &&
-      typeof item.connectionMethodId === 'string' &&
-      typeof item.lastRequested === 'string'
-    );
   }
 
   addSessionRequestToHistory(history: SessionRequestHistory) {
@@ -88,11 +73,4 @@ export class SessionHistoryService {
       JSON.stringify(currentHistory),
     );
   }
-}
-
-export interface SessionRequestHistory {
-  toolId: number;
-  versionId: number;
-  connectionMethodId: string;
-  lastRequested: Date;
 }
