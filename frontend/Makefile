@@ -26,14 +26,14 @@ test:
 	fi
 
 storybook:
-	npm run storybook
+	pnpm run storybook
 
 build-storybook:
-	npm run build-storybook
+	pnpm run build-storybook
 
 snapshots:
 	rm -rf __screenshots__
-	npx storycap http://localhost:6006 --serverCmd "npm run storybook" --flat
+	pnpx storycap http://localhost:6006 --serverCmd "pnpm run storybook" --flat
 
 openapi:
 	OPENAPI_DIR=$$(mktemp -d)
