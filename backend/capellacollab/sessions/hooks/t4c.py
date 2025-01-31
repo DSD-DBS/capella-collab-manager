@@ -10,7 +10,6 @@ from sqlalchemy import orm
 
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     crud as repo_crud,
 )
@@ -85,9 +84,8 @@ class T4CIntegration(interface.HookRegistration):
                     repository.name,
                     username=user.name,
                     password=environment["T4C_PASSWORD"],
-                    is_admin=auth_injectables.RoleVerification(
-                        required_role=users_models.Role.ADMIN, verify=False
-                    )(user.name, request.db),
+                    is_admin=user.role
+                    == users_models.Role.ADMIN,  # TODO: Replace with permissions
                 )
             except requests.RequestException:
                 warnings.append(

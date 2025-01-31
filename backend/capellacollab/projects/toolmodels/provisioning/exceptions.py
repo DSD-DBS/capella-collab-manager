@@ -14,3 +14,7 @@ class ProvisioningNotFoundError(core_exceptions.BaseError):
             reason=f"Couldn't find a provisioning for the model '{model_slug}' in the project '{project_slug}'.",
             err_code="PROVISIONING_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ProvisioningNotFoundError":
+        return cls("coffee-machine", "coffee-machine")

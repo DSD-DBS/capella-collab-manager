@@ -26,6 +26,10 @@ class PipelineOperationFailedT4CServerUnreachable(core_exceptions.BaseError):
             err_code="PIPELINE_OPERATION_FAILED_T4C_SERVER_UNREACHABLE",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "PipelineOperationFailedT4CServerUnreachable":
+        return cls(PipelineOperation.CREATE)
+
 
 class PipelineNotFoundError(core_exceptions.BaseError):
     def __init__(self, pipeline_id: int):
@@ -36,3 +40,7 @@ class PipelineNotFoundError(core_exceptions.BaseError):
             reason=f"The pipeline with the ID {pipeline_id} was not found.",
             err_code="PIPELINE_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "PipelineNotFoundError":
+        return cls(-1)

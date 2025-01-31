@@ -308,5 +308,5 @@ def test_project_slug_for_unauthorized_project(
     assert response.status_code == 403
     assert (
         response.json()["detail"]["err_code"]
-        == "REQUIRED_PROJECT_ROLE_NOT_MET"
+        == "INSUFFICIENT_PROJECT_PERMISSION"
     )

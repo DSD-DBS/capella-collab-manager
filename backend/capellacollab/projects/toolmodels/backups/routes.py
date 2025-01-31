@@ -11,7 +11,13 @@ from sqlalchemy import orm
 
 from capellacollab.configuration import core as configuration_core
 from capellacollab.core import credentials, database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
@@ -22,7 +28,6 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.projects.toolmodels.modelsources.t4c import (
     injectables as t4c_injectables,
 )
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as t4c_repository_interface,
@@ -35,19 +40,23 @@ from .. import exceptions as toolmodels_exceptions
 from . import core, crud, exceptions, injectables, models
 from .runs import routes as runs_routes
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
-            )
-        )
-    ]
-)
+router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 
-@router.get("", response_model=list[models.Backup])
+@router.get(
+    "",
+    response_model=list[models.Backup],
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipelines={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
+)
 def get_pipelines(
     model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
@@ -60,6 +69,15 @@ def get_pipelines(
 @router.get(
     "/{pipeline_id}",
     response_model=models.Backup,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipelines={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_pipeline(
     pipeline: models.DatabaseBackup = fastapi.Depends(
@@ -69,7 +87,19 @@ def get_pipeline(
     return pipeline
 
 
-@router.post("", response_model=models.Backup)
+@router.post(
+    "",
+    response_model=models.Backup,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipelines={permissions_models.UserTokenVerb.CREATE}
+                )
+            )
+        )
+    ],
+)
 def create_backup(
     body: models.CreateBackup,
     toolmodel: toolmodels_models.DatabaseToolModel = fastapi.Depends(
@@ -143,7 +173,19 @@ def create_backup(
     )
 
 
-@router.delete("/{pipeline_id}", status_code=204)
+@router.delete(
+    "/{pipeline_id}",
+    status_code=204,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    pipelines={permissions_models.UserTokenVerb.DELETE}
+                )
+            )
+        )
+    ],
+)
 def delete_pipeline(
     pipeline: models.DatabaseBackup = fastapi.Depends(
         injectables.get_existing_pipeline

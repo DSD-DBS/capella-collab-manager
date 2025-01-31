@@ -10,6 +10,8 @@ import fastapi
 from fastapi import responses
 
 from capellacollab.core import responses as core_responses
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.sessions import injectables as sessions_injectables
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions import operators
@@ -20,7 +22,21 @@ router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 
-@router.get("", response_model=models.FileTree)
+@router.get(
+    "",
+    response_model=models.FileTree,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
+)
 def list_files(
     show_hidden: bool,
     session: sessions_models.DatabaseSession = fastapi.Depends(
@@ -36,7 +52,21 @@ def list_files(
         raise exceptions.SessionFileLoadingFailedError()
 
 
-@router.post("", status_code=204)
+@router.post(
+    "",
+    status_code=204,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
+        )
+    ],
+)
 def upload_files(
     files: list[fastapi.UploadFile],
     session: sessions_models.DatabaseSession = fastapi.Depends(
@@ -71,6 +101,17 @@ def upload_files(
     "/download",
     response_class=responses.StreamingResponse,
     responses=core_responses.ZIPFileResponse.responses,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def download_file(
     path: str,

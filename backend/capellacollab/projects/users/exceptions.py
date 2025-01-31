@@ -18,6 +18,10 @@ class AdminNotAllowedAsProjectUserError(core_exceptions.BaseError):
             ),
         )
 
+    @classmethod
+    def openapi_example(cls) -> "AdminNotAllowedAsProjectUserError":
+        return cls()
+
 
 class ProjectUserAlreadyExistsError(core_exceptions.BaseError):
     def __init__(self, username: str, project_slug: str):
@@ -28,6 +32,10 @@ class ProjectUserAlreadyExistsError(core_exceptions.BaseError):
             reason=f"The user '{username}' already exists in the project '{project_slug}'.",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ProjectUserAlreadyExistsError":
+        return cls("johndoe", "coffee-machine")
+
 
 class ProjectUserNotFoundError(core_exceptions.BaseError):
     def __init__(self, username: str, project_slug: str):
@@ -37,6 +45,10 @@ class ProjectUserNotFoundError(core_exceptions.BaseError):
             title="User not found in project",
             reason=f"The user '{username}' was not found in the project '{project_slug}'.",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "ProjectUserNotFoundError":
+        return cls("johndoe", "coffee-machine")
 
 
 class PermissionForProjectLeadsNotAllowedError(core_exceptions.BaseError):
@@ -50,3 +62,7 @@ class PermissionForProjectLeadsNotAllowedError(core_exceptions.BaseError):
                 "They already have full access to the project."
             ),
         )
+
+    @classmethod
+    def openapi_example(cls) -> "PermissionForProjectLeadsNotAllowedError":
+        return cls()

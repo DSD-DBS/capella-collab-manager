@@ -17,6 +17,10 @@ class ProjectNotFoundError(core_exceptions.BaseError):
             err_code="PROJECT_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ProjectNotFoundError":
+        return cls("test")
+
 
 class ProjectAlreadyExistsError(core_exceptions.BaseError):
     def __init__(self, project_slug: str):
@@ -27,6 +31,10 @@ class ProjectAlreadyExistsError(core_exceptions.BaseError):
             err_code="PROJECT_ALREADY_EXISTS",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "ProjectAlreadyExistsError":
+        return cls("test")
+
 
 class AssignedModelsPreventDeletionError(
     core_exceptions.ExistingDependenciesError
@@ -36,4 +44,12 @@ class AssignedModelsPreventDeletionError(
             "project",
             project.name,
             [f"Model '{model.slug}'" for model in project.models],
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "AssignedModelsPreventDeletionError":
+        return cls(
+            models.DatabaseProject(
+                name="test", slug="test", description="example description"
+            )
         )

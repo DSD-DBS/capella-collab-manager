@@ -7,16 +7,26 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.settings.modelsources.git import core as instances_git_core
-from capellacollab.users import models as users_models
 
 from . import crud, injectables, models, util
 
 router = fastapi.APIRouter()
 
 
-@router.get("", response_model=list[models.GitInstance])
+@router.get(
+    "",
+    response_model=list[models.GitInstance],
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
+)
 def list_git_instances(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseGitInstance]:
@@ -28,9 +38,9 @@ def list_git_instances(
     response_model=models.GitInstance,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
         )
     ],
 )
@@ -47,9 +57,13 @@ def get_git_instance(
     response_model=models.GitInstance,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        git_servers={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -65,9 +79,13 @@ def create_git_instance(
     response_model=models.GitInstance,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        git_servers={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -85,9 +103,13 @@ def edit_git_instance(
     "/{git_instance_id}",
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        git_servers={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -103,7 +125,17 @@ def delete_git_instance(
 # In the future, check if the HTTP QUERY method is available in fast api,
 # and if so, use it instead of POST
 # (https://www.ietf.org/archive/id/draft-ietf-httpbis-safe-method-w-body-02.html)
-@router.post("/revisions", response_model=models.GetRevisionsResponseModel)
+@router.post(
+    "/revisions",
+    response_model=models.GetRevisionsResponseModel,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
+)
 async def get_revisions(
     body: models.GetRevisionModel,
 ) -> models.GetRevisionsResponseModel:
@@ -114,7 +146,17 @@ async def get_revisions(
     return await instances_git_core.get_remote_refs(url, username, password)
 
 
-@router.post("/validate/path", response_model=bool)
+@router.post(
+    "/validate/path",
+    response_model=bool,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes()
+            ),
+        )
+    ],
+)
 def validate_path(
     body: models.PathValidation,
     db: orm.Session = fastapi.Depends(database.get_db),

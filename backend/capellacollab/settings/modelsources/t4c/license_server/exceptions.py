@@ -15,6 +15,10 @@ class T4CLicenseServerTimeoutError(core_exceptions.BaseError):
             err_code="T4C_LICENSE_SERVER_TIMEOUT",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerTimeoutError":
+        return cls()
+
 
 class T4CLicenseServerConnectionFailedError(core_exceptions.BaseError):
     def __init__(self):
@@ -25,6 +29,10 @@ class T4CLicenseServerConnectionFailedError(core_exceptions.BaseError):
             err_code="T4C_LICENSE_SERVER_CONNECTION_FAILED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerConnectionFailedError":
+        return cls()
+
 
 class T4CLicenseServerInternalError(core_exceptions.BaseError):
     def __init__(self):
@@ -34,6 +42,10 @@ class T4CLicenseServerInternalError(core_exceptions.BaseError):
             reason="The license server returned an internal error.",
             err_code="T4C_LICENSE_SERVER_INTERNAL_ERROR",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerInternalError":
+        return cls()
 
 
 class T4CLicenseServerNoStatusError(core_exceptions.BaseError):
@@ -48,6 +60,10 @@ class T4CLicenseServerNoStatusError(core_exceptions.BaseError):
             err_code="T4C_LICENSE_SERVER_NO_STATUS",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerNoStatusError":
+        return cls()
+
 
 class T4CLicenseServerNoStatusInResponse(core_exceptions.BaseError):
     def __init__(self):
@@ -57,6 +73,10 @@ class T4CLicenseServerNoStatusInResponse(core_exceptions.BaseError):
             reason="No status in response from license server.",
             err_code="T4C_LICENSE_SERVER_NO_STATUS_IN_JSON",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerNoStatusInResponse":
+        return cls()
 
 
 class T4CLicenseServerResponseDecodeError(core_exceptions.BaseError):
@@ -68,6 +88,10 @@ class T4CLicenseServerResponseDecodeError(core_exceptions.BaseError):
             err_code="T4C_LICENSE_SERVER_DECODE_ERROR",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerResponseDecodeError":
+        return cls()
+
 
 class T4CLicenseServerUnknownError(core_exceptions.BaseError):
     def __init__(self):
@@ -78,6 +102,10 @@ class T4CLicenseServerUnknownError(core_exceptions.BaseError):
             err_code="T4C_LICENSE_SERVER_UNKNOWN_ERROR",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerUnknownError":
+        return cls()
+
 
 class T4CLicenseServerWithNameAlreadyExistsError(
     core_exceptions.ResourceAlreadyExistsError
@@ -86,6 +114,10 @@ class T4CLicenseServerWithNameAlreadyExistsError(
         super().__init__(
             resource_name="T4C License Server", identifier_name="name"
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerWithNameAlreadyExistsError":
+        return cls()
 
 
 class T4CLicenseServerNotFoundError(core_exceptions.BaseError):
@@ -97,6 +129,10 @@ class T4CLicenseServerNotFoundError(core_exceptions.BaseError):
             err_code="T4C_LICENSE_SERVER_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerNotFoundError":
+        return cls(-1)
+
 
 class T4CLicenseServerInUseError(core_exceptions.BaseError):
     def __init__(self, t4c_license_server_id: int):
@@ -106,3 +142,7 @@ class T4CLicenseServerInUseError(core_exceptions.BaseError):
             reason=f"The T4C license server with id {t4c_license_server_id} is in use.",
             err_code="T4C_LICENSE_SERVER_IN_USE",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CLicenseServerInUseError":
+        return cls(-1)

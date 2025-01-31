@@ -17,3 +17,7 @@ class PureVariantsIntegrationDisabledError(core_exceptions.BaseError):
                 "Please enable the pure::variants integration in the settings first."
             ),
         )
+
+    @classmethod
+    def openapi_example(cls) -> "PureVariantsIntegrationDisabledError":
+        return cls()

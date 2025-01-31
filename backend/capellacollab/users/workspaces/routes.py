@@ -7,27 +7,31 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database, responses
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
 from . import crud, exceptions, injectables, models, util
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
-        )
-    ]
-)
+router = fastapi.APIRouter()
 
 
 @router.get(
     "",
     response_model=list[models.Workspace],
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        workspaces={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def get_workspaces_for_user(
     user: users_models.DatabaseUser = fastapi.Depends(
@@ -41,12 +45,23 @@ def get_workspaces_for_user(
 @router.delete(
     "/{workspace_id}",
     status_code=204,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.WorkspaceNotFound("test", 0),
-            users_exceptions.UserNotFoundError("test"),
+            exceptions.WorkspaceNotFound,
+            users_exceptions.UserNotFoundError,
         ]
     ),
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        workspaces={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def delete_workspace(
     workspace: models.DatabaseWorkspace = fastapi.Depends(

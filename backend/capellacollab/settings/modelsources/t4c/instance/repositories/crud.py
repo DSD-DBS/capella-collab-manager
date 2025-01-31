@@ -56,6 +56,7 @@ def get_user_t4c_repositories(
         db, tool_version=tool_version
     )
 
+    # TODO: Replace with permissions
     if user.role == users_models.Role.ADMIN:
         return _get_admin_t4c_repositories(db, tool_versions)
     return _get_user_write_t4c_repositories(db, tool_versions, user)

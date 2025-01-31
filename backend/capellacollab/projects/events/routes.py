@@ -6,28 +6,34 @@ import fastapi_pagination
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import models as events_models
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
-from capellacollab.projects.users import models as projects_users_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 
 from . import crud
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
-            )
-        )
-    ]
-)
+router = fastapi.APIRouter()
 
 
 @router.get(
     "",
     response_model=fastapi_pagination.Page[events_models.HistoryEvent],
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    access_log={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_project_events(
     db: orm.Session = fastapi.Depends(database.get_db),

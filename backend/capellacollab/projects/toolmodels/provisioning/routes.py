@@ -5,29 +5,38 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.projects.users import models as projects_users_models
 
 from . import crud, exceptions, injectables, models
 
-router = fastapi.APIRouter(
+router = fastapi.APIRouter()
+
+
+@router.get(
+    "",
+    response_model=models.ModelProvisioning | None,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    provisioning={permissions_models.UserTokenVerb.GET}
+                )
             )
         )
     ],
 )
-
-
-@router.get("", response_model=models.ModelProvisioning | None)
 def get_provisioning(
     provisioning: models.DatabaseModelProvisioning = fastapi.Depends(
         injectables.get_model_provisioning
@@ -36,7 +45,19 @@ def get_provisioning(
     return provisioning
 
 
-@router.delete("", status_code=204)
+@router.delete(
+    "",
+    status_code=204,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    provisioning={permissions_models.UserTokenVerb.DELETE}
+                )
+            )
+        )
+    ],
+)
 def reset_provisioning(
     provisioning: models.DatabaseModelProvisioning | None = fastapi.Depends(
         injectables.get_model_provisioning

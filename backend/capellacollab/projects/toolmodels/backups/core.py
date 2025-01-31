@@ -79,6 +79,7 @@ def delete_pipeline(
             exc_info=True,
         )
 
+        # TODO: Replace with permissions
         if not (force and user.role == users_models.Role.ADMIN):
             raise exceptions.PipelineOperationFailedT4CServerUnreachable(
                 exceptions.PipelineOperation.DELETE

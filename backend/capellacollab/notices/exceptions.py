@@ -14,3 +14,7 @@ class AnnouncementNotFoundError(core_exceptions.BaseError):
             title="Announcement not found",
             reason=f"The announcement with ID {notice_id} doesn't exist",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "AnnouncementNotFoundError":
+        return cls(-1)

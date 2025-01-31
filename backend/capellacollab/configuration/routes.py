@@ -7,10 +7,10 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.feedback import util as feedback_util
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.users import crud as users_crud
-from capellacollab.users import models as users_models
 
 from . import core, crud, models, util
 
@@ -18,12 +18,8 @@ router = fastapi.APIRouter(
     tags=["Configuration"],
 )
 
-router_without_authentication = fastapi.APIRouter(
-    dependencies=[], tags=["Configuration"]
-)
 
-
-@router_without_authentication.get(
+@router.get(
     "/unified",
 )
 def get_unified_config(
@@ -44,9 +40,13 @@ def get_unified_config(
     response_model=models.GlobalConfiguration,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        configuration={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -61,9 +61,13 @@ async def get_configuration(
     response_model=models.GlobalConfiguration,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        configuration={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -94,7 +98,7 @@ async def update_configuration(
     ).configuration
 
 
-@router_without_authentication.get(
+@router.get(
     f"/{models.GlobalConfiguration._name}/schema", response_model=t.Any
 )
 async def get_json_schema():

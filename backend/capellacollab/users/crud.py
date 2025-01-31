@@ -43,6 +43,7 @@ def get_users(db: orm.Session) -> abc.Sequence[models.DatabaseUser]:
     return db.execute(sa.select(models.DatabaseUser)).scalars().all()
 
 
+# TODO: Remove this function
 def get_admin_users(db: orm.Session) -> abc.Sequence[models.DatabaseUser]:
     return (
         db.execute(

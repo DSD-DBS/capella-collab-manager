@@ -15,6 +15,10 @@ class PipelineRunBelongsToOtherPipelineError(core_exceptions.BaseError):
             err_code="PIPELINE_RUN_BELONGS_TO_OTHER_PIPELINE",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "PipelineRunBelongsToOtherPipelineError":
+        return cls(-1, -1)
+
 
 class PipelineRunNotFoundError(core_exceptions.BaseError):
     def __init__(self, pipeline_run_id: int):
@@ -24,3 +28,7 @@ class PipelineRunNotFoundError(core_exceptions.BaseError):
             reason=f"The pipeline run with the ID {pipeline_run_id} was not found.",
             err_code="PIPELINE_RUN_NOT_FOUND",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "PipelineRunNotFoundError":
+        return cls(-1)

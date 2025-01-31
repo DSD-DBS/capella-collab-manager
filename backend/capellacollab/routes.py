@@ -7,12 +7,12 @@ import logging
 import fastapi
 
 from capellacollab.configuration import routes as configuration_routes
-from capellacollab.core import responses as auth_responses
 from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
 from capellacollab.feedback import routes as feedback_routes
 from capellacollab.health import routes as health_routes
 from capellacollab.notices import routes as notices_routes
+from capellacollab.permissions import routes as permissions_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
 from capellacollab.settings import routes as settings_routes
@@ -26,7 +26,6 @@ router = fastapi.APIRouter()
 router.include_router(
     health_routes.router,
     prefix="/health",
-    responses=auth_responses.api_exceptions(include_authentication=True),
     tags=["Health"],
 )
 router.include_router(
@@ -36,34 +35,28 @@ router.include_router(
     sessions_routes.router,
     prefix="/sessions",
     tags=["Sessions"],
-    responses=auth_responses.api_exceptions(include_authentication=True),
-)
-router.include_router(
-    sessions_routes.router_without_authentication,
-    prefix="/sessions",
-    tags=["Sessions"],
 )
 router.include_router(
     projects_routes.router,
     prefix="/projects",
-    responses=auth_responses.api_exceptions(include_authentication=True),
 )
 router.include_router(
     tools_routes.router,
     prefix="/tools",
-    responses=auth_responses.api_exceptions(include_authentication=True),
     tags=["Tools"],
 )
 router.include_router(
     users_routes.router,
     prefix="/users",
-    responses=auth_responses.api_exceptions(include_authentication=True),
-    tags=["Users"],
+)
+router.include_router(
+    permissions_routes.router,
+    prefix="/permissions",
+    tags=["Permissions"],
 )
 router.include_router(
     events_router.router,
     prefix="/events",
-    responses=auth_responses.api_exceptions(include_authentication=True),
     tags=["Events"],
 )
 router.include_router(
@@ -72,19 +65,9 @@ router.include_router(
 router.include_router(
     settings_routes.router,
     prefix="/settings",
-    responses=auth_responses.api_exceptions(include_authentication=True),
-)
-router.include_router(
-    settings_routes.router_without_authentication,
-    prefix="/settings",
 )
 router.include_router(
     configuration_routes.router,
-    prefix="/configurations",
-    responses=auth_responses.api_exceptions(include_authentication=True),
-)
-router.include_router(
-    configuration_routes.router_without_authentication,
     prefix="/configurations",
 )
 

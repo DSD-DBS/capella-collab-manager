@@ -14,27 +14,36 @@ import requests
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
 from capellacollab.core import logging as log
 from capellacollab.core import responses
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels.diagrams import models
 from capellacollab.projects.toolmodels.modelsources.git.handler import (
     handler as git_handler,
 )
-from capellacollab.projects.users import models as projects_users_models
 
 from . import exceptions
 
-router = fastapi.APIRouter(
+router = fastapi.APIRouter()
+
+
+@router.get(
+    "",
+    response_model=models.DiagramCacheMetadata,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    diagram_cache={permissions_models.UserTokenVerb.GET}
+                )
             )
         )
     ],
 )
-
-
-@router.get("", response_model=models.DiagramCacheMetadata)
 async def get_diagram_metadata(
     handler: git_handler.GitHandler = fastapi.Depends(
         git_injectables.get_git_handler
@@ -75,6 +84,15 @@ async def get_diagram_metadata(
     "/{diagram_uuid_or_filename}",
     response_class=fastapi.responses.Response,
     responses=responses.SVGResponse.responses,
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    diagram_cache={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 async def get_diagram(
     diagram_uuid_or_filename: str,

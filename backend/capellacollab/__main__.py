@@ -12,8 +12,10 @@ import starlette_prometheus
 import uvicorn
 from fastapi import middleware, responses, routing
 from fastapi.middleware import cors
+from fastapi.openapi import utils as fastapi_openapi_utils
 
 import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
+from capellacollab import openapi as capellacollab_openapi
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.configuration.app import config
@@ -160,6 +162,37 @@ app.add_route("/metrics", starlette_prometheus.metrics)
 app.include_router(router, prefix="/api/v1")
 
 
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = fastapi_openapi_utils.get_openapi(
+        title="Capella Collaboration Manager API",
+        version=__version__,
+        routes=app.routes,
+    )
+
+    openapi_schema["components"]["securitySchemes"] = {
+        "PersonalAccessToken": {"type": "http", "scheme": "basic"},
+        "Cookie": {
+            "type": "apiKey",
+            "in": "cookie",
+            "name": "id_token",
+        },
+    }
+
+    openapi_schema["components"]["schemas"] |= (
+        capellacollab_openapi.get_exception_schemas()
+    )
+
+    openapi_schema["security"] = [
+        {"PersonalAccessToken": ["test"]},
+        {"Cookie": []},
+    ]
+
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
 def use_route_names_as_operation_ids() -> None:
     """
     Simplify operation IDs so that generated API clients have simpler function
@@ -171,6 +204,9 @@ def use_route_names_as_operation_ids() -> None:
 
 
 use_route_names_as_operation_ids()
+capellacollab_openapi.add_permissions_and_exceptions_to_api_docs(app)
+app.openapi = custom_openapi  # type: ignore[method-assign]
+
 
 if __name__ == "__main__":
     if os.getenv("FASTAPI_AUTO_RELOAD", "").lower() in ("1", "true", "t"):

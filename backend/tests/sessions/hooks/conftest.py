@@ -7,6 +7,7 @@ import logging
 import pytest
 from sqlalchemy import orm
 
+from capellacollab.permissions import models as permissions_models
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.operators import k8s as k8s_operator
@@ -32,6 +33,8 @@ def fixture_configuration_hook_request(
         provisioning=[],
         session_id="nxylxqbmfqwvswlqlcbsirvrt",
         project_scope=None,
+        authentication_information=(user, None),
+        global_scope=permissions_models.GlobalScopes(),
     )
 
 
