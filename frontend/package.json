@@ -64,7 +64,7 @@
     "@eslint/js": "^9.18.0",
     "@nx/vite": "~20.3.2",
     "@storybook/addon-docs": "^8.5.0",
-    "@storybook/addon-essentials": "^8.5.0",
+    "@storybook/addon-essentials": "^8.5.3",
     "@storybook/addon-interactions": "^8.5.0",
     "@storybook/addon-links": "^8.5.0",
     "@storybook/angular": "^8.5.0",
