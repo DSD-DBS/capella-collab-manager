@@ -13,6 +13,8 @@ from sqlalchemy import orm
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 
+from ..permissions import models
+
 if t.TYPE_CHECKING:
     from capellacollab.events.models import DatabaseUserHistoryEvent
     from capellacollab.projects.users.models import ProjectUserAssociation
@@ -23,6 +25,89 @@ if t.TYPE_CHECKING:
 class Role(str, enum.Enum):
     ADMIN = "administrator"
     USER = "user"
+
+
+USER_TOKEN_SCOPE = models.UserScopes(
+    sessions={
+        models.UserTokenVerb.GET,
+        models.UserTokenVerb.CREATE,
+        models.UserTokenVerb.UPDATE,
+        models.UserTokenVerb.DELETE,
+    },
+    projects={models.UserTokenVerb.CREATE},
+    tokens={
+        models.UserTokenVerb.GET,
+        models.UserTokenVerb.CREATE,
+        models.UserTokenVerb.DELETE,
+    },
+    feedback={models.UserTokenVerb.CREATE},
+)
+
+ROLE_MAPPING = {
+    Role.USER: models.GlobalScopes(
+        user=USER_TOKEN_SCOPE,
+    ),
+    Role.ADMIN: models.GlobalScopes(
+        user=USER_TOKEN_SCOPE,
+        admin=models.AdminScopes(
+            users={
+                models.UserTokenVerb.GET,
+                models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
+            projects={
+                models.UserTokenVerb.GET,
+                models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
+            tools={
+                models.UserTokenVerb.GET,
+                models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
+            announcements={
+                models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.DELETE,
+            },
+            monitoring={
+                models.UserTokenVerb.GET,
+            },
+            configuration={
+                models.UserTokenVerb.GET,
+                models.UserTokenVerb.UPDATE,
+            },
+            git_servers={
+                models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
+            t4c_servers={
+                models.UserTokenVerb.GET,
+                models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
+            t4c_repositories={
+                models.UserTokenVerb.GET,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
+            pv_configuration={
+                models.UserTokenVerb.GET,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
+            events={
+                models.UserTokenVerb.GET,
+            },
+            sessions={models.UserTokenVerb.GET},
+            workspaces={models.UserTokenVerb.GET, models.UserTokenVerb.DELETE},
+        ),
+    ),
+}
 
 
 class BaseUser(core_pydantic.BaseModel):

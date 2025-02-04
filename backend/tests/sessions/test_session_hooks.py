@@ -10,6 +10,7 @@ import pytest
 from sqlalchemy import orm
 
 from capellacollab import __main__
+from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions import models as sessions_models
@@ -137,6 +138,7 @@ async def test_hook_calls_during_session_request(
         db,
         mockoperator,  # type: ignore
         logger,
+        authentication_information=(user, None),
     )
 
     assert session_hook.configuration_hook_counter == 1
@@ -167,6 +169,7 @@ def test_hook_calls_during_session_termination(
     mockoperator: MockOperator,
     db: orm.Session,
     session: sessions_models.DatabaseSession,
+    user: users_models.DatabaseUser,
 ):
     monkeypatch.setattr(
         sessions_crud,
@@ -178,4 +181,5 @@ def test_hook_calls_during_session_termination(
         db,
         session,
         mockoperator,  # type: ignore
+        permissions_injectables.get_scope((user, None)),
     )

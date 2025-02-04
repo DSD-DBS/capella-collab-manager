@@ -4,7 +4,7 @@
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
-import { UsersService, Workspace } from 'src/app/openapi';
+import { UsersWorkspacesService, Workspace } from 'src/app/openapi';
 import {
   mockUser,
   mockOwnUserWrapperServiceProvider,
@@ -12,7 +12,7 @@ import {
 } from 'src/storybook/user';
 import { UserWorkspacesComponent } from './user-workspaces.component';
 
-class MockUserService {
+class MockUserWorkspacesService {
   _workspaces: Workspace[] = [];
 
   public getWorkspacesForUser(_userId: number): Observable<Workspace[]> {
@@ -52,8 +52,8 @@ export const NoWorkspaces: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: UsersService,
-          useFactory: () => new MockUserService([]),
+          provide: UsersWorkspacesService,
+          useFactory: () => new MockUserWorkspacesService([]),
         },
       ],
     }),
@@ -65,9 +65,9 @@ export const WorkspaceOverview: Story = {
     moduleMetadata({
       providers: [
         {
-          provide: UsersService,
+          provide: UsersWorkspacesService,
           useFactory: () =>
-            new MockUserService([
+            new MockUserWorkspacesService([
               {
                 id: 1,
                 pvc_name:

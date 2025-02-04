@@ -14,3 +14,7 @@ class SMTPNotConfiguredError(core_exceptions.BaseError):
             reason="SMTP must be configured in the application configuration before sending emails and activating related features.",
             err_code="SMTP_NOT_CONFIGURED",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "SMTPNotConfiguredError":
+        return cls()

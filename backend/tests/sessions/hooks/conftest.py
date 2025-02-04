@@ -7,6 +7,7 @@ import logging
 import pytest
 from sqlalchemy import orm
 
+from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.operators import k8s as k8s_operator
@@ -32,6 +33,8 @@ def fixture_configuration_hook_request(
         provisioning=[],
         session_id="nxylxqbmfqwvswlqlcbsirvrt",
         project_scope=None,
+        pat=None,
+        global_scope=permissions_injectables.get_scope((user, None)),
     )
 
 
@@ -78,6 +81,7 @@ def fixture_session_connection_hook_request(
 @pytest.fixture(name="pre_session_termination_hook_request")
 def fixture_pre_session_termination_hook_request(
     db: orm.Session,
+    user: users_models.DatabaseUser,
     session: sessions_models.DatabaseSession,
 ) -> hooks_interface.PreSessionTerminationHookRequest:
     return hooks_interface.PreSessionTerminationHookRequest(
@@ -85,4 +89,5 @@ def fixture_pre_session_termination_hook_request(
         connection_method=tools_models.GuacamoleConnectionMethod(),
         operator=k8s_operator.KubernetesOperator(),
         session=session,
+        global_scope=permissions_injectables.get_scope((user, None)),
     )

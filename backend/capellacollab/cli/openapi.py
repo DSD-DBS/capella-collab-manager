@@ -40,6 +40,13 @@ def generate(
             " This might be useful for client generation to reduce verbosity of the generated code."
         ),
     ),
+    remove_unique_items_keys: bool = typer.Option(
+        default=False,
+        help=(
+            "Remove the uniqueItems keys from the schema."
+            " This can be helpful in auto-generated clients to use arrays instead of sets."
+        ),
+    ),
 ):
     """Generate openapi.json and write it to output_file."""
 
@@ -55,6 +62,9 @@ def generate(
 
     if remove_min_max_keys:
         keys_to_remove.extend(["exclusiveMinimum", "exclusiveMaximum"])
+
+    if remove_unique_items_keys:
+        keys_to_remove.append("uniqueItems")
 
     schema = __main__.app.openapi()
     _remove_keys_from_spec(schema, keys_to_remove)

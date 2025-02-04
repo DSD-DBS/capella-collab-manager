@@ -13,7 +13,7 @@ import {
   catchError,
   of,
 } from 'rxjs';
-import { Session, UsersService } from 'src/app/openapi';
+import { Session, UsersSessionsService } from 'src/app/openapi';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import {
   isPersistentSession,
@@ -25,7 +25,7 @@ import {
 })
 export class UserSessionService {
   constructor(
-    private usersService: UsersService,
+    private usersSessionsService: UsersSessionsService,
     private userWrapperService: OwnUserWrapperService,
   ) {}
 
@@ -48,7 +48,9 @@ export class UserSessionService {
   loadSessionsObservable(): Observable<Session[] | undefined> {
     return this.userWrapperService.user$.pipe(
       filter(Boolean),
-      switchMap((user) => this.usersService.getSessionsForUser(user.id)),
+      switchMap((user) =>
+        this.usersSessionsService.getSessionsForUser(user.id),
+      ),
       tap((sessions) => this._sessions.next(sessions)),
       catchError(() => {
         this._sessions.next(undefined);

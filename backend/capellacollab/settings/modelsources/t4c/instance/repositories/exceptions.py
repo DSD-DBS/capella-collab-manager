@@ -15,6 +15,10 @@ class T4CRepositoryNotFoundError(core_exceptions.BaseError):
             err_code="T4C_REPOSITORY_NOT_FOUND",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CRepositoryNotFoundError":
+        return cls(-1)
+
 
 class T4CRepositoryDoesntBelongToServerError(core_exceptions.BaseError):
     def __init__(self, repository_id: int, server_id: int):
@@ -25,6 +29,10 @@ class T4CRepositoryDoesntBelongToServerError(core_exceptions.BaseError):
             err_code="T4C_REPOSITORY_DOESNT_BELONG_TO_SERVER",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "T4CRepositoryDoesntBelongToServerError":
+        return cls(-1, -1)
+
 
 class T4CRepositoryAlreadyExistsError(core_exceptions.BaseError):
     def __init__(self, repository_name: str, instance_name: str):
@@ -34,3 +42,7 @@ class T4CRepositoryAlreadyExistsError(core_exceptions.BaseError):
             reason=f"T4C Repository with name '{repository_name}' already exists for the T4C server '{instance_name}' in our database.",
             err_code="T4C_REPOSITORY_ALREADY_EXISTS",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "T4CRepositoryAlreadyExistsError":
+        return cls("coffee-machine", "PROD")

@@ -11,6 +11,8 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import models as core_models
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 
 from .. import injectables as settings_t4c_injectables
 from .. import models as settings_t4c_models
@@ -24,7 +26,21 @@ T4CRepositoriesResponseModel: t.TypeAlias = core_models.PayloadResponseModel[
 ]
 
 
-@router.get("", response_model=T4CRepositoriesResponseModel)
+@router.get(
+    "",
+    response_model=T4CRepositoriesResponseModel,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
+)
 def list_t4c_repositories(
     db: orm.Session = fastapi.Depends(database.get_db),
     instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
@@ -66,7 +82,23 @@ def list_t4c_repositories(
     return T4CRepositoriesResponseModel(payload=repositories)
 
 
-@router.post("", response_model=models.T4CRepository)
+@router.post(
+    "",
+    response_model=models.T4CRepository,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.CREATE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
+)
 def create_t4c_repository(
     body: models.CreateT4CRepository,
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -100,6 +132,19 @@ def create_t4c_repository(
 @router.delete(
     "/{t4c_repository_id}",
     response_model=core_models.ResponseModel | None,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.DELETE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
 )
 def delete_t4c_repository(
     response: fastapi.Response,
@@ -141,7 +186,21 @@ def delete_t4c_repository(
 
 
 @router.post(
-    "/{t4c_repository_id}/start", status_code=status.HTTP_204_NO_CONTENT
+    "/{t4c_repository_id}/start",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
 )
 def start_t4c_repository(
     instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
@@ -155,7 +214,21 @@ def start_t4c_repository(
 
 
 @router.post(
-    "/{t4c_repository_id}/stop", status_code=status.HTTP_204_NO_CONTENT
+    "/{t4c_repository_id}/stop",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
 )
 def stop_t4c_repository(
     instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
@@ -169,7 +242,21 @@ def stop_t4c_repository(
 
 
 @router.post(
-    "/{t4c_repository_id}/recreate", status_code=status.HTTP_204_NO_CONTENT
+    "/{t4c_repository_id}/recreate",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        t4c_repositories={
+                            permissions_models.UserTokenVerb.UPDATE
+                        }
+                    )
+                )
+            ),
+        )
+    ],
 )
 def recreate_t4c_repository(
     instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(

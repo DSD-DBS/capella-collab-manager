@@ -7,13 +7,17 @@ import pathlib
 from sqlalchemy import orm
 
 from capellacollab.core import models as core_models
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
 from capellacollab.projects.toolmodels import crud as toolmodels_crud
-from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
+from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from . import interface
 
@@ -26,7 +30,12 @@ class JupyterIntegration(interface.HookRegistration):
         request: interface.ConfigurationHookRequest,
     ) -> interface.ConfigurationHookResult:
         volumes, warnings = self._get_project_share_volume_mounts(
-            request.db, request.user.name, request.tool, request.operator
+            request.db,
+            request.tool,
+            request.operator,
+            request.user,
+            request.pat,
+            request.global_scope,
         )
         return interface.ConfigurationHookResult(
             volumes=volumes, warnings=warnings
@@ -35,9 +44,11 @@ class JupyterIntegration(interface.HookRegistration):
     def _get_project_share_volume_mounts(
         self,
         db: orm.Session,
-        username: str,
         tool: tools_models.DatabaseTool,
         operator: operators.KubernetesOperator,
+        user: users_models.DatabaseUser,
+        pat: tokens_models.DatabaseUserToken | None,
+        global_scope: permissions_models.GlobalScopes,
     ) -> tuple[list[operators_models.Volume], list[core_models.Message]]:
         volumes: list[operators_models.Volume] = []
         warnings: list[core_models.Message] = []
@@ -47,7 +58,14 @@ class JupyterIntegration(interface.HookRegistration):
             for model in toolmodels_crud.get_models_by_tool(db, tool.id)
             if model.configuration
             and "workspace" in model.configuration
-            and self._is_project_member(model, username, db)
+            and self._has_access_to_volume_share(
+                model.project,
+                db,
+                user,
+                pat,
+                global_scope,
+                permissions_models.UserTokenVerb.GET,
+            )
         ]
 
         for model in accessible_models_with_workspace_configuration:
@@ -72,8 +90,13 @@ class JupyterIntegration(interface.HookRegistration):
             volumes.append(
                 operators_models.PersistentVolume(
                     name=model.configuration["workspace"],
-                    read_only=not self._has_project_write_access(
-                        model, username, db
+                    read_only=not self._has_access_to_volume_share(
+                        model.project,
+                        db,
+                        user,
+                        pat,
+                        global_scope,
+                        permissions_models.UserTokenVerb.UPDATE,
                     ),
                     container_path=pathlib.PurePosixPath("/shared")
                     / model.project.slug
@@ -84,25 +107,16 @@ class JupyterIntegration(interface.HookRegistration):
 
         return volumes, warnings
 
-    def _is_project_member(
+    def _has_access_to_volume_share(
         self,
-        model: toolmodels_models.DatabaseToolModel,
-        username: str,
+        project: projects_models.DatabaseProject,
         db: orm.Session,
+        user: users_models.DatabaseUser,
+        pat: tokens_models.DatabaseUserToken | None,
+        global_scope: permissions_models.GlobalScopes,
+        required_verb: permissions_models.UserTokenVerb,
     ) -> bool:
-        return auth_injectables.ProjectRoleVerification(
-            required_role=projects_users_models.ProjectUserRole.USER,
-            verify=False,
-        )(model.project.slug, username, db)
-
-    def _has_project_write_access(
-        self,
-        model: toolmodels_models.DatabaseToolModel,
-        username: str,
-        db: orm.Session,
-    ) -> bool:
-        return auth_injectables.ProjectRoleVerification(
-            required_role=projects_users_models.ProjectUserRole.USER,
-            required_permission=projects_users_models.ProjectUserPermission.WRITE,
-            verify=False,
-        )(model.project.slug, username, db)
+        project_scope = projects_permissions_injectables.get_scope(
+            (user, pat), global_scope, project, db
+        )
+        return required_verb in project_scope.shared_volumes

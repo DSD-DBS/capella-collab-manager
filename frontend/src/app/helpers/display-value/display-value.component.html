@@ -4,7 +4,7 @@
  -->
 
 <div class="mt-2 flex items-center gap-2">
-  <span class="rounded border p-2 font-mono">
+  <span class="break-all rounded border p-2 font-mono">
     <span [ngClass]="{ blur: !valueRevealed && blurValue }">{{
       value
     }}</span></span
@@ -22,6 +22,7 @@
       <button
         (click)="valueRevealed = true"
         matTooltip="Show value"
+        data-testId="show-value"
         class="flex"
       >
         <mat-icon>blur_off</mat-icon>

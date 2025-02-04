@@ -4,7 +4,12 @@
  */
 import { AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { Project, ProjectType, ProjectVisibility } from 'src/app/openapi';
+import {
+  Project,
+  ProjectType,
+  ProjectUserRole,
+  ProjectVisibility,
+} from 'src/app/openapi';
 import {
   ProjectTypeDescriptions,
   ProjectVisibilityDescriptions,
@@ -43,6 +48,10 @@ class MockProjectWrapperService implements Partial<ProjectWrapperService> {
       return of(null);
     };
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  loadProjects(_minimumRole?: ProjectUserRole): void {}
+
   getProjectVisibilityDescription(visibility: ProjectVisibility): string {
     return ProjectVisibilityDescriptions[visibility];
   }

@@ -113,6 +113,7 @@ async def test_environment_behavior(
     monkeypatch: pytest.MonkeyPatch,
     operator: MockOperator,
     logger: logging.LoggerAdapter,
+    user: users_models.DatabaseUser,
     db: orm.Session,
 ):
     """Test the behavior of environment variables
@@ -151,6 +152,7 @@ async def test_environment_behavior(
         db,
         operator,  # type: ignore
         logger,
+        authentication_information=(user, None),
     )
 
     env = operator.environment

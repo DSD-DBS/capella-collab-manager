@@ -15,6 +15,9 @@ from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects.users import models as project_users_models
 
 if t.TYPE_CHECKING:
+    from capellacollab.projects.permissions.models import (
+        DatabaseProjectPATAssociation,
+    )
     from capellacollab.projects.toolmodels.models import DatabaseToolModel
     from capellacollab.projects.tools.models import (
         DatabaseProjectToolAssociation,
@@ -133,6 +136,11 @@ class DatabaseProject(database.Base):
 
     users: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
         default_factory=list, back_populates="project"
+    )
+    tokens: orm.Mapped[list[DatabaseProjectPATAssociation]] = orm.relationship(
+        default_factory=list,
+        back_populates="project",
+        cascade="all, delete-orphan",
     )
     models: orm.Mapped[list[DatabaseToolModel]] = orm.relationship(
         default_factory=list, back_populates="project"

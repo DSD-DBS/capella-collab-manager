@@ -8,6 +8,7 @@ import logging
 import requests
 from sqlalchemy import orm
 
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
@@ -19,7 +20,6 @@ from capellacollab.sessions import operators
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as t4c_repository_interface,
 )
-from capellacollab.users import models as users_models
 
 from . import crud, exceptions, models
 
@@ -63,8 +63,8 @@ def get_environment(
 def delete_pipeline(
     db: orm.Session,
     pipeline: models.DatabaseBackup,
-    user: users_models.DatabaseUser,
     force: bool,
+    global_scope: permissions_models.GlobalScopes,
 ):
     try:
         t4c_repository_interface.remove_user_from_repository(
@@ -79,7 +79,11 @@ def delete_pipeline(
             exc_info=True,
         )
 
-        if not (force and user.role == users_models.Role.ADMIN):
+        if (
+            not force
+            or permissions_models.UserTokenVerb.UPDATE
+            not in global_scope.admin.t4c_repositories
+        ):
             raise exceptions.PipelineOperationFailedT4CServerUnreachable(
                 exceptions.PipelineOperation.DELETE
             )

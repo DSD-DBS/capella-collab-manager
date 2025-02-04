@@ -15,6 +15,10 @@ class FeedbackNotEnabledError(core_exceptions.BaseError):
             err_code="FEEDBACK_NOT_ENABLED",
         )
 
+    @classmethod
+    def openapi_example(cls) -> "FeedbackNotEnabledError":
+        return cls()
+
 
 class NoFeedbackRecipientsError(core_exceptions.BaseError):
     def __init__(self):
@@ -24,3 +28,7 @@ class NoFeedbackRecipientsError(core_exceptions.BaseError):
             reason="Feedback can only be activated when there are recipients.",
             err_code="FEEDBACK_MISSING_RECIPIENTS",
         )
+
+    @classmethod
+    def openapi_example(cls) -> "NoFeedbackRecipientsError":
+        return cls()

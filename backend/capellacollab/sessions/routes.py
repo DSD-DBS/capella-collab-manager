@@ -16,8 +16,15 @@ from capellacollab.core import logging as log
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import exceptions as auth_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
-from capellacollab.projects.users import models as projects_users_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions.files import routes as files_routes
 from capellacollab.sessions.hooks import interface as hooks_interface
@@ -29,61 +36,44 @@ from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from . import auth, crud, exceptions, injectables, models, operators, util
 from .operators import k8s
 from .operators import models as operators_models
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.USER
-            )
-        )
-    ],
-    responses=responses.api_exceptions(include_authentication=True),
-)
+router = fastapi.APIRouter()
 
-router_without_authentication = fastapi.APIRouter()
-
-users_router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.USER
-            )
-        )
-    ]
-)
+users_router = fastapi.APIRouter()
 
 
 @router.post(
     "",
     response_model=models.Session,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.UnsupportedSessionTypeError(
-                tool_name="test", session_type=models.SessionType.PERSISTENT
-            ),
-            exceptions.ConflictingSessionError(
-                tool_name="test", version_name="test"
-            ),
-            exceptions.ToolAndModelMismatchError(
-                tool_name="test", version_name="test", model_name="test"
-            ),
-            exceptions.InvalidConnectionMethodIdentifierError(
-                tool_name="test", connection_method_id="default"
-            ),
-            exceptions.WorkspaceMountingNotAllowedError(tool_name="test"),
-            exceptions.TooManyModelsRequestedToProvisionError(
-                max_number_of_models=1
-            ),
-            exceptions.ProvisioningUnsupportedError(),
-            tools_exceptions.ToolNotFoundError(tool_id=1),
-            tools_exceptions.ToolVersionNotFoundError(version_id=1),
+            exceptions.UnsupportedSessionTypeError,
+            exceptions.ConflictingSessionError,
+            exceptions.ToolAndModelMismatchError,
+            exceptions.InvalidConnectionMethodIdentifierError,
+            exceptions.WorkspaceMountingNotAllowedError,
+            exceptions.TooManyModelsRequestedToProvisionError,
+            exceptions.ProvisioningUnsupportedError,
+            tools_exceptions.ToolNotFoundError,
+            tools_exceptions.ToolVersionNotFoundError,
         ],
     ),
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            ),
+        )
+    ],
 )
 async def request_session(
     body: models.PostSessionRequest,
@@ -93,7 +83,20 @@ async def request_session(
     db: orm.Session = fastapi.Depends(database.get_db),
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
     logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
+    authentication_information: tuple[
+        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ] = fastapi.Depends(
+        auth_injectables.AuthenticationInformationValidation()
+    ),
+    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
 ):
+    """Request a session.
+
+    If requested with a project slug (required for read-only sessions),
+    the requesting user must have the permissions `provisioning:get` in the project.
+    """
     logger.info(
         "Starting %s session for user %s", body.session_type, user.name
     )
@@ -116,11 +119,19 @@ async def request_session(
 
     project_scope = None
     if body.project_slug:
-        auth_injectables.ProjectRoleVerification(
-            required_role=projects_users_models.ProjectUserRole.USER
-        )(body.project_slug, user.name, db)
         project_scope = projects_injectables.get_existing_project(
             body.project_slug, db
+        )
+
+        projects_permissions_injectables.ProjectPermissionValidation(
+            required_scope=projects_permissions_models.ProjectUserScopes(
+                provisioning={permissions_models.UserTokenVerb.GET}
+            )
+        )(
+            projects_permissions_injectables.get_scope(
+                authentication_information, global_scope, project_scope, db
+            ),
+            project_scope,
         )
 
     environment = t.cast(
@@ -143,6 +154,8 @@ async def request_session(
         provisioning=body.provisioning,
         session_id=session_id,
         project_scope=project_scope,
+        pat=authentication_information[1],
+        global_scope=global_scope,
     )
 
     for hook_result in await util.schedule_configuration_hooks(
@@ -263,9 +276,13 @@ async def request_session(
     response_model=list[models.Session],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
-            )
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        sessions={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
         )
     ],
 )
@@ -278,12 +295,23 @@ def get_all_sessions(
 @router.get(
     "/{session_id}",
     response_model=models.Session,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.SessionNotFoundError(session_id="test"),
-            exceptions.SessionNotOwnedError(session_id="test"),
+            exceptions.SessionNotFoundError,
+            exceptions.SessionNotOwnedError,
         ]
     ),
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def get_session(
     session: models.DatabaseSession = fastapi.Depends(
@@ -296,20 +324,27 @@ def get_session(
 @router.post(
     "/{session_id}/shares",
     response_model=models.SessionSharing,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.InvalidConnectionMethodIdentifierError(
-                tool_name="test", connection_method_id="default"
-            ),
-            exceptions.SessionNotFoundError(session_id="test"),
-            exceptions.SessionNotOwnedError(session_id="test"),
-            exceptions.SessionAlreadySharedError(username="test"),
-            exceptions.SessionSharingNotSupportedError(
-                tool_name="test", connection_method_name="test"
-            ),
-            users_exceptions.UserNotFoundError(username="test"),
+            exceptions.InvalidConnectionMethodIdentifierError,
+            exceptions.SessionNotFoundError,
+            exceptions.SessionNotOwnedError,
+            exceptions.SessionAlreadySharedError,
+            exceptions.SessionSharingNotSupportedError,
+            users_exceptions.UserNotFoundError,
         ],
     ),
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.UPDATE}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def share_session(
     body: models.ShareSessionRequest,
@@ -349,15 +384,24 @@ def share_session(
     response_model=core_models.PayloadResponseModel[
         models.SessionConnectionInformation
     ],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.InvalidConnectionMethodIdentifierError(
-                tool_name="test", connection_method_id="default"
-            ),
-            exceptions.SessionNotFoundError(session_id="test"),
-            exceptions.SessionNotOwnedError(session_id="test"),
+            exceptions.InvalidConnectionMethodIdentifierError,
+            exceptions.SessionNotFoundError,
+            exceptions.SessionNotOwnedError,
         ],
     ),
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def get_session_connection_information(
     response: fastapi.Response,
@@ -419,7 +463,7 @@ def get_session_connection_information(
     )
 
 
-@router_without_authentication.post(
+@router.post(
     "/{session_id}/tokens/validate",
 )
 def validate_session_token(
@@ -453,12 +497,23 @@ def validate_session_token(
 @router.delete(
     "/{session_id}",
     status_code=204,
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            exceptions.SessionNotFoundError(session_id="test"),
-            exceptions.SessionNotOwnedError(session_id="test"),
+            exceptions.SessionNotFoundError,
+            exceptions.SessionNotOwnedError,
         ]
     ),
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def terminate_session(
     db: orm.Session = fastapi.Depends(database.get_db),
@@ -466,8 +521,11 @@ def terminate_session(
         injectables.get_existing_session
     ),
     operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
+    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
 ):
-    util.terminate_session(db, session, operator)
+    util.terminate_session(db, session, operator, global_scope)
 
 
 router.include_router(router=files_routes.router, prefix="/{session_id}/files")
@@ -476,14 +534,24 @@ router.include_router(router=files_routes.router, prefix="/{session_id}/files")
 @users_router.get(
     "/{user_id}/sessions",
     response_model=list[models.Session],
-    responses=responses.api_exceptions(
+    responses=responses.translate_exceptions_to_openapi_schema(
         [
-            users_exceptions.UserNotFoundError(user_id=1),
-            exceptions.SessionNotOwnedError(session_id="test"),
-            exceptions.SessionForbiddenError(),
+            users_exceptions.UserNotFoundError,
+            exceptions.SessionNotOwnedError,
+            exceptions.SessionForbiddenError,
         ],
-        minimum_role=users_models.Role.USER,
     ),
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        sessions={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            ),
+        )
+    ],
 )
 def get_sessions_for_user(
     user: users_models.DatabaseUser = fastapi.Depends(
@@ -493,8 +561,19 @@ def get_sessions_for_user(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
+    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
 ):
-    if user != current_user and current_user.role != users_models.Role.ADMIN:
+    """Get all sessions for a user.
+
+    You can request your own sessions
+    or the sessions of another user if you have the `admin.users:get` permission.
+    """
+
+    if user != current_user and permissions_models.UserTokenVerb.GET not in (
+        global_scope.admin.users
+    ):
         raise exceptions.SessionForbiddenError()
 
     return user.sessions + list(

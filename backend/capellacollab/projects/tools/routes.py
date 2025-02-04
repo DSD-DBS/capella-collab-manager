@@ -5,29 +5,35 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import models as toolmodels_models
-from capellacollab.projects.users import models as projects_users_models
 from capellacollab.tools import injectables as tools_injectables
 from capellacollab.tools import models as tools_models
 
 from . import crud, exceptions, injectables, models
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER
-            )
-        )
-    ]
-)
+router = fastapi.APIRouter()
 
 
 @router.get(
     "",
+    dependencies=[
+        fastapi.Depends(
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    used_tools={permissions_models.UserTokenVerb.GET}
+                )
+            )
+        )
+    ],
 )
 def get_project_tools(
     project: projects_models.DatabaseProject = fastapi.Depends(
@@ -74,8 +80,10 @@ def get_project_tools(
     response_model=models.ProjectTool,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    used_tools={permissions_models.UserTokenVerb.CREATE}
+                )
             )
         )
     ],
@@ -102,8 +110,10 @@ def link_tool_to_project(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    used_tools={permissions_models.UserTokenVerb.DELETE}
+                )
             )
         )
     ],

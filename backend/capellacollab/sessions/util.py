@@ -13,6 +13,7 @@ from sqlalchemy import orm
 from capellacollab.configuration.app import config
 from capellacollab.core import credentials
 from capellacollab.core import models as core_models
+from capellacollab.permissions import models as permissions_models
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
@@ -27,6 +28,7 @@ def terminate_session(
     db: orm.Session,
     session: models.DatabaseSession,
     operator: k8s.KubernetesOperator,
+    global_scope: permissions_models.GlobalScopes,
 ):
     connection_method = get_connection_method(
         session.tool, session.connection_method_id
@@ -38,6 +40,7 @@ def terminate_session(
                 session=session,
                 operator=operator,
                 connection_method=connection_method,
+                global_scope=global_scope,
             )
         )
 

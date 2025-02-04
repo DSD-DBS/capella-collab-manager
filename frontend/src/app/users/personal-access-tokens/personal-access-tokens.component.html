@@ -1,0 +1,302 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div>
+  <h2 class="!mb-2 text-xl font-medium">Personal Access Tokens</h2>
+  Personal Access Tokens can be used to authenticate against the API.
+  <form [formGroup]="tokenForm" (ngSubmit)="createToken()" class="mt-2">
+    <mat-form-field
+      appearance="outline"
+      subscriptSizing="dynamic"
+      class="mb-2 w-full sm:w-9/12"
+    >
+      <mat-label>Token description</mat-label>
+      <textarea
+        matInput
+        placeholder="Please shortly describe the purpose of the token"
+        formControlName="description"
+      ></textarea>
+    </mat-form-field>
+    <div class="flex">
+      <mat-form-field class="w-full sm:w-[250px]">
+        <mat-label>Choose expiration date</mat-label>
+        <input
+          matInput
+          [min]="minDate"
+          [max]="maxDate"
+          [matDatepicker]="picker"
+          formControlName="date"
+        />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="mt-2">
+      <h2 class="!mb-2 text-lg font-medium">Token Scopes</h2>
+
+      @if (permissionsSchema) {
+        @for (
+          scope of permissionsSchema["properties"] | keyvalue;
+          track $index
+        ) {
+          <div
+            (click)="
+              expandedTokenScopes[scope.key] = !expandedTokenScopes[scope.key]
+            "
+            class="flex cursor-pointer items-center"
+          >
+            <button mat-icon-button type="button">
+              <mat-icon class="align-top">
+                @if (expandedTokenScopes[scope.key]) {
+                  expand_circle_right
+                } @else {
+                  expand_circle_down
+                }
+              </mat-icon>
+            </button>
+            <h3>
+              <b>{{ scope.value.title }}</b>
+            </h3>
+            <span class="text-sm">
+              &nbsp;({{ countSelectedPermissions(scope.key) }} selected)
+            </span>
+          </div>
+          <div
+            class="w-fit rounded border p-2 sm:ml-12"
+            [hidden]="expandedTokenScopes[scope.key]"
+          >
+            <app-token-permission-selection
+              [tokenPermissions]="
+                getPermissionByRef(scope.value.$ref)!.properties
+              "
+              [scope]="scope.key"
+              (selectionChange)="onSelectionChange($event)"
+            ></app-token-permission-selection>
+          </div>
+        }
+        @if (projectPermissionsSchema) {
+          @for (scope of projectScopes; track scope) {
+            <div class="flex gap-2">
+              <div
+                (click)="
+                  expandedTokenScopes[scope] = !expandedTokenScopes[scope]
+                "
+                class="flex cursor-pointer items-center"
+              >
+                <button mat-icon-button type="button">
+                  <mat-icon class="align-top">
+                    @if (expandedTokenScopes[scope]) {
+                      expand_circle_right
+                    } @else {
+                      expand_circle_down
+                    }
+                  </mat-icon>
+                </button>
+                <h3>
+                  <b>{{ scope }} Project Scope</b>
+                </h3>
+                <span class="text-sm">
+                  &nbsp;({{ countSelectedPermissions(scope) }} selected)
+                </span>
+              </div>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="unselectProject(scope)"
+              >
+                <mat-icon class="align-top"> playlist_remove </mat-icon>
+              </button>
+            </div>
+            <div
+              class="w-fit rounded border p-2 sm:ml-12"
+              [hidden]="expandedTokenScopes[scope]"
+            >
+              <app-token-permission-selection
+                [tokenPermissions]="projectPermissionsSchema.properties"
+                [scope]="scope"
+                (selectionChange)="onSelectionChange($event)"
+              ></app-token-permission-selection>
+            </div>
+          }
+
+          <div
+            class="flex cursor-pointer items-center"
+            (click)="openProjectDialog()"
+          >
+            <button mat-icon-button>
+              <mat-icon class="align-top">add_circle</mat-icon>
+            </button>
+            <h3>
+              <b>Project Scopes</b>
+            </h3>
+          </div>
+        }
+      }
+    </div>
+    <button
+      class="!my-2 text-white"
+      color="primary"
+      mat-raised-button
+      [disabled]="!tokenForm.valid"
+    >
+      Create Token
+    </button>
+  </form>
+
+  @if (generatedToken) {
+    <div class="collab-card !ml-0">
+      <div class="flex justify-between">
+        <span>Generated Token:</span>
+        <div (click)="generatedToken = undefined" class="cursor-pointer">
+          <mat-icon>close</mat-icon>
+        </div>
+      </div>
+      <app-display-value
+        [value]="generatedToken"
+        [blurValue]="true"
+        valueName="session token"
+      ></app-display-value>
+      <div class="mt-2 text-red-600">
+        Make sure you save the token securely - you won't be able to access it
+        again.
+      </div>
+    </div>
+  }
+
+  <hr class="my-2" />
+
+  <h2 class="mb-2 text-xl font-medium">Token Overview</h2>
+  @if ((tokens$ | async)?.length) {
+    <div class="flex flex-wrap gap-2">
+      @for (token of tokens$ | async; track token) {
+        <div class="collab-card flex flex-col justify-between sm:max-w-[350px]">
+          <div>
+            <div class="min-h-[131px]">
+              <b>{{ token.description }}</b>
+              <hr class="my-1" />
+              The token was created
+              @if (token.created_at) {
+                <app-relative-time
+                  [date]="token.created_at"
+                ></app-relative-time>
+              }
+              <span> in the {{ token.source }}</span>
+              @if (!isTokenExpired(token.expiration_date)) {
+                and expires
+                <app-relative-time
+                  [date]="token.expiration_date"
+                  dateFormat="PP"
+                ></app-relative-time
+                >.
+              } @else {
+                <span>.</span>
+                <div
+                  class="mt-2 flex items-center justify-center gap-2 rounded border p-2 text-sm
+                    text-red-600 shadow"
+                >
+                  <mat-icon class="shrink-0">warning</mat-icon>
+                  <span
+                    >The token has expired
+                    <app-relative-time
+                      [date]="token.expiration_date"
+                      dateFormat="PP"
+                    ></app-relative-time
+                    >!</span
+                  >
+                </div>
+              }
+            </div>
+            <mat-expansion-panel class="!mt-2">
+              @let actualScopes = flattenScope(token.actual_scopes);
+              @let requestedScopes = flattenScope(token.requested_scopes);
+              @let count = countScopes(requestedScopes);
+
+              <mat-expansion-panel-header
+                [attr.data-testId]="'scopes-expansion-' + token.id"
+              >
+                <mat-panel-title>
+                  <b
+                    >{{ count }}
+                    {{ count === 1 ? "Permission" : "Permissions" }}</b
+                  ><br />
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              @if (count === 0) {
+                <div class="px-4 pb-4">
+                  No scopes requested. The token can still be used for API
+                  endpoints without scope.
+                </div>
+              } @else {
+                <div class="px-4 pb-4">
+                  <ul class="ml-1 list-inside list-disc">
+                    @for (
+                      scope of requestedScopes | keyvalue;
+                      track scope.key
+                    ) {
+                      @for (
+                        permission of scope.value | keyvalue;
+                        track permission.key
+                      ) {
+                        @if (permission.value.length) {
+                          <li>
+                            {{ scope.key }}.{{ permission.key }}:
+                            @for (verb of permission.value; track verb) {
+                              @if (
+                                containsVerb(
+                                  actualScopes,
+                                  scope.key,
+                                  permission.key,
+                                  verb
+                                )
+                              ) {
+                                <span class="text-green-600">{{ verb }}</span>
+                              } @else {
+                                <span
+                                  matTooltip="The verb is not currently granted. The underlying user does not have the required permission."
+                                  class="cursor-help text-red-600"
+                                  ><mat-icon inline class="align-bottom"
+                                    >warning</mat-icon
+                                  ><span
+                                    class="ml-0.5 underline decoration-dotted decoration-1 underline-offset-4"
+                                    >{{ verb }}</span
+                                  ></span
+                                >
+                              }
+                              <!-- prettier-ignore -->
+                              @if (!$last) {, }
+                            }
+                          </li>
+                        }
+                      }
+                    }
+                  </ul>
+                </div>
+              }
+            </mat-expansion-panel>
+          </div>
+          <button
+            class="mt-2 w-full"
+            (click)="deleteToken(token)"
+            mat-raised-button
+          >
+            <mat-icon color="warn">delete</mat-icon>
+            <span>
+              @if (isTokenExpired(token.expiration_date)) {
+                Remove token from overview
+              } @else {
+                Revoke token
+              }
+            </span>
+          </button>
+        </div>
+      }
+    </div>
+  } @else {
+    No token created for your user yet.
+  }
+</div>

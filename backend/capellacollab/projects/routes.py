@@ -2,18 +2,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import logging
-
 import fastapi
 import slugify
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core import logging as core_logging
 from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects.events import routes as projects_events_routes
+from capellacollab.projects.permissions import (
+    injectables as projects_permissions_injectables,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
+from capellacollab.projects.permissions import (
+    routes as projects_permissions_routes,
+)
 from capellacollab.projects.toolmodels import routes as toolmodels_routes
 from capellacollab.projects.toolmodels.backups import core as backups_core
 from capellacollab.projects.toolmodels.backups import crud as backups_crud
@@ -24,51 +32,63 @@ from capellacollab.projects.users import models as projects_users_models
 from capellacollab.projects.users import routes as projects_users_routes
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from . import crud, exceptions, models
 
-router = fastapi.APIRouter(
+router = fastapi.APIRouter()
+
+
+@router.get(
+    "",
+    response_model=list[models.Project],
+    tags=["Projects"],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.USER
-            )
+            permissions_injectables.PermissionValidation(required_scope=None)
         )
-    ]
+    ],
 )
-
-
-@router.get("", response_model=list[models.Project], tags=["Projects"])
 def get_projects(
     minimum_role: projects_users_models.ProjectUserRole | None = None,
-    user: users_models.DatabaseUser = fastapi.Depends(
-        users_injectables.get_own_user
-    ),
     db: orm.Session = fastapi.Depends(database.get_db),
-    log: logging.LoggerAdapter = fastapi.Depends(
-        core_logging.get_request_logger
+    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
+    authentication_information: tuple[
+        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+    ] = fastapi.Depends(
+        auth_injectables.AuthenticationInformationValidation()
     ),
 ) -> list[models.DatabaseProject]:
-    if user.role == users_models.Role.ADMIN:
-        log.debug("Fetching all projects")
-        return list(crud.get_projects(db))
+    """List all projects the user has access to.
 
-    if not minimum_role:
-        projects = [
-            association.project
-            for association in user.projects
-            if not association.project.visibility
-            == models.ProjectVisibility.INTERNAL
-        ]
-        projects.extend(crud.get_internal_projects(db))
-    else:
-        projects = [
-            association.project
-            for association in user.projects
-            if auth_injectables.ProjectRoleVerification(
-                minimum_role, verify=False
-            )(association.project.slug, user.name, db)
-        ]
+    Internal projects are visible to all users. With the `minimum_role` query parameter,
+    only projects where the user has at least the specified role are returned.
+    """
+    projects = []
+
+    for project in crud.get_projects(db):
+        project_scope = projects_permissions_injectables.get_scope(
+            authentication_information, global_scope, project, db
+        )
+
+        if permissions_models.UserTokenVerb.GET in project_scope.root:
+            if minimum_role in (
+                projects_users_models.ProjectUserRole.ADMIN,
+                projects_users_models.ProjectUserRole.MANAGER,
+            ):
+                # This is a workaround for backwards compatibility, but without dependency
+                # to the removed ProjectRoleVerification
+                # (project_scope.root, UPDATE) is only available admins & project leads
+
+                if (
+                    permissions_models.UserTokenVerb.UPDATE
+                    in project_scope.root
+                ):
+                    projects.append(project)
+            else:
+                projects.append(project)
 
     return projects
 
@@ -79,8 +99,10 @@ def get_projects(
     tags=["Projects"],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.MANAGER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    root={permissions_models.UserTokenVerb.UPDATE}
+                )
             )
         )
     ],
@@ -90,18 +112,25 @@ def update_project(
     project: models.DatabaseProject = fastapi.Depends(
         projects_injectables.get_existing_project
     ),
-    user: users_models.DatabaseUser = fastapi.Depends(
-        users_injectables.get_own_user
-    ),
     db: orm.Session = fastapi.Depends(database.get_db),
+    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
 ) -> models.DatabaseProject:
+    """Update a project's metadata.
+
+    An update of the name will also change the slug. This will break existing API routes
+    and the project provisioning. Be careful with project renames.
+
+    If the project is archived, all pipelines will be deleted.
+    """
     if patch_project.name:
         new_slug = slugify.slugify(patch_project.name)
 
         if project.slug != new_slug and crud.get_project_by_slug(db, new_slug):
             raise exceptions.ProjectAlreadyExistsError(project.slug)
     if patch_project.is_archived:
-        _delete_all_pipelines_for_project(db, project, user)
+        _delete_all_pipelines_for_project(db, project, global_scope)
     return crud.update_project(db, project, patch_project)
 
 
@@ -111,8 +140,10 @@ def update_project(
     tags=["Projects"],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.ProjectRoleVerification(
-                required_role=projects_users_models.ProjectUserRole.USER
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    root={permissions_models.UserTokenVerb.GET}
+                )
             )
         )
     ],
@@ -122,10 +153,26 @@ def get_project_by_slug(
         projects_injectables.get_existing_project
     ),
 ) -> models.DatabaseProject:
+    """Get a project by its slug."""
     return db_project
 
 
-@router.post("", response_model=models.Project, tags=["Projects"])
+@router.post(
+    "",
+    response_model=models.Project,
+    tags=["Projects"],
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    user=permissions_models.UserScopes(
+                        projects={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            )
+        )
+    ],
+)
 def create_project(
     post_project: models.PostProjectRequest,
     user: users_models.DatabaseUser = fastapi.Depends(
@@ -145,14 +192,13 @@ def create_project(
         post_project.type,
     )
 
-    if user.role != users_models.Role.ADMIN:
-        projects_users_crud.add_user_to_project(
-            db,
-            project,
-            user,
-            projects_users_models.ProjectUserRole.MANAGER,
-            projects_users_models.ProjectUserPermission.WRITE,
-        )
+    projects_users_crud.add_user_to_project(
+        db,
+        project,
+        user,
+        projects_users_models.ProjectUserRole.MANAGER,
+        projects_users_models.ProjectUserPermission.WRITE,
+    )
 
     return project
 
@@ -163,8 +209,10 @@ def create_project(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
+            projects_permissions_injectables.ProjectPermissionValidation(
+                required_scope=projects_permissions_models.ProjectUserScopes(
+                    root={permissions_models.UserTokenVerb.DELETE}
+                )
             )
         )
     ],
@@ -175,6 +223,11 @@ def delete_project(
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+    """Delete a project.
+
+    To avoid accidental deletions of projects, all models have to be deleted before
+    removing the project.
+    """
     if project.models:
         raise exceptions.AssignedModelsPreventDeletionError(project)
     projects_users_crud.delete_users_from_project(db, project)
@@ -186,13 +239,13 @@ def delete_project(
 def _delete_all_pipelines_for_project(
     db: orm.Session,
     project: models.DatabaseProject,
-    user: users_models.DatabaseUser,
+    global_scope: permissions_models.GlobalScopes,
 ):
     pipelines: list[backups_models.DatabaseBackup] = []
     for model in project.models:
         pipelines.extend(backups_crud.get_pipelines_for_tool_model(db, model))
     for pipeline in pipelines:
-        backups_core.delete_pipeline(db, pipeline, user, True)
+        backups_core.delete_pipeline(db, pipeline, True, global_scope)
 
 
 router.include_router(
@@ -213,4 +266,9 @@ router.include_router(
     projects_tools_routes.router,
     prefix="/{project_slug}/tools",
     tags=["Projects - Tools"],
+)
+router.include_router(
+    projects_permissions_routes.router,
+    prefix="/-/permissions",
+    tags=["Projects - Permissions"],
 )

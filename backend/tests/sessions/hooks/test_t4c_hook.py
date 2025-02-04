@@ -70,12 +70,11 @@ def test_t4c_configuration_hook(
 
 
 @responses.activate
-@pytest.mark.usefixtures("t4c_model")
+@pytest.mark.usefixtures("t4c_model", "admin")
 def test_t4c_configuration_hook_as_admin(
     mock_add_user_to_repository: responses.BaseResponse,
     configuration_hook_request: sessions_hooks_interface.ConfigurationHookRequest,
 ):
-    configuration_hook_request.user.role = users_models.Role.ADMIN
     result = t4c.T4CIntegration().configuration_hook(
         configuration_hook_request
     )
@@ -92,7 +91,7 @@ def test_t4c_configuration_hook_as_admin(
 
 
 @responses.activate
-@pytest.mark.usefixtures("t4c_model")
+@pytest.mark.usefixtures("t4c_model", "admin")
 def test_t4c_configuration_hook_with_same_repository_used_twice(
     db: orm.Session,
     project: projects_models.DatabaseProject,
@@ -108,7 +107,6 @@ def test_t4c_configuration_hook_with_same_repository_used_twice(
         db, project, model, capella_tool_version.tool, capella_tool_version
     )
     models_t4c_crud.create_t4c_model(db, db_model, t4c_repository, "default2")
-    configuration_hook_request.user.role = users_models.Role.ADMIN
     result = t4c.T4CIntegration().configuration_hook(
         configuration_hook_request
     )

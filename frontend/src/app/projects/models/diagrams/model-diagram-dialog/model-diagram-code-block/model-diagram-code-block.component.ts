@@ -23,10 +23,14 @@ import { MatTooltip } from '@angular/material/tooltip';
 import hljs from 'highlight.js';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Metadata, Project, ToolModel } from 'src/app/openapi';
+import {
+  Metadata,
+  Project,
+  ToolModel,
+  UsersTokenService,
+} from 'src/app/openapi';
 import { getPrimaryGitModel } from 'src/app/projects/models/service/model.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { TokenService } from 'src/app/users/basic-auth-service/basic-auth-token.service';
 
 @Component({
   selector: 'app-model-diagram-code-block',
@@ -52,7 +56,7 @@ export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   constructor(
     private metadataService: MetadataService,
     private userService: OwnUserWrapperService,
-    private tokenService: TokenService,
+    private tokenService: UsersTokenService,
     private toastService: ToastService,
   ) {}
 
@@ -115,11 +119,18 @@ model = capellambse.MelodyModel(
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 30);
     this.tokenService
-      .createToken(
-        'Created in diagram cache dialog',
-        expirationDate,
-        'Diagram-cache',
-      )
+      .createTokenForUser({
+        description: 'Token used to fetch diagrams from the diagram cache',
+        expiration_date: expirationDate.toISOString().substring(0, 10),
+        source: `diagram viewer of project ${this.project.slug})`,
+        scopes: {
+          projects: {
+            [this.project.slug]: {
+              diagram_cache: ['GET'],
+            },
+          },
+        },
+      })
       .subscribe((token) => {
         this.passwordValue = token.password;
       });
@@ -129,8 +140,8 @@ model = capellambse.MelodyModel(
     this.toastService.showSuccess(
       'Code snippet copied to clipboard',
       this.passwordValue
-        ? "The code snipped contains a personal access token for the Collaboration Manager. Be careful with it and don't share it with others!"
-        : "The code snipped doesn't contain a personal access token. You can insert one with 'Insert token'.",
+        ? "The code snippet contains a personal access token for the Collaboration Manager. Be careful with it and don't share it with others!"
+        : "The code snippet doesn't contain a personal access token. You can insert one with 'Insert token'.",
     );
   }
 }

@@ -8,54 +8,52 @@ from sqlalchemy import orm
 
 from capellacollab.configuration import core as config_core
 from capellacollab.core import database
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
 from capellacollab.events import models as events_models
 from capellacollab.feedback import crud as feedback_crud
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
+from capellacollab.permissions import routes as permissions_routes
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.sessions import routes as session_routes
 from capellacollab.users import injectables as users_injectables
-from capellacollab.users import models as users_models
 from capellacollab.users.tokens import routes as tokens_routes
 from capellacollab.users.workspaces import routes as workspaces_routes
 from capellacollab.users.workspaces import util as workspaces_util
 
 from . import crud, exceptions, injectables, models
 
-router = fastapi.APIRouter(
-    dependencies=[
-        fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=models.Role.USER)
-        )
-    ]
-)
+router = fastapi.APIRouter()
 
 
-@router.get("/current", response_model=models.User)
+@router.get("/current", response_model=models.User, tags=["Users"])
 def get_current_user(
     user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
 ) -> models.DatabaseUser:
+    """Return the user that is currently logged in. No specific permissions required."""
     return user
 
 
-@router.get(
-    "/{user_id}",
-    response_model=models.User,
-)
+@router.get("/{user_id}", response_model=models.User, tags=["Users"])
 def get_user(
     own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
+    scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> models.DatabaseUser:
+    """Return the user.
+
+    Requires scope `admin.users:get` or at least one common project with the user.
+    """
     if (
         user.id == own_user.id
         or len(projects_crud.get_common_projects_for_users(db, own_user, user))
         > 0
-        or auth_injectables.RoleVerification(
-            required_role=models.Role.ADMIN, verify=False
-        )(own_user.name, db)
+        or permissions_models.UserTokenVerb.GET in scope.admin.users
     ):
         return user
     else:
@@ -67,13 +65,21 @@ def get_user(
     response_model=list[models.User],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=models.Role.ADMIN)
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        users={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            )
         )
     ],
+    tags=["Users"],
 )
 def get_users(
     db: orm.Session = fastapi.Depends(database.get_db),
 ) -> abc.Sequence[models.DatabaseUser]:
+    """Get all users."""
     return crud.get_users(db)
 
 
@@ -82,15 +88,26 @@ def get_users(
     response_model=models.User,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=models.Role.ADMIN)
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        users={permissions_models.UserTokenVerb.CREATE}
+                    )
+                )
+            )
         )
     ],
+    tags=["Users"],
 )
 def create_user(
     post_user: models.PostUser,
     own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+    """Create a user.
+
+    This is usually not needed since users are auto-created on login.
+    """
     created_user = crud.create_user(
         db, post_user.name, post_user.idp_identifier, post_user.email
     )
@@ -103,7 +120,7 @@ def create_user(
 @router.get(
     "/{user_id}/common-projects",
     response_model=list[projects_models.Project],
-    tags=["Projects"],
+    tags=["Users"],
 )
 def get_common_projects(
     user_for_common_projects: models.DatabaseUser = fastapi.Depends(
@@ -111,8 +128,19 @@ def get_common_projects(
     ),
     user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
     db: orm.Session = fastapi.Depends(database.get_db),
+    scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
 ) -> list[projects_models.DatabaseProject]:
-    if user.role == models.Role.ADMIN:
+    """List all common projects with a user.
+
+    If the user sending the request has the `admin.projects:get` and `admin.users:get` permissions,
+    the API will return all projects of the selected user.
+    """
+    if (
+        permissions_models.UserTokenVerb.GET in scope.admin.projects
+        and permissions_models.UserTokenVerb.GET in scope.admin.users
+    ):
         return [
             association.project
             for association in user_for_common_projects.projects
@@ -123,18 +151,30 @@ def get_common_projects(
     return list(projects)
 
 
-@router.patch(
-    "/{user_id}",
-    response_model=models.User,
-)
+@router.patch("/{user_id}", response_model=models.User, tags=["Users"])
 def update_user(
     patch_user: models.PatchUser,
     user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
     own_user: models.DatabaseUser = fastapi.Depends(get_current_user),
     db: orm.Session = fastapi.Depends(database.get_db),
+    scope: permissions_models.GlobalScopes = fastapi.Depends(
+        permissions_injectables.get_scope
+    ),
 ):
-    # Users are only allowed to update their beta_tester status unless they are an admin
-    if own_user.role != models.Role.ADMIN:
+    """Update the user.
+
+    The `reason` field is required when updating the role.
+
+    The `beta_user` field can only be updated when `beta.enabled` is activated in the
+    global configuration.
+
+    The `beta_user` field can be updated for the own user when `beta.allow_self_enrollment`
+    is activated in the global configuration.
+    All other fields can only be updated with the `admin.users:update` scope.
+    """
+
+    # Users are only allowed to update their beta_tester status unless they have the `admin.users:update` scope
+    if permissions_models.UserTokenVerb.UPDATE not in scope.admin.users:
         if own_user.id != user.id:
             raise exceptions.ChangesNotAllowedForOtherUsersError()
         if any(patch_user.model_dump(exclude={"beta_tester"}).values()):
@@ -146,7 +186,8 @@ def update_user(
             raise exceptions.BetaTestingDisabledError()
         if (
             not cfg.beta.allow_self_enrollment
-            and own_user.role != models.Role.ADMIN
+            and permissions_models.UserTokenVerb.UPDATE
+            not in scope.admin.users
         ):
             raise exceptions.BetaTestingSelfEnrollmentNotAllowedError()
 
@@ -166,14 +207,26 @@ def update_user(
     status_code=204,
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(required_role=models.Role.ADMIN)
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        users={permissions_models.UserTokenVerb.DELETE}
+                    )
+                )
+            )
         )
     ],
+    tags=["Users"],
 )
 def delete_user(
     user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
     db: orm.Session = fastapi.Depends(database.get_db),
 ):
+    """Delete a user irrevocably.
+
+    The user will be removed from all projects, all events the user was involved in will be deleted,
+    all workspaces of the user will be deleted, and all feedback of the user will be anonymized.
+    """
     projects_users_crud.delete_projects_for_user(db, user.id)
     events_crud.delete_all_events_user_involved_in(db, user.id)
     workspaces_util.delete_all_workspaces_of_user(db, user)
@@ -186,27 +239,25 @@ def delete_user(
     response_model=list[events_models.HistoryEvent],
     dependencies=[
         fastapi.Depends(
-            auth_injectables.RoleVerification(
-                required_role=users_models.Role.ADMIN
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        users={permissions_models.UserTokenVerb.GET},
+                        events={permissions_models.UserTokenVerb.GET},
+                    )
+                )
             )
         )
     ],
+    tags=["Users"],
 )
 def get_user_events(
-    user: users_models.DatabaseUser = fastapi.Depends(
+    user: models.DatabaseUser = fastapi.Depends(
         users_injectables.get_existing_user
     ),
 ) -> list[events_models.DatabaseUserHistoryEvent]:
+    """List all events for the user."""
     return user.events
-
-
-def get_projects_for_user(
-    user: models.DatabaseUser, db: orm.Session
-) -> list[projects_models.DatabaseProject]:
-    if user.role != models.Role.ADMIN:
-        return [association.project for association in user.projects]
-    else:
-        return list(projects_crud.get_projects(db))
 
 
 def update_user_role(
@@ -216,9 +267,6 @@ def update_user_role(
     role: models.Role,
     reason: str,
 ):
-    if role == models.Role.ADMIN:
-        projects_users_crud.delete_projects_for_user(db, user.id)
-
     updated_user = crud.update_role_of_user(db, user, role)
 
     event_type = (
@@ -241,4 +289,9 @@ router.include_router(
 )
 router.include_router(
     tokens_routes.router, prefix="/current/tokens", tags=["Users - Token"]
+)
+router.include_router(
+    permissions_routes.users_router,
+    prefix="/{user_id}/permissions",
+    tags=["Users - Permissions"],
 )

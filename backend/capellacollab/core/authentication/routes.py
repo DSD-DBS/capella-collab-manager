@@ -8,8 +8,9 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database, responses
-from capellacollab.core.authentication import injectables as auth_injectables
 from capellacollab.events import crud as events_crud
+from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
@@ -73,20 +74,6 @@ async def logout(response: fastapi.Response):
     return None
 
 
-@router.get("/tokens")
-async def validate_jwt_token(
-    request: fastapi.Request,
-    scope: users_models.Role | None = None,
-    db: orm.Session = fastapi.Depends(database.get_db),
-):
-    username = await api_key_cookie.JWTAPIKeyCookie()(request)
-    if scope and scope.ADMIN:
-        auth_injectables.RoleVerification(
-            required_role=users_models.Role.ADMIN
-        )(username, db)
-    return username
-
-
 def validate_id_token(
     id_token: str,
     nonce: str | None,
@@ -147,7 +134,10 @@ def update_token_cookies(
             response, "refresh_token", refresh_token, "/api/v1"
         )
 
-    if user.role == users_models.Role.ADMIN:
+    if (
+        permissions_models.UserTokenVerb.GET
+        in permissions_injectables.get_scope((user, None)).admin.monitoring
+    ):
         responses.set_secure_cookie(response, "id_token", id_token, "/grafana")
         responses.set_secure_cookie(
             response, "id_token", id_token, "/prometheus"

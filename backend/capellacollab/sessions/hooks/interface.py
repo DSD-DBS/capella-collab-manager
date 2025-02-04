@@ -9,12 +9,14 @@ import typing as t
 from sqlalchemy import orm
 
 from capellacollab.core import models as core_models
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import models as projects_models
 from capellacollab.sessions import operators
 from capellacollab.sessions.operators import k8s
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 from .. import models as sessions_models
 
@@ -43,6 +45,10 @@ class ConfigurationHookRequest:
         List of workspace provisioning requests
     session_id: str
         ID of the session to be created
+    pat: tokens_models.DatabaseUserToken | None
+        Personal access token if used for authentication
+    global_scope: permissions_models.GlobalScopes
+        Global permission scope of the user
     """
 
     db: orm.Session
@@ -55,6 +61,8 @@ class ConfigurationHookRequest:
     provisioning: list[sessions_models.SessionProvisioningRequest]
     project_scope: projects_models.DatabaseProject | None
     session_id: str
+    pat: tokens_models.DatabaseUserToken | None
+    global_scope: permissions_models.GlobalScopes
 
 
 class ConfigurationHookResult(t.TypedDict):
@@ -190,12 +198,15 @@ class PreSessionTerminationHookRequest:
         Session which is to be terminated
     connection_method : tools_models.ToolSessionConnectionMethod
         Connection method of the session
+    global_scope: permissions_models.GlobalScopes
+        Global permission scope of the user
     """
 
     db: orm.Session
     operator: operators.KubernetesOperator
     session: sessions_models.DatabaseSession
     connection_method: tools_models.ToolSessionConnectionMethod
+    global_scope: permissions_models.GlobalScopes
 
 
 class PreSessionTerminationHookResult(t.TypedDict):
