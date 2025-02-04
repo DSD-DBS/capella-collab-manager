@@ -16,7 +16,7 @@
 A web platform for collaboration on MBSE and
 [Capella](https://www.eclipse.org/capella/) projects.
 
-**Copyright 2021 - 2024 [DB InfraGO AG](https://dbinfrago.com/), licensed under
+**Copyright 2021 - 2025 [DB InfraGO AG](https://dbinfrago.com/), licensed under
 Apache 2.0 License (see full text [here](./LICENSES/Apache-2.0.txt))**
 
 Turn your local MBSE and Capella experience into a browser-based collaboration

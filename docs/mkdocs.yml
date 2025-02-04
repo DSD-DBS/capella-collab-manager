@@ -200,4 +200,6 @@ extra:
 
 dev_addr: 127.0.0.1:8081
 
-copyright: Copyright &copy; 2022-2024 DB InfraGO AG
+# prettier-ignore
+copyright:
+  'Copyright &copy; 2022-<script>document.write(new Date().getFullYear())</script> DB InfraGO AG'
