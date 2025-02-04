@@ -7,31 +7,48 @@
   <h2 class="!mb-2 text-xl font-medium">Personal Access Tokens</h2>
   Personal Access Tokens can be used to authenticate against the API.
   <form [formGroup]="tokenForm" (ngSubmit)="createToken()" class="mt-2">
-    <mat-form-field
-      appearance="outline"
-      subscriptSizing="dynamic"
-      class="mb-2 w-full sm:w-9/12"
-    >
-      <mat-label>Token description</mat-label>
-      <textarea
-        matInput
-        placeholder="Please shortly describe the purpose of the token"
-        formControlName="description"
-      ></textarea>
-    </mat-form-field>
-    <div class="flex">
-      <mat-form-field class="w-full sm:w-[250px]">
-        <mat-label>Choose expiration date</mat-label>
-        <input
+    <div class="flex flex-col gap-2 sm:max-w-[886px]">
+      <div class="flex w-full flex-wrap gap-2">
+        <mat-form-field
+          class="grow"
+          subscriptSizing="dynamic"
+          appearance="outline"
+        >
+          <mat-label>Title</mat-label>
+          <input formControlName="title" matInput />
+        </mat-form-field>
+        <mat-form-field
+          subscriptSizing="dynamic"
+          appearance="outline"
+          class="w-full sm:w-[250px]"
+        >
+          <mat-label>Choose expiration date</mat-label>
+          <input
+            matInput
+            [min]="minDate"
+            [max]="maxDate"
+            [matDatepicker]="picker"
+            formControlName="date"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field
+        appearance="outline"
+        subscriptSizing="dynamic"
+        class="mb-2 w-full"
+      >
+        <mat-label>Token description</mat-label>
+        <textarea
           matInput
-          [min]="minDate"
-          [max]="maxDate"
-          [matDatepicker]="picker"
-          formControlName="date"
-        />
-        <mat-hint>MM/DD/YYYY</mat-hint>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+          placeholder="Describe the purpose of the token"
+          formControlName="description"
+        ></textarea>
       </mat-form-field>
     </div>
 
@@ -176,7 +193,7 @@
         <div class="collab-card flex flex-col justify-between sm:max-w-[350px]">
           <div>
             <div class="min-h-[131px]">
-              <b>{{ token.description }}</b>
+              <b>{{ token.title }}</b>
               <hr class="my-1" />
               The token was created
               @if (token.created_at) {
@@ -209,7 +226,10 @@
                   >
                 </div>
               }
+              <div class="mt-1 text-sm">{{ token.description }}</div>
             </div>
+          </div>
+          <div>
             <mat-expansion-panel class="!mt-2">
               @let actualScopes = flattenScope(token.actual_scopes);
               @let requestedScopes = flattenScope(token.requested_scopes);
@@ -278,21 +298,22 @@
                 </div>
               }
             </mat-expansion-panel>
+
+            <button
+              class="mt-2 w-full"
+              (click)="deleteToken(token)"
+              mat-raised-button
+            >
+              <mat-icon color="warn">delete</mat-icon>
+              <span>
+                @if (isTokenExpired(token.expiration_date)) {
+                  Remove token from overview
+                } @else {
+                  Revoke token
+                }
+              </span>
+            </button>
           </div>
-          <button
-            class="mt-2 w-full"
-            (click)="deleteToken(token)"
-            mat-raised-button
-          >
-            <mat-icon color="warn">delete</mat-icon>
-            <span>
-              @if (isTokenExpired(token.expiration_date)) {
-                Remove token from overview
-              } @else {
-                Revoke token
-              }
-            </span>
-          </button>
         </div>
       }
     </div>

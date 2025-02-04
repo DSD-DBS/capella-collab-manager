@@ -10,9 +10,9 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { provideMomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -62,7 +62,19 @@ import { DisplayValueComponent } from '../../helpers/display-value/display-value
     MatExpansionModule,
     MatTooltipModule,
   ],
-  providers: [provideNativeDateAdapter()],
+  providers: [
+    provideMomentDateAdapter({
+      parse: {
+        dateInput: 'LL',
+      },
+      display: {
+        dateInput: 'LL',
+        monthYearLabel: 'MMM YYYY',
+        dateA11yLabel: 'LL',
+        monthYearA11yLabel: 'MMMM YYYY',
+      },
+    }),
+  ],
 })
 export class PersonalAccessTokensComponent implements OnInit {
   generatedToken?: string;
@@ -104,7 +116,11 @@ export class PersonalAccessTokensComponent implements OnInit {
   readonly tokens$ = this._tokens.asObservable();
 
   tokenForm = this.formBuilder.group({
-    description: ['', [Validators.required, Validators.minLength(1)]],
+    title: [
+      '',
+      [Validators.required, Validators.minLength(1), Validators.maxLength(50)],
+    ],
+    description: ['', [Validators.required]],
     date: [this.getTomorrow(), [Validators.required]],
   });
   constructor(
@@ -205,6 +221,7 @@ export class PersonalAccessTokensComponent implements OnInit {
     if (this.tokenForm.valid) {
       this.tokenService
         .createTokenForUser({
+          title: this.tokenForm.value.title!,
           description: this.tokenForm.value.description!,
           expiration_date: this.tokenForm.value
             .date!.toISOString()

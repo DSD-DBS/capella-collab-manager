@@ -19,6 +19,7 @@ def create_token(
     db: orm.Session,
     user: users_models.DatabaseUser,
     scope: permissions_models.GlobalScopes,
+    title: str,
     description: str,
     expiration_date: datetime.date | None,
     source: str,
@@ -29,6 +30,7 @@ def create_token(
         expiration_date = datetime.date.today() + datetime.timedelta(days=30)
     db_token = models.DatabaseUserToken(
         user=user,
+        title=title,
         hash=ph.hash(password),
         created_at=datetime.datetime.now(datetime.UTC),
         expiration_date=expiration_date,

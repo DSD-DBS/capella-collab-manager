@@ -136,7 +136,8 @@ def fixture_pat(
         db,
         user,
         scope=global_scope,
-        description="test",
+        title="test",
+        description="",
         expiration_date=None,
         source="test",
     )

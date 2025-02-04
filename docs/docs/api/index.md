@@ -47,9 +47,9 @@ To authenticate against the API you can use Personal Access Tokens (PAT).
 ### PAT Creation
 
 To create a personal access token (PAT) you can go to `Menu` > `Tokens`. Every
-token requires a description and expiration date. In addition, the token only
-has access to the provided scope. In the API documentation you'll find the
-required permissions for each route.
+token requires a title, description, and expiration date. In addition, the
+token only has access to the provided scope. In the API documentation you'll
+find the required permissions for each route.
 
 !!! info
 

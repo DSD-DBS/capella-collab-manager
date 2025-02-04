@@ -17,6 +17,7 @@ from . import (
     pure_variants,
     read_only_workspace,
     session_preparation,
+    session_token,
     t4c,
 )
 
@@ -28,6 +29,7 @@ REGISTERED_HOOKS: dict[str, interface.HookRegistration] = {
 
 REGISTER_HOOKS_AUTO_USE: list[interface.HookRegistration] = [
     persistent_workspace.PersistentWorkspaceHook(),
+    session_token.SessionTokenIntegration(),
     guacamole.GuacamoleIntegration(),
     http.HTTPIntegration(),
     read_only_workspace.ReadOnlyWorkspaceHook(),

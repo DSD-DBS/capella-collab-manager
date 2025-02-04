@@ -25,6 +25,7 @@ export interface UserToken {
      */
     actual_scopes: FineGrainedResourceOutput;
     created_at: string | null;
+    title: string;
     description: string;
     source: string;
 }

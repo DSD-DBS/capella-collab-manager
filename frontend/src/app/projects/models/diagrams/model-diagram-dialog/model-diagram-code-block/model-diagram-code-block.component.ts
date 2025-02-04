@@ -120,6 +120,7 @@ model = capellambse.MelodyModel(
     expirationDate.setDate(expirationDate.getDate() + 30);
     this.tokenService
       .createTokenForUser({
+        title: 'Diagram cache token',
         description: 'Token used to fetch diagrams from the diagram cache',
         expiration_date: expirationDate.toISOString().substring(0, 10),
         source: `diagram viewer of project ${this.project.slug})`,
