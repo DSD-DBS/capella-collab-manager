@@ -67,6 +67,24 @@ def update_tool(
     return tool
 
 
+def update_tools_username(
+    db: orm.Session, old_username: str, new_username: str
+):
+    tools = get_tools(db)
+    for tool in tools:
+        updated = False
+        for profile in tool.config.resources.additional.values():
+            if old_username in profile.usernames:
+                profile.usernames = [
+                    new_username if username == old_username else username
+                    for username in profile.usernames
+                ]
+                updated = True
+        if updated:
+            orm.attributes.flag_modified(tool, "config")
+    db.commit()
+
+
 def delete_tool(db: orm.Session, tool: models.DatabaseTool) -> None:
     db.delete(tool)
     db.commit()

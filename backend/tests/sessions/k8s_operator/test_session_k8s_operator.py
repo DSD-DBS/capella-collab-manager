@@ -118,7 +118,7 @@ def test_create_job(monkeypatch: pytest.MonkeyPatch):
         command="fakecmd",
         labels={"key": "value"},
         environment={"ENVVAR": "value"},
-        tool_resources=tools_models.Resources(),
+        tool_resources=tools_models.DefaultResourceProfile(),
     )
 
     assert result
@@ -136,7 +136,7 @@ def test_create_cronjob(monkeypatch: pytest.MonkeyPatch):
         command="fakecmd",
         environment={"ENVVAR": "value"},
         labels={},
-        tool_resources=tools_models.Resources(),
+        tool_resources=tools_models.DefaultResourceProfile(),
     )
 
     assert result

@@ -8,6 +8,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.tools import crud as tools_crud
 from capellacollab.users import models
 
 
@@ -80,6 +81,8 @@ def create_user(
 def update_user(
     db: orm.Session, user: models.DatabaseUser, patch_user: models.PatchUser
 ) -> models.DatabaseUser:
+    if patch_user.name:
+        tools_crud.update_tools_username(db, user.name, patch_user.name)
     database.patch_database_with_pydantic_object(user, patch_user)
     db.commit()
     return user
