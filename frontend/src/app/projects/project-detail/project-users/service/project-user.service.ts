@@ -125,15 +125,16 @@ export class ProjectUserService {
     this._projectUsers.next(undefined);
     combineLatest([
       this.projectWrapperService.project$.pipe(filter(Boolean)),
-      this.projectUser$.pipe(
+      this.projectUser$,
+    ])
+      .pipe(
+        filter(Boolean),
         filter(
-          (projectUser) =>
+          ([_, projectUser]) =>
             projectUser?.role === 'manager' ||
             projectUser?.role === 'administrator',
         ),
-      ),
-    ])
-      .pipe(filter(Boolean))
+      )
       .subscribe(([project, _]) => {
         this.loadProjectUsers(project.slug);
       });
