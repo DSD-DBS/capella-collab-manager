@@ -45,12 +45,18 @@ export const Overview: Story = {
             ...mockUser,
             role: 'administrator',
             name: 'globalAdministrator2',
+            beta_tester: true,
           },
           loggedInUser,
           mockUser,
           {
             ...mockUser,
             name: 'userWithReallyLongNameThatHasToBeWrapped',
+          },
+          {
+            ...mockUser,
+            name: 'userThatsAlsoABetaTester',
+            beta_tester: true,
           },
         ]),
         mockOwnUserWrapperServiceProvider(loggedInUser),
