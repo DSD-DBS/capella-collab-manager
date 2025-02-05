@@ -110,6 +110,6 @@ In general, we use pre-commit hooks to enforce coding standards. To set up the
 pre-commit hooks, please run the following commands:
 
 ```zsh
-pip install -U pip pre-commit
+uv tool install pre-commit --with pre-commit-uv
 pre-commit install
 ```

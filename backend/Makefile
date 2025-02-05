@@ -64,13 +64,15 @@ coverage:
 		--cov-report html \
 		tests/
 
-install:
+generate-archival:
 	python generate_git_archival.py
+
+install: generate-archival
 	if [ ! -d "$(VENV)" ]; \
 		then printf "\033[0;31mThe directory $$(readlink -f $(VENV)) doesn't exist. A venv will be created now.\n\033[0m" && \
-		python -m venv $(VENV);
+		uv venv $(VENV) --python 3.12;
 	fi
-	$(VENV)/bin/pip install -e ".[dev]"
+	uv pip install -e ".[dev]" --python $(VENV)/bin/python
 
 openapi:
 	$(VENV)/bin/python \
