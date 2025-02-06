@@ -99,6 +99,15 @@
             <mat-icon>download_file</mat-icon>
           </button>
         </div>
+        <div class="flex w-8">
+          <button
+            matRipple
+            class="flex rounded p-1 text-red-500"
+            (click)="deleteFile(node)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       }
     </mat-tree-node>
 
@@ -160,6 +169,17 @@
           <mat-icon>upload_file</mat-icon>
         </button>
       </div>
+      @if (node.path.startsWith("/workspace/")) {
+        <div class="flex w-8">
+          <button
+            matRipple
+            class="flex rounded p-1 text-red-500"
+            (click)="deleteFile(node)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      }
     </mat-tree-node>
   </mat-tree>
   <br />
