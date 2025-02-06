@@ -17,7 +17,7 @@ import { SessionViewerComponent } from 'src/app/sessions/session/session-viewer.
 import { ConfigurationSettingsComponent } from 'src/app/settings/core/configuration-settings/configuration-settings.component';
 import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
-import { AddGitInstanceComponent } from 'src/app/settings/modelsources/git-settings/add-git-instance/add-git-instance.component';
+import { AddGitInstanceComponent } from 'src/app/settings/modelsources/git-instances/add-git-instance/add-git-instance.component';
 import { PersonalAccessTokensComponent } from 'src/app/users/personal-access-tokens/personal-access-tokens.component';
 import { UserWrapperComponent } from 'src/app/users/user-wrapper/user-wrapper.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
@@ -42,8 +42,8 @@ import { AlertSettingsComponent } from './settings/core/alert-settings/alert-set
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { PureVariantsComponent } from './settings/integrations/pure-variants/pure-variants.component';
-import { EditGitSettingsComponent } from './settings/modelsources/git-settings/edit-git-settings/edit-git-settings.component';
-import { GitSettingsComponent } from './settings/modelsources/git-settings/git-settings.component';
+import { EditGitInstanceComponent } from './settings/modelsources/git-instances/edit-git-instance/edit-git-instance.component';
+import { GitInstancesComponent } from './settings/modelsources/git-instances/git-instances.component';
 import { EditT4CInstanceComponent } from './settings/modelsources/t4c-settings/edit-t4c-instance/edit-t4c-instance.component';
 import { EditT4cLicenseServerComponent } from './settings/modelsources/t4c-settings/edit-t4c-license-server/edit-t4c-license-server.component';
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
@@ -419,7 +419,7 @@ export const routes: Routes = [
                   {
                     path: '',
                     data: { breadcrumb: undefined },
-                    children: [{ path: '', component: GitSettingsComponent }],
+                    children: [{ path: '', component: GitInstancesComponent }],
                   },
                   {
                     path: 'create',
@@ -440,7 +440,7 @@ export const routes: Routes = [
                     data: {
                       breadcrumb: (data: Data) => data.gitInstance?.name,
                     },
-                    component: EditGitSettingsComponent,
+                    component: EditGitInstanceComponent,
                   },
                 ],
               },

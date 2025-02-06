@@ -11,7 +11,7 @@ import {
   ValidationError,
 } from 'src/app/openapi';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
-import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-settings/service/git-instances.service';
+import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-instances/service/git-instances.service';
 
 export const mockPrimaryGitModel: Readonly<GitModel> = {
   id: 1,
