@@ -3,15 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnInit,
-  Pipe,
-  PipeTransform,
-  forwardRef,
-} from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatExpansionPanel,
@@ -20,7 +12,13 @@ import {
 } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import hljs from 'highlight.js';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import {
+  BundledLanguage,
+  BundledTheme,
+  createHighlighter,
+  HighlighterGeneric,
+} from 'shiki';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -46,18 +44,19 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
     MatButton,
     MatTooltip,
     CdkCopyToClipboard,
-    forwardRef(() => HighlightPipeTransform),
   ],
 })
 export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   passwordValue?: string;
   metadata?: Metadata;
+  highlighter?: HighlighterGeneric<BundledLanguage, BundledTheme>;
 
   constructor(
     private metadataService: MetadataService,
     private userService: OwnUserWrapperService,
     private tokenService: UsersTokenService,
     private toastService: ToastService,
+    private domSanitizer: DomSanitizer,
   ) {}
 
   ngOnInit(): void {
@@ -78,8 +77,21 @@ export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
   @Input()
   expanded = false;
 
-  ngAfterViewInit(): void {
-    hljs.highlightAll();
+  async ngAfterViewInit(): Promise<void> {
+    this.highlighter = await createHighlighter({
+      themes: ['github-dark'],
+      langs: ['python'],
+    });
+  }
+
+  get highlightedCodeBlockContent(): SafeHtml {
+    if (!this.highlighter) return '';
+    return this.domSanitizer.bypassSecurityTrustHtml(
+      this.highlighter.codeToHtml(this.codeBlockContent, {
+        lang: 'python',
+        theme: 'github-dark',
+      }),
+    );
   }
 
   get codeBlockContent(): string {
@@ -144,15 +156,5 @@ model = capellambse.MelodyModel(
         ? "The code snippet contains a personal access token for the Collaboration Manager. Be careful with it and don't share it with others!"
         : "The code snippet doesn't contain a personal access token. You can insert one with 'Insert token'.",
     );
-  }
-}
-
-@Pipe({
-  name: 'highlight',
-  standalone: true,
-})
-export class HighlightPipeTransform implements PipeTransform {
-  transform(value: string, language: string): string {
-    return hljs.highlight(value, { language }).value;
   }
 }
