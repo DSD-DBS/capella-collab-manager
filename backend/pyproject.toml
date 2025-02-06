@@ -10,7 +10,7 @@ dynamic = ["version"]
 
 name = "capellacollab-backend"
 readme = "README.md"
-requires-python = ">=3.11, <3.13"
+requires-python = ">=3.12, <3.14"
 license = { text = "Apache-2.0" }
 authors = [{ name = "DB InfraGO AG" }]
 keywords = []
@@ -95,7 +95,7 @@ no_implicit_optional = true
 show_error_codes = true
 warn_redundant_casts = true
 warn_unreachable = true
-python_version = "3.11"
+python_version = "3.12"
 exclude = "capellacollab/alembic"
 
 [[tool.mypy.overrides]]
@@ -222,7 +222,7 @@ xfail_strict = true
 
 [tool.ruff]
 line-length = 79
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["I", "UP"]

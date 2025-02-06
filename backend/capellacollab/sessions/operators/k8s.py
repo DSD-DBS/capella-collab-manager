@@ -12,7 +12,7 @@ import logging
 import random
 import shlex
 import string
-import subprocess
+import textwrap
 import typing as t
 
 import kubernetes
@@ -70,9 +70,7 @@ class KubernetesOperator:
         self.v1_policy = client.PolicyV1Api(api_client=self.client)
 
     def load_config(self) -> None:
-        self.kubectl_arguments = []
         if cfg.context:
-            self.kubectl_arguments += ["--context", cfg.context]
             kubernetes.config.load_config(context=cfg.context)
         else:
             kubernetes.config.load_incluster_config()
@@ -977,88 +975,109 @@ class KubernetesOperator:
             )
 
         source = helper.get_source_of_python_function(print_file_tree_as_json)
+        encoded = base64.b64encode(source.encode("utf-8")).decode("utf-8")
+        command = [
+            "bash",
+            "-c",
+            f'echo "{encoded}" | base64 --decode | python - {directory} {json.dumps(show_hidden)}',
+        ]
 
-        # We have to use subprocess to get it running until this issue is solved:
-        # https://github.com/kubernetes/kubernetes/issues/89899
-        # Python doesn't start evaluating the code before EOF, but there is no way to close stdin
+        stdout = self._open_session_stream(
+            session_id,
+            command,
+            None,
+        )
 
+        return json.loads(stdout)
+
+    def _open_session_stream(
+        self, session_id: str, command: list[str], stdin: bytes | None
+    ) -> str:
+        """Open session stream and return stdout"""
+
+        log.debug(
+            "Running command in session %s\n%s",
+            session_id,
+            textwrap.indent(
+                " ".join(command),
+                "[COMMAND] ",
+            ),
+        )
         try:
-            response = subprocess.run(
-                ["kubectl"]
-                + self.kubectl_arguments
-                + [
-                    "--namespace",
-                    namespace,
-                    "exec",
-                    "--stdin",
-                    session_id,
-                    "--container",
-                    "session",
-                    "--",
-                    "python",
-                    "-",
-                    directory,
-                    json.dumps(show_hidden),
-                ],
-                input=source.encode(),
-                capture_output=True,
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            log.error(
-                "Loading files of session '%s' failed - STDOUT: %s",
-                session_id,
-                e.stdout.decode(),
-            )
-            log.error(
-                "Loading files of session '%s' failed - STDERR: %s",
-                session_id,
-                e.stderr.decode(),
-            )
-            raise
-
-        return json.loads(response.stdout)
-
-    def upload_files(
-        self,
-        session_id: str,
-        content: bytes,
-    ):
-        try:
-            exec_command = ["tar", "xf", "-", "-C", "/"]
             stream = kubernetes.stream.stream(
                 self.v1_core.connect_get_namespaced_pod_exec,
                 session_id,
                 container="session",
                 namespace=namespace,
-                command=exec_command,
+                command=command,
                 stderr=True,
-                stdin=True,
+                stdin=bool(stdin),
                 stdout=True,
                 tty=False,
                 _preload_content=False,
             )
 
-            stream.write_stdin(content)
-            stream.update(timeout=5)
-            if stream.peek_stdout():
-                log.debug(
-                    "Upload into %s - STDOUT: %s",
-                    session_id,
-                    stream.read_stdout(),
-                )
-            if stream.peek_stderr():
-                log.debug(
-                    "Upload into %s - STDERR: %s",
-                    session_id,
-                    stream.read_stderr(),
-                )
+            if stdin:
+                stream.write_stdin(stdin)
 
+            stdout = ""
+            stderr = ""
+
+            while stream.is_open():
+                stream.update(timeout=1)
+                if stream.peek_stdout():
+                    new_stdout = stream.read_stdout()
+                    stdout += new_stdout
+                    log.debug(
+                        "Reading STDOUT from session %s:\n%s",
+                        session_id,
+                        textwrap.indent(
+                            new_stdout,
+                            "[STDOUT] ",
+                        ),
+                    )
+                if stream.peek_stderr():
+                    new_stderr = stream.read_stderr()
+                    stderr += new_stderr
+                    log.debug(
+                        "Reading STDERR from session %s:\n%s",
+                        session_id,
+                        textwrap.indent(
+                            new_stderr,
+                            "[STDERR] ",
+                        ),
+                    )
+                    log.debug(
+                        "Loading files of session '%s' - STDERR: %s",
+                        session_id,
+                        stderr,
+                    )
         except exceptions.ApiException:
-            log.exception(
-                "Exception when copying file to the pod with id %s", session_id
+            logging.error(
+                "Command failed for session %s. See stacktrace below.\n%s\n%s",
+                session_id,
+                textwrap.indent(
+                    " ".join(command),
+                    "[COMMAND] ",
+                ),
+                textwrap.indent(
+                    stderr,
+                    "[STDERR] ",
+                ),
+                exc_info=True,
             )
             raise
+
+        return stdout
+
+    def upload_files(
+        self,
+        session_id: str,
+        content: bytes,
+    ) -> None:
+        self._open_session_stream(
+            session_id, ["tar", "xf", "-", "-C", "/"], content
+        )
 
     def download_file(self, session_id: str, path: str) -> t.Iterable[bytes]:
         try:
