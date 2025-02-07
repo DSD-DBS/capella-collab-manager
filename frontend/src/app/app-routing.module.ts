@@ -4,6 +4,9 @@
  */
 import { NgModule } from '@angular/core';
 import { Data, RouterModule, Routes } from '@angular/router';
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import { configureMonacoYaml } from 'monaco-yaml';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { PageNotFoundComponent } from 'src/app/general/404/404.component';
 import { authGuard } from 'src/app/general/auth/auth-guard/auth-guard.service';
 import { JobRunOverviewComponent } from 'src/app/projects/models/backup-settings/job-run-overview/job-run-overview.component';
@@ -21,6 +24,7 @@ import { AddGitInstanceComponent } from 'src/app/settings/modelsources/git-insta
 import { PersonalAccessTokensComponent } from 'src/app/users/personal-access-tokens/personal-access-tokens.component';
 import { UserWrapperComponent } from 'src/app/users/user-wrapper/user-wrapper.component';
 import { UsersProfileComponent } from 'src/app/users/users-profile/users-profile.component';
+import { API_DOCS_URL } from './environment';
 import { EventsComponent } from './events/events.component';
 import { AuthRedirectComponent } from './general/auth/auth-redirect/auth-redirect.component';
 import { AuthComponent } from './general/auth/auth/auth.component';
@@ -50,6 +54,7 @@ import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-setting
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
 import { UserSettingsComponent } from './users/user-settings/user-settings.component';
+import YamlWorker from './yaml.worker.js?worker';
 
 export const routes: Routes = [
   {
@@ -564,7 +569,53 @@ export const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes),
+    MonacoEditorModule.forRoot({
+      onMonacoLoad: () => {
+        window.MonacoEnvironment = {
+          getWorker(_, label) {
+            switch (label) {
+              case 'editorWorkerService':
+                return new EditorWorker();
+              case 'yaml':
+                return new YamlWorker();
+              default:
+                throw new Error(`Unknown label ${label}`);
+            }
+          },
+        };
+
+        const apiDocsUrl = API_DOCS_URL.startsWith('http')
+          ? API_DOCS_URL
+          : new URL(API_DOCS_URL, window.location.origin).href;
+
+        // eslint-disable-next-line
+        // @ts-ignore We have to use ignore here because this error only occurs in some contexts
+        configureMonacoYaml(window.monaco, {
+          enableSchemaRequest: true,
+          schemas: [
+            {
+              fileMatch: ['*.globalconfig.yaml'],
+              uri: `${apiDocsUrl}/openapi.json#/components/schemas/GlobalConfiguration-Input`,
+            },
+            {
+              fileMatch: ['*.tool.yaml'],
+              uri: `${apiDocsUrl}/openapi.json#/components/schemas/CreateTool-Input`,
+            },
+            {
+              fileMatch: ['*.toolnature.yaml'],
+              uri: `${apiDocsUrl}/openapi.json#/components/schemas/CreateToolNature-Input`,
+            },
+            {
+              fileMatch: ['*.toolversion.yaml'],
+              uri: `${apiDocsUrl}/openapi.json#/components/schemas/CreateToolVersion-Input`,
+            },
+          ],
+        });
+      },
+    }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

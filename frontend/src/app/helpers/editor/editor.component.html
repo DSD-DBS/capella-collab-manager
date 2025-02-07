@@ -3,7 +3,13 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div #editorRef [style.height]="height"></div>
+<ngx-monaco-editor
+  [style.height]="height()"
+  [options]="options"
+  [(ngModel)]="code"
+  [model]="editorModel()"
+  (onInit)="onInit($event)"
+></ngx-monaco-editor>
 
 <span class="size-0 text-xs text-gray-600">
   <em>Hint: You can also save the content by pressing 'CTRL' + 'S'</em>

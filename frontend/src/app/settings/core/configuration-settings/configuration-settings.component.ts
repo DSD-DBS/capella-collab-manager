@@ -31,7 +31,7 @@ export class ConfigurationSettingsComponent implements OnInit {
 
   fetchConfiguration() {
     this.configurationSettingsService.getConfiguration().subscribe((data) => {
-      this.editor!.value = data;
+      this.editor!.setValue(data);
     });
   }
 
