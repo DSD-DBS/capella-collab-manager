@@ -61,6 +61,11 @@ export const Overview: Story = {
             name: 'Project without description',
             description: '',
           },
+          {
+            ...mockProject,
+            name: 'This is a very long project name. Why would someone name a project like this?',
+            is_archived: true,
+          },
         ]),
       ],
     }),
