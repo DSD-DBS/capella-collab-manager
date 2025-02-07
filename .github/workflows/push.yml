@@ -84,7 +84,7 @@ jobs:
           echo "branch=${GITHUB_REF_NAME//[^a-zA-Z0-9.]/-}" >> "$GITHUB_OUTPUT"
           echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.11.0
+        uses: helm/kind-action@v1.12.0
       - name: Create sessions namespace
         run: |
           kubectl create namespace collab-sessions
