@@ -24,9 +24,11 @@ jobs:
           cache: pip
           cache-dependency-path: ./backend/pyproject.toml
           python-version: '3.12'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
       - name: Install dependencies
         run: |
-          pip install -e "./backend[dev]"
+          uv pip install --system -e "./backend[dev]"
       - name: Run pytest
         working-directory: backend
         run: |
