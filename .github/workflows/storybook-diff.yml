@@ -9,11 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: 'frontend/package.json'
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install storycap puppeteer http-server
+        run: pnpm install storycap puppeteer http-server
         working-directory: ./frontend
       - name: Build Storybook
         run: npm run build-storybook

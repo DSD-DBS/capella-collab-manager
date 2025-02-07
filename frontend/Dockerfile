@@ -7,15 +7,16 @@ FROM $BASE_IMAGE as build
 USER root
 
 ARG CONFIGURATION=production
-RUN npm install -g npm@latest
+RUN npm install -g corepack@latest && corepack enable
 
 WORKDIR /work
 
-COPY ./package*.json /work/
-RUN npm i
+COPY ./package.json /work/
+COPY ./pnpm-lock.yaml /work/
+RUN pnpm install --ignore-scripts
 
 COPY . /work
-RUN npm run build -- --configuration=${CONFIGURATION}
+RUN pnpm run build -- --configuration=${CONFIGURATION}
 
 FROM nginxinc/nginx-unprivileged:latest
 
