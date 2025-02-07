@@ -9,7 +9,7 @@ updates:
     schedule:
       interval: 'weekly'
   # Frontend
-  - package-ecosystem: 'pnpm'
+  - package-ecosystem: 'npm'
     directory: '/frontend'
     schedule:
       interval: 'weekly'
