@@ -117,3 +117,18 @@ def unenroll_all_beta_testers(db: orm.Session):
         .values(beta_tester=False)
     )
     db.commit()
+
+
+def count_users_by_beta(db: orm.Session) -> dict[bool, int]:
+    return {
+        value[0]: value[1]
+        for value in db.execute(
+            sa.select(
+                models.DatabaseUser.beta_tester,
+                # pylint: disable=not-callable
+                sa.func.count(),
+            ).group_by(
+                models.DatabaseUser.beta_tester,
+            )
+        ).all()
+    }
