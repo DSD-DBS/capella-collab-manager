@@ -4,8 +4,38 @@
  -->
 
 <div class="flex flex-col gap-4 text-center">
-  <div>
-    <app-welcome />
+  <div
+    class="transition-all duration-700"
+    [ngClass]="{
+      'max-h-0 overflow-hidden': (navBarService.loaded$ | async) === false,
+      'max-h-[100vh]': navBarService.loaded$ | async,
+    }"
+  >
+    <div class="collab-card grid place-items-center">
+      <div class="flex select-none flex-col items-center gap-3 py-4">
+        @if (navBarService.logoUrl$ | async; as logoUrl) {
+          <img [src]="logoUrl" aria-hidden="true" alt="" class="h-12" />
+        }
+        <h1 class="text-2xl/none font-semibold text-primary">
+          Capella Collaboration Manager
+        </h1>
+
+        @if ((navBarService.badge$ | async)?.show) {
+          <div
+            class="whitespace-nowrap rounded-md px-2 py-1 text-sm font-semibold uppercase
+              tracking-wide text-white"
+            [class.bg-hazard]="
+              (navBarService.badge$ | async)?.variant === 'warning'
+            "
+            [class.bg-green-600]="
+              (navBarService.badge$ | async)?.variant === 'success'
+            "
+          >
+            {{ (navBarService.badge$ | async)?.text }}
+          </div>
+        }
+      </div>
+    </div>
   </div>
 
   @if (params["error"]) {

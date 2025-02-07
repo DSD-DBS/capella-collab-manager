@@ -40,6 +40,10 @@ export class NavBarService {
     map((unifiedConfig) => unifiedConfig?.navbar?.logo_url),
   );
 
+  readonly loaded$ = this.unifiedConfigWrapperService.unifiedConfig$.pipe(
+    map((unifiedConfig) => !!unifiedConfig),
+  );
+
   readonly badge$ = this.unifiedConfigWrapperService.unifiedConfig$.pipe(
     map((unifiedConfig) => unifiedConfig?.navbar?.badge),
   );

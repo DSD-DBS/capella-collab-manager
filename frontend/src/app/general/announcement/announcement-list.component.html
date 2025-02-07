@@ -1,0 +1,19 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div
+  class="my-3 flex max-h-0 flex-col gap-2 overflow-hidden transition-all duration-700"
+  [ngClass]="{
+    'max-h-[100vh]':
+      announcementWrapperService.visibleAnnouncements().length > 0,
+  }"
+>
+  @for (
+    announcement of announcementWrapperService.visibleAnnouncements();
+    track announcement.id
+  ) {
+    <app-announcement [@announcementAnimation] [announcement]="announcement" />
+  }
+</div>

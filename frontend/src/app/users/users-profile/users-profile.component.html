@@ -34,6 +34,10 @@
     }
   }
 
+  @if (ownUserService.user?.id === (userWrapperService.user$ | async)?.id) {
+    <app-reset-hidden-announcements />
+  }
+
   <app-common-projects></app-common-projects>
   @if (ownUserService.user?.role === "administrator") {
     <app-user-workspaces></app-user-workspaces>

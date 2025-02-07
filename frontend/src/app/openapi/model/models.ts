@@ -11,6 +11,8 @@
 
 export * from './admin-scopes-input';
 export * from './admin-scopes-output';
+export * from './announcement-level';
+export * from './announcement-response';
 export * from './anonymized-session';
 export * from './authorization-response';
 export * from './backup';
@@ -25,8 +27,8 @@ export * from './built-in-link-item';
 export * from './built-in-navbar-link';
 export * from './cpu-resources-input';
 export * from './cpu-resources-output';
+export * from './create-announcement-request';
 export * from './create-backup';
-export * from './create-notice-request';
 export * from './create-t4-c-instance';
 export * from './create-t4-c-repository';
 export * from './create-tool-input';
@@ -86,8 +88,6 @@ export * from './model-provisioning';
 export * from './navbar-configuration-input';
 export * from './navbar-configuration-input-external-links-inner';
 export * from './navbar-configuration-output';
-export * from './notice-level';
-export * from './notice-response';
 export * from './page-history-event';
 export * from './page-pipeline-run';
 export * from './patch-project';

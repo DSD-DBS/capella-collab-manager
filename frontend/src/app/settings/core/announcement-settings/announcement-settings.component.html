@@ -1,0 +1,36 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="flex flex-col gap-2">
+  <h2 class="text-xl font-medium">Create new Announcement</h2>
+  <app-edit-announcement />
+
+  <h2 class="text-xl font-medium">Edit existing Announcements</h2>
+  @if (announcementWrapperService.announcements() === undefined) {
+    @for (_ of [0, 1, 2]; track $index) {
+      <ngx-skeleton-loader
+        count="1"
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '350px',
+          width: '100%',
+          border: '1px solid white',
+          margin: 0,
+          padding: 0,
+        }"
+      ></ngx-skeleton-loader>
+    }
+  } @else {
+    @for (
+      announcement of announcementWrapperService.announcements();
+      track announcement.id
+    ) {
+      <app-edit-announcement [existingAnnouncement]="announcement" />
+    } @empty {
+      <p>No announcements found</p>
+    }
+  }
+</div>

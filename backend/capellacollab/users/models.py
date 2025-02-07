@@ -72,6 +72,7 @@ ROLE_MAPPING = {
             },
             announcements={
                 models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.UPDATE,
                 models.UserTokenVerb.DELETE,
             },
             monitoring={

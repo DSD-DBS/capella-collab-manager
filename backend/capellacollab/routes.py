@@ -6,12 +6,12 @@ import logging
 
 import fastapi
 
+from capellacollab.announcements import routes as announcements_routes
 from capellacollab.configuration import routes as configuration_routes
 from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
 from capellacollab.feedback import routes as feedback_routes
 from capellacollab.health import routes as health_routes
-from capellacollab.notices import routes as notices_routes
 from capellacollab.permissions import routes as permissions_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
@@ -60,7 +60,9 @@ router.include_router(
     tags=["Events"],
 )
 router.include_router(
-    notices_routes.router, prefix="/notices", tags=["Notices"]
+    announcements_routes.router,
+    prefix="/announcements",
+    tags=["Announcements"],
 )
 router.include_router(
     settings_routes.router,

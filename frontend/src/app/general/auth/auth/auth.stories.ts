@@ -8,6 +8,7 @@ import {
   mockMetadataServiceProvider,
 } from 'src/storybook/metadata';
 import { mockActivatedRouteProvider } from 'src/storybook/routes';
+import { mockNavbarServiceProvider } from '../../../../storybook/navbar';
 import { AuthComponent } from './auth.component';
 
 const meta: Meta<AuthComponent> = {
@@ -32,6 +33,15 @@ export const IdentityProviderError: Story = {
           error_description: 'This is the error description.',
           error_uri: 'https://example.com/error',
         }),
+        mockNavbarServiceProvider(
+          '/test-assets/wide_logo.svg',
+          {
+            show: true,
+            variant: 'success',
+            text: 'Production',
+          },
+          true,
+        ),
       ],
     }),
   ],
@@ -44,12 +54,91 @@ export const Logout: Story = {
         mockActivatedRouteProvider({
           reason: 'logout',
         }),
+        mockNavbarServiceProvider(
+          '/test-assets/wide_logo.svg',
+          {
+            show: true,
+            variant: 'success',
+            text: 'Production',
+          },
+          true,
+        ),
       ],
     }),
   ],
 };
 
-export const Login: Story = {};
+export const Login: Story = {
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockNavbarServiceProvider(
+          '/test-assets/wide_logo.svg',
+          {
+            show: true,
+            variant: 'success',
+            text: 'Production',
+          },
+          true,
+        ),
+      ],
+    }),
+  ],
+};
+
+export const NarrowLogo: Story = {
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockNavbarServiceProvider(
+          '/test-assets/narrow_logo.svg',
+          {
+            show: true,
+            variant: 'success',
+            text: 'Production',
+          },
+          true,
+        ),
+      ],
+    }),
+  ],
+};
+
+export const NoBadge: Story = {
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockNavbarServiceProvider(
+          '/test-assets/wide_logo.svg',
+          {
+            show: false,
+            variant: 'success',
+            text: 'Production',
+          },
+          true,
+        ),
+      ],
+    }),
+  ],
+};
+
+export const LogoLoading: Story = {
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockNavbarServiceProvider(
+          '/test-assets/wide_logo.svg',
+          {
+            show: true,
+            variant: 'success',
+            text: 'Production',
+          },
+          false,
+        ),
+      ],
+    }),
+  ],
+};
 
 export const SessionExpired: Story = {
   decorators: [
@@ -58,6 +147,15 @@ export const SessionExpired: Story = {
         mockActivatedRouteProvider({
           reason: 'session-expired',
         }),
+        mockNavbarServiceProvider(
+          '/test-assets/wide_logo.svg',
+          {
+            show: true,
+            variant: 'success',
+            text: 'Production',
+          },
+          true,
+        ),
       ],
     }),
   ],

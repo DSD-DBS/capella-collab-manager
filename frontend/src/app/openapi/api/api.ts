@@ -9,6 +9,8 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+export * from './announcements.service';
+import { AnnouncementsService } from './announcements.service';
 export * from './authentication.service';
 import { AuthenticationService } from './authentication.service';
 export * from './configuration.service';
@@ -21,8 +23,6 @@ export * from './health.service';
 import { HealthService } from './health.service';
 export * from './integrations-pure-variants.service';
 import { IntegrationsPureVariantsService } from './integrations-pure-variants.service';
-export * from './notices.service';
-import { NoticesService } from './notices.service';
 export * from './permissions.service';
 import { PermissionsService } from './permissions.service';
 export * from './projects.service';
@@ -71,4 +71,4 @@ export * from './users-token.service';
 import { UsersTokenService } from './users-token.service';
 export * from './users-workspaces.service';
 import { UsersWorkspacesService } from './users-workspaces.service';
-export const APIS = [AuthenticationService, ConfigurationService, EventsService, FeedbackService, HealthService, IntegrationsPureVariantsService, NoticesService, PermissionsService, ProjectsService, ProjectsEventsService, ProjectsModelsService, ProjectsModelsBackupsService, ProjectsModelsDiagramsService, ProjectsModelsGitService, ProjectsModelsModelComplexityBadgeService, ProjectsModelsProvisioningService, ProjectsModelsREADMEService, ProjectsModelsRestrictionsService, ProjectsModelsT4CService, ProjectsPermissionsService, ProjectsToolsService, SessionsService, SettingsModelsourcesGitService, SettingsModelsourcesT4CInstancesService, SettingsModelsourcesT4CLicenseServersService, ToolsService, UsersService, UsersPermissionsService, UsersSessionsService, UsersTokenService, UsersWorkspacesService];
+export const APIS = [AnnouncementsService, AuthenticationService, ConfigurationService, EventsService, FeedbackService, HealthService, IntegrationsPureVariantsService, PermissionsService, ProjectsService, ProjectsEventsService, ProjectsModelsService, ProjectsModelsBackupsService, ProjectsModelsDiagramsService, ProjectsModelsGitService, ProjectsModelsModelComplexityBadgeService, ProjectsModelsProvisioningService, ProjectsModelsREADMEService, ProjectsModelsRestrictionsService, ProjectsModelsT4CService, ProjectsPermissionsService, ProjectsToolsService, SessionsService, SettingsModelsourcesGitService, SettingsModelsourcesT4CInstancesService, SettingsModelsourcesT4CLicenseServersService, ToolsService, UsersService, UsersPermissionsService, UsersSessionsService, UsersTokenService, UsersWorkspacesService];

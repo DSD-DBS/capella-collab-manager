@@ -1,0 +1,66 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<form [formGroup]="announcementForm" class="collab-card space-y-2">
+  <mat-form-field class="w-full" appearance="fill" subscriptSizing="dynamic">
+    <mat-label>Title</mat-label>
+    <input matInput formControlName="title" />
+  </mat-form-field>
+  <mat-form-field class="w-full" appearance="fill" subscriptSizing="dynamic">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="message"></textarea>
+    @if (
+      announcementForm.get("message")?.getError("titleOrDescriptionAvailable")
+    ) {
+      <mat-error>Please enter a description or title!</mat-error>
+    }
+  </mat-form-field>
+
+  <div class="flex items-start gap-2">
+    <mat-form-field appearance="fill" subscriptSizing="dynamic">
+      <mat-label>Level</mat-label>
+      <mat-select formControlName="level">
+        @for (
+          announcementLevel of announcementLevels();
+          track announcementLevel
+        ) {
+          <mat-option [value]="announcementLevel">
+            {{ announcementLevel }}
+          </mat-option>
+        }
+      </mat-select>
+      <mat-error>Please select a level!</mat-error>
+    </mat-form-field>
+    <mat-checkbox
+      color="primary"
+      class="rounded border p-2"
+      formControlName="dismissible"
+    >
+      Dismissible
+    </mat-checkbox>
+  </div>
+
+  <div>
+    <app-announcement
+      [announcement]="displayedAnnouncement()"
+      [isPreview]="true"
+    />
+  </div>
+
+  <div class="flex gap-2">
+    @if (existingAnnouncement()) {
+      <button mat-flat-button color="warn" (click)="deleteAnnouncement()">
+        Delete
+      </button>
+      <button mat-flat-button color="primary" (click)="updateAnnouncement()">
+        Update
+      </button>
+    } @else {
+      <button mat-flat-button color="primary" (click)="createAnnouncement()">
+        Create
+      </button>
+    }
+  </div>
+</form>

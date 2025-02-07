@@ -1,0 +1,28 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div
+  [class]="announcement().level"
+  class="flex items-center justify-between rounded-md bg-white pl-3 pr-1 shadow-md"
+>
+  <div class="py-3">
+    <h3 class="text-[16px] font-bold" [innerHTML]="announcement().title"></h3>
+    <markdown
+      class="[&_a]:!underline [&_h1]:text-2xl [&_h2]:text-lg [&_ol]:ml-5 [&_ol]:list-decimal
+        [&_pre]:my-1 [&_pre]:rounded [&_pre]:border [&_pre]:bg-white [&_pre]:p-2
+        [&_ul]:ml-5 [&_ul]:list-disc"
+      [data]="announcement().message"
+    ></markdown>
+  </div>
+  @if (announcement().dismissible) {
+    <button
+      [attr.data-testid]="'announcement-' + announcement().id"
+      mat-icon-button
+      (click)="dismissAnnouncement()"
+    >
+      <mat-icon> close </mat-icon>
+    </button>
+  }
+</div>
