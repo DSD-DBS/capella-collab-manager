@@ -369,10 +369,12 @@
       "id": 5,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": ["lastNotNull"],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Last *",
+          "sortDesc": false
         },
         "tooltip": {
           "mode": "single",
@@ -393,6 +395,106 @@
         }
       ],
       "title": "Session idletimes",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_ccm"
+      },
+      "description": "Shows the latency of clients of the corresponding sessions. Only Xpra sessions are displayed. A higher latency can lead to unstable connections and frequent reconnects.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 13
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": ["lastNotNull", "max", "mean"],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_ccm"
+          },
+          "editorMode": "code",
+          "expr": "xpra_client_latency_ms{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\"}",
+          "instant": false,
+          "legendFormat": "{{session_id}} ({{tool_name}} {{tool_version_name}})",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Session latency",
       "type": "timeseries"
     },
     {
@@ -423,7 +525,7 @@
         "h": 3,
         "w": 4,
         "x": 0,
-        "y": 13
+        "y": 21
       },
       "id": 7,
       "options": {
@@ -494,7 +596,7 @@
         "h": 3,
         "w": 4,
         "x": 4,
-        "y": 13
+        "y": 21
       },
       "id": 2,
       "options": {
@@ -563,7 +665,7 @@
         "h": 3,
         "w": 4,
         "x": 8,
-        "y": 13
+        "y": 21
       },
       "id": 8,
       "options": {
@@ -632,7 +734,7 @@
         "h": 3,
         "w": 4,
         "x": 12,
-        "y": 13
+        "y": 21
       },
       "id": 9,
       "options": {
@@ -766,6 +868,6 @@
   "timezone": "",
   "title": "Active sessions",
   "uid": "0kK_I7T4k",
-  "version": 13,
+  "version": 14,
   "weekStart": ""
 }
