@@ -68,7 +68,7 @@ def test_project_permission_validation_injectable_fails_with_insufficient_permis
 def test_project_permission_validation_injectable_passes(
     id_token: str,
     project: projects_models.DatabaseProject,
-    project_user: projects_users_models.ProjectUserAssociation,
+    project_user: projects_users_models.DatabaseProjectUserAssociation,
 ):
     """Test that the project permission validation passes if permissions are sufficient"""
     project_user.role = projects_users_models.ProjectUserRole.MANAGER

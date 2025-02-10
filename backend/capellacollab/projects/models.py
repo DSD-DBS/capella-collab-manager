@@ -22,7 +22,9 @@ if t.TYPE_CHECKING:
     from capellacollab.projects.tools.models import (
         DatabaseProjectToolAssociation,
     )
-    from capellacollab.projects.users.models import ProjectUserAssociation
+    from capellacollab.projects.users.models import (
+        DatabaseProjectUserAssociation,
+    )
 
 
 class UserMetadata(core_pydantic.BaseModel):
@@ -134,7 +136,7 @@ class DatabaseProject(database.Base):
         default=ProjectType.GENERAL
     )
 
-    users: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
+    users: orm.Mapped[list[DatabaseProjectUserAssociation]] = orm.relationship(
         default_factory=list, back_populates="project"
     )
     tokens: orm.Mapped[list[DatabaseProjectPATAssociation]] = orm.relationship(

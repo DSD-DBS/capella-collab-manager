@@ -167,7 +167,7 @@ def test_configuration_hook_as_rw_user(
     db: orm.Session,
     user: users_models.DatabaseUser,
     mock_add_user_to_repository: responses.BaseResponse,
-    project_user: projects_users_models.ProjectUserAssociation,
+    project_user: projects_users_models.DatabaseProjectUserAssociation,
     configuration_hook_request: sessions_hooks_interface.ConfigurationHookRequest,
 ):
     project_user.permission = projects_users_models.ProjectUserPermission.READ

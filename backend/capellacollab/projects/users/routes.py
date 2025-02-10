@@ -33,7 +33,7 @@ router = fastapi.APIRouter()
 def check_user_not_in_project(
     project: projects_models.DatabaseProject, user: users_models.DatabaseUser
 ):
-    if user in project.users:
+    if user in [user.user for user in project.users]:
         raise exceptions.ProjectUserAlreadyExistsError(user.name, project.slug)
 
 
@@ -41,7 +41,7 @@ def get_project_user_association_or_raise(
     db: orm.Session,
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
-) -> models.ProjectUserAssociation | models.ProjectUser:
+) -> models.DatabaseProjectUserAssociation | models.ProjectUser:
     if project_user := crud.get_project_user_association(db, project, user):
         return project_user
 
@@ -66,7 +66,7 @@ def get_current_project_user(
         projects_injectables.get_existing_project
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.ProjectUserAssociation | models.ProjectUser:
+) -> models.DatabaseProjectUserAssociation | models.ProjectUser:
     """Get the current project users"""
     if user.role == users_models.Role.ADMIN:
         return models.ProjectUser(
@@ -130,7 +130,7 @@ def add_user_to_project(
         users_injectables.get_own_user
     ),
     db: orm.Session = fastapi.Depends(database.get_db),
-) -> models.ProjectUserAssociation:
+) -> models.DatabaseProjectUserAssociation:
     if not (
         user := users_crud.get_user_by_name(db, post_project_user.username)
     ):

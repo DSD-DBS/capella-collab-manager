@@ -21,7 +21,7 @@ def test_assign_read_write_permission_when_adding_manager(
     project: projects_models.DatabaseProject,
 ):
     response = client.post(
-        f"/api/v1/projects/{project.slug}/users/",
+        f"/api/v1/projects/{project.slug}/users",
         json={
             "role": projects_users_models.ProjectUserRole.MANAGER.value,
             "permission": projects_users_models.ProjectUserPermission.READ.value,
@@ -173,3 +173,72 @@ def test_get_current_project_user_as_admin(
     assert response.status_code == 200
     assert response.json()["role"] == "administrator"
     assert response.json()["permission"] == "write"
+
+
+def test_get_project_users(
+    db: orm.Session,
+    client: testclient.TestClient,
+    project: projects_models.DatabaseProject,
+    user2: users_models.DatabaseUser,
+    admin: users_models.DatabaseUser,
+):
+    projects_users_crud.add_user_to_project(
+        db,
+        project=project,
+        user=user2,
+        role=projects_users_models.ProjectUserRole.MANAGER,
+        permission=projects_users_models.ProjectUserPermission.WRITE,
+    )
+
+    another_user = users_crud.create_user(db, "another_user", "another_user")
+    projects_users_crud.add_user_to_project(
+        db,
+        project=project,
+        user=another_user,
+        role=projects_users_models.ProjectUserRole.MANAGER,
+        permission=projects_users_models.ProjectUserPermission.WRITE,
+    )
+
+    response = client.get(f"/api/v1/projects/{project.slug}/users")
+
+    assert len(response.json()) == 4
+    usernames = [user["user"]["name"] for user in response.json()]
+
+    assert admin.name in usernames
+    assert user2.name in usernames
+    assert another_user.name in usernames
+
+
+@pytest.mark.usefixtures("admin")
+def test_fail_to_add_existing_user(
+    client: testclient.TestClient,
+    project: projects_models.DatabaseProject,
+    user2: users_models.DatabaseUser,
+):
+    """Try to add a user twice to a project"""
+    response = client.post(
+        f"/api/v1/projects/{project.slug}/users",
+        json={
+            "role": projects_users_models.ProjectUserRole.MANAGER.value,
+            "permission": projects_users_models.ProjectUserPermission.READ.value,
+            "username": user2.name,
+            "reason": "",
+        },
+    )
+
+    assert response.status_code == 200
+
+    response = client.post(
+        f"/api/v1/projects/{project.slug}/users",
+        json={
+            "role": projects_users_models.ProjectUserRole.MANAGER.value,
+            "permission": projects_users_models.ProjectUserPermission.READ.value,
+            "username": user2.name,
+            "reason": "",
+        },
+    )
+
+    assert response.status_code == 409
+    assert (
+        response.json()["detail"]["err_code"] == "PROJECT_USER_ALREADY_EXISTS"
+    )

@@ -54,7 +54,7 @@ class PatchProjectUser(core_pydantic.BaseModel):
     reason: str
 
 
-class ProjectUserAssociation(database.Base):
+class DatabaseProjectUserAssociation(database.Base):
     __tablename__ = "project_user_association"
 
     user_id: orm.Mapped[int] = orm.mapped_column(
