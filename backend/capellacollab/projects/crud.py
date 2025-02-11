@@ -48,8 +48,12 @@ def get_common_projects_for_users(
     user1: users_models.DatabaseUser,
     user2: users_models.DatabaseUser,
 ) -> abc.Sequence[models.DatabaseProject]:
-    user1_table = orm.aliased(project_users_models.ProjectUserAssociation)
-    user2_table = orm.aliased(project_users_models.ProjectUserAssociation)
+    user1_table = orm.aliased(
+        project_users_models.DatabaseProjectUserAssociation
+    )
+    user2_table = orm.aliased(
+        project_users_models.DatabaseProjectUserAssociation
+    )
 
     return (
         db.execute(

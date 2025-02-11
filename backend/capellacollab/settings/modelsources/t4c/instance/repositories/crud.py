@@ -106,10 +106,12 @@ def _get_user_write_t4c_repositories(
         .where(projects_models.DatabaseProject.is_archived.is_(False))
         .join(projects_models.DatabaseProject.users)
         .where(
-            projects_users_models.ProjectUserAssociation.permission
+            projects_users_models.DatabaseProjectUserAssociation.permission
             == projects_users_models.ProjectUserPermission.WRITE
         )
-        .where(projects_users_models.ProjectUserAssociation.user == user)
+        .where(
+            projects_users_models.DatabaseProjectUserAssociation.user == user
+        )
         .distinct()
     )
 

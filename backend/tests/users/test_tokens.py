@@ -177,7 +177,7 @@ def test_updated_token_scope_on_role_change(
 def test_updated_token_scope_on_project_role_change(
     client: testclient.TestClient,
     project: projects_models.DatabaseProject,
-    project_user: project_users_models.ProjectUserAssociation,
+    project_user: project_users_models.DatabaseProjectUserAssociation,
 ):
     project_user.role = project_users_models.ProjectUserRole.MANAGER
 

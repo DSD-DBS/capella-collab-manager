@@ -17,7 +17,9 @@ from ..permissions import models
 
 if t.TYPE_CHECKING:
     from capellacollab.events.models import DatabaseUserHistoryEvent
-    from capellacollab.projects.users.models import ProjectUserAssociation
+    from capellacollab.projects.users.models import (
+        DatabaseProjectUserAssociation,
+    )
     from capellacollab.sessions.models import DatabaseSession
     from capellacollab.users.tokens.models import DatabaseUserToken
 
@@ -172,8 +174,8 @@ class DatabaseUser(database.Base):
         default=datetime.datetime.now(datetime.UTC)
     )
 
-    projects: orm.Mapped[list[ProjectUserAssociation]] = orm.relationship(
-        default_factory=list, back_populates="user"
+    projects: orm.Mapped[list[DatabaseProjectUserAssociation]] = (
+        orm.relationship(default_factory=list, back_populates="user")
     )
     sessions: orm.Mapped[list[DatabaseSession]] = orm.relationship(
         default_factory=list, back_populates="owner"

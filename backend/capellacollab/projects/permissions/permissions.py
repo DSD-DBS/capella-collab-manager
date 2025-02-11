@@ -33,7 +33,7 @@ def inherit_global_permissions(
 
 def derive_project_permissions_from_role(
     project: projects_models.DatabaseProject,
-    project_user: projects_users_models.ProjectUserAssociation | None,
+    project_user: projects_users_models.DatabaseProjectUserAssociation | None,
     user: users_models.DatabaseUser,
 ) -> models.ProjectUserScopes:
     read_only_permissions = models.ProjectUserScopes(

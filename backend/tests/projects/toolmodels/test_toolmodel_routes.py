@@ -86,7 +86,7 @@ def test_update_toolmodel_order_successful(
 
 def test_move_toolmodel(
     project: projects_models.DatabaseProject,
-    project_manager: users_models.DatabaseUser,
+    project_manager: projects_users_models.DatabaseProjectUserAssociation,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
     db: orm.Session,
@@ -95,7 +95,7 @@ def test_move_toolmodel(
     projects_users_crud.add_user_to_project(
         db,
         project=second_project,
-        user=project_manager,
+        user=project_manager.user,
         role=projects_users_models.ProjectUserRole.MANAGER,
         permission=projects_users_models.ProjectUserPermission.WRITE,
     )
