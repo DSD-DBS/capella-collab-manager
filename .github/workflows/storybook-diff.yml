@@ -23,7 +23,8 @@ jobs:
         working-directory: ./frontend
       - name: Capture screenshots
         run:
-          npx storycap --serverCmd "npx http-server storybook-static -p 9001" http://localhost:9001
+          npx storycap --serverCmd "npx http-server storybook-static -p 9001"
+          http://localhost:9001
         working-directory: ./frontend
       - uses: reg-viz/reg-actions@v2
         with:

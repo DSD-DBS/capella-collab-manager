@@ -38,7 +38,9 @@ export class MatCardOverviewSkeletonLoaderComponent implements OnInit {
     const cardsPerColumn = this.rows ? this.rows : (0.98 * height - 120) / 275;
     const cardsPerRow = (0.98 * width) / 425;
 
-    this.cardsNumber =
-      Math.trunc(cardsPerColumn) * Math.trunc(cardsPerRow) - this.reservedCards;
+    this.cardsNumber = Math.max(
+      Math.trunc(cardsPerColumn) * Math.trunc(cardsPerRow) - this.reservedCards,
+      1,
+    );
   }
 }
