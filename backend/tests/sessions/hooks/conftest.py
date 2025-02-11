@@ -21,6 +21,7 @@ def fixture_configuration_hook_request(
     user: users_models.DatabaseUser,
     capella_tool: tools_models.DatabaseTool,
     capella_tool_version: tools_models.DatabaseVersion,
+    logger: logging.LoggerAdapter,
 ) -> hooks_interface.ConfigurationHookRequest:
     return hooks_interface.ConfigurationHookRequest(
         db=db,
@@ -35,6 +36,7 @@ def fixture_configuration_hook_request(
         project_scope=None,
         pat=None,
         global_scope=permissions_injectables.get_scope((user, None)),
+        logger=logger,
     )
 
 
@@ -83,6 +85,7 @@ def fixture_pre_session_termination_hook_request(
     db: orm.Session,
     user: users_models.DatabaseUser,
     session: sessions_models.DatabaseSession,
+    logger: logging.LoggerAdapter,
 ) -> hooks_interface.PreSessionTerminationHookRequest:
     return hooks_interface.PreSessionTerminationHookRequest(
         db=db,
@@ -90,4 +93,5 @@ def fixture_pre_session_termination_hook_request(
         operator=k8s_operator.KubernetesOperator(),
         session=session,
         global_scope=permissions_injectables.get_scope((user, None)),
+        logger=logger,
     )

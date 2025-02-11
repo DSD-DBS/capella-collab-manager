@@ -29,6 +29,7 @@ def terminate_session(
     session: models.DatabaseSession,
     operator: k8s.KubernetesOperator,
     global_scope: permissions_models.GlobalScopes,
+    logger: logging.LoggerAdapter,
 ):
     connection_method = get_connection_method(
         session.tool, session.connection_method_id
@@ -41,6 +42,7 @@ def terminate_session(
                 operator=operator,
                 connection_method=connection_method,
                 global_scope=global_scope,
+                logger=logger,
             )
         )
 

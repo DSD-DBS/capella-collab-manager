@@ -42,6 +42,7 @@ def terminate_idle_session():
                         permissions_injectables.get_scope(
                             (session.owner, None)
                         ),
+                        logging.LoggerAdapter(log),
                     )
                 else:
                     log.error(

@@ -175,6 +175,7 @@ def test_hook_calls_during_session_termination(
     db: orm.Session,
     session: sessions_models.DatabaseSession,
     user: users_models.DatabaseUser,
+    logger: logging.LoggerAdapter,
 ):
     monkeypatch.setattr(
         sessions_crud,
@@ -187,4 +188,5 @@ def test_hook_calls_during_session_termination(
         session,
         mockoperator,  # type: ignore
         permissions_injectables.get_scope((user, None)),
+        logger,
     )

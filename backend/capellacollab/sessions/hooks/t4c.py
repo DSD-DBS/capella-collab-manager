@@ -17,11 +17,12 @@ from capellacollab.settings.modelsources.t4c.instance.repositories import (
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as repo_interface,
 )
+from capellacollab.settings.modelsources.t4c.instance.repositories import (
+    models as repo_models,
+)
 
 from .. import models as sessions_models
 from . import interface
-
-log = logging.getLogger(__name__)
 
 
 class T4CConfigEnvironment(t.TypedDict):
@@ -64,6 +65,12 @@ class T4CIntegration(interface.HookRegistration):
             ]
         )
 
+        config = {
+            "t4c_repositories": json.dumps(
+                [repository.id for repository in t4c_repositories]
+            )
+        }
+
         t4c_licence_secret = (
             t4c_repositories[0].instance.license_server.license_key
             if t4c_repositories
@@ -99,7 +106,7 @@ class T4CIntegration(interface.HookRegistration):
                         ),
                     )
                 )
-                log.warning(
+                request.logger.warning(
                     "Could not add user to t4c repository '%s' of instance '%s'",
                     repository.name,
                     repository.instance.name,
@@ -107,16 +114,28 @@ class T4CIntegration(interface.HookRegistration):
                 )
 
         return interface.ConfigurationHookResult(
-            environment=environment, warnings=warnings
+            environment=environment, warnings=warnings, config=config
         )
 
     def pre_session_termination_hook(
         self, request: interface.PreSessionTerminationHookRequest
     ):
         if request.session.type == sessions_models.SessionType.PERSISTENT:
-            self._revoke_session_tokens(
-                request.db, request.session, request.global_scope
-            )
+            if "t4c_repositories" in request.session.config:
+                self._revoke_session_tokens(
+                    request.session.config["t4c_repositories"],
+                    request.db,
+                    request.session,
+                    request.logger,
+                )
+            else:
+                # Session was created before t4c_repositories config was introduced
+                self._revoke_session_tokens_legacy(
+                    request.db,
+                    request.session,
+                    request.global_scope,
+                    request.logger,
+                )
 
     def session_connection_hook(
         self,
@@ -133,23 +152,60 @@ class T4CIntegration(interface.HookRegistration):
             t4c_token=request.db_session.environment.get("T4C_PASSWORD")
         )
 
+    @classmethod
     def _revoke_session_tokens(
-        self,
+        cls,
+        t4c_config: str,
+        db: orm.Session,
+        session: sessions_models.DatabaseSession,
+        logger: logging.LoggerAdapter,
+    ):
+        """Remove session tokens using configuration"""
+        for repository_id in json.loads(t4c_config):
+            repository = repo_crud.get_t4c_repository_by_id(db, repository_id)
+            if not repository:
+                logger.error(
+                    "Could not delete user '%s' from repository '%d'. The repository doesn't exist. Please delete the user manually.",
+                    session.owner.name,
+                    repository_id,
+                )
+                continue
+
+            cls._remove_user_from_repository(
+                repository, session.owner.name, logger
+            )
+
+    @classmethod
+    def _revoke_session_tokens_legacy(
+        cls,
         db: orm.Session,
         session: sessions_models.DatabaseSession,
         global_scope: permissions_models.GlobalScopes,
+        logger: logging.LoggerAdapter,
     ):
+        """Remove session tokens using access evaluation"""
         for repository in repo_crud.get_user_t4c_repositories(
             db, session.version, session.owner, global_scope
         ):
-            try:
-                repo_interface.remove_user_from_repository(
-                    repository.instance, repository.name, session.owner.name
-                )
-            except requests.RequestException:
-                log.exception(
-                    "Could not delete user '%s' from repository '%s' of instance '%s'. Please delete the user manually.",
-                    session.owner.name,
-                    repository.name,
-                    repository.instance.name,
-                )
+            cls._remove_user_from_repository(
+                repository, session.owner.name, logger
+            )
+
+    @classmethod
+    def _remove_user_from_repository(
+        cls,
+        repository: repo_models.DatabaseT4CRepository,
+        username: str,
+        logger: logging.LoggerAdapter,
+    ):
+        try:
+            repo_interface.remove_user_from_repository(
+                repository.instance, repository.name, username
+            )
+        except requests.RequestException:
+            logger.exception(
+                "Could not delete user '%s' from repository '%s' of instance '%s'. Please delete the user manually.",
+                username,
+                repository.name,
+                repository.instance.name,
+            )
