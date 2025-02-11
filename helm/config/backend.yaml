@@ -87,6 +87,7 @@ initial:
 logging:
   level: DEBUG
   logPath: /var/log/backend/
+  profiling: {{ .Values.backend.profiling }}
 
 requests:
   timeout: 5
