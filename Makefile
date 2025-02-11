@@ -159,7 +159,7 @@ create-cluster: registry
 	kubectl create namespace $(SESSION_NAMESPACE)
 
 install-vpa:
-	git clone https://github.com/kubernetes/autoscaler.git
+	[ -d "autoscaler" ] || git clone https://github.com/kubernetes/autoscaler.git
 	cd autoscaler/vertical-pod-autoscaler
 	./hack/vpa-up.sh
 	kubectl --namespace=kube-system get pods | grep vpa

@@ -8,7 +8,7 @@ metadata:
   labels:
     id: {{ .Release.Name }}-deployment-prometheus-nginx
   annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/prometheus/nginx.configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/prometheus/prometheus-nginx.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount.prometheusNginx | default 1 }}
   selector:
@@ -19,7 +19,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-deployment-prometheus-nginx
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/prometheus/nginx.configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/prometheus/prometheus-nginx.configmap.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: false
       volumes:

@@ -9,7 +9,7 @@ metadata:
   labels:
     id: {{ .Release.Name }}-deployment-guacamole-postgres
   annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/guacamole" "/postgres.configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/guacamole" "/guacamole-postgres.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount.guacamolePostgres | default 1 }}
   selector:
@@ -22,7 +22,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-deployment-guacamole-postgres
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/guacamole" "/postgres.configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/guacamole" "/guacamole-postgres.configmap.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: false
       volumes:

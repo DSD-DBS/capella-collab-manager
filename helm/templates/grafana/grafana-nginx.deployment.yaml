@@ -9,7 +9,7 @@ metadata:
   labels:
     id: {{ .Release.Name }}-deployment-grafana-nginx
   annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/grafana/nginx.configmap.yaml") . | sha256sum }}
+    checksum/config: {{ include (print $.Template.BasePath "/grafana/grafana-nginx.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount.grafanaNginx | default 1 }}
   selector:
@@ -20,7 +20,7 @@ spec:
       labels:
         id: {{ .Release.Name }}-deployment-grafana-nginx
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/grafana/nginx.configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/grafana/grafana-nginx.configmap.yaml") . | sha256sum }}
     spec:
       automountServiceAccountToken: false
       volumes:
