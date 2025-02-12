@@ -180,6 +180,7 @@ backend:
   k8sSessionNamespace: &sessionNamespace collab-sessions
   storageClassName: local-path
   storageAccessMode: ReadWriteOnce
+  profiling: false
 
 guacamole:
   username: guacadmin
