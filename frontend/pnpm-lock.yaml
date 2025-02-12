@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@analogjs/router':
         specifier: ^1.13.0
-        version: 1.13.0(@analogjs/content@1.13.0(4dcd71d4c41ab3649198476782f59b46))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/router@19.1.5(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.5(@angular/animations@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1))
+        version: 1.13.0(@analogjs/content@1.13.0(zyijhsevdmsmxf2xmpbvs5am7u))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/router@19.1.5(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.5(@angular/animations@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1))
       '@angular/animations':
         specifier: ~19.1.5
         version: 19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))
@@ -31,10 +31,10 @@ importers:
         version: 19.1.5(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.5(@angular/animations@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
       '@angular/material':
         specifier: ^19.1.3
-        version: 19.1.3(9d75d27a27350663f3cd119ec01b8610)
+        version: 19.1.3(im5s2gtnqpfkb7v5apdyqz6coq)
       '@angular/material-moment-adapter':
         specifier: ^19.1.3
-        version: 19.1.3(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/material@19.1.3(9d75d27a27350663f3cd119ec01b8610))(moment@2.30.1)
+        version: 19.1.3(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/material@19.1.3(im5s2gtnqpfkb7v5apdyqz6coq))(moment@2.30.1)
       '@angular/platform-browser':
         specifier: ~19.1.5
         version: 19.1.5(@angular/animations@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))
@@ -125,10 +125,10 @@ importers:
     devDependencies:
       '@analogjs/platform':
         specifier: ^1.13.0
-        version: 1.13.0(3a6fac50ca65db3c8bcb2a12b1635204)
+        version: 1.13.0(htb7atjatxxtimnfws4yclsahe)
       '@analogjs/vite-plugin-angular':
         specifier: ^1.13.0
-        version: 1.13.0(ff368ae7d233ed9ba2c1e5e7265e5284)
+        version: 1.13.0(4b67jvw5sndzvfonmh6umay4om)
       '@angular-devkit/architect':
         specifier: ^0.1901.6
         version: 0.1901.6(chokidar@4.0.2)
@@ -141,6 +141,9 @@ importers:
       '@angular/compiler-cli':
         specifier: ~19.1.5
         version: 19.1.5(@angular/compiler@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.6.3)
+      '@codecov/vite-plugin':
+        specifier: ^1.9.0
+        version: 1.9.0(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0)(yaml@2.7.0))
       '@eslint/js':
         specifier: ^9.19.0
         version: 9.19.0
@@ -158,7 +161,7 @@ importers:
         version: 8.5.3(react@18.3.1)(storybook@8.5.3(prettier@3.4.2))
       '@storybook/angular':
         specifier: ^8.5.3
-        version: 8.5.3(dd6c22f03badc48276f479510fe482c0)
+        version: 8.5.3(d7zsru34jf5wyopschmnnxciau)
       '@storybook/blocks':
         specifier: ^8.5.3
         version: 8.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.5.3(prettier@3.4.2))
@@ -257,6 +260,21 @@ importers:
         version: 5.1.4(typescript@5.6.3)(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0)(yaml@2.7.0))
 
 packages:
+
+  '@actions/core@1.11.1':
+    resolution: {integrity: sha512-hXJCSrkwfA46Vd9Z3q4cpEpHB1rL5NG04+/rbqW9d3+CSvtB1tYe8UTpAlixa1vj0m/ULglfEK2UKxMGxCxv5A==}
+
+  '@actions/exec@1.1.1':
+    resolution: {integrity: sha512-+sCcHHbVdk93a0XT19ECtO/gIXoxvdsgQLzb2fE2/5sIZmWQuluYyjPQtrtTHdU1YzTZ7bAPN4sITq2xi1679w==}
+
+  '@actions/github@6.0.0':
+    resolution: {integrity: sha512-alScpSVnYmjNEXboZjarjukQEzgCRmjMv6Xj47fsdnqGS73bjJNDpiiXmp8jr0UZLdUB6d9jW63IcmddUP+l0g==}
+
+  '@actions/http-client@2.2.3':
+    resolution: {integrity: sha512-mx8hyJi/hjFvbPokCg4uRd4ZX78t+YyRPtnKWwIl+RzNaVuFpQHfmlGVfsKEJN8LwTCvL+DfVgAM04XaHkm6bA==}
+
+  '@actions/io@1.1.3':
+    resolution: {integrity: sha512-wi9JjgKLYS7U/z8PPbco+PvTb/nRWjeoFlJ1Qer83k/3C5PHQi28hiVdeE2kHXmIL99mQFawx8qt/JPjZilJ8Q==}
 
   '@adobe/css-tools@4.3.3':
     resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
@@ -1218,6 +1236,16 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
+  '@codecov/bundler-plugin-core@1.9.0':
+    resolution: {integrity: sha512-UB0I5haL0gnF4ei46wxNo7ptCHqFAh3PnmcLLeXRb2zV7HeobOF8WRjOW/PwrXAphPS/6bL7PDUmh3ruVObGtg==}
+    engines: {node: '>=18.0.0'}
+
+  '@codecov/vite-plugin@1.9.0':
+    resolution: {integrity: sha512-5+CxUGN0Rxr5F6xYqrKwug3NXTlNVBEZcI9caOCjlpErt7p2lp7J/6Qo+GRjmaVkXErnNMiyhjzXRB6rLNAjfg==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      vite: 4.x || 5.x || 6.x
+
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
@@ -1866,6 +1894,10 @@ packages:
   '@eslint/plugin-kit@0.2.5':
     resolution: {integrity: sha512-lB05FkqEdUg2AA0xEbUz0SnkXT1LcCTa438W4IWTUh4hdOnVbQyOJ81OrDXsJk/LSiJHubgGEFoR5EHq1NsH1A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@fastify/busboy@2.1.1':
+    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
+    engines: {node: '>=14'}
 
   '@fontsource/material-symbols-outlined@5.1.4':
     resolution: {integrity: sha512-6S+pncybbCEZqLXurDlZssrfsUB6Jf+8YeB3c2R0T+6jtNGwpNG5TT+d/znsoZs0mhzVlqmbfyVzzW7DOw2mVQ==}
@@ -2688,6 +2720,54 @@ packages:
 
   '@nx/workspace@20.3.3':
     resolution: {integrity: sha512-eN7W9H2yLDZ4ZWegdS+pChdFETMUgjsLgvGijRpZONIguo6wR+aU2LhSfj2ww8JKNJ4rcSnOw4soaaHg2W3dTQ==}
+
+  '@octokit/auth-token@4.0.0':
+    resolution: {integrity: sha512-tY/msAuJo6ARbK6SPIxZrPBms3xPbfwBrulZe0Wtr/DIY9lje2HeV1uoebShn6mx7SjCHif6EjMvoREj+gZ+SA==}
+    engines: {node: '>= 18'}
+
+  '@octokit/core@5.2.0':
+    resolution: {integrity: sha512-1LFfa/qnMQvEOAdzlQymH0ulepxbxnCYAKJZfMci/5XJyIHWgEYnDmgnKakbTh7CH2tFQ5O60oYDvns4i9RAIg==}
+    engines: {node: '>= 18'}
+
+  '@octokit/endpoint@9.0.5':
+    resolution: {integrity: sha512-ekqR4/+PCLkEBF6qgj8WqJfvDq65RH85OAgrtnVp1mSxaXF03u2xW/hUdweGS5654IlC0wkNYC18Z50tSYTAFw==}
+    engines: {node: '>= 18'}
+
+  '@octokit/graphql@7.1.0':
+    resolution: {integrity: sha512-r+oZUH7aMFui1ypZnAvZmn0KSqAUgE1/tUXIWaqUCa1758ts/Jio84GZuzsvUkme98kv0WFY8//n0J1Z+vsIsQ==}
+    engines: {node: '>= 18'}
+
+  '@octokit/openapi-types@20.0.0':
+    resolution: {integrity: sha512-EtqRBEjp1dL/15V7WiX5LJMIxxkdiGJnabzYx5Apx4FkQIFgAfKumXeYAqqJCj1s+BMX4cPFIFC4OLCR6stlnA==}
+
+  '@octokit/openapi-types@23.0.1':
+    resolution: {integrity: sha512-izFjMJ1sir0jn0ldEKhZ7xegCTj/ObmEDlEfpFrx4k/JyZSMRHbO3/rBwgE7f3m2DHt+RrNGIVw4wSmwnm3t/g==}
+
+  '@octokit/plugin-paginate-rest@9.2.1':
+    resolution: {integrity: sha512-wfGhE/TAkXZRLjksFXuDZdmGnJQHvtU/joFQdweXUgzo1XwvBCD4o4+75NtFfjfLK5IwLf9vHTfSiU3sLRYpRw==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@octokit/core': '5'
+
+  '@octokit/plugin-rest-endpoint-methods@10.4.1':
+    resolution: {integrity: sha512-xV1b+ceKV9KytQe3zCVqjg+8GTGfDYwaT1ATU5isiUyVtlVAO3HNdzpS4sr4GBx4hxQ46s7ITtZrAsxG22+rVg==}
+    engines: {node: '>= 18'}
+    peerDependencies:
+      '@octokit/core': '5'
+
+  '@octokit/request-error@5.1.0':
+    resolution: {integrity: sha512-GETXfE05J0+7H2STzekpKObFe765O5dlAKUTLNGeH+x47z7JjXHfsHKo5z21D/o/IOZTUEI6nyWyR+bZVP/n5Q==}
+    engines: {node: '>= 18'}
+
+  '@octokit/request@8.4.0':
+    resolution: {integrity: sha512-9Bb014e+m2TgBeEJGEbdplMVWwPmL1FPtggHQRkV+WVsMggPtEkLKPlcVYm/o8xKLkpJ7B+6N8WfQMtDLX2Dpw==}
+    engines: {node: '>= 18'}
+
+  '@octokit/types@12.6.0':
+    resolution: {integrity: sha512-1rhSOfRa6H9w4YwK0yrf5faDaDTb+yLyBUKOCV4xtCDB5VmIPqd/v9yr9o6SAzOAlRxMiRiCic6JVM1/kunVkw==}
+
+  '@octokit/types@13.8.0':
+    resolution: {integrity: sha512-x7DjTIbEpEWXK99DMd01QfWy0hd5h4EN+Q7shkdKds3otGQP+oWE/y0A76i1OvH9fygo4ddvNf7ZvF0t78P98A==}
 
   '@oozcitak/dom@1.15.10':
     resolution: {integrity: sha512-0JT29/LaxVgRcGKvHmSrUTEvZ8BXvZhGl2LASRUgHqDTC1M5g1pLmVv56IYNyt3bG2CUjDkc67wnyZC14pbQrQ==}
@@ -4214,6 +4294,9 @@ packages:
     resolution: {integrity: sha512-Ljqskqx/tbZagIglYoJIMzH5zgssyp+in9+9sAyh15N22AornBeIDnb8EZ6Rk+6ShfMxd92uO3gfpT0NtZbpow==}
     engines: {node: '>=14.0.0'}
 
+  before-after-hook@2.2.3:
+    resolution: {integrity: sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==}
+
   better-opn@3.0.2:
     resolution: {integrity: sha512-aVNobHnJqLiUelTaHat9DZ1qM2w0C0Eym4LPI/3JxOnSokGVdsl1T1kN7TFvsEAD8G47A6VKQ0TVHqbBnYMJlQ==}
     engines: {node: '>=12.0.0'}
@@ -5116,6 +5199,9 @@ packages:
   depd@2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
     engines: {node: '>= 0.8'}
+
+  deprecation@2.3.1:
+    resolution: {integrity: sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==}
 
   dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
@@ -8985,6 +9071,10 @@ packages:
     resolution: {integrity: sha512-+68OP1ZzSF84rTckf3FA95vJ1Zlx/uaXyiiKyPd1pA4rZNkpEvDAKmsu1xUSmbF/chCRYgZ6UZkDwC7PmzmAyA==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
+  tunnel@0.0.6:
+    resolution: {integrity: sha512-1h/Lnq9yajKY2PEbBadPXj3VxsDDu844OnaAo52UVmIzIvwwtBPIuNvkjuzBlTWpfJyUbG3ez0KSBibQkj4ojg==}
+    engines: {node: '>=0.6.11 <=0.7.0 || >=0.7.3'}
+
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -9037,6 +9127,10 @@ packages:
 
   undici-types@6.20.0:
     resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+
+  undici@5.28.5:
+    resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
+    engines: {node: '>=14.0'}
 
   unenv@1.10.0:
     resolution: {integrity: sha512-wY5bskBQFL9n3Eca5XnhH6KbUo/tfvkwm9OpcdCvLaeA7piBNbavbOKJySEwQ1V0RH6HvNlSAFRTpvTqgKRQXQ==}
@@ -9094,6 +9188,9 @@ packages:
 
   unist-util-visit@5.0.0:
     resolution: {integrity: sha512-MR04uvD+07cwl/yhVuVWAtw+3GOR/knlL55Nd/wAdblk27GCVt3lqpTivy/tkJcZoNPzTwS1Y+KMojlLDhoTzg==}
+
+  universal-user-agent@6.0.1:
+    resolution: {integrity: sha512-yCzhz6FN2wU1NiiQRogkTQszlQSlpWaw8SvVegAc+bDxbzHgh1vX8uIe8OYyMH6DwH+sdTJsgMl36+mSMdRJIQ==}
 
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
@@ -9801,6 +9898,29 @@ packages:
 
 snapshots:
 
+  '@actions/core@1.11.1':
+    dependencies:
+      '@actions/exec': 1.1.1
+      '@actions/http-client': 2.2.3
+
+  '@actions/exec@1.1.1':
+    dependencies:
+      '@actions/io': 1.1.3
+
+  '@actions/github@6.0.0':
+    dependencies:
+      '@actions/http-client': 2.2.3
+      '@octokit/core': 5.2.0
+      '@octokit/plugin-paginate-rest': 9.2.1(@octokit/core@5.2.0)
+      '@octokit/plugin-rest-endpoint-methods': 10.4.1(@octokit/core@5.2.0)
+
+  '@actions/http-client@2.2.3':
+    dependencies:
+      tunnel: 0.0.6
+      undici: 5.28.5
+
+  '@actions/io@1.1.3': {}
+
   '@adobe/css-tools@4.3.3': {}
 
   '@adobe/css-tools@4.4.1': {}
@@ -9812,7 +9932,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.8
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@analogjs/content@1.13.0(4dcd71d4c41ab3649198476782f59b46)':
+  '@analogjs/content@1.13.0(zyijhsevdmsmxf2xmpbvs5am7u)':
     dependencies:
       '@angular/common': 19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
       '@angular/core': 19.1.5(rxjs@7.8.1)(zone.js@0.15.0)
@@ -9828,11 +9948,11 @@ snapshots:
       rxjs: 7.8.1
       tslib: 2.8.1
 
-  '@analogjs/platform@1.13.0(3a6fac50ca65db3c8bcb2a12b1635204)':
+  '@analogjs/platform@1.13.0(htb7atjatxxtimnfws4yclsahe)':
     dependencies:
-      '@analogjs/vite-plugin-angular': 1.13.0(ff368ae7d233ed9ba2c1e5e7265e5284)
+      '@analogjs/vite-plugin-angular': 1.13.0(4b67jvw5sndzvfonmh6umay4om)
       '@analogjs/vite-plugin-nitro': 1.13.0(encoding@0.1.13)(typescript@5.6.3)
-      '@nx/angular': 20.2.2(4438024eee351b76da9300cf3c0f3628)
+      '@nx/angular': 20.2.2(zwa2yffwjjku2yslqbfzdyt5va)
       '@nx/devkit': 20.3.3(nx@20.2.2)
       '@nx/vite': 20.3.3(@babel/traverse@7.26.7)(@types/node@22.13.1)(nx@20.2.2)(typescript@5.6.3)(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0)(yaml@2.7.0))(vitest@2.1.8(@types/node@22.13.1)(jsdom@26.0.0)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0))
       marked: 15.0.6
@@ -9870,14 +9990,14 @@ snapshots:
       - vite
       - xml2js
 
-  '@analogjs/router@1.13.0(@analogjs/content@1.13.0(4dcd71d4c41ab3649198476782f59b46))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/router@19.1.5(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.5(@angular/animations@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1))':
+  '@analogjs/router@1.13.0(@analogjs/content@1.13.0(zyijhsevdmsmxf2xmpbvs5am7u))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/router@19.1.5(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.5(@angular/animations@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1))':
     dependencies:
-      '@analogjs/content': 1.13.0(4dcd71d4c41ab3649198476782f59b46)
+      '@analogjs/content': 1.13.0(zyijhsevdmsmxf2xmpbvs5am7u)
       '@angular/core': 19.1.5(rxjs@7.8.1)(zone.js@0.15.0)
       '@angular/router': 19.1.5(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/platform-browser@19.1.5(@angular/animations@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(rxjs@7.8.1)
       tslib: 2.8.1
 
-  '@analogjs/vite-plugin-angular@1.13.0(ff368ae7d233ed9ba2c1e5e7265e5284)':
+  '@analogjs/vite-plugin-angular@1.13.0(4b67jvw5sndzvfonmh6umay4om)':
     dependencies:
       ts-morph: 21.0.1
       vfile: 6.0.3
@@ -10315,14 +10435,14 @@ snapshots:
       rxjs: 7.8.1
       tslib: 2.8.1
 
-  '@angular/material-moment-adapter@19.1.3(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/material@19.1.3(9d75d27a27350663f3cd119ec01b8610))(moment@2.30.1)':
+  '@angular/material-moment-adapter@19.1.3(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(@angular/material@19.1.3(im5s2gtnqpfkb7v5apdyqz6coq))(moment@2.30.1)':
     dependencies:
       '@angular/core': 19.1.5(rxjs@7.8.1)(zone.js@0.15.0)
-      '@angular/material': 19.1.3(9d75d27a27350663f3cd119ec01b8610)
+      '@angular/material': 19.1.3(im5s2gtnqpfkb7v5apdyqz6coq)
       moment: 2.30.1
       tslib: 2.8.1
 
-  '@angular/material@19.1.3(9d75d27a27350663f3cd119ec01b8610)':
+  '@angular/material@19.1.3(im5s2gtnqpfkb7v5apdyqz6coq)':
     dependencies:
       '@angular/animations': 19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))
       '@angular/cdk': 19.1.3(@angular/common@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1))(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0))(rxjs@7.8.1)
@@ -11114,6 +11234,21 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
+  '@codecov/bundler-plugin-core@1.9.0':
+    dependencies:
+      '@actions/core': 1.11.1
+      '@actions/github': 6.0.0
+      chalk: 4.1.2
+      semver: 7.7.1
+      unplugin: 1.16.0
+      zod: 3.24.1
+
+  '@codecov/vite-plugin@1.9.0(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0)(yaml@2.7.0))':
+    dependencies:
+      '@codecov/bundler-plugin-core': 1.9.0
+      unplugin: 1.16.0
+      vite: 6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0)(yaml@2.7.0)
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -11480,6 +11615,8 @@ snapshots:
       '@eslint/core': 0.10.0
       levn: 0.4.1
 
+  '@fastify/busboy@2.1.1': {}
+
   '@fontsource/material-symbols-outlined@5.1.4': {}
 
   '@fontsource/roboto@5.1.1': {}
@@ -11774,7 +11911,7 @@ snapshots:
       https-proxy-agent: 7.0.6(supports-color@9.4.0)
       node-fetch: 2.7.0(encoding@0.1.13)
       nopt: 8.0.0
-      semver: 7.6.3
+      semver: 7.7.1
       tar: 7.4.3
     transitivePeerDependencies:
       - encoding
@@ -12101,7 +12238,7 @@ snapshots:
 
   '@npmcli/fs@4.0.0':
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.1
 
   '@npmcli/git@6.0.1':
     dependencies:
@@ -12112,7 +12249,7 @@ snapshots:
       proc-log: 5.0.0
       promise-inflight: 1.0.1
       promise-retry: 2.0.1
-      semver: 7.6.3
+      semver: 7.7.1
       which: 5.0.0
     transitivePeerDependencies:
       - bluebird
@@ -12132,7 +12269,7 @@ snapshots:
       json-parse-even-better-errors: 4.0.0
       normalize-package-data: 7.0.0
       proc-log: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.1
     transitivePeerDependencies:
       - bluebird
 
@@ -12154,7 +12291,7 @@ snapshots:
       - bluebird
       - supports-color
 
-  '@nx/angular@20.2.2(4438024eee351b76da9300cf3c0f3628)':
+  '@nx/angular@20.2.2(zwa2yffwjjku2yslqbfzdyt5va)':
     dependencies:
       '@angular-devkit/build-angular': 19.0.5(@angular/compiler-cli@19.1.5(@angular/compiler@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.6.3))(@angular/compiler@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@rspack/core@1.1.6(@swc/helpers@0.5.15))(@types/node@22.13.1)(chokidar@4.0.2)(html-webpack-plugin@5.6.3(@rspack/core@1.1.6(@swc/helpers@0.5.15))(webpack@5.97.1(esbuild@0.24.2)))(stylus@0.64.0)(tailwindcss@3.4.17(ts-node@10.9.1(@types/node@22.13.1)(typescript@5.6.3)))(typescript@5.6.3)(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0)(yaml@2.7.0))
       '@angular-devkit/core': 19.1.6(chokidar@4.0.2)
@@ -12586,6 +12723,64 @@ snapshots:
       - '@swc-node/register'
       - '@swc/core'
       - debug
+
+  '@octokit/auth-token@4.0.0': {}
+
+  '@octokit/core@5.2.0':
+    dependencies:
+      '@octokit/auth-token': 4.0.0
+      '@octokit/graphql': 7.1.0
+      '@octokit/request': 8.4.0
+      '@octokit/request-error': 5.1.0
+      '@octokit/types': 13.8.0
+      before-after-hook: 2.2.3
+      universal-user-agent: 6.0.1
+
+  '@octokit/endpoint@9.0.5':
+    dependencies:
+      '@octokit/types': 13.8.0
+      universal-user-agent: 6.0.1
+
+  '@octokit/graphql@7.1.0':
+    dependencies:
+      '@octokit/request': 8.4.0
+      '@octokit/types': 13.8.0
+      universal-user-agent: 6.0.1
+
+  '@octokit/openapi-types@20.0.0': {}
+
+  '@octokit/openapi-types@23.0.1': {}
+
+  '@octokit/plugin-paginate-rest@9.2.1(@octokit/core@5.2.0)':
+    dependencies:
+      '@octokit/core': 5.2.0
+      '@octokit/types': 12.6.0
+
+  '@octokit/plugin-rest-endpoint-methods@10.4.1(@octokit/core@5.2.0)':
+    dependencies:
+      '@octokit/core': 5.2.0
+      '@octokit/types': 12.6.0
+
+  '@octokit/request-error@5.1.0':
+    dependencies:
+      '@octokit/types': 13.8.0
+      deprecation: 2.3.1
+      once: 1.4.0
+
+  '@octokit/request@8.4.0':
+    dependencies:
+      '@octokit/endpoint': 9.0.5
+      '@octokit/request-error': 5.1.0
+      '@octokit/types': 13.8.0
+      universal-user-agent: 6.0.1
+
+  '@octokit/types@12.6.0':
+    dependencies:
+      '@octokit/openapi-types': 20.0.0
+
+  '@octokit/types@13.8.0':
+    dependencies:
+      '@octokit/openapi-types': 23.0.1
 
   '@oozcitak/dom@1.15.10':
     dependencies:
@@ -13124,7 +13319,7 @@ snapshots:
       memoizerific: 1.11.3
       storybook: 8.5.3(prettier@3.4.2)
 
-  '@storybook/angular@8.5.3(dd6c22f03badc48276f479510fe482c0)':
+  '@storybook/angular@8.5.3(d7zsru34jf5wyopschmnnxciau)':
     dependencies:
       '@angular-devkit/architect': 0.1901.6(chokidar@4.0.2)
       '@angular-devkit/build-angular': 19.0.5(@angular/compiler-cli@19.1.5(@angular/compiler@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(typescript@5.6.3))(@angular/compiler@19.1.5(@angular/core@19.1.5(rxjs@7.8.1)(zone.js@0.15.0)))(@rspack/core@1.1.6(@swc/helpers@0.5.15))(@types/node@22.13.1)(chokidar@4.0.2)(html-webpack-plugin@5.6.3(@rspack/core@1.1.6(@swc/helpers@0.5.15))(webpack@5.97.1(esbuild@0.24.2)))(stylus@0.64.0)(tailwindcss@3.4.17(ts-node@10.9.1(@types/node@22.13.1)(typescript@5.6.3)))(typescript@5.6.3)(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.0)(sass@1.83.1)(stylus@0.64.0)(terser@5.36.0)(yaml@2.7.0))
@@ -13233,7 +13428,7 @@ snapshots:
       jsdoc-type-pratt-parser: 4.1.0
       process: 0.11.10
       recast: 0.23.9
-      semver: 7.6.3
+      semver: 7.7.1
       util: 0.12.5
       ws: 8.18.0
     optionalDependencies:
@@ -13746,7 +13941,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.1
       ts-api-utils: 1.4.3(typescript@5.6.3)
       typescript: 5.6.3
     transitivePeerDependencies:
@@ -13760,7 +13955,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.1
       ts-api-utils: 2.0.1(typescript@5.6.3)
       typescript: 5.6.3
     transitivePeerDependencies:
@@ -14348,6 +14543,8 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.5.1
       postcss-media-query-parser: 0.2.3
+
+  before-after-hook@2.2.3: {}
 
   better-opn@3.0.2:
     dependencies:
@@ -15334,6 +15531,8 @@ snapshots:
   depd@1.1.2: {}
 
   depd@2.0.0: {}
+
+  deprecation@2.3.1: {}
 
   dequal@2.0.3: {}
 
@@ -17728,7 +17927,7 @@ snapshots:
       make-fetch-happen: 14.0.3
       nopt: 8.0.0
       proc-log: 5.0.0
-      semver: 7.6.3
+      semver: 7.7.1
       tar: 7.4.3
       which: 5.0.0
     transitivePeerDependencies:
@@ -17751,7 +17950,7 @@ snapshots:
   normalize-package-data@7.0.0:
     dependencies:
       hosted-git-info: 8.0.2
-      semver: 7.6.3
+      semver: 7.7.1
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -17766,7 +17965,7 @@ snapshots:
 
   npm-install-checks@7.1.1:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.1
 
   npm-normalize-package-bin@4.0.0: {}
 
@@ -19847,6 +20046,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  tunnel@0.0.6: {}
+
   type-check@0.4.0:
     dependencies:
       prelude-ls: 1.2.1
@@ -19895,6 +20096,10 @@ snapshots:
       unplugin: 2.1.0
 
   undici-types@6.20.0: {}
+
+  undici@5.28.5:
+    dependencies:
+      '@fastify/busboy': 2.1.1
 
   unenv@1.10.0:
     dependencies:
@@ -19977,6 +20182,8 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-is: 6.0.0
       unist-util-visit-parents: 6.0.1
+
+  universal-user-agent@6.0.1: {}
 
   universalify@0.1.2: {}
 

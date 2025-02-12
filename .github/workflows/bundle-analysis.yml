@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: CC0-1.0
+name: 'Bundle Analysis'
+
+on: [push, pull_request]
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: 'frontend/package.json'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ./frontend
+      - name: Build bundle
+        run: pnpm run build
+        working-directory: ./frontend
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
