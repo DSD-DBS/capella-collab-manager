@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import analog from '@analogjs/platform';
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
@@ -34,6 +35,13 @@ export default defineConfig(() => {
         ],
       }),
       viteTsConfigPaths(),
+      codecovVitePlugin({
+        enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+        bundleName: 'capella-collab-manager',
+        uploadToken: process.env.CODECOV_TOKEN,
+        gitService: 'github',
+        telemetry: false,
+      }),
     ],
     server: {
       fs: {

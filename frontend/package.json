@@ -61,6 +61,7 @@
     "@angular/build": "^19.1.6",
     "@angular/cli": "~19.1.6",
     "@angular/compiler-cli": "~19.1.5",
+    "@codecov/vite-plugin": "^1.9.0",
     "@eslint/js": "^9.19.0",
     "@storybook/addon-docs": "^8.5.3",
     "@storybook/addon-essentials": "^8.5.3",
