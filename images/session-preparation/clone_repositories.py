@@ -52,7 +52,7 @@ def _backup_directory_if_exists(path: pathlib.Path) -> None:
 
     if backup_path.exists():
         log.info("Removing existing backup directory %s", backup_path)
-        shutil.rmtree(path)
+        shutil.rmtree(backup_path)
         log.info("Removed existing backup directory %s", backup_path)
 
     path.rename(backup_path)
