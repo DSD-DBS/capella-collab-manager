@@ -1,0 +1,63 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+                sans-serif;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <p><strong>Rating:</strong> {{ feedback.rating.value|capitalize }}</p>
+        <p><strong>Text:</strong> {{ feedback.feedback_text or 'No feedback text provided' }}</p>
+        <p><strong>User:</strong> {% if user %}{{ user.name }}{% if user.email %} ({{ user.email }}){% endif %}{% else
+            %}Anonymous{% endif %}</p>
+        <p><strong>User Agent:</strong> {{ user_agent or 'Unknown' }}</p>
+
+        {% if user %}
+        <p><strong>Beta Tester:</strong> {{ user.beta_tester }}</p>
+        {% endif %}
+
+        {% if feedback.trigger %}
+        <p><strong>Trigger:</strong> {{ feedback.trigger }}</p>
+        {% endif %}
+    </div>
+
+    {% if feedback.sessions %}
+    <div>
+        <p><strong>Sessions:</strong></p>
+        {% for session in feedback.sessions %}
+        <pre>{{ session.model_dump_json(indent=2) }}</pre>
+        {% set grafana_url
+        = ccm_url ~ '/grafana/d/individual-session/individual-session?orgId=1&var-session_id=' ~ session.id %}
+        <p>Get more insights in our Grafana dashboard: <a href="{{ grafana_url }}">{{ grafana_url }}</a></p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div>
+        <hr>
+        <p>You received this email because you're registered as feedback recipient in the
+            Capella Collaboration Manager (<a href="{{ ccm_url }}">{{ ccm_url }}</a>).</p>
+        <p>If you want to unsubscribe, contact your System Administrator.</p>
+        <p><em>Please note that only the user is validated. All other fields are provided via the API and should not be
+                trusted.</em></p>
+    </div>
+</body>
+
+</html>

@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import pathlib
 
+import jinja2
 from sqlalchemy import orm
 
 from capellacollab.configuration import core as config_core
@@ -52,57 +54,26 @@ def format_email(
     user: users_models.User | None,
     user_agent: str | None,
 ) -> email_models.EMailContent:
-    rating = feedback.rating.value
-    user_msg = user.name if user else "Anonymous"
-    if user and user.email:
-        user_msg += f" ({user.email})"
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(pathlib.Path(__file__).parent),
+        autoescape=True,
+    )
+    template = env.get_template("email.jinja")
+    ccm_url = f"{config.general.scheme}://{config.general.host}:{config.general.port}"
 
-    message_list = [
-        f"Rating: {rating.capitalize()}",
-        f"Text: {feedback.feedback_text or 'No feedback text provided'}",
-        f"User: {user_msg}",
-        f"User Agent: {user_agent or 'Unknown'}",
-    ]
-    if user:
-        message_list.append(
-            f"Beta Tester: {user.beta_tester}",
-        )
-
-    if feedback.trigger:
-        message_list.append(f"Trigger: {feedback.trigger}")
+    html_content = template.render(
+        feedback=feedback, user=user, user_agent=user_agent, ccm_url=ccm_url
+    )
 
     if feedback.sessions:
-        message_list.append("Sessions:")
-        message_list += [
-            session.model_dump_json(indent=2) for session in feedback.sessions
-        ]
-
-    message_list.append("---")
-    message_list.append(
-        f"You received this email because you're registered as feedback recipient in the "
-        f"Capella Collaboration Manager ({config.general.scheme}://{config.general.host}:{config.general.port})."
-    )
-    message_list.append(
-        "If you want to unsubscribe, contact your System Administrator."
-    )
-    message_list.append(
-        "Please note that only the user is validated. All other fields are provided via the API and should not be trusted."
-    )
-    message = "\n".join(message_list)
-
-    if len(feedback.sessions) > 0:
         sessions = ", ".join(
-            [format_session(session) for session in feedback.sessions]
+            format_session(session) for session in feedback.sessions
         )
-        return email_models.EMailContent(
-            subject=f"New Feedback with rating {rating} for sessions: {sessions}",
-            message=message,
-        )
+        subject = f"New Feedback with rating {feedback.rating.value} for sessions: {sessions}"
     else:
-        return email_models.EMailContent(
-            subject=f"New General Feedback with rating {rating}",
-            message=message,
-        )
+        subject = f"New General Feedback with rating {feedback.rating.value}"
+
+    return email_models.EMailContent(subject=subject, message=html_content)
 
 
 def send_feedback_email(

@@ -48,6 +48,7 @@ dependencies = [
   "cryptography",
   "croniter",
   "pyinstrument",
+  "Jinja2",
 ]
 
 [project.urls]
@@ -125,6 +126,7 @@ module = [
   "websocket.*",
   "testcontainers.*",
   "valkey.*",
+  "jinja2.*"
 ]
 ignore_missing_imports = true
 
