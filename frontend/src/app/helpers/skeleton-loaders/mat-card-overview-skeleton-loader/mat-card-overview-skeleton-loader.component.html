@@ -4,7 +4,7 @@
  -->
 
 @for (_ of _cardNumbersArray; track $index) {
-  <div class="h-[250px]">
+  <div class="h-[250px] max-w-full">
     <ngx-skeleton-loader
       count="1"
       appearance="circle"
@@ -12,6 +12,7 @@
         'border-radius': '5px',
         height: '100%',
         width: '400px',
+        'max-width': '100%',
         border: '1px solid white',
         margin: 0,
       }"
