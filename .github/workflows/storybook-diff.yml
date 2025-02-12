@@ -25,7 +25,7 @@ jobs:
         run:
           npx storycap --serverCmd "npx http-server storybook-static -p 9001" http://localhost:9001
         working-directory: ./frontend
-      - uses: reg-viz/reg-actions@v3
+      - uses: reg-viz/reg-actions@v2
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           image-directory-path: './frontend/__screenshots__'
