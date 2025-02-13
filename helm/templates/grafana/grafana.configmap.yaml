@@ -57,8 +57,9 @@ data:
     apiVersion: 1
     datasources:
       {{ if .Values.loki.enabled }}
-      - name: Loki (Capella Collaboration Manager)
+      - name: Grafana Loki (Capella Collaboration Manager)
         type: loki
+        uid: loki_ccm
         access: proxy
         orgId: 1
         url: http://loki-gateway.{{ .Release.Namespace }}.svc.cluster.local
