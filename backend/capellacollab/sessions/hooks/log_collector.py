@@ -36,10 +36,12 @@ class LogCollectorIntegration(interface.HookRegistration):
         request.operator._create_configmap(
             name=request.db_session.id,
             data=self._promtail_configuration(
+                session_id=request.session_id,
                 username=request.user.name,
                 session_type=request.db_session.type.value,
                 tool=request.db_session.tool,
-                version_name=request.db_session.version.name,
+                version=request.db_session.version,
+                connection_method=request.connection_method,
             ),
         )
 
@@ -102,10 +104,12 @@ class LogCollectorIntegration(interface.HookRegistration):
     @classmethod
     def _promtail_configuration(
         cls,
+        session_id: str,
         username: str,
         session_type: str,
         tool: tools_models.DatabaseTool,
-        version_name: str,
+        version: tools_models.DatabaseVersion,
+        connection_method: tools_models.ToolSessionConnectionMethod,
     ) -> dict:
         cfg = config.k8s.promtail
 
@@ -143,8 +147,10 @@ class LogCollectorIntegration(interface.HookRegistration):
                                     "labels": {
                                         "username": username,
                                         "session_type": session_type,
-                                        "tool": tool.name,
-                                        "version": version_name,
+                                        "session_id": session_id,
+                                        "tool_id": tool.id,
+                                        "version_id": version.id,
+                                        "connection_method_id": connection_method.id,
                                         "__path__": tool.config.monitoring.logging.path,
                                     },
                                 }
