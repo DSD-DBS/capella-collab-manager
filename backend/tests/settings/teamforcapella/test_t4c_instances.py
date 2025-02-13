@@ -27,8 +27,6 @@ from capellacollab.settings.modelsources.t4c.license_server import (
     models as t4c_license_server_models,
 )
 from capellacollab.tools import models as tools_models
-from capellacollab.users import crud as users_crud
-from capellacollab.users import models as users_models
 
 
 @pytest.mark.usefixtures("admin")
@@ -99,16 +97,10 @@ def test_create_t4c_instance_already_existing_name(
     assert "name already used" in detail["title"]
 
 
-@pytest.mark.usefixtures("t4c_instance")
+@pytest.mark.usefixtures("t4c_instance", "admin")
 def test_get_t4c_instances(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.get(
         "/api/v1/settings/modelsources/t4c/instances",
     )
@@ -120,16 +112,11 @@ def test_get_t4c_instances(
     assert "password" not in response.json()[1]
 
 
+@pytest.mark.usefixtures("admin")
 def test_get_t4c_instance(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
     t4c_instance: t4c_instance_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.get(
         f"/api/v1/settings/modelsources/t4c/instances/{t4c_instance.id}",
     )
@@ -140,16 +127,12 @@ def test_get_t4c_instance(
     assert "password" not in response.json()
 
 
+@pytest.mark.usefixtures("admin")
 def test_patch_t4c_instance(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
     t4c_instance: t4c_instance_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.patch(
         f"/api/v1/settings/modelsources/t4c/instances/{t4c_instance.id}",
         json={
@@ -171,16 +154,12 @@ def test_patch_t4c_instance(
     assert updated_t4c_instance.host == "localhost"
 
 
+@pytest.mark.usefixtures("admin")
 def test_patch_archived_t4c_instance_error(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
     t4c_instance: t4c_instance_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     t4c_instance_crud.update_t4c_instance(
         db,
         t4c_instance,
@@ -197,16 +176,12 @@ def test_patch_archived_t4c_instance_error(
     assert response.status_code == 400
 
 
+@pytest.mark.usefixtures("admin")
 def test_unarchive_t4c_instance(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
     t4c_instance: t4c_instance_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     t4c_instance_crud.update_t4c_instance(
         db,
         t4c_instance,
@@ -295,15 +270,11 @@ def test_delete_t4c_instance(
     assert models_t4c_crud.get_t4c_model_by_id(db, t4c_model.id) is None
 
 
+@pytest.mark.usefixtures("admin")
 def test_injectables_raise_when_archived_instance(
     db: orm.Session,
-    executor_name: str,
     t4c_instance: t4c_instance_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     t4c_instance_crud.update_t4c_instance(
         db,
         t4c_instance,
@@ -316,16 +287,12 @@ def test_injectables_raise_when_archived_instance(
         )
 
 
+@pytest.mark.usefixtures("admin")
 def test_update_t4c_instance_password_empty_string(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
     t4c_instance: t4c_instance_models.DatabaseT4CInstance,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     expected_password = t4c_instance.password
 
     response = client.patch(

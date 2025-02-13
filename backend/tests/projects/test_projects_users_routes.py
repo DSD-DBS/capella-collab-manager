@@ -109,10 +109,10 @@ def test_http_exception_when_updating_permission_of_manager(
     )
 
 
+@pytest.mark.usefixtures("user")
 def test_current_user_rights_for_internal_project(
     db: orm.Session,
     client: testclient.TestClient,
-    executor_name: str,
     project: projects_models.DatabaseProject,
 ):
     projects_crud.update_project(
@@ -121,9 +121,6 @@ def test_current_user_rights_for_internal_project(
         projects_models.PatchProject(
             visibility=projects_models.ProjectVisibility.INTERNAL
         ),
-    )
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.USER
     )
 
     response = client.get(
@@ -135,10 +132,10 @@ def test_current_user_rights_for_internal_project(
     assert response.json()["permission"] == "read"
 
 
+@pytest.mark.usefixtures("user")
 def test_no_user_rights_on_internal_permissions(
     db: orm.Session,
     client: testclient.TestClient,
-    executor_name: str,
     project: projects_models.DatabaseProject,
 ):
     projects_crud.update_project(
@@ -147,9 +144,6 @@ def test_no_user_rights_on_internal_permissions(
         projects_models.PatchProject(
             visibility=projects_models.ProjectVisibility.PRIVATE
         ),
-    )
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.USER
     )
 
     response = client.get(

@@ -46,13 +46,9 @@ def test_create_admin_user_by_system(db: orm.Session):
 def test_create_user_created_event(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
+    admin: users_models.DatabaseUser,
     unique_username: str,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.post(
         "/api/v1/users",
         json={
@@ -71,7 +67,7 @@ def test_create_user_created_event(
     event = events[0]
 
     assert event.event_type == events_models.EventType.CREATED_USER
-    assert event.executor_id == executor.id
+    assert event.executor_id == admin.id
     assert event.reason == "TestReason"
     assert event.project is None
     assert event.user_id == int(response.json()["id"])
@@ -80,13 +76,9 @@ def test_create_user_created_event(
 def test_user_deleted_cleanup(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
+    admin: users_models.DatabaseUser,
     unique_username: str,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.post(
         "/api/v1/users",
         json={
@@ -99,14 +91,14 @@ def test_user_deleted_cleanup(
 
     assert response.status_code == 200
     assert len(get_events_by_username(db, unique_username)) == 1
-    assert len(get_executed_events_by_user_id(db, executor.id)) == 1
+    assert len(get_executed_events_by_user_id(db, admin.id)) == 1
 
     user_id = int(response.json()["id"])
     response = client.delete(f"/api/v1/users/{user_id}")
 
     assert response.status_code == 204
     assert not get_events_by_username(db, unique_username)
-    assert not get_executed_events_by_user_id(db, executor.id)
+    assert not get_executed_events_by_user_id(db, admin.id)
 
 
 @pytest.mark.parametrize(
@@ -127,15 +119,12 @@ def test_user_deleted_cleanup(
 def test_create_assign_user_role_event(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
+    admin: users_models.DatabaseUser,
     unique_username: str,
     initial_role: users_models.Role,
     target_role: users_models.Role,
     expected_event_type: events_models.EventType,
 ):
-    executor = users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
     user = users_crud.create_user(
         db, unique_username, unique_username, None, initial_role
     )
@@ -153,7 +142,7 @@ def test_create_assign_user_role_event(
     event = events[0]
 
     assert event.event_type == expected_event_type
-    assert event.executor_id == executor.id
+    assert event.executor_id == admin.id
     assert event.reason == reason
     assert event.project is None
     assert event.user_id == user.id
@@ -303,7 +292,6 @@ def test_create_manager_added_to_project_event(
 def test_create_user_permission_change_event(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
     admin: users_models.DatabaseUser,
     project: projects_models.DatabaseProject,
     initial_permission: projects_users_models.ProjectUserPermission,

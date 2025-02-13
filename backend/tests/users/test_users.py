@@ -19,14 +19,11 @@ from capellacollab.users.workspaces import crud as user_workspace_crud
 from capellacollab.users.workspaces import models as user_workspace_models
 
 
+@pytest.mark.usefixtures("admin")
 def test_get_user_by_id_admin(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
     user = users_crud.create_user(db, "test_user", "test_user")
     response = client.get(f"/api/v1/users/{user.id}")
 

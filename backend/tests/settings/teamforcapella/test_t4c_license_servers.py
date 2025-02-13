@@ -12,7 +12,6 @@ from capellacollab.settings.modelsources.t4c.license_server import (
 from capellacollab.settings.modelsources.t4c.license_server import (
     models as license_server_models,
 )
-from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
 
@@ -62,16 +61,10 @@ def test_create_t4c_license_server_already_existing_name(
     )
 
 
-@pytest.mark.usefixtures("t4c_license_server")
+@pytest.mark.usefixtures("t4c_license_server", "admin")
 def test_get_t4c_license_servers_admin(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.get(
         "/api/v1/settings/modelsources/t4c/license-servers",
     )
@@ -83,17 +76,11 @@ def test_get_t4c_license_servers_admin(
     assert response.json()[-1]["usage_api"] == "http://localhost:8086"
 
 
-@pytest.mark.usefixtures("t4c_license_server")
+@pytest.mark.usefixtures("t4c_license_server", "user")
 def test_get_t4c_license_servers(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
 ):
     """Test that the license server data is anonymized without permissions"""
-
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.USER
-    )
 
     response = client.get(
         "/api/v1/settings/modelsources/t4c/license-servers",
@@ -106,16 +93,11 @@ def test_get_t4c_license_servers(
     assert response.json()[-1]["usage_api"] == ""
 
 
+@pytest.mark.usefixtures("admin")
 def test_get_t4c_license_server(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
     t4c_license_server: license_server_models.DatabaseT4CLicenseServer,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.get(
         f"/api/v1/settings/modelsources/t4c/license-servers/{t4c_license_server.id}",
     )
@@ -123,16 +105,12 @@ def test_get_t4c_license_server(
     assert response.json()["name"] == "test license server"
 
 
+@pytest.mark.usefixtures("admin")
 def test_patch_t4c_license_server(
     client: testclient.TestClient,
     db: orm.Session,
-    executor_name: str,
     t4c_license_server: license_server_models.DatabaseT4CLicenseServer,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.patch(
         f"/api/v1/settings/modelsources/t4c/license-servers/{t4c_license_server.id}",
         json={
@@ -204,16 +182,11 @@ def test_delete_t4c_license_server(
     )
 
 
-@pytest.mark.usefixtures("mock_license_server")
+@pytest.mark.usefixtures("mock_license_server", "admin")
 def test_get_t4c_license_server_usage(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
     t4c_license_server: license_server_models.DatabaseT4CLicenseServer,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
     response = client.get(
         f"/api/v1/settings/modelsources/t4c/license-servers/{t4c_license_server.id}/usage",
     )
@@ -226,13 +199,9 @@ def test_get_t4c_license_server_usage(
 @responses.activate
 def test_get_t4c_license_usage_no_status(
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
+    admin: users_models.DatabaseUser,
     t4c_license_server: license_server_models.DatabaseT4CLicenseServer,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
     responses.get(
         "http://localhost:8086/status/json",
         status=status.HTTP_200_OK,
