@@ -102,7 +102,7 @@ def test_user_deleted_cleanup(
 
 
 @pytest.mark.parametrize(
-    "initial_role,target_role,expected_event_type",
+    ("initial_role", "target_role", "expected_event_type"),
     [
         (
             users_models.Role.USER,
@@ -149,7 +149,7 @@ def test_create_assign_user_role_event(
 
 
 @pytest.mark.parametrize(
-    "permission,expected_permission_event_type",
+    ("permission", "expected_permission_event_type"),
     [
         (
             projects_users_models.ProjectUserPermission.READ,
@@ -275,7 +275,7 @@ def test_create_manager_added_to_project_event(
 
 
 @pytest.mark.parametrize(
-    "initial_permission,target_permission,expected_permission_event_type",
+    ("initial_permission", "target_permission", "expected_permission_event_type"),
     [
         (
             projects_users_models.ProjectUserPermission.READ,
@@ -330,7 +330,7 @@ def test_create_user_permission_change_event(
 
 
 @pytest.mark.parametrize(
-    "initial_role,target_role,expected_role_event_type",
+    ("initial_role", "target_role", "expected_role_event_type"),
     [
         (
             projects_users_models.ProjectUserRole.USER,

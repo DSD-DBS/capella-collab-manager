@@ -149,7 +149,7 @@ def test_get_logs(
 
 
 @pytest.mark.parametrize(
-    "include_commit_history, run_nightly",
+    ("include_commit_history", "run_nightly"),
     [(False, False)],
 )
 def test_get_logs_with_loki_disabled(

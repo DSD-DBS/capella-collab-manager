@@ -138,7 +138,7 @@ def fixture_mock_gitlab_diagram_cache_svg(git_type: git_models.GitType):
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_query_params",
+    ("git_type", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -184,7 +184,7 @@ def test_get_diagram_metadata_from_repository(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_response_status,git_query_params",
+    ("git_type", "git_response_status", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -232,7 +232,7 @@ def test_get_diagram_metadata_from_artifacts(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_instance_api_url",
+    ("git_type", "git_instance_api_url"),
     [(git_models.GitType.GENERAL, "https://example.com/api/v4")],
 )
 @pytest.mark.usefixtures(
@@ -255,7 +255,7 @@ def test_get_diagrams_fails_without_git_instance(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_instance_api_url",
+    ("git_type", "git_instance_api_url"),
     [(git_models.GitType.GITLAB, ""), (git_models.GitType.GITHUB, "")],
 )
 @pytest.mark.usefixtures(
@@ -281,7 +281,7 @@ def test_get_diagrams_fails_without_api_endpoint(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_response_status,pipeline_ids,git_query_params",
+    ("git_type", "git_response_status", "pipeline_ids", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -330,7 +330,7 @@ def test_get_diagram_cache_without_defined_job(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_response_status,job_status,git_query_params",
+    ("git_type", "git_response_status", "job_status", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -382,7 +382,7 @@ def test_get_diagrams_failed_diagram_cache_job_found(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_response_status,git_query_params",
+    ("git_type", "git_response_status", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -440,7 +440,7 @@ def test_get_single_diagram_from_artifacts(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_response_status,git_query_params",
+    ("git_type", "git_response_status", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -498,7 +498,7 @@ def test_get_single_diagram_from_artifacts_with_file_ending(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_response_status,git_query_params",
+    ("git_type", "git_response_status", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -554,7 +554,7 @@ def test_get_single_diagram_from_artifacts_with_wrong_file_ending(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_query_params",
+    ("git_type", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,

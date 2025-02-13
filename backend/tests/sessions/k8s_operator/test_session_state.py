@@ -76,7 +76,7 @@ def fixture_pod(
 
 
 @pytest.mark.parametrize(
-    "init_container_status, container_status, expected",
+    ("init_container_status", "container_status", "expected"),
     [
         (
             client.V1ContainerState(
