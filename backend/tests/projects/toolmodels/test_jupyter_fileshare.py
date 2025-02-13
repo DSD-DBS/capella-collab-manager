@@ -19,7 +19,7 @@ class MockOperator:
         self,
         name: str,
         size: str,
-        labels: dict[str, str] = None,
+        labels: dict[str, str],
     ):
         self._created_volumes += 1
 
