@@ -55,9 +55,8 @@ def list_t4c_repositories(
     except requests.RequestException:
         for repo in repositories:
             repo.status = models.T4CRepositoryStatus.INSTANCE_UNREACHABLE
-        log.error(
-            "TeamForCapella server not reachable.",
-            exc_info=True,
+        log.exception(
+            "TeamForCapella server not reachable."
         )
 
         return core_models.PayloadResponseModel(
@@ -159,7 +158,7 @@ def delete_t4c_repository(
     try:
         interface.delete_repository(instance, repository.name)
     except requests.RequestException as e:
-        log.error("Repository deletion failed partially", exc_info=True)
+        log.exception("Repository deletion failed partially")
         response.status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
 
         if isinstance(e, requests.HTTPError):

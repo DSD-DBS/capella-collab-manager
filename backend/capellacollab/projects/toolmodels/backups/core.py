@@ -73,10 +73,9 @@ def delete_pipeline(
             pipeline.t4c_username,
         )
     except requests.RequestException:
-        log.error(
+        log.exception(
             "Error during the deletion of user %s in t4c",
             pipeline.t4c_username,
-            exc_info=True,
         )
 
         if (

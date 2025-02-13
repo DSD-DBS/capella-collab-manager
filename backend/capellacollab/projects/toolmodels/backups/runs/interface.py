@@ -85,8 +85,8 @@ def _schedule_pending_jobs():
                 pending_run.reference_id = job_name
                 pending_run.status = models.PipelineRunStatus.SCHEDULED
             except Exception:
-                log.error(
-                    "Scheduling of job run with id %s failed", exc_info=True
+                log.exception(
+                    "Scheduling of job run with id %s failed", pending_run.id
                 )
                 pending_run.status = models.PipelineRunStatus.UNKNOWN
             db.commit()
@@ -148,7 +148,7 @@ def _fetch_events_of_job_run(run: models.DatabasePipelineRun):
     try:
         loki.push_logs_to_loki(event_entries, labels)
     except Exception:
-        log.exception("Failed pushing logs to loki", exc_info=True)
+        log.exception("Failed pushing logs to loki")
     run.logs_last_fetched_timestamp = datetime.datetime.now(datetime.UTC)
 
 
@@ -182,7 +182,7 @@ def _fetch_logs_of_job_runs(run: models.DatabasePipelineRun):
     try:
         loki.push_logs_to_loki(log_entries, labels)
     except Exception:
-        log.exception("Failed pushing logs to loki", exc_info=True)
+        log.exception("Failed pushing logs to loki")
     run.logs_last_fetched_timestamp = datetime.datetime.now(datetime.UTC)
 
 
@@ -220,11 +220,11 @@ def _map_k8s_to_internal_status(
                 return models.PipelineRunStatus.TIMEOUT
     if succeeded and succeeded > 0:
         return models.PipelineRunStatus.SUCCESS
-    elif failed and failed > 0:
+    if failed and failed > 0:
         return models.PipelineRunStatus.FAILURE
-    elif job.status.active:
+    if job.status.active:
         return models.PipelineRunStatus.RUNNING
-    elif (
+    if (
         job.status.active is None
         and (succeeded is None or succeeded == 0)
         and (failed is None or failed == 0)
@@ -277,25 +277,22 @@ def _refresh_and_trigger_pipeline_jobs():
             try:
                 _update_status_of_job_run(run)
             except Exception:
-                log.error(
+                log.exception(
                     "Failed updating the status of running and scheduled jobs",
-                    exc_info=True,
                 )
 
             try:
                 _fetch_events_of_job_run(run)
             except Exception:
-                log.error(
+                log.exception(
                     "Failed fetching events of jobs",
-                    exc_info=True,
                 )
 
             try:
                 _fetch_logs_of_job_runs(run)
             except Exception:
-                log.error(
+                log.exception(
                     "Failed fetching logs of jobs",
-                    exc_info=True,
                 )
 
             if _job_is_finished(run.status):

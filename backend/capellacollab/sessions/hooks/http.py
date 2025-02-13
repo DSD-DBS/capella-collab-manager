@@ -22,8 +22,8 @@ class HTTPIntegration(interface.HookRegistration):
                 **request.db_session.environment
             )
         except Exception:
-            request.logger.error(
-                "Error while formatting the redirect URL", exc_info=True
+            request.logger.exception(
+                "Error while formatting the redirect URL"
             )
             return interface.SessionConnectionHookResult(
                 warnings=[

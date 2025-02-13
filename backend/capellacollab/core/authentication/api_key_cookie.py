@@ -73,7 +73,7 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
             )
             raise exceptions.JWTValidationFailed()
         except jwt_exceptions.PyJWTError:
-            log.exception("JWT validation failed", exc_info=True)
+            log.exception("JWT validation failed")
             raise exceptions.JWTValidationFailed()
 
     @classmethod

@@ -152,5 +152,4 @@ class T4CIntegration(interface.HookRegistration):
                     session.owner.name,
                     repository.name,
                     repository.instance.name,
-                    exc_info=True,
                 )

@@ -253,7 +253,7 @@ class KubernetesOperator:
                 return pod_log
         except Exception:
             log.exception(
-                "Failed fetching logs from Kubernetes", exc_info=True
+                "Failed fetching logs from Kubernetes"
             )
         return None
 
@@ -1055,7 +1055,7 @@ class KubernetesOperator:
                         stderr,
                     )
         except exceptions.ApiException:
-            logging.error(
+            logging.exception(
                 "Command failed for session %s. See stacktrace below.\n%s\n%s",
                 session_id,
                 textwrap.indent(
@@ -1065,8 +1065,7 @@ class KubernetesOperator:
                 textwrap.indent(
                     stderr,
                     "[STDERR] ",
-                ),
-                exc_info=True,
+                )
             )
             raise
 
