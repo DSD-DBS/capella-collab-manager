@@ -17,27 +17,36 @@
   </div>
   Please type in the name of the repository to confirm the deletion: <br />
   <form (submit)="removeRepository()">
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="fill" class="my-2 w-full">
       <mat-label>Repository name</mat-label>
       <input
         (paste)="(false)"
         matInput
         [formControl]="repositoryNameForm"
         [placeholder]="repo.name"
+        data-testid="delete-repo-input"
       />
-      <mat-error *ngIf="repositoryNameForm.errors?.required">
-        You have to type in the repository name!
-      </mat-error>
-      <mat-error *ngIf="repositoryNameForm.errors?.repositoryNameMatchFailed">
-        The repository name doesn't match the repository you'd like to delete!
-      </mat-error>
+      @if (repositoryNameForm.errors?.required) {
+        <mat-error> You have to type in the repository name! </mat-error>
+      }
+
+      @if (repositoryNameForm.errors?.repositoryNameMatchFailed) {
+        <mat-error>
+          The repository name doesn't match the repository you'd like to delete!
+        </mat-error>
+      }
     </mat-form-field>
 
     <div class="flex justify-between">
       <button type="button" mat-button (click)="this.dialogRef.close(false)">
         Cancel
       </button>
-      <button mat-flat-button type="submit" color="warn">
+      <button
+        [disabled]="!repositoryNameForm.valid"
+        mat-flat-button
+        type="submit"
+        color="warn"
+      >
         Remove the repository
       </button>
     </div>
