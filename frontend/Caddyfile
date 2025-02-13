@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+:8080 {
+        log {
+                output file /var/log/access.log
+        }
+
+        root * /srv
+
+        # Serve static assets with aggressive caching
+        header /assets/* Cache-Control "public, max-age=31536000, immutable"
+
+        try_files {path} /index.html
+        # Force browsers to always load index.html
+        header /index.html Cache-Control "public, max-age=0, must-revalidate"
+
+        file_server {
+                # Enable serving pre-compressed files
+                precompressed br gzip
+        }
+}
