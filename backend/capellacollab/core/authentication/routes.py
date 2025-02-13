@@ -71,7 +71,6 @@ async def refresh_identity_token(
 @router.delete("/tokens")
 async def logout(response: fastapi.Response):
     delete_token_cookies(response)
-    return None
 
 
 def validate_id_token(
