@@ -56,7 +56,7 @@ app:
 		source $(VENV)/Scripts/activate;
 	fi
 	export OAUTHLIB_INSECURE_TRANSPORT=1;
-	uvicorn --host $(HOST) --reload --reload-dir $$(pwd) --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" capellacollab.__main__:app
+	uvicorn --host $(HOST) --reload --reload-dir $$(pwd) --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" --reload-include "*.jinja" capellacollab.__main__:app
 
 coverage:
 	pytest \

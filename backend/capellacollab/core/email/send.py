@@ -38,7 +38,7 @@ def send_email(
                 msg["From"] = config.smtp.sender
                 msg["To"] = recipient
                 msg["Subject"] = email.subject
-                msg.attach(text.MIMEText(email.message, "plain"))
+                msg.attach(text.MIMEText(email.message, "html"))
 
                 logger.info(
                     "Sending email to '%s' with subject '%s'",
