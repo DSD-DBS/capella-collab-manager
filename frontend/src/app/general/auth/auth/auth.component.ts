@@ -46,8 +46,11 @@ export class AuthComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
       this.params = params;
-      if (params.reason && params.reason === 'session-expired') {
+      if (params.reason === 'session-expired' || params.auto === 'true') {
         this.authService.login();
+      }
+      if (params.redirectTo) {
+        this.authService.redirectURL = params.redirectTo;
       }
     });
   }
