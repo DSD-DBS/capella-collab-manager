@@ -94,6 +94,11 @@ export class AuthRedirectComponent implements OnInit {
                 redirectTo.startsWith('/logout')
               ) {
                 this.router.navigateByUrl('/');
+              } else if (
+                redirectTo.startsWith('/grafana') ||
+                redirectTo.startsWith('/prometheus')
+              ) {
+                window.location.href = redirectTo;
               } else {
                 this.router.navigateByUrl(redirectTo);
               }
