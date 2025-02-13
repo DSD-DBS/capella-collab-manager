@@ -39,7 +39,7 @@ def create_add_user_to_project_events(
         reason=reason,
     )
 
-    if not project_role == models.ProjectUserRole.MANAGER:
+    if project_role != models.ProjectUserRole.MANAGER:
         events_crud.create_project_change_event(
             db=db,
             user=user,

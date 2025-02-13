@@ -39,7 +39,7 @@ def upgrade():
 
     if (
         constraint["name"]
-        and "project_user_association_pkey" == constraint["name"]
+        and constraint["name"] == "project_user_association_pkey"
     ):
         # The database looks correct, nothing to do
         return
