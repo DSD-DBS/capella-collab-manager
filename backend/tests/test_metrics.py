@@ -5,7 +5,6 @@ import pytest
 from fastapi import testclient
 from kubernetes import client as k8s_client
 
-from capellacollab import __main__
 from capellacollab.sessions import metrics
 
 
