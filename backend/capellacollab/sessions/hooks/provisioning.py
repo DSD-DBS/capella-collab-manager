@@ -368,8 +368,8 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             username=git_model.username,
             password=git_model.password,
         ):
-            rev = rev.removeprefix("refs/heads/").removeprefix("refs/tags/")
-            if rev == revision:
+            rev_without_prefix = rev.removeprefix("refs/heads/").removeprefix("refs/tags/")
+            if rev_without_prefix == revision:
                 return revision, hash
 
         raise instances_git_exceptions.RevisionNotFoundError(revision)
