@@ -51,11 +51,11 @@ async def get_model_complexity_badge(
             logger=logger,
         )
         return responses.SVGResponse(content=file_or_artifact[2])
-    except Exception:
+    except Exception as e:
         logger.debug(
             "Failed fetching model badge file or artifact for %s on revision %s.",
             git_handler.path,
             git_handler.revision,
             exc_info=True,
         )
-        raise exceptions.ModelBadgeNotConfiguredProperlyError()
+        raise exceptions.ModelBadgeNotConfiguredProperlyError() from e

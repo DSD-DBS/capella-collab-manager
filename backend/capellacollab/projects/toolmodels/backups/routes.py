@@ -124,11 +124,11 @@ def create_backup(
             password,
             is_admin=False,
         )
-    except requests.RequestException:
+    except requests.RequestException as e:
         log.warning("Pipeline could not be created", exc_info=True)
         raise exceptions.PipelineOperationFailedT4CServerUnreachable(
             exceptions.PipelineOperation.CREATE
-        )
+        ) from e
 
     pipeline_config = configuration_core.get_global_configuration(db).pipelines
 

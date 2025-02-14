@@ -18,11 +18,11 @@ def validate_license_url(value: str | None):
     if value:
         try:
             requests.Request("GET", value).prepare()
-        except requests.RequestException:
+        except requests.RequestException as e:
             log.info("Floating license validation failed", exc_info=True)
             raise ValueError(
                 "The provided floating license server is not valid."
-            )
+            ) from e
     return value
 
 

@@ -61,13 +61,13 @@ async def get_diagram_metadata(
             job_name="update_capella_diagram_cache",
             file_revision=f"diagram-cache/{handler.revision}",
         )
-    except requests.HTTPError:
+    except requests.HTTPError as e:
         logger.info(
             "Failed fetching diagram metadata file or artifact for %s",
             handler.path,
             exc_info=True,
         )
-        raise exceptions.DiagramCacheNotConfiguredProperlyError()
+        raise exceptions.DiagramCacheNotConfiguredProperlyError() from e
 
     diagram_metadata_entries = json.loads(diagram_metadata_entries)
     return models.DiagramCacheMetadata(
@@ -118,7 +118,7 @@ async def get_diagram(
             file_revision=f"diagram-cache/{handler.revision}",
         )
         return responses.SVGResponse(content=file_or_artifact[2])
-    except requests.HTTPError:
+    except requests.HTTPError as e:
         logger.info(
             "Failed fetching diagram file or artifact %s for %s.",
             diagram_uuid,
@@ -126,4 +126,4 @@ async def get_diagram(
             f"diagram-cache/{handler.revision}",
             exc_info=True,
         )
-        raise exceptions.DiagramCacheNotConfiguredProperlyError()
+        raise exceptions.DiagramCacheNotConfiguredProperlyError() from e

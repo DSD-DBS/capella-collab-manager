@@ -37,10 +37,10 @@ def get_t4c_license_server_usage(usage_api: str) -> T4CLicenseServerUsage:
             f"{usage_api}/status/json",
             timeout=config.requests.timeout,
         )
-    except requests.Timeout:
-        raise exceptions.T4CLicenseServerTimeoutError()
-    except requests.ConnectionError:
-        raise exceptions.T4CLicenseServerConnectionFailedError()
+    except requests.Timeout as e:
+        raise exceptions.T4CLicenseServerTimeoutError() from e
+    except requests.ConnectionError as e:
+        raise exceptions.T4CLicenseServerConnectionFailedError() from e
 
     # In older versions of the TeamForCapella license server,
     # the API endpoint returns 404 on success
@@ -56,9 +56,9 @@ def get_t4c_license_server_usage(usage_api: str) -> T4CLicenseServerUsage:
 
         if "used" in cur_status:
             return T4CLicenseServerUsage(**cur_status)
-    except KeyError:
-        raise exceptions.T4CLicenseServerNoStatusInResponse()
-    except requests.JSONDecodeError:
-        raise exceptions.T4CLicenseServerResponseDecodeError()
+    except KeyError as e:
+        raise exceptions.T4CLicenseServerNoStatusInResponse() from e
+    except requests.JSONDecodeError as e:
+        raise exceptions.T4CLicenseServerResponseDecodeError() from e
 
     raise exceptions.T4CLicenseServerUnknownError()

@@ -72,7 +72,7 @@ def delete_pipeline(
             pipeline.t4c_model.repository.name,
             pipeline.t4c_username,
         )
-    except requests.RequestException:
+    except requests.RequestException as e:
         log.exception(
             "Error during the deletion of user %s in t4c",
             pipeline.t4c_username,
@@ -85,7 +85,7 @@ def delete_pipeline(
         ):
             raise exceptions.PipelineOperationFailedT4CServerUnreachable(
                 exceptions.PipelineOperation.DELETE
-            )
+            ) from e
 
     if pipeline.run_nightly:
         operators.get_operator().delete_cronjob(pipeline.k8s_cronjob_id)

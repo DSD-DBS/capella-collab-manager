@@ -47,9 +47,9 @@ def list_files(
         return operators.get_operator().list_files(
             session.id, "/workspace", show_hidden
         )
-    except Exception:
+    except Exception as e:
         log.exception("Loading of files for session %s failed", session.id)
-        raise exceptions.SessionFileLoadingFailedError()
+        raise exceptions.SessionFileLoadingFailedError() from e
 
 
 @router.post(

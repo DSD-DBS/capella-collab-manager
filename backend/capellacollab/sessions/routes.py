@@ -486,8 +486,8 @@ def validate_session_token(
         )
     except jwt.exceptions.ExpiredSignatureError:
         return auth_exceptions.TokenSignatureExpired()
-    except jwt.exceptions.PyJWTError:
-        raise auth_exceptions.JWTValidationFailed()
+    except jwt.exceptions.PyJWTError as e:
+        raise auth_exceptions.JWTValidationFailed() from e
 
     if decoded_token.get("session", {}).get("id") != session_id:
         return fastapi.Response(status_code=status.HTTP_403_FORBIDDEN)

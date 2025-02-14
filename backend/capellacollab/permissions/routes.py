@@ -85,9 +85,9 @@ def _resolve_permission_from_locator_and_verb(
 
     try:
         return models.GlobalScopes.model_validate(permission)
-    except pydantic.ValidationError:
+    except pydantic.ValidationError as e:
         logger.info("Permission or verb not found.", exc_info=True)
-        raise exceptions.PermissionOrVerbNotFoundError(attribute_locator, verb)
+        raise exceptions.PermissionOrVerbNotFoundError(attribute_locator, verb) from e
 
 
 @users_router.get(

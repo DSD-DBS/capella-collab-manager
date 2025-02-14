@@ -127,8 +127,8 @@ def create_t4c_model(
 
     try:
         return crud.create_t4c_model(db, model, repository, body.name)
-    except exc.IntegrityError:
-        raise exceptions.T4CIntegrationAlreadyExists()
+    except exc.IntegrityError as e:
+        raise exceptions.T4CIntegrationAlreadyExists() from e
 
 
 @router.patch(
