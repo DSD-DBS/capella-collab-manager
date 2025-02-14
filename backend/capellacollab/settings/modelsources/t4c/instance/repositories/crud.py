@@ -52,11 +52,7 @@ def get_user_t4c_repositories(
     user: users_models.DatabaseUser,
     global_scope: permissions_models.GlobalScopes,
 ) -> abc.Sequence[models.DatabaseT4CRepository]:
-    tool_versions = [
-        tool_version
-    ] + tools_crud.get_compatible_versions_for_tool_versions(
-        db, tool_version=tool_version
-    )
+    tool_versions = [tool_version, *tools_crud.get_compatible_versions_for_tool_versions(db, tool_version=tool_version)]
 
     if (
         permissions_models.UserTokenVerb.GET

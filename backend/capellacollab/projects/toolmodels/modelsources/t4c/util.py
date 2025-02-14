@@ -20,7 +20,7 @@ def verify_compatibility_of_model_and_server(
 
     if (
         t4c_repository.instance.version.id
-        not in model_version.config.compatible_versions + [model_version.id]
+        not in [*model_version.config.compatible_versions, model_version.id]
     ):
         raise exceptions.T4CIntegrationWrongCapellaVersion(
             server.name,

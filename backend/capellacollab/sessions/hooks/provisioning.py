@@ -261,11 +261,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         version: tools_models.DatabaseVersion,
         resolved_entries: list[ResolvedSessionProvisioning],
     ):
-        allowed_versions = [
-            version
-        ] + tools_crud.get_compatible_versions_for_tool_versions(
-            db, tool_version=version
-        )
+        allowed_versions = [version, *tools_crud.get_compatible_versions_for_tool_versions(db, tool_version=version)]
         for entry in resolved_entries:
             if entry["model"].version not in allowed_versions:
                 raise sessions_exceptions.ToolAndModelMismatchError(
