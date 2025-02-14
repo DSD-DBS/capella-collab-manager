@@ -214,7 +214,7 @@ class PreSessionTerminationHookResult(t.TypedDict):
     """Return type of the pre session termination hook"""
 
 
-class HookRegistration(metaclass=abc.ABCMeta):
+class HookRegistration(metaclass=abc.ABCMeta):  # noqa: B024
     """Interface for session hooks
 
     Notes

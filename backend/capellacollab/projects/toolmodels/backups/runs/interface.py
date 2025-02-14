@@ -40,7 +40,7 @@ def schedule_refresh_and_trigger_pipeline_jobs(interval=5):
             except BaseException:
                 pass
 
-    asyncio.ensure_future(loop())
+    asyncio.ensure_future(loop())  # noqa: RUF006
 
 
 def _schedule_pending_jobs():

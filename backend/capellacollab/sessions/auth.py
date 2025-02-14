@@ -76,8 +76,8 @@ def load_private_key_from_disk(path: pathlib.Path) -> rsa.RSAPrivateKey | None:
 
 
 def load_private_key_in_memory(key: rsa.RSAPrivateKey):
-    global PRIVATE_KEY
-    global PUBLIC_KEY
+    global PRIVATE_KEY  # noqa: PLW0603
+    global PUBLIC_KEY  # noqa: PLW0603
 
     PRIVATE_KEY = key
     PUBLIC_KEY = PRIVATE_KEY.public_key()
