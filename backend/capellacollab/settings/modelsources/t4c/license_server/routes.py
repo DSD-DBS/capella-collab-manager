@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 from sqlalchemy import orm
 
@@ -24,10 +26,10 @@ router = fastapi.APIRouter()
     ],
 )
 def get_t4c_license_servers(
-    db: orm.Session = fastapi.Depends(database.get_db),
-    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
         permissions_injectables.get_scope
-    ),
+    )],
 ) -> list[models.T4CLicenseServer]:
     """Get the list of T4C license servers.
 
@@ -61,12 +63,12 @@ def get_t4c_license_servers(
     ],
 )
 def get_t4c_license_server(
-    license_server: models.DatabaseT4CLicenseServer = fastapi.Depends(
+    license_server: t.Annotated[models.DatabaseT4CLicenseServer, fastapi.Depends(
         injectables.get_existing_license_server
-    ),
-    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+    )],
+    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
         permissions_injectables.get_scope
-    ),
+    )],
 ) -> models.T4CLicenseServer:
     """Get a T4C license server.
 
@@ -103,7 +105,7 @@ def get_t4c_license_server(
 )
 def create_t4c_license_server(
     body: models.T4CLicenseServerBase,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseT4CLicenseServer:
     if crud.get_t4c_license_server_by_name(db, body.name):
         raise exceptions.T4CLicenseServerWithNameAlreadyExistsError()
@@ -131,10 +133,10 @@ def create_t4c_license_server(
 )
 def edit_t4c_license_server(
     body: models.PatchT4CLicenseServer,
-    license_server: models.DatabaseT4CLicenseServer = fastapi.Depends(
+    license_server: t.Annotated[models.DatabaseT4CLicenseServer, fastapi.Depends(
         injectables.get_existing_license_server
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseT4CLicenseServer:
     if (
         body.name
@@ -162,10 +164,10 @@ def edit_t4c_license_server(
     ],
 )
 def delete_t4c_license_server(
-    license_server: models.DatabaseT4CLicenseServer = fastapi.Depends(
+    license_server: t.Annotated[models.DatabaseT4CLicenseServer, fastapi.Depends(
         injectables.get_existing_license_server
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.delete_t4c_license_server(db, license_server)
 
@@ -182,8 +184,8 @@ def delete_t4c_license_server(
     ],
 )
 def get_t4c_license_server_usage(
-    license_server: models.DatabaseT4CLicenseServer = fastapi.Depends(
+    license_server: t.Annotated[models.DatabaseT4CLicenseServer, fastapi.Depends(
         injectables.get_existing_license_server
-    ),
+    )],
 ) -> interface.T4CLicenseServerUsage:
     return interface.get_t4c_license_server_usage(license_server.usage_api)

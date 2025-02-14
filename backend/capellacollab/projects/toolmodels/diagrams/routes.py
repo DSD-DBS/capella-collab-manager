@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import logging
 import pathlib
+import typing as t
 from urllib import parse
 
 import fastapi
@@ -45,10 +46,10 @@ router = fastapi.APIRouter()
     ],
 )
 async def get_diagram_metadata(
-    handler: git_handler.GitHandler = fastapi.Depends(
+    handler: t.Annotated[git_handler.GitHandler, fastapi.Depends(
         git_injectables.get_git_handler
-    ),
-    logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
+    )],
+    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
 ):
     try:
         (
@@ -96,11 +97,9 @@ async def get_diagram_metadata(
 )
 async def get_diagram(
     diagram_uuid_or_filename: str,
+    handler: t.Annotated[git_handler.GitHandler, fastapi.Depends(git_injectables.get_git_handler)],
+    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
     job_id: str | None = None,
-    handler: git_handler.GitHandler = fastapi.Depends(
-        git_injectables.get_git_handler
-    ),
-    logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     fileextension = pathlib.PurePosixPath(diagram_uuid_or_filename).suffix
     if fileextension and fileextension.lower() != ".svg":

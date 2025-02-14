@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import typing as t
+
 import fastapi
 import slugify
 from sqlalchemy import orm
@@ -50,16 +52,16 @@ router = fastapi.APIRouter()
     ],
 )
 def get_projects(
-    minimum_role: projects_users_models.ProjectUserRole | None = None,
-    db: orm.Session = fastapi.Depends(database.get_db),
-    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
         permissions_injectables.get_scope
-    ),
-    authentication_information: tuple[
+    )],
+    authentication_information: t.Annotated[tuple[
         users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ] = fastapi.Depends(
+    ], fastapi.Depends(
         auth_injectables.AuthenticationInformationValidation()
-    ),
+    )],
+    minimum_role: projects_users_models.ProjectUserRole | None = None,
 ) -> list[models.DatabaseProject]:
     """List all projects the user has access to.
 
@@ -109,13 +111,13 @@ def get_projects(
 )
 def update_project(
     patch_project: models.PatchProject,
-    project: models.DatabaseProject = fastapi.Depends(
+    project: t.Annotated[models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
-    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
         permissions_injectables.get_scope
-    ),
+    )],
 ) -> models.DatabaseProject:
     """Update a project's metadata.
 
@@ -149,9 +151,9 @@ def update_project(
     ],
 )
 def get_project_by_slug(
-    db_project: models.DatabaseProject = fastapi.Depends(
+    db_project: t.Annotated[models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
+    )],
 ) -> models.DatabaseProject:
     """Get a project by its slug."""
     return db_project
@@ -175,10 +177,10 @@ def get_project_by_slug(
 )
 def create_project(
     post_project: models.PostProjectRequest,
-    user: users_models.DatabaseUser = fastapi.Depends(
+    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         users_injectables.get_own_user
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseProject:
     slug = slugify.slugify(post_project.name)
     if crud.get_project_by_slug(db, slug):
@@ -218,10 +220,10 @@ def create_project(
     ],
 )
 def delete_project(
-    project: models.DatabaseProject = fastapi.Depends(
+    project: t.Annotated[models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     """Delete a project.
 

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import typing as t
 
 import fastapi
 import requests
@@ -40,10 +41,10 @@ type T4CRepositoriesResponseModel = core_models.PayloadResponseModel[
     ],
 )
 def list_t4c_repositories(
-    db: orm.Session = fastapi.Depends(database.get_db),
-    instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    instance: t.Annotated[settings_t4c_models.DatabaseT4CInstance, fastapi.Depends(
         settings_t4c_injectables.get_existing_instance
-    ),
+    )],
 ) -> T4CRepositoriesResponseModel:
     repositories = [
         models2.SimpleT4CRepositoryWithIntegrations.model_validate(repository)
@@ -98,10 +99,10 @@ def list_t4c_repositories(
 )
 def create_t4c_repository(
     body: models.CreateT4CRepository,
-    db: orm.Session = fastapi.Depends(database.get_db),
-    instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    instance: t.Annotated[settings_t4c_models.DatabaseT4CInstance, fastapi.Depends(
         settings_t4c_injectables.get_existing_instance
-    ),
+    )],
 ) -> models.T4CRepository:
     if crud.exist_repo_for_name_and_instance(db, body.name, instance):
         raise exceptions.T4CRepositoryAlreadyExistsError(
@@ -145,13 +146,13 @@ def create_t4c_repository(
 )
 def delete_t4c_repository(
     response: fastapi.Response,
-    db: orm.Session = fastapi.Depends(database.get_db),
-    instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    instance: t.Annotated[settings_t4c_models.DatabaseT4CInstance, fastapi.Depends(
         settings_t4c_injectables.get_existing_instance
-    ),
-    repository: models.DatabaseT4CRepository = fastapi.Depends(
+    )],
+    repository: t.Annotated[models.DatabaseT4CRepository, fastapi.Depends(
         injectables.get_existing_t4c_repository
-    ),
+    )],
 ) -> core_models.ResponseModel | None:
     crud.delete_4c_repository(db, repository)
     try:
@@ -200,12 +201,12 @@ def delete_t4c_repository(
     ],
 )
 def start_t4c_repository(
-    instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
+    instance: t.Annotated[settings_t4c_models.DatabaseT4CInstance, fastapi.Depends(
         settings_t4c_injectables.get_existing_instance
-    ),
-    repository: models.DatabaseT4CRepository = fastapi.Depends(
+    )],
+    repository: t.Annotated[models.DatabaseT4CRepository, fastapi.Depends(
         injectables.get_existing_t4c_repository
-    ),
+    )],
 ):
     interface.start_repository(instance, repository.name)
 
@@ -228,12 +229,12 @@ def start_t4c_repository(
     ],
 )
 def stop_t4c_repository(
-    instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
+    instance: t.Annotated[settings_t4c_models.DatabaseT4CInstance, fastapi.Depends(
         settings_t4c_injectables.get_existing_instance
-    ),
-    repository: models.DatabaseT4CRepository = fastapi.Depends(
+    )],
+    repository: t.Annotated[models.DatabaseT4CRepository, fastapi.Depends(
         injectables.get_existing_t4c_repository
-    ),
+    )],
 ):
     interface.stop_repository(instance, repository.name)
 
@@ -256,12 +257,12 @@ def stop_t4c_repository(
     ],
 )
 def recreate_t4c_repository(
-    instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
+    instance: t.Annotated[settings_t4c_models.DatabaseT4CInstance, fastapi.Depends(
         settings_t4c_injectables.get_existing_instance
-    ),
-    repository: models.DatabaseT4CRepository = fastapi.Depends(
+    )],
+    repository: t.Annotated[models.DatabaseT4CRepository, fastapi.Depends(
         injectables.get_existing_t4c_repository
-    ),
+    )],
 ):
     interface.create_repository(instance, repository.name)
 

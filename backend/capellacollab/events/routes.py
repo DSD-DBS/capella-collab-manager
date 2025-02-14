@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 from collections import abc
 
 import fastapi
@@ -31,6 +32,6 @@ router = fastapi.APIRouter()
     ],
 )
 def get_events(
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.DatabaseUserHistoryEvent]:
     return crud.get_events(db)

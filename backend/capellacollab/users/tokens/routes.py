@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 from collections import abc
 
 import fastapi
@@ -36,10 +37,10 @@ router = fastapi.APIRouter()
 )
 def create_token_for_user(
     post_token: models.PostToken,
-    user: users_models.DatabaseUser = fastapi.Depends(
+    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         user_injectables.get_own_user
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.UserTokenWithPassword:
     projects = [
         (
@@ -95,10 +96,10 @@ def create_token_for_user(
     ],
 )
 def get_all_tokens_of_user(
-    token_list: abc.Sequence[models.DatabaseUserToken] = fastapi.Depends(
+    token_list: t.Annotated[abc.Sequence[models.DatabaseUserToken], fastapi.Depends(
         injectables.get_own_user_tokens
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.UserToken]:
     return [
         models.UserToken(
@@ -132,9 +133,9 @@ def get_all_tokens_of_user(
     ],
 )
 def delete_token_for_user(
-    token: models.DatabaseUserToken = fastapi.Depends(
+    token: t.Annotated[models.DatabaseUserToken, fastapi.Depends(
         injectables.get_exisiting_own_user_token
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> None:
     return crud.delete_token(db, token)

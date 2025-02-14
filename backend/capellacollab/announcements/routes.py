@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 from sqlalchemy import orm
 
@@ -17,15 +19,15 @@ router = fastapi.APIRouter()
     "",
     response_model=list[models.AnnouncementResponse],
 )
-def get_announcements(db: orm.Session = fastapi.Depends(database.get_db)):
+def get_announcements(db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]):
     return crud.get_announcements(db)
 
 
 @router.get("/{announcement_id}")
 def get_announcement_by_id(
-    announcement: models.DatabaseAnnouncement = fastapi.Depends(
+    announcement: t.Annotated[models.DatabaseAnnouncement, fastapi.Depends(
         injectables.get_existing_announcement
-    ),
+    )],
 ):
     return announcement
 
@@ -46,7 +48,7 @@ def get_announcement_by_id(
 )
 def create_announcement(
     post_announcement: models.CreateAnnouncementRequest,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return crud.create_announcement(db, post_announcement)
 
@@ -67,10 +69,10 @@ def create_announcement(
 )
 def update_announcement(
     post_announcement: models.CreateAnnouncementRequest,
-    announcement: models.DatabaseAnnouncement = fastapi.Depends(
+    announcement: t.Annotated[models.DatabaseAnnouncement, fastapi.Depends(
         injectables.get_existing_announcement
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return crud.update_announcement(db, announcement, post_announcement)
 
@@ -91,9 +93,9 @@ def update_announcement(
     ],
 )
 def delete_announcement(
-    announcement: models.DatabaseAnnouncement = fastapi.Depends(
+    announcement: t.Annotated[models.DatabaseAnnouncement, fastapi.Depends(
         injectables.get_existing_announcement
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.delete_announcement(db, announcement)

@@ -23,7 +23,7 @@ router = fastapi.APIRouter(
     "/unified",
 )
 def get_unified_config(
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.UnifiedConfig:
     cfg = core.get_global_configuration(db)
 
@@ -51,7 +51,7 @@ def get_unified_config(
     ],
 )
 async def get_configuration(
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return core.get_global_configuration(db)
 
@@ -73,7 +73,7 @@ async def get_configuration(
 )
 async def update_configuration(
     body: models.GlobalConfiguration,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     configuration = crud.get_configuration_by_name(
         db, models.GlobalConfiguration._name

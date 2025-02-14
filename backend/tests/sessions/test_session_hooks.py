@@ -11,6 +11,7 @@ from sqlalchemy import orm
 
 from capellacollab import __main__
 from capellacollab.permissions import injectables as permissions_injectables
+from capellacollab.permissions import models as permissions_models
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions import models as sessions_models
@@ -139,6 +140,9 @@ async def test_hook_calls_during_session_request(
         mockoperator,  # type: ignore
         logger,
         authentication_information=(user, None),
+        global_scope=permissions_models.GlobalScopes(
+            user=users_models.USER_TOKEN_SCOPE,
+        )
     )
 
     assert session_hook.configuration_hook_counter == 1

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+import typing as t
 
 import fastapi
 
@@ -39,10 +40,10 @@ router = fastapi.APIRouter()
     ],
 )
 async def get_model_complexity_badge(
-    git_handler: handler.GitHandler = fastapi.Depends(
+    git_handler: t.Annotated[handler.GitHandler, fastapi.Depends(
         git_injectables.get_git_handler
-    ),
-    logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
+    )],
+    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
 ):
     try:
         file_or_artifact = await git_handler.get_file_or_artifact(

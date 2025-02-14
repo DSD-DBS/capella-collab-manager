@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 from collections import abc
 
 import fastapi
@@ -28,7 +29,7 @@ router = fastapi.APIRouter()
     ],
 )
 def list_git_instances(
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.DatabaseGitInstance]:
     return crud.get_git_instances(db)
 
@@ -45,9 +46,9 @@ def list_git_instances(
     ],
 )
 def get_git_instance(
-    git_instance: models.DatabaseGitInstance = fastapi.Depends(
+    git_instance: t.Annotated[models.DatabaseGitInstance, fastapi.Depends(
         injectables.get_existing_git_instance
-    ),
+    )],
 ):
     return git_instance
 
@@ -69,7 +70,7 @@ def get_git_instance(
 )
 def create_git_instance(
     post_git_instance: models.PostGitInstance,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseGitInstance:
     return crud.create_git_instance(db, post_git_instance)
 
@@ -91,10 +92,10 @@ def create_git_instance(
 )
 def edit_git_instance(
     put_git_instance: models.PostGitInstance,
-    db_git_instance: models.DatabaseGitInstance = fastapi.Depends(
+    db_git_instance: t.Annotated[models.DatabaseGitInstance, fastapi.Depends(
         injectables.get_existing_git_instance
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseGitInstance:
     return crud.update_git_instance(db, db_git_instance, put_git_instance)
 
@@ -114,10 +115,10 @@ def edit_git_instance(
     ],
 )
 def delete_git_instance(
-    git_instance: models.DatabaseGitInstance = fastapi.Depends(
+    git_instance: t.Annotated[models.DatabaseGitInstance, fastapi.Depends(
         injectables.get_existing_git_instance
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return crud.delete_git_instance(db, git_instance)
 
@@ -158,7 +159,7 @@ async def get_revisions(
 )
 def validate_path(
     body: models.PathValidation,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> bool:
     try:
         util.verify_path_prefix(db, body.url)

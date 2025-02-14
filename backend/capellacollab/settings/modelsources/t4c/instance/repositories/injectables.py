@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
+import typing as t
 
 import fastapi
 from sqlalchemy import orm
@@ -13,10 +14,10 @@ from . import crud, exceptions, models
 
 def get_existing_t4c_repository(
     t4c_repository_id: int,
-    db: orm.Session = fastapi.Depends(database.get_db),
-    instance: settings_t4c_models.DatabaseT4CInstance = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    instance: t.Annotated[settings_t4c_models.DatabaseT4CInstance, fastapi.Depends(
         settings_t4c_injectables.get_existing_instance
-    ),
+    )],
 ) -> models.DatabaseT4CRepository:
     if repository := crud.get_t4c_repository_by_id(db, t4c_repository_id):
         if repository.instance != instance:

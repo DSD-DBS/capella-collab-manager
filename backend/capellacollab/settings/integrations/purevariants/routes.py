@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import typing as t
+
 import fastapi
 from sqlalchemy import orm
 
@@ -34,7 +36,7 @@ router = fastapi.APIRouter(
     ],
 )
 def get_license(
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabasePureVariantsLicenses | None:
     return crud.get_pure_variants_configuration(db)
 
@@ -58,7 +60,7 @@ def get_license(
 )
 def set_license(
     body: models.PureVariantsLicenses,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabasePureVariantsLicenses:
     return crud.set_license_server_configuration(db, body.license_server_url)
 
@@ -82,8 +84,8 @@ def set_license(
 )
 def upload_license_key_file(
     file: fastapi.UploadFile,
-    operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    operator: t.Annotated[k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     operator.create_secret(
         "pure-variants", {"license.lic": file.file.read()}, overwrite=True
@@ -108,8 +110,8 @@ def upload_license_key_file(
     ],
 )
 def delete_license_key_file(
-    operator: k8s.KubernetesOperator = fastapi.Depends(operators.get_operator),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    operator: t.Annotated[k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.set_license_key_filename(db, None)
     operator.delete_secret("pure-variants")

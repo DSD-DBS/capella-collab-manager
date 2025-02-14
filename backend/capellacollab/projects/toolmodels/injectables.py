@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
+import typing as t
 
 import fastapi
 from sqlalchemy import orm
@@ -13,10 +14,10 @@ from . import crud, exceptions, models
 
 def get_existing_capella_model(
     model_slug: str,
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseToolModel:
     model = crud.get_model_by_slugs(db, project.slug, model_slug)
     if not model:

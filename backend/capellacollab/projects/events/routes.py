@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 import fastapi_pagination
 from sqlalchemy import orm
@@ -36,10 +38,10 @@ router = fastapi.APIRouter()
     ],
 )
 def get_project_events(
-    db: orm.Session = fastapi.Depends(database.get_db),
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
+    )],
 ) -> fastapi_pagination.Page[events_models.DatabaseUserHistoryEvent]:
     return crud.get_events_per_project_paginated(db, project)
 

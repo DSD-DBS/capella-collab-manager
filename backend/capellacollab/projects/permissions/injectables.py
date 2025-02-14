@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
+import typing as t
 
 import fastapi
 from sqlalchemy import orm
@@ -20,18 +21,18 @@ from . import crud, exceptions, models, permissions
 
 
 def get_scope(
-    authentication_information: tuple[
+    authentication_information: t.Annotated[tuple[
         users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ] = fastapi.Depends(
+    ], fastapi.Depends(
         auth_injectables.AuthenticationInformationValidation()
-    ),
-    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+    )],
+    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
         permissions_injectables.get_scope
-    ),
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    )],
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.ProjectUserScopes:
     user, token = authentication_information
 
@@ -64,10 +65,10 @@ class ProjectPermissionValidation:
 
     def __call__(
         self,
-        project_scope: models.ProjectUserScopes = fastapi.Depends(get_scope),
-        project: projects_models.DatabaseProject = fastapi.Depends(
+        project_scope: t.Annotated[models.ProjectUserScopes, fastapi.Depends(get_scope)],
+        project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
             projects_injectables.get_existing_project
-        ),
+        )],
     ) -> None:
         actual_scope = project_scope.model_dump()
 

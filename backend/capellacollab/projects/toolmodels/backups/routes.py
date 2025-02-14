@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-
 import logging
+import typing as t
 import uuid
 
 import fastapi
@@ -57,10 +57,10 @@ log = logging.getLogger(__name__)
     ],
 )
 def get_pipelines(
-    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+    model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return crud.get_pipelines_for_tool_model(db, model)
 
@@ -79,9 +79,9 @@ def get_pipelines(
     ],
 )
 def get_pipeline(
-    pipeline: models.DatabaseBackup = fastapi.Depends(
+    pipeline: t.Annotated[models.DatabaseBackup, fastapi.Depends(
         injectables.get_existing_pipeline
-    ),
+    )],
 ):
     return pipeline
 
@@ -101,10 +101,10 @@ def get_pipeline(
 )
 def create_backup(
     body: models.CreateBackup,
-    toolmodel: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+    toolmodel: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     git_model = git_injectables.get_existing_git_model(
         body.git_model_id, toolmodel, db
@@ -186,14 +186,14 @@ def create_backup(
     ],
 )
 def delete_pipeline(
-    pipeline: models.DatabaseBackup = fastapi.Depends(
+    pipeline: t.Annotated[models.DatabaseBackup, fastapi.Depends(
         injectables.get_existing_pipeline
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
-    force: bool = False,
-    global_scope: permissions_models.GlobalScopes = fastapi.Depends(
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
         permissions_injectables.get_scope
-    ),
+    )],
+    force: bool = False,
 ):
     """Remove a pipeline.
 

@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 from collections import abc
 
 import fastapi
@@ -46,10 +47,10 @@ router = fastapi.APIRouter()
     ],
 )
 def list_t4c_models(
-    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+    model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.DatabaseT4CModel]:
     return crud.get_t4c_models_for_tool_model(db, model)
 
@@ -74,9 +75,9 @@ def list_t4c_models(
     ],
 )
 def get_t4c_model(
-    t4c_model: models.DatabaseT4CModel = fastapi.Depends(
+    t4c_model: t.Annotated[models.DatabaseT4CModel, fastapi.Depends(
         injectables.get_existing_t4c_model
-    ),
+    )],
 ) -> models.DatabaseT4CModel:
     return t4c_model
 
@@ -107,10 +108,10 @@ def get_t4c_model(
 )
 def create_t4c_model(
     body: models.SubmitT4CModel,
-    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+    model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     instance = settings_t4c_injectables.get_existing_unarchived_instance(
         body.t4c_instance_id, db
@@ -163,10 +164,10 @@ def create_t4c_model(
 )
 def update_t4c_model(
     body: models.PatchT4CModel,
-    t4c_model: models.DatabaseT4CModel = fastapi.Depends(
+    t4c_model: t.Annotated[models.DatabaseT4CModel, fastapi.Depends(
         injectables.get_existing_t4c_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     if body.t4c_instance_id is not None:
         instance = settings_t4c_injectables.get_existing_unarchived_instance(
@@ -219,10 +220,10 @@ def update_t4c_model(
     ),
 )
 def delete_t4c_model(
-    t4c_model: models.DatabaseT4CModel = fastapi.Depends(
+    t4c_model: t.Annotated[models.DatabaseT4CModel, fastapi.Depends(
         injectables.get_existing_t4c_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     if backups_crud.get_pipelines_for_t4c_model(db, t4c_model):
         raise exceptions.T4CIntegrationUsedInPipelines()

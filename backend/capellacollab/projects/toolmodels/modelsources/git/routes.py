@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import typing as t
 
 import fastapi
 from sqlalchemy import orm
@@ -44,9 +45,9 @@ log = logging.getLogger(__name__)
     ],
 )
 def get_git_models(
-    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+    capella_model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
-    ),
+    )],
 ) -> list[models.DatabaseGitModel]:
     return capella_model.git_models
 
@@ -65,9 +66,9 @@ def get_git_models(
     ],
 )
 def get_git_model_by_id(
-    git_model: models.DatabaseGitModel = fastapi.Depends(
+    git_model: t.Annotated[models.DatabaseGitModel, fastapi.Depends(
         injectables.get_existing_git_model
-    ),
+    )],
 ) -> models.DatabaseGitModel:
     return git_model
 
@@ -86,9 +87,9 @@ def get_git_model_by_id(
     ],
 )
 async def get_revisions_of_primary_git_model(
-    primary_git_model: models.DatabaseGitModel = fastapi.Depends(
+    primary_git_model: t.Annotated[models.DatabaseGitModel, fastapi.Depends(
         injectables.get_existing_primary_git_model
-    ),
+    )],
 ) -> git_models.GetRevisionsResponseModel:
     return await instances_git_core.get_remote_refs(
         primary_git_model.path,
@@ -112,10 +113,10 @@ async def get_revisions_of_primary_git_model(
     ],
 )
 async def get_revisions_with_model_credentials(
-    url: str = fastapi.Body(media_type="text/plain"),
-    git_model: models.DatabaseGitModel = fastapi.Depends(
+    url: t.Annotated[str, fastapi.Body(media_type="text/plain")],
+    git_model: t.Annotated[models.DatabaseGitModel, fastapi.Depends(
         injectables.get_existing_git_model
-    ),
+    )],
 ):
     return await instances_git_core.get_remote_refs(
         url, git_model.username, git_model.password
@@ -137,10 +138,10 @@ async def get_revisions_with_model_credentials(
 )
 def create_git_model(
     post_git_model: models.PostGitModel,
-    capella_model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
+    capella_model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
         toolmodels_injectables.get_existing_capella_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseGitModel:
     git_util.verify_path_prefix(db, post_git_model.path)
 
@@ -164,10 +165,10 @@ def create_git_model(
 )
 def update_git_model_by_id(
     put_git_model: models.PutGitModel,
-    db_git_model: models.DatabaseGitModel = fastapi.Depends(
+    db_git_model: t.Annotated[models.DatabaseGitModel, fastapi.Depends(
         injectables.get_existing_git_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseGitModel:
     git_util.verify_path_prefix(db, put_git_model.path)
     cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
@@ -187,9 +188,9 @@ def update_git_model_by_id(
     ],
 )
 def empty_cache(
-    git_model: models.DatabaseGitModel = fastapi.Depends(
+    git_model: t.Annotated[models.DatabaseGitModel, fastapi.Depends(
         injectables.get_existing_primary_git_model
-    ),
+    )],
 ):
     cache.GitValkeyCache(git_model_id=git_model.id).clear()
 
@@ -208,10 +209,10 @@ def empty_cache(
     ],
 )
 def delete_git_model_by_id(
-    db_git_model: models.DatabaseGitModel = fastapi.Depends(
+    db_git_model: t.Annotated[models.DatabaseGitModel, fastapi.Depends(
         injectables.get_existing_git_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     if backups_crud.get_pipelines_for_git_model(db, db_git_model):
         raise exceptions.GitRepositoryUsedInPipelines(db_git_model.id)

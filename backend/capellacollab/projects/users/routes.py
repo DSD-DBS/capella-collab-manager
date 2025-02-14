@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 import pydantic
 from sqlalchemy import orm
@@ -59,13 +61,13 @@ def get_project_user_association_or_raise(
 
 @router.get("/current", response_model=models.ProjectUser)
 def get_current_project_user(
-    user: users_models.DatabaseUser = fastapi.Depends(
+    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         users_injectables.get_own_user
-    ),
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    )],
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseProjectUserAssociation | models.ProjectUser:
     """Get the current project users"""
     if user.role == users_models.Role.ADMIN:
@@ -91,10 +93,10 @@ def get_current_project_user(
     ],
 )
 def get_users_for_project(
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> list[models.ProjectUser]:
     return pydantic.TypeAdapter(list[models.ProjectUser]).validate_python(
         project.users
@@ -123,13 +125,13 @@ def get_users_for_project(
 )
 def add_user_to_project(
     post_project_user: models.PostProjectUser,
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    own_user: users_models.DatabaseUser = fastapi.Depends(
+    )],
+    own_user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         users_injectables.get_own_user
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseProjectUserAssociation:
     if not (
         user := users_crud.get_user_by_name(db, post_project_user.username)
@@ -167,16 +169,16 @@ def add_user_to_project(
 )
 def update_project_user(
     patch_project_user: models.PatchProjectUser,
-    user: users_models.DatabaseUser = fastapi.Depends(
+    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         users_injectables.get_existing_user
-    ),
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    )],
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    own_user: users_models.DatabaseUser = fastapi.Depends(
+    )],
+    own_user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         users_injectables.get_own_user
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     if role := patch_project_user.role:
         crud.change_role_of_user_in_project(db, project, user, role)
@@ -228,17 +230,17 @@ def update_project_user(
     ],
 )
 def remove_user_from_project(
-    reason: str = fastapi.Body(media_type="text/plain"),
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    reason: t.Annotated[str, fastapi.Body(media_type="text/plain")],
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
-    user: users_models.DatabaseUser = fastapi.Depends(
+    )],
+    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         users_injectables.get_existing_user
-    ),
-    own_user: users_models.DatabaseUser = fastapi.Depends(
+    )],
+    own_user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
         users_injectables.get_own_user
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    )],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.delete_user_from_project(db, project, user)
     events_crud.create_project_change_event(

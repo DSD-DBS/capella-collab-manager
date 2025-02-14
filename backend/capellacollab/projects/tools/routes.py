@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 from sqlalchemy import orm
 
@@ -36,9 +38,9 @@ router = fastapi.APIRouter()
     ],
 )
 def get_project_tools(
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
+    )],
 ) -> list[models.ProjectTool]:
     tools = [models.ProjectTool.model_validate(tool) for tool in project.tools]
 
@@ -90,10 +92,10 @@ def get_project_tools(
 )
 def link_tool_to_project(
     body: models.PostProjectToolRequest,
-    db: orm.Session = fastapi.Depends(database.get_db),
-    project: projects_models.DatabaseProject = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
         projects_injectables.get_existing_project
-    ),
+    )],
 ) -> models.DatabaseProjectToolAssociation:
     tool_version = tools_injectables.get_existing_tool_version(
         body.tool_id, body.tool_version_id, db
@@ -119,9 +121,9 @@ def link_tool_to_project(
     ],
 )
 def delete_tool_from_project(
-    db: orm.Session = fastapi.Depends(database.get_db),
-    project_tool: models.DatabaseProjectToolAssociation = fastapi.Depends(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    project_tool: t.Annotated[models.DatabaseProjectToolAssociation, fastapi.Depends(
         injectables.get_existing_project_tool
-    ),
+    )],
 ) -> None:
     crud.delete_project_tool(db, project_tool)

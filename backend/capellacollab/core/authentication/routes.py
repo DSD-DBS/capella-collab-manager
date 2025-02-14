@@ -35,7 +35,7 @@ async def get_authorization_url(
 async def get_identity_token(
     token_request: models.TokenRequest,
     response: fastapi.Response,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     tokens = oidc.OIDCProvider().exchange_code_for_tokens(
         token_request.code, token_request.code_verifier
@@ -52,8 +52,8 @@ async def get_identity_token(
 @router.put("/tokens")
 async def refresh_identity_token(
     response: fastapi.Response,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
     refresh_token: t.Annotated[str | None, fastapi.Cookie()] = None,
-    db: orm.Session = fastapi.Depends(database.get_db),
 ) -> None:
     if refresh_token is None or refresh_token == "":
         raise exceptions.RefreshTokenCookieMissingError()
