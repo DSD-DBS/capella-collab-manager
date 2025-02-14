@@ -27,7 +27,6 @@ type T4CRepositoriesResponseModel = core_models.PayloadResponseModel[
 
 @router.get(
     "",
-    response_model=T4CRepositoriesResponseModel,
     dependencies=[
         fastapi.Depends(
             permissions_injectables.PermissionValidation(

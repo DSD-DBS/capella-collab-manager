@@ -148,7 +148,6 @@ async def get_revisions(
 
 @router.post(
     "/validate/path",
-    response_model=bool,
     dependencies=[
         fastapi.Depends(
             permissions_injectables.PermissionValidation(
