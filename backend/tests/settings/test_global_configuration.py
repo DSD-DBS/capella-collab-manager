@@ -45,7 +45,7 @@ def test_get_general_configuration(
     )
 
 
-@pytest.mark.usefixtures("executor_name")
+@pytest.mark.usefixtures("user")
 def test_get_configuration_schema(client: testclient.TestClient):
     response = client.get("/api/v1/configurations/global/schema")
 

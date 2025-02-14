@@ -20,8 +20,6 @@ from capellacollab.core.logging import loki
 from capellacollab.projects.toolmodels.backups.runs import (
     injectables as runs_injectables,
 )
-from capellacollab.users import crud as users_crud
-from capellacollab.users import models as users_models
 
 
 @pytest.fixture(name="unix_time_in_ns")
@@ -214,17 +212,13 @@ def fixture_override_get_existing_pipeline_run_dependency(
 
 
 @mock.patch("capellacollab.core.logging.loki.fetch_logs_from_loki")
-@pytest.mark.usefixtures("override_get_existing_pipeline_run_dependency")
+@pytest.mark.usefixtures(
+    "override_get_existing_pipeline_run_dependency", "admin"
+)
 def test_mask_logs(
     mock_fetch_logs: mock.Mock,
     client: testclient.TestClient,
-    db: orm.Session,
-    executor_name: str,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     mock_fetch_logs.return_value = [
         {
             "values": [

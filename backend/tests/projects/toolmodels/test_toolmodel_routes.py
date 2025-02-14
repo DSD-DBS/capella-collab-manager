@@ -15,21 +15,14 @@ from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
-from capellacollab.users import crud as users_crud
-from capellacollab.users import models as users_models
 
 
+@pytest.mark.usefixtures("admin")
 def test_rename_toolmodel_successful(
     capella_model: toolmodels_models.DatabaseToolModel,
     project: projects_models.DatabaseProject,
     client: testclient.TestClient,
-    executor_name: str,
-    db: orm.Session,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.patch(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
         json={
@@ -43,18 +36,13 @@ def test_rename_toolmodel_successful(
     assert "new-name" in response.text
 
 
+@pytest.mark.usefixtures("admin")
 def test_rename_toolmodel_where_name_already_exists(
     client: testclient.TestClient,
     project: projects_models.DatabaseProject,
     capella_model: toolmodels_models.DatabaseToolModel,
     jupyter_model: toolmodels_models.DatabaseToolModel,
-    executor_name: str,
-    db: orm.Session,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.patch(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
         json={"name": jupyter_model.name, "version_id": -1, "nature_id": -1},
@@ -64,17 +52,12 @@ def test_rename_toolmodel_where_name_already_exists(
     assert response.json()["detail"]["err_code"] == "TOOLMODEL_ALREADY_EXISTS"
 
 
+@pytest.mark.usefixtures("admin")
 def test_update_toolmodel_order_successful(
     capella_model: toolmodels_models.DatabaseToolModel,
     project: projects_models.DatabaseProject,
     client: testclient.TestClient,
-    executor_name: str,
-    db: orm.Session,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.patch(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
         json={"display_order": 1},
@@ -169,17 +152,12 @@ def training_tool(db: orm.Session) -> tools_models.DatabaseTool:
     return tools_crud.create_tool(db, tool)
 
 
+@pytest.mark.usefixtures("admin")
 def test_create_training_toolmodel(
     training_project: projects_models.DatabaseProject,
     client: testclient.TestClient,
     training_tool: tools_models.DatabaseTool,
-    executor_name: str,
-    db: orm.Session,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.post(
         f"/api/v1/projects/{training_project.slug}/models",
         json={
@@ -193,17 +171,12 @@ def test_create_training_toolmodel(
     assert "Valid Training Toolmodel" in response.text
 
 
+@pytest.mark.usefixtures("admin")
 def test_create_toolmodel_project_type_not_allowed(
     project: projects_models.DatabaseProject,
     client: testclient.TestClient,
     training_tool: tools_models.DatabaseTool,
-    executor_name: str,
-    db: orm.Session,
 ):
-    users_crud.create_user(
-        db, executor_name, executor_name, None, users_models.Role.ADMIN
-    )
-
     response = client.post(
         f"/api/v1/projects/{project.slug}/models",
         json={
