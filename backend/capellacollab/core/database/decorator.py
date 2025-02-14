@@ -39,19 +39,19 @@ class PydanticDecorator(types.TypeDecorator):
         super().__init__()
         self.pydantic_model = pydantic_model
 
-    def process_bind_param(self, value, dialect):
+    def process_bind_param(self, value, dialect):  # noqa: ARG002
         """Convert a pydantic object to JSONB."""
         if value is None:
             return None
         return value.model_dump()
 
-    def process_literal_param(self, value, dialect):
+    def process_literal_param(self, value, dialect):  # noqa: ARG002
         """Convert a literal pydantic object to JSONB."""
         if value is None:
             return None
         return value.model_dump()
 
-    def process_result_value(self, value, dialect):
+    def process_result_value(self, value, dialect):  # noqa: ARG002
         """Convert JSONB to a pydantic object."""
         if value is None:
             return None

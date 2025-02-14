@@ -124,8 +124,7 @@ fastapi_pagination.add_pagination(app)
 
 
 @app.exception_handler(500)
-async def handle_exceptions(request: fastapi.Request, exc: Exception):
-    # pylint: disable=unused-argument
+async def handle_exceptions(request: fastapi.Request, exc: Exception):  # noqa: ARG001
     """
     A custom exception handler is required, otherwise no CORS headers are included
     in the case of exceptions.

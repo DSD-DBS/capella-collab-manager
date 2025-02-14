@@ -229,9 +229,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
     That's why the hooks in this interface are not abstract methods.
     """
 
-    # pylint: disable=unused-argument
     def configuration_hook(
-        self, request: ConfigurationHookRequest
+        self, request: ConfigurationHookRequest  # noqa: ARG002
     ) -> ConfigurationHookResult:
         """Hook to determine session configuration
 
@@ -240,9 +239,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
 
         return ConfigurationHookResult()
 
-    # pylint: disable=unused-argument
     async def async_configuration_hook(
-        self, request: ConfigurationHookRequest
+        self, request: ConfigurationHookRequest  # noqa: ARG002
     ) -> ConfigurationHookResult:
         """Hook to determine session configuration
 
@@ -251,10 +249,9 @@ class HookRegistration(metaclass=abc.ABCMeta):
 
         return ConfigurationHookResult()
 
-    # pylint: disable=unused-argument
     def post_session_creation_hook(
         self,
-        request: PostSessionCreationHookRequest,
+        request: PostSessionCreationHookRequest,  # noqa: ARG002
     ) -> PostSessionCreationHookResult:
         """Hook executed after session creation
 
@@ -264,9 +261,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
 
         return PostSessionCreationHookResult()
 
-    # pylint: disable=unused-argument
     def session_connection_hook(
-        self, request: SessionConnectionHookRequest
+        self, request: SessionConnectionHookRequest  # noqa: ARG002
     ) -> SessionConnectionHookResult:
         """Hook executed while connecting to a session
 
@@ -276,9 +272,8 @@ class HookRegistration(metaclass=abc.ABCMeta):
 
         return SessionConnectionHookResult()
 
-    # pylint: disable=unused-argument
     def pre_session_termination_hook(
-        self, request: PreSessionTerminationHookRequest
+        self, request: PreSessionTerminationHookRequest  # noqa: ARG002
     ) -> PreSessionTerminationHookResult:
         """Hook executed directly before session termination
 
