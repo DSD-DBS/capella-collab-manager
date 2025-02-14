@@ -1,4 +1,5 @@
 api.module.ts
+api/announcements.service.ts
 api/api.ts
 api/authentication.service.ts
 api/configuration.service.ts
@@ -6,7 +7,6 @@ api/events.service.ts
 api/feedback.service.ts
 api/health.service.ts
 api/integrations-pure-variants.service.ts
-api/notices.service.ts
 api/permissions.service.ts
 api/projects-events.service.ts
 api/projects-models-backups.service.ts
@@ -36,6 +36,8 @@ encoder.ts
 index.ts
 model/admin-scopes-input.ts
 model/admin-scopes-output.ts
+model/announcement-level.ts
+model/announcement-response.ts
 model/anonymized-session.ts
 model/authorization-response.ts
 model/backup-pipeline-run.ts
@@ -50,8 +52,8 @@ model/built-in-link-item.ts
 model/built-in-navbar-link.ts
 model/cpu-resources-input.ts
 model/cpu-resources-output.ts
+model/create-announcement-request.ts
 model/create-backup.ts
-model/create-notice-request.ts
 model/create-t4-c-instance.ts
 model/create-t4-c-repository.ts
 model/create-tool-input.ts
@@ -112,8 +114,6 @@ model/models.ts
 model/navbar-configuration-input-external-links-inner.ts
 model/navbar-configuration-input.ts
 model/navbar-configuration-output.ts
-model/notice-level.ts
-model/notice-response.ts
 model/page-history-event.ts
 model/page-pipeline-run.ts
 model/patch-project-user.ts

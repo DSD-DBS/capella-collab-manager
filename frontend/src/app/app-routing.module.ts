@@ -42,7 +42,7 @@ import { ProjectOverviewComponent } from './projects/project-overview/project-ov
 import { ProjectWrapperComponent } from './projects/project-wrapper/project-wrapper.component';
 import { SessionOverviewComponent } from './sessions/session-overview/session-overview.component';
 import { SessionsComponent } from './sessions/sessions.component';
-import { AlertSettingsComponent } from './settings/core/alert-settings/alert-settings.component';
+import { AnnouncementSettingsComponent } from './settings/core/announcement-settings/announcement-settings.component';
 import { ToolDetailsComponent } from './settings/core/tools-settings/tool-details/tool-details.component';
 import { ToolsSettingsComponent } from './settings/core/tools-settings/tools-settings.component';
 import { PureVariantsComponent } from './settings/integrations/pure-variants/pure-variants.component';
@@ -361,9 +361,9 @@ export const routes: Routes = [
                 component: UserSettingsComponent,
               },
               {
-                path: 'alerts',
-                data: { breadcrumb: 'Alerts' },
-                component: AlertSettingsComponent,
+                path: 'announcements',
+                data: { breadcrumb: 'Announcements' },
+                component: AnnouncementSettingsComponent,
               },
               {
                 path: 'pipelines',

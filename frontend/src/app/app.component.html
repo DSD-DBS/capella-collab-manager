@@ -25,9 +25,9 @@
     >
       @if (
         (fullscreenService.isFullscreen$ | async) === false &&
-        pageLayoutService.showNotice
+        pageLayoutService.showAnnouncement
       ) {
-        <app-notice></app-notice>
+        <app-announcement-list></app-announcement-list>
       }
 
       <router-outlet class="h-full"></router-outlet>

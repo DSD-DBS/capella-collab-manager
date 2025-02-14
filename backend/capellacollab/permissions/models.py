@@ -101,7 +101,9 @@ class AdminScopes(core_pydantic.BaseModelStrict):
         description="Manage all tools, including its versions and natures",
     )
     announcements: set[
-        t.Literal[UserTokenVerb.CREATE, UserTokenVerb.DELETE]
+        t.Literal[
+            UserTokenVerb.CREATE, UserTokenVerb.UPDATE, UserTokenVerb.DELETE
+        ]
     ] = pydantic.Field(
         default_factory=set,
         title="Announcements",

@@ -13,10 +13,10 @@ import {
 import { RouterOutlet } from '@angular/router';
 import slugify from 'slugify';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
+import { AnnouncementListComponent } from './general/announcement/announcement-list.component';
 import { FooterComponent } from './general/footer/footer.component';
 import { HeaderComponent } from './general/header/header.component';
 import { NavBarMenuComponent } from './general/nav-bar-menu/nav-bar-menu.component';
-import { NoticeComponent } from './general/notice/notice.component';
 import { PageLayoutService } from './page-layout/page-layout.service';
 import { FeedbackWrapperService } from './sessions/feedback/feedback.service';
 import { FullscreenService } from './sessions/service/fullscreen.service';
@@ -31,7 +31,7 @@ import { FullscreenService } from './sessions/service/fullscreen.service';
     MatDrawerContent,
     HeaderComponent,
     NgClass,
-    NoticeComponent,
+    AnnouncementListComponent,
     RouterOutlet,
     FooterComponent,
     AsyncPipe,

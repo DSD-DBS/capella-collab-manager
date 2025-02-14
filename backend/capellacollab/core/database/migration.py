@@ -11,6 +11,8 @@ from alembic import config as alembic_config
 from sqlalchemy import orm
 
 from capellacollab import core
+from capellacollab.announcements import crud as announcements_crud
+from capellacollab.announcements import models as announcements_models
 from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.events import crud as events_crud
@@ -82,6 +84,7 @@ def migrate_db(engine, database_url: str):
             LOGGER.info("Database structure creation successful")
             command.stamp(alembic_cfg, "head")
             initialize_admin_user(session)
+            create_welcome_announcement(session)
             create_tools(session)
 
             initialize_capellambse_test_project(session)
@@ -103,6 +106,19 @@ def initialize_admin_user(db: orm.Session):
     )
     events_crud.create_user_creation_event(db, admin_user)
     LOGGER.info("Initialized admin user %s", config.initial.admin)
+
+
+def create_welcome_announcement(db: orm.Session):
+    welcome_announcement = announcements_crud.create_announcement(
+        db,
+        announcements_models.CreateAnnouncementRequest(
+            title="Welcome to the Capella Collaboration Manager",
+            message="Make sure to check out our documentation to learn more",
+            level=announcements_models.AnnouncementLevel.PRIMARY,
+            dismissible=True,
+        ),
+    )
+    LOGGER.info("Initialized welcome announcement %s", welcome_announcement.id)
 
 
 def initialize_capellambse_test_project(db: orm.Session):

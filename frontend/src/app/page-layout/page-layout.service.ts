@@ -10,7 +10,7 @@ import { Injectable } from '@angular/core';
 export class PageLayoutService {
   showNavbar = true;
   showFooter = true;
-  showNotice = true;
+  showAnnouncement = true;
 
   hideNavbar() {
     this.showNavbar = false;
@@ -19,6 +19,6 @@ export class PageLayoutService {
   enableAll() {
     this.showNavbar = true;
     this.showFooter = true;
-    this.showNotice = true;
+    this.showAnnouncement = true;
   }
 }

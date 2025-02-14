@@ -120,7 +120,7 @@ nav:
       - Tools:
           - General: admin/settings/tools/index.md
           - Configuration: admin/tools/configuration.md
-      - Alerts: admin/alerts/create.md
+      - Announcements: admin/announcements/create.md
       - CI templates:
           - Gitlab CI/CD:
               - Image builder: admin/ci-templates/gitlab/image-builder.md
@@ -181,6 +181,7 @@ plugins:
         'user/tools/capella/teamforcapella/import/import-from-t4c.md': 'user/tools/capella/teamforcapella/import/index.md'
         'user/tools/capella/teamforcapella/export/export-to-t4c.md': 'user/tools/capella/teamforcapella/export/index.md'
         'admin/settings/monitoring.md': 'admin/monitoring/frontend.md'
+        'admin/alerts/create.md': 'admin/announcements/create.md'
 
 markdown_extensions:
   - meta

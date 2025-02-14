@@ -87,9 +87,10 @@ export namespace AdminScopesOutput {
         Update: 'UPDATE' as ToolsEnum,
         Delete: 'DELETE' as ToolsEnum
     };
-    export type AnnouncementsEnum = 'CREATE' | 'DELETE';
+    export type AnnouncementsEnum = 'CREATE' | 'UPDATE' | 'DELETE';
     export const AnnouncementsEnum = {
         Create: 'CREATE' as AnnouncementsEnum,
+        Update: 'UPDATE' as AnnouncementsEnum,
         Delete: 'DELETE' as AnnouncementsEnum
     };
     export type MonitoringEnum = 'GET';
