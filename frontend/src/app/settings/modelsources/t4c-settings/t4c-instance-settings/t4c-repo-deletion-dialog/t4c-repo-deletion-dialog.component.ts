@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import {
   AbstractControl,
@@ -26,14 +25,12 @@ import {
 @Component({
   selector: 't4c-repo-deletion-dialog-dialog',
   templateUrl: './t4c-repo-deletion-dialog.component.html',
-  styleUrls: ['./t4c-repo-deletion-dialog.component.css'],
   imports: [
     FormsModule,
     MatFormField,
     MatLabel,
     MatInput,
     ReactiveFormsModule,
-    NgIf,
     MatError,
     MatButton,
   ],

@@ -48,12 +48,7 @@
         @if (
           configuration?.license_key_filename === undefined || loadingLicenseKey
         ) {
-          <app-form-field-skeleton-loader
-            *ngIf="
-              configuration?.license_key_filename === undefined ||
-              loadingLicenseKey
-            "
-          ></app-form-field-skeleton-loader>
+          <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
         } @else if (configuration?.license_key_filename && !loadingLicenseKey) {
           <div>
             You've uploaded a file with the name '{{
