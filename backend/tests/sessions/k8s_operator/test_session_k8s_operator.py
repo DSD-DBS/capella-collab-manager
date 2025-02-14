@@ -17,7 +17,7 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
     operator = k8s.KubernetesOperator()
 
     name = "testname"
-    creation_timestamp = datetime.datetime.now()
+    creation_timestamp = datetime.datetime.now(tz=datetime.UTC)
 
     pod_counter = 0
     service_counter = 0

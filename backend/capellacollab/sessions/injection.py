@@ -43,11 +43,10 @@ def get_idle_state(sid: str) -> sessions_models2.IdleState:
             idle_for_minutes=idle_for_minutes,
             terminate_after_minutes=config.sessions.timeout,
         )
-    else:
-        log.debug("Couldn't find Prometheus metrics for session %s.", sid)
+    log.debug("Couldn't find Prometheus metrics for session %s.", sid)
 
-        return sessions_models2.IdleState(
-            available=False,
-            unavailable_reason="No metrics found for session",
-            terminate_after_minutes=config.sessions.timeout,
-        )
+    return sessions_models2.IdleState(
+        available=False,
+        unavailable_reason="No metrics found for session",
+        terminate_after_minutes=config.sessions.timeout,
+    )

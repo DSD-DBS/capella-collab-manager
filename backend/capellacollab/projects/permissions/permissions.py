@@ -114,8 +114,7 @@ def derive_project_permissions_from_role(
                 == projects_users_models.ProjectUserPermission.WRITE
             ):
                 return write_permissions
-            else:
-                return read_only_permissions
+            return read_only_permissions
 
     if project.visibility == projects_models.ProjectVisibility.INTERNAL:
         return read_only_permissions

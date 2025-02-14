@@ -54,7 +54,7 @@ def submit_feedback(
         feedback.rating,
         feedback_user,
         feedback.feedback_text,
-        datetime.datetime.now(),
+        datetime.datetime.now(tz=datetime.UTC),
         feedback.trigger,
     )
 

@@ -28,8 +28,7 @@ def get_t4c_license_server_version(usage_api: str) -> str | None:
         return None
 
     data = r.json()
-    license_server_version = data.get("version", None)
-    return license_server_version
+    return data.get("version", None)
 
 
 def get_t4c_license_server_usage(usage_api: str) -> T4CLicenseServerUsage:

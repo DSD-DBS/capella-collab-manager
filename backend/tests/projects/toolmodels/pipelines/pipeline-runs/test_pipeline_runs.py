@@ -180,9 +180,9 @@ def fixture_mock_pipeline_run():
     mock_pipeline_run.id = "mock_id"
     mock_pipeline_run.reference_id = "mock_reference_id"
     mock_pipeline_run.trigger_time = (
-        datetime.datetime.now() - datetime.timedelta(minutes=1)
+        datetime.datetime.now(tz=datetime.UTC) - datetime.timedelta(minutes=1)
     )
-    mock_pipeline_run.end_time = datetime.datetime.now()
+    mock_pipeline_run.end_time = datetime.datetime.now(tz=datetime.UTC)
 
     # These values will be masked
     mock_pipeline_run.pipeline.t4c_password = "secret_pipeline_t4c_password"

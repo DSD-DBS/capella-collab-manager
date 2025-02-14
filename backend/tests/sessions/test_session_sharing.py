@@ -28,14 +28,13 @@ def fixture_enable_tool_session_sharing(
 
 @pytest.fixture(name="shared_with_user")
 def fixture_shared_with_user(db: orm.Session) -> users_models.DatabaseUser:
-    user2 = users_crud.create_user(
+    return users_crud.create_user(
         db,
         "shared_with_user",
         "shared_with_user",
         None,
         users_models.Role.USER,
     )
-    return user2
 
 
 @pytest.fixture(name="act_as_shared_with_user")
@@ -61,7 +60,7 @@ def fixture_shared_session(
     sessions_crud.create_shared_session(
         db,
         sessions_models.DatabaseSharedSession(
-            created_at=datetime.datetime.now(),
+            created_at=datetime.datetime.now(tz=datetime.UTC),
             session=session,
             user=shared_with_user,
         ),

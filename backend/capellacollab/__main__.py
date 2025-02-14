@@ -109,8 +109,7 @@ if config.logging.profiling:
             await call_next(request)
             profiler.stop()
             return responses.HTMLResponse(profiler.output_html())
-        else:
-            return await call_next(request)
+        return await call_next(request)
 
 
 @app.get(

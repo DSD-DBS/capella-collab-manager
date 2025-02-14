@@ -27,7 +27,7 @@ class MockOperator:
     # pylint: disable=unused-argument
     def start_session(self, *args, **kwargs) -> k8s.Session:
         return k8s.Session(
-            id="test", port=1, created_at=datetime.datetime.now(), host="test"
+            id="test", port=1, created_at=datetime.datetime.now(tz=datetime.UTC), host="test"
         )
 
     def kill_session(self, *args, **kwargs) -> None:

@@ -24,7 +24,7 @@ def fixture_session() -> sessions_models.DatabaseSession:
 
     return sessions_models.DatabaseSession(
         id=str(uuid.uuid1()),
-        created_at=datetime.datetime.now(),
+        created_at=datetime.datetime.now(tz=datetime.UTC),
         type=sessions_models.SessionType.READONLY,
         owner=users_models.DatabaseUser(
             name="test", idp_identifier="test", role=users_models.Role.USER

@@ -144,10 +144,9 @@ def create_git_model(
 ) -> models.DatabaseGitModel:
     git_util.verify_path_prefix(db, post_git_model.path)
 
-    new_git_model = crud.add_git_model_to_capellamodel(
+    return crud.add_git_model_to_capellamodel(
         db, capella_model, post_git_model
     )
-    return new_git_model
 
 
 @router.put(

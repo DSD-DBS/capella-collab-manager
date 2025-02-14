@@ -27,7 +27,7 @@ def create_token(
     password = "collabmanager_" + credentials.generate_password(32)
     ph = argon2.PasswordHasher()
     if not expiration_date:
-        expiration_date = datetime.date.today() + datetime.timedelta(days=30)
+        expiration_date = datetime.datetime.now(tz=datetime.UTC).date() + datetime.timedelta(days=30)
     db_token = models.DatabaseUserToken(
         user=user,
         title=title,

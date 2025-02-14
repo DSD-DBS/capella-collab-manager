@@ -132,12 +132,11 @@ class GuacamoleIntegration(interface.HookRegistration):
                 raise GuacamoleError(
                     "Could not create an admin token. Please make sure that your Guacamole instance is running."
                 ) from e
-            elif status == 500:
+            if status == 500:
                 raise GuacamoleError(
                     "Could not create an admin token. Please make sure that your Guacamole database is initialized properly."
                 ) from e
-            else:
-                raise e
+            raise e
         return r.json()["authToken"]
 
     @classmethod

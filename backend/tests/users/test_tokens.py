@@ -17,7 +17,7 @@ from capellacollab.projects.users import models as project_users_models
 from capellacollab.users import models as users_models
 
 POST_TOKEN = {
-    "expiration_date": str(datetime.date.today()),
+    "expiration_date": str(datetime.datetime.now(tz=datetime.UTC).date()),
     "title": "test",
     "description": "test_token",
     "source": "test source",
@@ -40,7 +40,7 @@ def test_create_pat_with_scope(client: testclient.TestClient):
     response = client.post(
         "/api/v1/users/current/tokens",
         json={
-            "expiration_date": str(datetime.date.today()),
+            "expiration_date": str(datetime.datetime.now(tz=datetime.UTC).date()),
             "title": "test",
             "description": "test_token",
             "source": "test source",

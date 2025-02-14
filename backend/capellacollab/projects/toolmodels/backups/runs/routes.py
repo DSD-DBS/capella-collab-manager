@@ -188,7 +188,7 @@ def _determine_end_time_from_pipeline_run(
 def _transform_unix_nanoseconds_to_human_readable_format(
     nanoseconds: int,
 ) -> str:
-    return datetime.datetime.fromtimestamp(int(nanoseconds) / 10**9).strftime(
+    return datetime.datetime.fromtimestamp(int(nanoseconds) / 10**9, tz=datetime.UTC).strftime(
         "%Y-%m-%d %H:%M:%S"
     )
 
@@ -232,7 +232,7 @@ def get_logs(
 
     logs = "\n".join(
         [
-            datetime.datetime.fromtimestamp(int(logline[0]) / 10**9).strftime(
+            datetime.datetime.fromtimestamp(int(logline[0]) / 10**9, tz=datetime.UTC).strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
             + ": "

@@ -56,8 +56,7 @@ def get_user(
         or permissions_models.UserTokenVerb.GET in scope.admin.users
     ):
         return user
-    else:
-        raise exceptions.NoProjectsInCommonError(user.id)
+    raise exceptions.NoProjectsInCommonError(user.id)
 
 
 @router.get(
@@ -197,9 +196,8 @@ def update_user(
             raise exceptions.RoleUpdateRequiresReasonError()
         user = update_user_role(db, user, own_user, patch_user.role, reason)
 
-    updated_user = crud.update_user(db, user, patch_user)
+    return crud.update_user(db, user, patch_user)
 
-    return updated_user
 
 
 @router.delete(

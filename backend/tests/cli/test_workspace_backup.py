@@ -249,9 +249,8 @@ class MockWSClient:
     def recv_data_frame(self, wait):
         if self._blocks:
             return ABNF.OPCODE_BINARY, Frame(self._blocks.pop(0))
-        else:
-            self._connected = False
-            return ABNF.OPCODE_CLOSE, None
+        self._connected = False
+        return ABNF.OPCODE_CLOSE, None
 
     def update(self, timeout=0):
         pass
