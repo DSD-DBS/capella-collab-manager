@@ -122,7 +122,6 @@ async def get_diagram(
         logger.info(
             "Failed fetching diagram file or artifact %s for %s.",
             diagram_uuid,
-            handler.path,
             f"diagram-cache/{handler.revision}",
             exc_info=True,
         )
