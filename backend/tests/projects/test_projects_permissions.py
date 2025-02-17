@@ -231,10 +231,10 @@ def test_project_scope_merging():
     )
 
     with pytest.raises(TypeError):
-        projects_permissions_models.ProjectUserScopes() & None  # type: ignore # pylint: disable=expression-not-assigned
+        projects_permissions_models.ProjectUserScopes() & None  # type: ignore
 
     with pytest.raises(TypeError):
-        projects_permissions_models.ProjectUserScopes() | None  # type: ignore # pylint: disable=expression-not-assigned
+        projects_permissions_models.ProjectUserScopes() | None  # type: ignore
 
 
 @pytest.mark.usefixtures("project_user")

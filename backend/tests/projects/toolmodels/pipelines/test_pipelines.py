@@ -27,7 +27,6 @@ class MockOperator:
     cronjob_counter = 0
 
     def create_cronjob(
-        # pylint: disable=unused-argument
         self,
         *args,
         **kwargs,

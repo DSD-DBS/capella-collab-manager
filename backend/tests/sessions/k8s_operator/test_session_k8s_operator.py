@@ -23,7 +23,7 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
     service_counter = 0
     disruption_budget_counter = 0
 
-    # pylint: disable=unused-argument
+
     def create_namespaced_pod(namespace, deployment):
         nonlocal pod_counter
         pod_counter += 1
@@ -39,7 +39,6 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
         create_namespaced_pod,
     )
 
-    # pylint: disable=unused-argument
     def create_namespaced_service(namespace, service):
         nonlocal service_counter
         service_counter += 1

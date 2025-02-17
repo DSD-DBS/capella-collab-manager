@@ -19,7 +19,7 @@ def inherit_global_permissions(
 
     for attribute in scope:
         for verb in global_scope.admin.projects:
-            type_annotations = models.ProjectUserScopes.model_fields[  # pylint: disable=unsubscriptable-object
+            type_annotations = models.ProjectUserScopes.model_fields[
                 attribute
             ].annotation
             assert type_annotations

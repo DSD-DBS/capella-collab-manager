@@ -934,7 +934,7 @@ class KubernetesOperator:
 
     def list_files(self, session_id: str, directory: str, show_hidden: bool):
         def print_file_tree_as_json():
-            import json  # pylint: disable=redefined-outer-name,reimported
+            import json
             import pathlib
             import sys
 

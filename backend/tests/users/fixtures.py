@@ -29,7 +29,7 @@ from capellacollab.users.workspaces import models as users_workspaces_models
 def fixture_executor_name(monkeypatch: pytest.MonkeyPatch) -> str:
     name = str(uuid.uuid1())
 
-    # pylint: disable=unused-argument
+
     async def cookie_passthrough(self, request: fastapi.Request):
         return name
 

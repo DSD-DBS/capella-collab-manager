@@ -22,7 +22,7 @@ def fixture_mock_ls_remote(
         "bce139e467d3d60bd21a4097c78e86a87e1a5d21	refs/tags/v1.1.0\n"
     )
 
-    # pylint: disable=unused-argument
+
     def mock_ls_remote(*args, **kwargs):
         f: asyncio.Future = asyncio.Future()
         f.set_result(ls_remote)

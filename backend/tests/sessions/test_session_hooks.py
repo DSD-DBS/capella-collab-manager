@@ -25,7 +25,7 @@ from capellacollab.users import models as users_models
 
 
 class MockOperator:
-    # pylint: disable=unused-argument
+
     def start_session(self, *args, **kwargs) -> k8s.Session:
         return k8s.Session(
             id="test", port=1, created_at=datetime.datetime.now(tz=datetime.UTC), host="test"
@@ -34,7 +34,7 @@ class MockOperator:
     def kill_session(self, *args, **kwargs) -> None:
         pass
 
-    # pylint: disable=unused-argument
+
     def create_persistent_volume(self, *args, **kwargs):
         return
 

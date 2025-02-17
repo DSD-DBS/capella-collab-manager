@@ -26,7 +26,6 @@ def test_database_sessions_metric_empty():
 
 def test_kubernetes_sessions_metric(monkeypatch: pytest.MonkeyPatch):
     def mock_list_namespaced_pod(
-        # pylint: disable=unused-argument
         self,
         namespace: str,
         label_selector: str,

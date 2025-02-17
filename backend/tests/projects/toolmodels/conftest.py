@@ -21,12 +21,10 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
     class MockGitValkeyCache:
         cache: dict[str, tuple[datetime.datetime, bytes]] = {}
 
-        # pylint: disable=unused-argument
         def __init__(self, *args, **kwargs) -> None:
             super().__init__()
 
         def get_file_data(
-            # pylint: disable=unused-argument
             self,
             file_path: str,
             revision: str,
@@ -35,7 +33,6 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
             return MockGitValkeyCache.cache.get(f"f:{file_path}", None)
 
         def get_artifact_data(
-            # pylint: disable=unused-argument
             self,
             job_id: str,
             file_path: str,
@@ -44,7 +41,6 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
             return MockGitValkeyCache.cache.get(f"a:{file_path}:{job_id}")
 
         def put_file_data(
-            # pylint: disable=unused-argument
             self,
             file_path: str,
             last_updated: datetime.datetime,
@@ -58,7 +54,6 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
             )
 
         def put_artifact_data(
-            # pylint: disable=unused-argument
             self,
             job_id: str,
             file_path: str,
@@ -268,7 +263,6 @@ def fixture_mock_git_get_commit_information_api(
 @pytest.fixture(name="mock_add_user_to_t4c_repository")
 def fixture_mock_add_user_to_t4c_repository(monkeypatch: pytest.MonkeyPatch):
     def mock_add_user_to_repository(
-        # pylint: disable=unused-argument
         instance: t4c_models.DatabaseT4CInstance,
         repository_name: str,
         username: str,

@@ -25,7 +25,6 @@ def count_feedback_by_rating(
             sa.select(
                 models.DatabaseFeedback.rating,
                 anonymity_case.label("anonymous"),
-                # pylint: disable=not-callable
                 sa.func.count(),
             ).group_by(
                 models.DatabaseFeedback.rating,

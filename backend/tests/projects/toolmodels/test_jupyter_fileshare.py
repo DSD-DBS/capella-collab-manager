@@ -15,7 +15,6 @@ class MockOperator:
     _deleted_volumes = 0
 
     def create_persistent_volume(
-        # pylint: disable=unused-argument
         self,
         name: str,
         size: str,
@@ -23,7 +22,6 @@ class MockOperator:
     ):
         self._created_volumes += 1
 
-    # pylint: disable=unused-argument
     def delete_persistent_volume(self, name: str):
         self._deleted_volumes += 1
 

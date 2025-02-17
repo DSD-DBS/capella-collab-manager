@@ -39,7 +39,7 @@ class MockLocation:
     def exists(self):
         return self._exists
 
-    def open(self, encoding: str = "utf-8"):  # pylint: disable=unused-argument
+    def open(self, encoding: str = "utf-8"):
         return io.StringIO(self.content)
 
     def absolute(self):

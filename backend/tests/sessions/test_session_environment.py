@@ -23,7 +23,7 @@ from capellacollab.users import models as users_models
 class MockOperator:
     environment: dict[str, str] = {}
 
-    # pylint: disable=unused-argument
+
     def start_session(self, environment, *args, **kwargs):
         self.environment = environment
         return {"port": "", "host": "", "created_at": ""}

@@ -30,7 +30,6 @@ def fixture_unix_time_in_ns() -> int:
 @pytest.fixture(name="patch_loki")
 def fixture_patch_loki(monkeypatch: pytest.MonkeyPatch, unix_time_in_ns: int):
     def fetch_logs_from_loki(
-        # pylint: disable=unused-argument
         query,
         start_time: datetime.datetime,
         end_time: datetime.datetime,

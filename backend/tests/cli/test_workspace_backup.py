@@ -149,7 +149,6 @@ def test_restore_workspace_without_sidecar(
     pvc_created = False
 
     def mock_create_namespaced_persistent_volume_claim(
-        # pylint: disable=unused-argument
         self,
         namespace: str,
         pvc: kubernetes.client.V1PersistentVolumeClaim,
@@ -194,7 +193,6 @@ def test_restore_workspace_with_sidecar(
     )
 
     def mock_create_namespaced_persistent_volume_claim(
-        # pylint: disable=unused-argument
         self,
         namespace: str,
         pvc: kubernetes.client.V1PersistentVolumeClaim,
@@ -245,7 +243,6 @@ class MockWSClient:
     def close(self):
         self._connected = False
 
-    # pylint: disable=unused-argument
     def recv_data_frame(self, wait):
         if self._blocks:
             return ABNF.OPCODE_BINARY, Frame(self._blocks.pop(0))
