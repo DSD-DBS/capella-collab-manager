@@ -487,7 +487,7 @@
             "uid": "prometheus_ccm"
           },
           "editorMode": "code",
-          "expr": "xpra_connection_client_ping_latency_ms{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\"}",
+          "expr": "xpra_connection_client_ping_latency_ms{tool_version_id=~\"$tool_version_id\",connection_method_id=~\"$connection_method_id\", session_type=~\"$session_type\", type=\"cur\"}",
           "instant": false,
           "legendFormat": "{{session_id}} ({{tool_name}} {{tool_version_name}})",
           "range": true,
@@ -556,7 +556,7 @@
             "uid": "prometheus_ccm"
           },
           "editorMode": "code",
-          "expr": "avg(xpra_connection_client_ping_latency_ms)",
+          "expr": "avg(xpra_connection_client_ping_latency_ms{type=\"cur\"})",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -690,7 +690,7 @@
             "uid": "prometheus_ccm"
           },
           "editorMode": "code",
-          "expr": "avg(xpra_client_encoding_quality)",
+          "expr": "avg(xpra_client_encoding_quality{type=\"cur\"})",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -759,7 +759,7 @@
             "uid": "prometheus_ccm"
           },
           "editorMode": "code",
-          "expr": "avg(xpra_client_batch_delay_ms)",
+          "expr": "avg(xpra_client_batch_delay_ms{type=\"cur\"})",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1140,6 +1140,6 @@
   "timezone": "",
   "title": "Active sessions",
   "uid": "0kK_I7T4k",
-  "version": 15,
+  "version": 16,
   "weekStart": ""
 }
