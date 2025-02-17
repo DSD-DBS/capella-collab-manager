@@ -221,7 +221,7 @@ def test_update_project_as_admin(
 
 
 @pytest.mark.parametrize(
-    ("run_nightly, include_commit_history"), [(True, True)]
+    ("run_nightly", "include_commit_history"), [(True, True)]
 )
 @pytest.mark.usefixtures("admin")
 def test_delete_pipeline_called_when_archiving_project(

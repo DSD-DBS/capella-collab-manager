@@ -17,13 +17,12 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
     operator = k8s.KubernetesOperator()
 
     name = "testname"
-    creation_timestamp = datetime.datetime.now()
+    creation_timestamp = datetime.datetime.now(tz=datetime.UTC)
 
     pod_counter = 0
     service_counter = 0
     disruption_budget_counter = 0
 
-    # pylint: disable=unused-argument
     def create_namespaced_pod(namespace, deployment):
         nonlocal pod_counter
         pod_counter += 1
@@ -39,7 +38,6 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
         create_namespaced_pod,
     )
 
-    # pylint: disable=unused-argument
     def create_namespaced_service(namespace, service):
         nonlocal service_counter
         service_counter += 1

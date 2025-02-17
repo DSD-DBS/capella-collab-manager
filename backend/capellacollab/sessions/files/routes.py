@@ -5,6 +5,7 @@
 import io
 import logging
 import tarfile
+import typing as t
 
 import fastapi
 from fastapi import responses
@@ -39,17 +40,18 @@ log = logging.getLogger(__name__)
 )
 def list_files(
     show_hidden: bool,
-    session: sessions_models.DatabaseSession = fastapi.Depends(
-        sessions_injectables.get_existing_session
-    ),
+    session: t.Annotated[
+        sessions_models.DatabaseSession,
+        fastapi.Depends(sessions_injectables.get_existing_session),
+    ],
 ):
     try:
         return operators.get_operator().list_files(
             session.id, "/workspace", show_hidden
         )
-    except Exception:
+    except Exception as e:
         log.exception("Loading of files for session %s failed", session.id)
-        raise exceptions.SessionFileLoadingFailedError()
+        raise exceptions.SessionFileLoadingFailedError() from e
 
 
 @router.post(
@@ -69,9 +71,10 @@ def list_files(
 )
 def upload_files(
     files: list[fastapi.UploadFile],
-    session: sessions_models.DatabaseSession = fastapi.Depends(
-        sessions_injectables.get_existing_session
-    ),
+    session: t.Annotated[
+        sessions_models.DatabaseSession,
+        fastapi.Depends(sessions_injectables.get_existing_session),
+    ],
 ):
     tar_bytesio = io.BytesIO()
 
@@ -114,9 +117,10 @@ def upload_files(
 )
 def delete_file(
     path: str,
-    session: sessions_models.DatabaseSession = fastapi.Depends(
-        sessions_injectables.get_existing_session
-    ),
+    session: t.Annotated[
+        sessions_models.DatabaseSession,
+        fastapi.Depends(sessions_injectables.get_existing_session),
+    ],
 ):
     operators.get_operator().delete_file(session.id, path)
 
@@ -139,9 +143,10 @@ def delete_file(
 )
 def download_file(
     path: str,
-    session: sessions_models.DatabaseSession = fastapi.Depends(
-        sessions_injectables.get_existing_session
-    ),
+    session: t.Annotated[
+        sessions_models.DatabaseSession,
+        fastapi.Depends(sessions_injectables.get_existing_session),
+    ],
 ) -> core_responses.ZIPFileResponse:
     return core_responses.ZIPFileResponse(
         operators.get_operator().download_file(session.id, path),

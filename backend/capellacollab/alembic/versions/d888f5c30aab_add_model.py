@@ -102,7 +102,7 @@ def upgrade():
         # If there is a conflicts with slugs, they get a suffix with a counting number.
         existing_slugs = {}
         for id_, name, project_id in models:
-            if not project_id in existing_slugs:
+            if project_id not in existing_slugs:
                 existing_slugs[project_id] = []
 
             base_slug = slugify(name)

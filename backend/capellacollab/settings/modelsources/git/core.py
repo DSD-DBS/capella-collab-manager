@@ -34,9 +34,8 @@ async def _ls_remote_command(url: str, env: t.Mapping[str, str]) -> str:
             }
         )
         if e.returncode == 128:
-            raise exceptions.GitRepositoryAccessError()
-        else:
-            raise e
+            raise exceptions.GitRepositoryAccessError() from e
+        raise e
 
     stdout, _ = await proc.communicate()
     return stdout.decode()

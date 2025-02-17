@@ -14,7 +14,7 @@ from alembic.config import Config
 from capellacollab.core.database import migration
 
 database_connect_timeout = 60  # in seconds
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 log.setLevel("DEBUG")
 client = docker.from_env()
 
@@ -93,7 +93,7 @@ def fixture_initialized_database(
     else:
         raise RuntimeError(output.output.decode())
 
-    yield sqlalchemy.create_engine(
+    return sqlalchemy.create_engine(
         f"postgresql://dev:dev@localhost:{port}/dev"
     )
 
@@ -107,7 +107,7 @@ def fixture_alembic_cfg(initialized_database):
         "sqlalchemy.url", str(initialized_database.url).replace("***", "dev")
     )
     alembic_cfg.attributes["configure_logger"] = False
-    yield alembic_cfg
+    return alembic_cfg
 
 
 def test_init_database(

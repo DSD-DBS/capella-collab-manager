@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 from collections import abc
 
 import fastapi
@@ -42,7 +43,7 @@ router = fastapi.APIRouter()
     ],
 )
 def get_t4c_instances(
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.DatabaseT4CInstance]:
     return crud.get_t4c_instances(db)
 
@@ -63,9 +64,10 @@ def get_t4c_instances(
     ],
 )
 def get_t4c_instance(
-    instance: models.DatabaseT4CInstance = fastapi.Depends(
-        injectables.get_existing_instance
-    ),
+    instance: t.Annotated[
+        models.DatabaseT4CInstance,
+        fastapi.Depends(injectables.get_existing_instance),
+    ],
 ) -> models.DatabaseT4CInstance:
     return instance
 
@@ -87,7 +89,7 @@ def get_t4c_instance(
 )
 def create_t4c_instance(
     body: models.CreateT4CInstance,
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseT4CInstance:
     if crud.get_t4c_instance_by_name(db, body.name):
         raise exceptions.T4CInstanceWithNameAlreadyExistsError()
@@ -132,10 +134,11 @@ def create_t4c_instance(
 )
 def edit_t4c_instance(
     body: models.PatchT4CInstance,
-    instance: models.DatabaseT4CInstance = fastapi.Depends(
-        injectables.get_existing_instance
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    instance: t.Annotated[
+        models.DatabaseT4CInstance,
+        fastapi.Depends(injectables.get_existing_instance),
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseT4CInstance:
     if instance.is_archived and (body.is_archived is None or body.is_archived):
         raise exceptions.T4CInstanceIsArchivedError(instance.id)
@@ -165,10 +168,11 @@ def edit_t4c_instance(
     ],
 )
 def delete_t4c_instance(
-    instance: models.DatabaseT4CInstance = fastapi.Depends(
-        injectables.get_existing_instance
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    instance: t.Annotated[
+        models.DatabaseT4CInstance,
+        fastapi.Depends(injectables.get_existing_instance),
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.delete_t4c_instance(db, instance)
 

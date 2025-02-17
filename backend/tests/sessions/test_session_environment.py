@@ -9,6 +9,7 @@ from sqlalchemy import orm
 from capellacollab.configuration.app import config
 from capellacollab.configuration.app import models as config_models
 from capellacollab.core import models as core_models
+from capellacollab.permissions import models as permissions_models
 from capellacollab.sessions import crud as sessions_crud
 from capellacollab.sessions import hooks as sessions_hooks
 from capellacollab.sessions import models as sessions_models
@@ -22,7 +23,6 @@ from capellacollab.users import models as users_models
 class MockOperator:
     environment: dict[str, str] = {}
 
-    # pylint: disable=unused-argument
     def start_session(self, environment, *args, **kwargs):
         self.environment = environment
         return {"port": "", "host": "", "created_at": ""}
@@ -153,6 +153,9 @@ async def test_environment_behavior(
         operator,  # type: ignore
         logger,
         authentication_information=(user, None),
+        global_scope=permissions_models.GlobalScopes(
+            user=users_models.USER_TOKEN_SCOPE,
+        ),
     )
 
     env = operator.environment

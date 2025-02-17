@@ -64,7 +64,7 @@ def terminate_idle_sessions_in_background(interval=60):
                 log.exception("Could not handle idle sessions")
 
     if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
-        asyncio.ensure_future(loop())
+        asyncio.ensure_future(loop())  # noqa: RUF006
 
 
 def run():

@@ -132,7 +132,7 @@ def test_model_has_no_git_instance(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_instance_api_url",
+    ("git_type", "git_instance_api_url"),
     [(git_models.GitType.GENERAL, "https://example.com/api/v4")],
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
@@ -150,7 +150,7 @@ def test_get_model_badge_fails_with_unsupported_git_instance(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_instance_api_url",
+    ("git_type", "git_instance_api_url"),
     [(git_models.GitType.GITLAB, ""), (git_models.GitType.GITHUB, "")],
 )
 @pytest.mark.usefixtures(
@@ -175,7 +175,7 @@ def test_get_model_badge_fails_without_api_endpoint(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,git_query_params",
+    ("git_type", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,
@@ -211,7 +211,7 @@ def test_get_model_badge(
 
 @responses.activate
 @pytest.mark.parametrize(
-    "git_type,job_name,git_query_params",
+    ("git_type", "job_name", "git_query_params"),
     [
         (
             git_models.GitType.GITLAB,

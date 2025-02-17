@@ -201,10 +201,10 @@ def get_connection_method(
             for connection_method in tool.config.connection.methods
             if connection_method.id == connection_method_id
         )
-    except StopIteration:
+    except StopIteration as e:
         raise exceptions.InvalidConnectionMethodIdentifierError(
             tool.name, connection_method_id
-        )
+        ) from e
 
 
 def is_session_shared_with_user(

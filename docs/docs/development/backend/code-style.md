@@ -19,8 +19,8 @@ Python code. The key differences are:
   automated tools pick up the full base class docstring instead, and is
   therefore more useful in IDEs etc.
 
-- **Linting**: Use [pylint] for static code analysis, and [mypy] for static
-  type checking.
+- **Linting**: Use [ruff] for static code analysis, and [mypy] for static type
+  checking.
 
 - **Formatting**: Use [ruff] as code auto-formatter. The maximum line length is
   79, as per [PEP-8]. This setting should be automatically picked up from the
@@ -109,5 +109,4 @@ Python code. The key differences are:
 [pep-257]: https://peps.python.org/pep-0257/
 [pep-604]: https://www.python.org/dev/peps/pep-0604/
 [mypy]: https://github.com/python/mypy
-[pylint]: https://github.com/PyCQA/pylint
 [ruff]: https://docs.astral.sh/ruff/

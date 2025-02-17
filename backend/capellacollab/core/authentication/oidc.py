@@ -146,6 +146,6 @@ class OIDCProvider:
             return self.web_client.parse_request_body_response(
                 r.text, scope=self.oidc_config.get_scopes()
             )
-        except Exception:
+        except Exception as e:
             logger.info("Could not refresh token", exc_info=True)
-            raise exceptions.RefreshTokenSignatureExpired()
+            raise exceptions.RefreshTokenSignatureExpired() from e

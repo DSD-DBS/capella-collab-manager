@@ -22,7 +22,6 @@ def fixture_tool(
 
     database_tool = tools_crud.create_tool(db, tool)
 
-    # pylint: disable=unused-argument
     def mock_get_existing_tool(*args, **kwargs) -> tools_models.DatabaseTool:
         return database_tool
 
@@ -42,7 +41,7 @@ def fixture_tool_nature(
 
     def get_existing_tool_nature(
         *args,
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs,
     ) -> tools_models.DatabaseNature:
         return nature
 

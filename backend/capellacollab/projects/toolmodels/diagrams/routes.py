@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import logging
 import pathlib
+import typing as t
 from urllib import parse
 
 import fastapi
@@ -45,10 +46,13 @@ router = fastapi.APIRouter()
     ],
 )
 async def get_diagram_metadata(
-    handler: git_handler.GitHandler = fastapi.Depends(
-        git_injectables.get_git_handler
-    ),
-    logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
+    handler: t.Annotated[
+        git_handler.GitHandler,
+        fastapi.Depends(git_injectables.get_git_handler),
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
 ):
     try:
         (
@@ -61,13 +65,13 @@ async def get_diagram_metadata(
             job_name="update_capella_diagram_cache",
             file_revision=f"diagram-cache/{handler.revision}",
         )
-    except requests.HTTPError:
+    except requests.HTTPError as e:
         logger.info(
             "Failed fetching diagram metadata file or artifact for %s",
             handler.path,
             exc_info=True,
         )
-        raise exceptions.DiagramCacheNotConfiguredProperlyError()
+        raise exceptions.DiagramCacheNotConfiguredProperlyError() from e
 
     diagram_metadata_entries = json.loads(diagram_metadata_entries)
     return models.DiagramCacheMetadata(
@@ -96,11 +100,14 @@ async def get_diagram_metadata(
 )
 async def get_diagram(
     diagram_uuid_or_filename: str,
+    handler: t.Annotated[
+        git_handler.GitHandler,
+        fastapi.Depends(git_injectables.get_git_handler),
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
     job_id: str | None = None,
-    handler: git_handler.GitHandler = fastapi.Depends(
-        git_injectables.get_git_handler
-    ),
-    logger: logging.LoggerAdapter = fastapi.Depends(log.get_request_logger),
 ):
     fileextension = pathlib.PurePosixPath(diagram_uuid_or_filename).suffix
     if fileextension and fileextension.lower() != ".svg":
@@ -118,12 +125,11 @@ async def get_diagram(
             file_revision=f"diagram-cache/{handler.revision}",
         )
         return responses.SVGResponse(content=file_or_artifact[2])
-    except requests.HTTPError:
+    except requests.HTTPError as e:
         logger.info(
             "Failed fetching diagram file or artifact %s for %s.",
             diagram_uuid,
-            handler.path,
             f"diagram-cache/{handler.revision}",
             exc_info=True,
         )
-        raise exceptions.DiagramCacheNotConfiguredProperlyError()
+        raise exceptions.DiagramCacheNotConfiguredProperlyError() from e

@@ -30,7 +30,6 @@ class MockOperator:
     sessions: list[dict[str, t.Any]] = []
 
     def start_session(
-        # pylint: disable=unused-argument
         self,
         *args,
         **kwargs,
@@ -41,7 +40,7 @@ class MockOperator:
             id=_id,
             host="test",
             port=1,
-            created_at=datetime.datetime.now(),
+            created_at=datetime.datetime.now(tz=datetime.UTC),
         )
 
 
@@ -192,7 +191,7 @@ def test_get_all_sessions(
 ):
     session = sessions_models.DatabaseSession(
         str(uuid.uuid1()),
-        created_at=datetime.datetime.now(),
+        created_at=datetime.datetime.now(tz=datetime.UTC),
         type=sessions_models.SessionType.READONLY,
         environment={},
         owner=admin,
@@ -235,7 +234,7 @@ def fixture_session_of_other_user(
 ) -> sessions_models.DatabaseSession:
     session_of_other_user = sessions_models.DatabaseSession(
         str(uuid.uuid1()),
-        created_at=datetime.datetime.now(),
+        created_at=datetime.datetime.now(tz=datetime.UTC),
         type=sessions_models.SessionType.PERSISTENT,
         environment={},
         owner=another_user,

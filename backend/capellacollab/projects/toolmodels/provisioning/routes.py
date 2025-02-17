@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 from sqlalchemy import orm
 
@@ -38,9 +40,10 @@ router = fastapi.APIRouter()
     ],
 )
 def get_provisioning(
-    provisioning: models.DatabaseModelProvisioning = fastapi.Depends(
-        injectables.get_model_provisioning
-    ),
+    provisioning: t.Annotated[
+        models.DatabaseModelProvisioning,
+        fastapi.Depends(injectables.get_model_provisioning),
+    ],
 ) -> models.DatabaseModelProvisioning:
     return provisioning
 
@@ -59,16 +62,19 @@ def get_provisioning(
     ],
 )
 def reset_provisioning(
-    provisioning: models.DatabaseModelProvisioning | None = fastapi.Depends(
-        injectables.get_model_provisioning
-    ),
-    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    ),
-    project: projects_models.DatabaseProject = fastapi.Depends(
-        projects_injectables.get_existing_project
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    provisioning: t.Annotated[
+        models.DatabaseModelProvisioning | None,
+        fastapi.Depends(injectables.get_model_provisioning),
+    ],
+    model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     """This will delete the provisioning data from the workspace.
     During the next session request, the existing provisioning will be overwritten in the workspace.

@@ -30,7 +30,6 @@ def fixture_unix_time_in_ns() -> int:
 @pytest.fixture(name="patch_loki")
 def fixture_patch_loki(monkeypatch: pytest.MonkeyPatch, unix_time_in_ns: int):
     def fetch_logs_from_loki(
-        # pylint: disable=unused-argument
         query,
         start_time: datetime.datetime,
         end_time: datetime.datetime,
@@ -149,7 +148,7 @@ def test_get_logs(
 
 
 @pytest.mark.parametrize(
-    "include_commit_history, run_nightly",
+    ("include_commit_history", "run_nightly"),
     [(False, False)],
 )
 def test_get_logs_with_loki_disabled(
@@ -179,10 +178,10 @@ def fixture_mock_pipeline_run():
     # Assign the values you want the mock object to return
     mock_pipeline_run.id = "mock_id"
     mock_pipeline_run.reference_id = "mock_reference_id"
-    mock_pipeline_run.trigger_time = (
-        datetime.datetime.now() - datetime.timedelta(minutes=1)
-    )
-    mock_pipeline_run.end_time = datetime.datetime.now()
+    mock_pipeline_run.trigger_time = datetime.datetime.now(
+        tz=datetime.UTC
+    ) - datetime.timedelta(minutes=1)
+    mock_pipeline_run.end_time = datetime.datetime.now(tz=datetime.UTC)
 
     # These values will be masked
     mock_pipeline_run.pipeline.t4c_password = "secret_pipeline_t4c_password"

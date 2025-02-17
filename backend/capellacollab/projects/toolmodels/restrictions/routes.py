@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
+
 import fastapi
 from sqlalchemy import orm
 
@@ -46,9 +48,10 @@ router = fastapi.APIRouter()
     ],
 )
 def get_restrictions(
-    restrictions: models.DatabaseToolModelRestrictions = fastapi.Depends(
-        injectables.get_model_restrictions
-    ),
+    restrictions: t.Annotated[
+        models.DatabaseToolModelRestrictions,
+        fastapi.Depends(injectables.get_model_restrictions),
+    ],
 ) -> models.DatabaseToolModelRestrictions:
     return restrictions
 
@@ -77,13 +80,15 @@ def get_restrictions(
 )
 def update_restrictions(
     body: models.ToolModelRestrictions,
-    restrictions: models.DatabaseToolModelRestrictions = fastapi.Depends(
-        injectables.get_model_restrictions
-    ),
-    model: toolmodels_models.DatabaseToolModel = fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    restrictions: t.Annotated[
+        models.DatabaseToolModelRestrictions,
+        fastapi.Depends(injectables.get_model_restrictions),
+    ],
+    model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseToolModelRestrictions:
     if body.allow_pure_variants and not model.tool.integrations.pure_variants:
         raise exceptions.PureVariantsIntegrationDisabledError()

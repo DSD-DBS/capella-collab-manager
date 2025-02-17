@@ -19,7 +19,7 @@ def inherit_global_permissions(
 
     for attribute in scope:
         for verb in global_scope.admin.projects:
-            type_annotations = models.ProjectUserScopes.model_fields[  # pylint: disable=unsubscriptable-object
+            type_annotations = models.ProjectUserScopes.model_fields[
                 attribute
             ].annotation
             assert type_annotations
@@ -114,8 +114,7 @@ def derive_project_permissions_from_role(
                 == projects_users_models.ProjectUserPermission.WRITE
             ):
                 return write_permissions
-            else:
-                return read_only_permissions
+            return read_only_permissions
 
     if project.visibility == projects_models.ProjectVisibility.INTERNAL:
         return read_only_permissions

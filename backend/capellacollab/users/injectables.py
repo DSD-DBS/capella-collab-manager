@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
-
+import typing as t
 
 import fastapi
 
@@ -12,11 +12,12 @@ from . import crud, exceptions, models
 
 
 def get_own_user(
-    authentication_information: tuple[
-        models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ] = fastapi.Depends(
-        auth_injectables.AuthenticationInformationValidation()
-    ),
+    authentication_information: t.Annotated[
+        tuple[models.DatabaseUser, tokens_models.DatabaseUserToken | None],
+        fastapi.Depends(
+            auth_injectables.AuthenticationInformationValidation()
+        ),
+    ],
 ) -> models.DatabaseUser:
     return authentication_information[0]
 

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import typing as t
 
 import fastapi
 from fastapi.security import utils as security_utils
@@ -34,7 +35,7 @@ class AuthenticationInformationValidation:
     async def __call__(
         self,
         request: fastapi.Request,
-        db: orm.Session = fastapi.Depends(database.get_db),
+        db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
     ) -> tuple[
         users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
     ]:

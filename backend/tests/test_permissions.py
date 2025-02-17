@@ -363,7 +363,7 @@ def test_global_scope_merging():
     )
 
     with pytest.raises(TypeError):
-        permissions_models.GlobalScopes() & None  # type: ignore # pylint: disable=expression-not-assigned
+        permissions_models.GlobalScopes() & None  # type: ignore
 
     with pytest.raises(TypeError):
-        permissions_models.GlobalScopes() | None  # type: ignore # pylint: disable=expression-not-assigned
+        permissions_models.GlobalScopes() | None  # type: ignore

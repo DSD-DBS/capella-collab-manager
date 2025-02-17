@@ -9,7 +9,7 @@ repos:
     rev: v0.9.5
     hooks:
       - id: ruff
-        args: [ --fix ]
+        args: [ --fix, --extend-ignore=FIX ]
       - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.23.3
@@ -67,21 +67,6 @@ repos:
           - cryptography
           - types-croniter
           - pyinstrument
-  - repo: local
-    hooks:
-      - id: pylint
-        name: pylint
-        entry: pylint
-        args: [
-            '-rn', # Only display messages
-            '-sn', # Don't display the score
-            '--rcfile=./backend/pyproject.toml',
-          ]
-        language: system
-        types: [python]
-        require_serial: true
-        files: '^backend'
-        exclude: '^backend/capellacollab/alembic/'
   - repo: local
     hooks:
       - id: tsc

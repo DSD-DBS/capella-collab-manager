@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
+import typing as t
 
 import fastapi
 from sqlalchemy import orm
@@ -12,7 +13,8 @@ from . import exceptions
 
 
 def get_existing_project(
-    project_slug: str, db: orm.Session = fastapi.Depends(database.get_db)
+    project_slug: str,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> projects_models.DatabaseProject:
     project = projects_crud.get_project_by_slug(db, project_slug)
     if not project:

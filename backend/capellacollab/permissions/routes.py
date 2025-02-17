@@ -34,20 +34,25 @@ def get_available_permissions():
     ),
 )
 async def validate_permissions(
-    required_scopes: list[str] = fastapi.Query(
-        description=(
-            "List of required scopes. A scope consists of a locator and a verb."
-            " The locator is a string with comma-separated attributes in the format `group.permissions`."
-            " The verb is the required verb for the given locator. "
-            " The values are combined using colon in the format `group.permission:verb`."
-            "<br /><br />"
+    required_scopes: t.Annotated[
+        list[str],
+        fastapi.Query(
+            description=(
+                "List of required scopes. A scope consists of a locator and a verb."
+                " The locator is a string with comma-separated attributes in the format `group.permissions`."
+                " The verb is the required verb for the given locator. "
+                " The values are combined using colon in the format `group.permission:verb`."
+                "<br /><br />"
+            ),
+            example=["admin.users:get", "admin.users:create"],
         ),
-        example=["admin.users:get", "admin.users:create"],
-    ),
-    actual_scope: models.GlobalScopes = fastapi.Depends(injectables.get_scope),
-    logger: logging.LoggerAdapter = fastapi.Depends(
-        core_logging.get_request_logger
-    ),
+    ],
+    actual_scope: t.Annotated[
+        models.GlobalScopes, fastapi.Depends(injectables.get_scope)
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(core_logging.get_request_logger)
+    ],
 ):
     """Validate permissions against required scopes"""
     merged_required_scopes = models.GlobalScopes()
@@ -85,22 +90,28 @@ def _resolve_permission_from_locator_and_verb(
 
     try:
         return models.GlobalScopes.model_validate(permission)
-    except pydantic.ValidationError:
+    except pydantic.ValidationError as e:
         logger.info("Permission or verb not found.", exc_info=True)
-        raise exceptions.PermissionOrVerbNotFoundError(attribute_locator, verb)
+        raise exceptions.PermissionOrVerbNotFoundError(
+            attribute_locator, verb
+        ) from e
 
 
 @users_router.get(
     "",
 )
 def get_actual_permissions(
-    user: users_models.DatabaseUser = fastapi.Depends(
-        users_injectables.get_existing_user
-    ),
-    own_user: users_models.DatabaseUser = fastapi.Depends(
-        users_injectables.get_own_user
-    ),
-    global_scope: models.GlobalScopes = fastapi.Depends(injectables.get_scope),
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_existing_user),
+    ],
+    own_user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    global_scope: t.Annotated[
+        models.GlobalScopes, fastapi.Depends(injectables.get_scope)
+    ],
 ) -> models.GlobalScopes:
     """Get the actual permissions for a user.
 

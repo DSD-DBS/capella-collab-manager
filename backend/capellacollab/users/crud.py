@@ -125,7 +125,6 @@ def count_users_by_beta(db: orm.Session) -> dict[bool, int]:
         for value in db.execute(
             sa.select(
                 models.DatabaseUser.beta_tester,
-                # pylint: disable=not-callable
                 sa.func.count(),
             ).group_by(
                 models.DatabaseUser.beta_tester,

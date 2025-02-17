@@ -32,7 +32,7 @@ class SessionTokenIntegration(interface.HookRegistration):
                 " and is only valid for the duration of the session."
                 " Manual deletion may lead to unexpected behavior."
             ),
-            expiration_date=datetime.date.today()
+            expiration_date=datetime.datetime.now(tz=datetime.UTC).date()
             + datetime.timedelta(
                 days=2
             ),  # Maximum duration is until end of the next day.

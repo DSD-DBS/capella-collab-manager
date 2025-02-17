@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import typing as t
 from collections import abc
 
 import fastapi
@@ -30,7 +31,9 @@ router = fastapi.APIRouter()
 
 @router.get("/current", response_model=models.User, tags=["Users"])
 def get_current_user(
-    user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
+    user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_own_user)
+    ],
 ) -> models.DatabaseUser:
     """Return the user that is currently logged in. No specific permissions required."""
     return user
@@ -38,12 +41,17 @@ def get_current_user(
 
 @router.get("/{user_id}", response_model=models.User, tags=["Users"])
 def get_user(
-    own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
-    user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
-    scope: permissions_models.GlobalScopes = fastapi.Depends(
-        permissions_injectables.get_scope
-    ),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    own_user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_own_user)
+    ],
+    user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_existing_user)
+    ],
+    scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseUser:
     """Return the user.
 
@@ -56,8 +64,7 @@ def get_user(
         or permissions_models.UserTokenVerb.GET in scope.admin.users
     ):
         return user
-    else:
-        raise exceptions.NoProjectsInCommonError(user.id)
+    raise exceptions.NoProjectsInCommonError(user.id)
 
 
 @router.get(
@@ -77,7 +84,7 @@ def get_user(
     tags=["Users"],
 )
 def get_users(
-    db: orm.Session = fastapi.Depends(database.get_db),
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.DatabaseUser]:
     """Get all users."""
     return crud.get_users(db)
@@ -101,8 +108,10 @@ def get_users(
 )
 def create_user(
     post_user: models.PostUser,
-    own_user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    own_user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_own_user)
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     """Create a user.
 
@@ -123,14 +132,17 @@ def create_user(
     tags=["Users"],
 )
 def get_common_projects(
-    user_for_common_projects: models.DatabaseUser = fastapi.Depends(
-        injectables.get_existing_user
-    ),
-    user: models.DatabaseUser = fastapi.Depends(injectables.get_own_user),
-    db: orm.Session = fastapi.Depends(database.get_db),
-    scope: permissions_models.GlobalScopes = fastapi.Depends(
-        permissions_injectables.get_scope
-    ),
+    user_for_common_projects: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_existing_user)
+    ],
+    user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_own_user)
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ) -> list[projects_models.DatabaseProject]:
     """List all common projects with a user.
 
@@ -154,12 +166,17 @@ def get_common_projects(
 @router.patch("/{user_id}", response_model=models.User, tags=["Users"])
 def update_user(
     patch_user: models.PatchUser,
-    user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
-    own_user: models.DatabaseUser = fastapi.Depends(get_current_user),
-    db: orm.Session = fastapi.Depends(database.get_db),
-    scope: permissions_models.GlobalScopes = fastapi.Depends(
-        permissions_injectables.get_scope
-    ),
+    user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_existing_user)
+    ],
+    own_user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(get_current_user)
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ):
     """Update the user.
 
@@ -197,9 +214,7 @@ def update_user(
             raise exceptions.RoleUpdateRequiresReasonError()
         user = update_user_role(db, user, own_user, patch_user.role, reason)
 
-    updated_user = crud.update_user(db, user, patch_user)
-
-    return updated_user
+    return crud.update_user(db, user, patch_user)
 
 
 @router.delete(
@@ -219,8 +234,10 @@ def update_user(
     tags=["Users"],
 )
 def delete_user(
-    user: models.DatabaseUser = fastapi.Depends(injectables.get_existing_user),
-    db: orm.Session = fastapi.Depends(database.get_db),
+    user: t.Annotated[
+        models.DatabaseUser, fastapi.Depends(injectables.get_existing_user)
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     """Delete a user irrevocably.
 
@@ -252,9 +269,10 @@ def delete_user(
     tags=["Users"],
 )
 def get_user_events(
-    user: models.DatabaseUser = fastapi.Depends(
-        users_injectables.get_existing_user
-    ),
+    user: t.Annotated[
+        models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_existing_user),
+    ],
 ) -> list[events_models.DatabaseUserHistoryEvent]:
     """List all events for the user."""
     return user.events

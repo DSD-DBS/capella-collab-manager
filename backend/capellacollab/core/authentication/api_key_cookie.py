@@ -60,9 +60,9 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
                 issuer=self.oidc_config.get_issuer(),
                 options={"require": ["exp", "iat"]},
             )
-        except jwt_exceptions.ExpiredSignatureError:
-            raise exceptions.TokenSignatureExpired()
-        except jwt_exceptions.InvalidIssuerError:
+        except jwt_exceptions.ExpiredSignatureError as e:
+            raise exceptions.TokenSignatureExpired() from e
+        except jwt_exceptions.InvalidIssuerError as e:
             log.exception(
                 "Expected issuer '%s'. Got '%s'",
                 self.oidc_config.get_issuer(),
@@ -71,10 +71,10 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
                     options={"verify_signature": False},
                 )["iss"],
             )
-            raise exceptions.JWTValidationFailed()
-        except jwt_exceptions.PyJWTError:
-            log.exception("JWT validation failed", exc_info=True)
-            raise exceptions.JWTValidationFailed()
+            raise exceptions.JWTValidationFailed() from e
+        except jwt_exceptions.PyJWTError as e:
+            log.exception("JWT validation failed")
+            raise exceptions.JWTValidationFailed() from e
 
     @classmethod
     def get_username(cls, token_decoded: dict[str, str]) -> str:

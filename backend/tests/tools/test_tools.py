@@ -6,6 +6,8 @@ import pytest
 from capellacollab.tools import models as tools_models
 from capellacollab.tools import util as tools_util
 
+# ruff: noqa: PT011
+
 
 def test_additional_ports_are_unique():
     with pytest.raises(ValueError):

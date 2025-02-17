@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# pylint: disable=unused-import
+# ruff: noqa: F401
 # These import statements of the models are required and should not be removed! (SQLAlchemy will not load the models otherwise)
 
 import capellacollab.announcements.models

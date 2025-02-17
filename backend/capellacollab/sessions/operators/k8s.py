@@ -252,9 +252,7 @@ class KubernetesOperator:
             ):
                 return pod_log
         except Exception:
-            log.exception(
-                "Failed fetching logs from Kubernetes", exc_info=True
-            )
+            log.exception("Failed fetching logs from Kubernetes")
         return None
 
     def get_events_for_involved_object(
@@ -934,11 +932,11 @@ class KubernetesOperator:
 
     def list_files(self, session_id: str, directory: str, show_hidden: bool):
         def print_file_tree_as_json():
-            import json  # pylint: disable=redefined-outer-name,reimported
+            import json
             import pathlib
             import sys
 
-            print(  # pylint: disable=bad-builtin
+            print(  # noqa: T201
                 "Using CLI arguments: " + str(sys.argv[1:]), file=sys.stderr
             )
 
@@ -968,7 +966,7 @@ class KubernetesOperator:
 
                 return file
 
-            print(  # pylint: disable=bad-builtin
+            print(  # noqa: T201
                 json.dumps(
                     get_files(
                         pathlib.Path(sys.argv[1]), json.loads(sys.argv[2])
@@ -1055,7 +1053,7 @@ class KubernetesOperator:
                         stderr,
                     )
         except exceptions.ApiException:
-            logging.error(
+            logging.exception(
                 "Command failed for session %s. See stacktrace below.\n%s\n%s",
                 session_id,
                 textwrap.indent(
@@ -1066,7 +1064,6 @@ class KubernetesOperator:
                     stderr,
                     "[STDERR] ",
                 ),
-                exc_info=True,
             )
             raise
 

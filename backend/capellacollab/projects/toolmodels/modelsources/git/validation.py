@@ -63,9 +63,10 @@ async def check_pipeline_health(
     except handler_exceptions.GitInstanceUnsupportedError:
         return models.ModelArtifactStatus.UNSUPPORTED
     except Exception:
-        logger.error(
-            f"Failed to fetch artifacts for model '{model.slug}' and job '{job_name}'",
-            exc_info=True,
+        logger.exception(
+            "Failed to fetch artifacts for model '%s' and job '%s'",
+            model.slug,
+            job_name,
         )
         return models.ModelArtifactStatus.FAILURE
 

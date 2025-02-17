@@ -273,7 +273,7 @@ def test_feedback_metric(db: orm.Session):
         feedback_models.FeedbackRating.GOOD,
         None,
         None,
-        datetime.datetime.now(),
+        datetime.datetime.now(tz=datetime.UTC),
         None,
     )
 
@@ -304,7 +304,7 @@ def test_anonymize_feedback_during_deletion(
         feedback_models.FeedbackRating.GOOD,
         user,
         "test123",
-        datetime.datetime.now(),
+        datetime.datetime.now(tz=datetime.UTC),
         None,
     )
 

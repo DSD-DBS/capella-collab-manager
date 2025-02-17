@@ -25,7 +25,7 @@ def fixture_session(
 ) -> sessions_models.DatabaseSession:
     session = sessions_models.DatabaseSession(
         id=str(uuid.uuid1()),
-        created_at=datetime.datetime.now(),
+        created_at=datetime.datetime.now(tz=datetime.UTC),
         type=sessions_models.SessionType.PERSISTENT,
         environment={"CAPELLACOLLAB_SESSION_TOKEN": "thisisarandomtoken"},
         owner=basic_user,
@@ -45,7 +45,7 @@ def fixture_test_session(
 ) -> sessions_models.DatabaseSession:
     session = sessions_models.DatabaseSession(
         id=str(uuid.uuid1()),
-        created_at=datetime.datetime.now(),
+        created_at=datetime.datetime.now(tz=datetime.UTC),
         type=sessions_models.SessionType.PERSISTENT,
         environment={"CAPELLACOLLAB_SESSION_TOKEN": "thisisarandomtoken"},
         owner=test_user,

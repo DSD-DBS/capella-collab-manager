@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# pylint: disable=bad-builtin
+# ruff: noqa: T201
 
 from __future__ import annotations
 

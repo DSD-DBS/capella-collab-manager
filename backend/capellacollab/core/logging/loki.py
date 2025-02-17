@@ -36,7 +36,7 @@ def check_loki_enabled():
 
 def push_logs_to_loki(entries: list[LogEntry], labels) -> None:
     if PROMTAIL_CONFIGURATION.loki_enabled is False:
-        return None
+        return
     assert PROMTAIL_CONFIGURATION.loki_url
 
     # Convert the streams and labels into the Loki log format
@@ -71,10 +71,10 @@ def push_logs_to_loki(entries: list[LogEntry], labels) -> None:
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        logging.exception("Error pushing logs to Grafana Loki", exc_info=True)
+        logging.exception("Error pushing logs to Grafana Loki")
         logging.info("Response from Loki API: %s", e.response.content.decode())
 
-    return None
+    return
 
 
 def fetch_logs_from_loki(
@@ -115,8 +115,6 @@ def fetch_logs_from_loki(
         logs = response.json()
         return logs["data"]["result"]
     except requests.exceptions.RequestException as e:
-        logging.exception(
-            "Error fetching logs from Grafana Loki", exc_info=True
-        )
+        logging.exception("Error fetching logs from Grafana Loki")
         logging.info("Response from Loki API: %s", e.response.content.decode())
         return None

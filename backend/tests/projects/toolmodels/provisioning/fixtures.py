@@ -29,7 +29,7 @@ def fixture_provisioning(
             tool_model=capella_model,
             revision="main",
             commit_hash="db45166576e7f1e7fec3256e8657ba431f9b5b77",
-            provisioned_at=datetime.datetime.now(),
+            provisioned_at=datetime.datetime.now(tz=datetime.UTC),
             session=None,
         ),
     )

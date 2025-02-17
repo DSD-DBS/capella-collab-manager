@@ -5,7 +5,6 @@ import pytest
 from fastapi import testclient
 from kubernetes import client as k8s_client
 
-from capellacollab import __main__
 from capellacollab.sessions import metrics
 
 
@@ -27,7 +26,6 @@ def test_database_sessions_metric_empty():
 
 def test_kubernetes_sessions_metric(monkeypatch: pytest.MonkeyPatch):
     def mock_list_namespaced_pod(
-        # pylint: disable=unused-argument
         self,
         namespace: str,
         label_selector: str,

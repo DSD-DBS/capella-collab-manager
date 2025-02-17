@@ -37,11 +37,7 @@ class UniqueKeyLoader(yaml.SafeLoader):
 
 
 def does_config_exist() -> bool:
-    for loc in config_locations:
-        if loc.exists():
-            return True
-
-    return False
+    return any(loc.exists() for loc in config_locations)
 
 
 def load_yaml() -> dict:
