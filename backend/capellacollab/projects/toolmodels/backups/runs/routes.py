@@ -53,12 +53,14 @@ router = fastapi.APIRouter()
 )
 def create_pipeline_run(
     body: models.BackupPipelineRun,
-    pipeline: t.Annotated[pipeline_models.DatabaseBackup, fastapi.Depends(
-        pipeline_injectables.get_existing_pipeline
-    )],
-    triggerer: t.Annotated[user_models.DatabaseUser, fastapi.Depends(
-        user_injectables.get_own_user
-    )],
+    pipeline: t.Annotated[
+        pipeline_models.DatabaseBackup,
+        fastapi.Depends(pipeline_injectables.get_existing_pipeline),
+    ],
+    triggerer: t.Annotated[
+        user_models.DatabaseUser,
+        fastapi.Depends(user_injectables.get_own_user),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabasePipelineRun:
     environment = {}
@@ -92,9 +94,10 @@ def create_pipeline_run(
 )
 def get_pipeline_runs(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    pipeline: t.Annotated[pipeline_models.DatabaseBackup, fastapi.Depends(
-        pipeline_injectables.get_existing_pipeline
-    )],
+    pipeline: t.Annotated[
+        pipeline_models.DatabaseBackup,
+        fastapi.Depends(pipeline_injectables.get_existing_pipeline),
+    ],
 ) -> fastapi_pagination.Page[models.PipelineRun]:
     return crud.get_pipeline_runs_for_pipeline_id_paginated(db, pipeline)
 
@@ -114,9 +117,10 @@ def get_pipeline_runs(
     ],
 )
 def get_pipeline_run(
-    pipeline_run: t.Annotated[models.DatabasePipelineRun, fastapi.Depends(
-        injectables.get_existing_pipeline_run
-    )],
+    pipeline_run: t.Annotated[
+        models.DatabasePipelineRun,
+        fastapi.Depends(injectables.get_existing_pipeline_run),
+    ],
 ) -> models.DatabasePipelineRun:
     return pipeline_run
 
@@ -145,9 +149,10 @@ def get_pipeline_run(
     ],
 )
 def get_pipeline_run_events(
-    pipeline_run: t.Annotated[models.DatabasePipelineRun, fastapi.Depends(
-        injectables.get_existing_pipeline_run
-    )],
+    pipeline_run: t.Annotated[
+        models.DatabasePipelineRun,
+        fastapi.Depends(injectables.get_existing_pipeline_run),
+    ],
 ):
     loki.check_loki_enabled()
     event_logs = loki.fetch_logs_from_loki(
@@ -189,9 +194,9 @@ def _determine_end_time_from_pipeline_run(
 def _transform_unix_nanoseconds_to_human_readable_format(
     nanoseconds: int,
 ) -> str:
-    return datetime.datetime.fromtimestamp(int(nanoseconds) / 10**9, tz=datetime.UTC).strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
+    return datetime.datetime.fromtimestamp(
+        int(nanoseconds) / 10**9, tz=datetime.UTC
+    ).strftime("%Y-%m-%d %H:%M:%S")
 
 
 @router.get(
@@ -218,9 +223,10 @@ def _transform_unix_nanoseconds_to_human_readable_format(
     ],
 )
 def get_logs(
-    pipeline_run: t.Annotated[models.DatabasePipelineRun, fastapi.Depends(
-        injectables.get_existing_pipeline_run
-    )],
+    pipeline_run: t.Annotated[
+        models.DatabasePipelineRun,
+        fastapi.Depends(injectables.get_existing_pipeline_run),
+    ],
 ):
     loki.check_loki_enabled()
     logs = loki.fetch_logs_from_loki(
@@ -233,9 +239,9 @@ def get_logs(
 
     logs = "\n".join(
         [
-            datetime.datetime.fromtimestamp(int(logline[0]) / 10**9, tz=datetime.UTC).strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
+            datetime.datetime.fromtimestamp(
+                int(logline[0]) / 10**9, tz=datetime.UTC
+            ).strftime("%Y-%m-%d %H:%M:%S")
             + ": "
             + logline[1]
             for logentry in logs

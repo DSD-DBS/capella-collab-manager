@@ -64,7 +64,9 @@ async def check_pipeline_health(
         return models.ModelArtifactStatus.UNSUPPORTED
     except Exception:
         logger.exception(
-            "Failed to fetch artifacts for model '%s' and job '%s'", model.slug, job_name
+            "Failed to fetch artifacts for model '%s' and job '%s'",
+            model.slug,
+            job_name,
         )
         return models.ModelArtifactStatus.FAILURE
 

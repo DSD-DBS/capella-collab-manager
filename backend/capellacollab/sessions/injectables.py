@@ -17,12 +17,14 @@ from . import crud, exceptions, models, util
 def get_existing_session(
     session_id: str,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_own_user
-    )],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ) -> models.DatabaseSession:
     """Get a session by its ID, ensuring that the user is the owner or an admin."""
 
@@ -41,12 +43,14 @@ def get_existing_session(
 def get_existing_session_including_shared(
     session_id: str,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_own_user
-    )],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ) -> models.DatabaseSession:
     if not (session := crud.get_session_by_id(db, session_id)):
         raise exceptions.SessionNotFoundError(session_id)

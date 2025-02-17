@@ -16,9 +16,10 @@ from . import crud, exceptions, models
 
 def get_existing_pipeline(
     pipeline_id: int,
-    model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    )],
+    model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseBackup:
     pipeline = crud.get_pipeline_by_id(db, pipeline_id)

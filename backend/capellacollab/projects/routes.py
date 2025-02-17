@@ -53,14 +53,18 @@ router = fastapi.APIRouter()
 )
 def get_projects(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
-    authentication_information: t.Annotated[tuple[
-        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ], fastapi.Depends(
-        auth_injectables.AuthenticationInformationValidation()
-    )],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
+    authentication_information: t.Annotated[
+        tuple[
+            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+        ],
+        fastapi.Depends(
+            auth_injectables.AuthenticationInformationValidation()
+        ),
+    ],
     minimum_role: projects_users_models.ProjectUserRole | None = None,
 ) -> list[models.DatabaseProject]:
     """List all projects the user has access to.
@@ -111,13 +115,15 @@ def get_projects(
 )
 def update_project(
     patch_project: models.PatchProject,
-    project: t.Annotated[models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    project: t.Annotated[
+        models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ) -> models.DatabaseProject:
     """Update a project's metadata.
 
@@ -151,9 +157,10 @@ def update_project(
     ],
 )
 def get_project_by_slug(
-    db_project: t.Annotated[models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    db_project: t.Annotated[
+        models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
 ) -> models.DatabaseProject:
     """Get a project by its slug."""
     return db_project
@@ -177,9 +184,10 @@ def get_project_by_slug(
 )
 def create_project(
     post_project: models.PostProjectRequest,
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_own_user
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseProject:
     slug = slugify.slugify(post_project.name)
@@ -220,9 +228,10 @@ def create_project(
     ],
 )
 def delete_project(
-    project: t.Annotated[models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    project: t.Annotated[
+        models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     """Delete a project.

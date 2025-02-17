@@ -34,9 +34,10 @@ router = fastapi.APIRouter()
     ],
 )
 def get_workspaces_for_user(
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_existing_user
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_existing_user),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> t.Sequence[models.DatabaseWorkspace]:
     return crud.get_workspaces_for_user(db=db, user=user)
@@ -64,9 +65,10 @@ def get_workspaces_for_user(
     ],
 )
 def delete_workspace(
-    workspace: t.Annotated[models.DatabaseWorkspace, fastapi.Depends(
-        injectables.get_existing_user_workspace
-    )],
+    workspace: t.Annotated[
+        models.DatabaseWorkspace,
+        fastapi.Depends(injectables.get_existing_user_workspace),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> None:
     util.delete_workspace(db, workspace)

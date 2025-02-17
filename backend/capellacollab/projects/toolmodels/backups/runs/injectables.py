@@ -16,9 +16,10 @@ from . import crud, exceptions, models
 
 def get_existing_pipeline_run(
     pipeline_run_id: int,
-    pipeline: t.Annotated[backups_models.DatabaseBackup, fastapi.Depends(
-        backups_injectables.get_existing_pipeline
-    )],
+    pipeline: t.Annotated[
+        backups_models.DatabaseBackup,
+        fastapi.Depends(backups_injectables.get_existing_pipeline),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabasePipelineRun:
     if pipeline_run := crud.get_pipeline_run_by_id(db, pipeline_run_id):

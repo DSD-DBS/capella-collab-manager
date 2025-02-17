@@ -23,7 +23,9 @@ def test_invalid_basic_auth_expired_token(
     client_pat: testclient.TestClient,
     pat: tuple[tokens_models.DatabaseUserToken, str],
 ) -> None:
-    pat[0].expiration_date = datetime.datetime.now(tz=datetime.UTC).date() - datetime.timedelta(days=1)
+    pat[0].expiration_date = datetime.datetime.now(
+        tz=datetime.UTC
+    ).date() - datetime.timedelta(days=1)
     response = client_pat.get("/api/v1/projects")
 
     assert response.status_code == 401

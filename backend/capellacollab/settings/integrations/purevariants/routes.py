@@ -84,7 +84,9 @@ def set_license(
 )
 def upload_license_key_file(
     file: fastapi.UploadFile,
-    operator: t.Annotated[k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)],
+    operator: t.Annotated[
+        k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     operator.create_secret(
@@ -110,7 +112,9 @@ def upload_license_key_file(
     ],
 )
 def delete_license_key_file(
-    operator: t.Annotated[k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)],
+    operator: t.Annotated[
+        k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.set_license_key_filename(db, None)

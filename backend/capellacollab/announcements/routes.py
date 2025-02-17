@@ -19,15 +19,18 @@ router = fastapi.APIRouter()
     "",
     response_model=list[models.AnnouncementResponse],
 )
-def get_announcements(db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]):
+def get_announcements(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+):
     return crud.get_announcements(db)
 
 
 @router.get("/{announcement_id}")
 def get_announcement_by_id(
-    announcement: t.Annotated[models.DatabaseAnnouncement, fastapi.Depends(
-        injectables.get_existing_announcement
-    )],
+    announcement: t.Annotated[
+        models.DatabaseAnnouncement,
+        fastapi.Depends(injectables.get_existing_announcement),
+    ],
 ):
     return announcement
 
@@ -69,9 +72,10 @@ def create_announcement(
 )
 def update_announcement(
     post_announcement: models.CreateAnnouncementRequest,
-    announcement: t.Annotated[models.DatabaseAnnouncement, fastapi.Depends(
-        injectables.get_existing_announcement
-    )],
+    announcement: t.Annotated[
+        models.DatabaseAnnouncement,
+        fastapi.Depends(injectables.get_existing_announcement),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return crud.update_announcement(db, announcement, post_announcement)
@@ -93,9 +97,10 @@ def update_announcement(
     ],
 )
 def delete_announcement(
-    announcement: t.Annotated[models.DatabaseAnnouncement, fastapi.Depends(
-        injectables.get_existing_announcement
-    )],
+    announcement: t.Annotated[
+        models.DatabaseAnnouncement,
+        fastapi.Depends(injectables.get_existing_announcement),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.delete_announcement(db, announcement)

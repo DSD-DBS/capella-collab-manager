@@ -230,7 +230,8 @@ class HookRegistration(metaclass=abc.ABCMeta):  # noqa: B024
     """
 
     def configuration_hook(
-        self, request: ConfigurationHookRequest  # noqa: ARG002
+        self,
+        request: ConfigurationHookRequest,  # noqa: ARG002
     ) -> ConfigurationHookResult:
         """Hook to determine session configuration
 
@@ -240,7 +241,8 @@ class HookRegistration(metaclass=abc.ABCMeta):  # noqa: B024
         return ConfigurationHookResult()
 
     async def async_configuration_hook(
-        self, request: ConfigurationHookRequest  # noqa: ARG002
+        self,
+        request: ConfigurationHookRequest,  # noqa: ARG002
     ) -> ConfigurationHookResult:
         """Hook to determine session configuration
 
@@ -262,7 +264,8 @@ class HookRegistration(metaclass=abc.ABCMeta):  # noqa: B024
         return PostSessionCreationHookResult()
 
     def session_connection_hook(
-        self, request: SessionConnectionHookRequest  # noqa: ARG002
+        self,
+        request: SessionConnectionHookRequest,  # noqa: ARG002
     ) -> SessionConnectionHookResult:
         """Hook executed while connecting to a session
 
@@ -273,7 +276,8 @@ class HookRegistration(metaclass=abc.ABCMeta):  # noqa: B024
         return SessionConnectionHookResult()
 
     def pre_session_termination_hook(
-        self, request: PreSessionTerminationHookRequest  # noqa: ARG002
+        self,
+        request: PreSessionTerminationHookRequest,  # noqa: ARG002
     ) -> PreSessionTerminationHookResult:
         """Hook executed directly before session termination
 

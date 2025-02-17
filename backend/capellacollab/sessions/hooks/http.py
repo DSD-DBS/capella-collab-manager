@@ -22,9 +22,7 @@ class HTTPIntegration(interface.HookRegistration):
                 **request.db_session.environment
             )
         except Exception:
-            request.logger.exception(
-                "Error while formatting the redirect URL"
-            )
+            request.logger.exception("Error while formatting the redirect URL")
             return interface.SessionConnectionHookResult(
                 warnings=[
                     core_models.Message(

@@ -45,7 +45,7 @@ class Base(orm.MappedAsDataclass, orm.DeclarativeBase):
 
 ### SQL MODELS ARE IMPORTED HERE ###
 # ruff: noqa: F401
-from . import models  # isort:skip 
+from . import models  # isort:skip
 
 
 def get_db() -> t.Iterator[orm.Session]:

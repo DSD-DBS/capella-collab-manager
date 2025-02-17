@@ -14,9 +14,10 @@ from . import crud, exceptions, models
 
 def get_existing_capella_model(
     model_slug: str,
-    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseToolModel:
     model = crud.get_model_by_slugs(db, project.slug, model_slug)

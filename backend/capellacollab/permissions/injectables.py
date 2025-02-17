@@ -14,11 +14,14 @@ from . import exceptions, models
 
 
 def get_scope(
-    authentication_information: t.Annotated[tuple[
-        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ], fastapi.Depends(
-        auth_injectables.AuthenticationInformationValidation()
-    )]
+    authentication_information: t.Annotated[
+        tuple[
+            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+        ],
+        fastapi.Depends(
+            auth_injectables.AuthenticationInformationValidation()
+        ),
+    ],
 ) -> models.GlobalScopes:
     user, token = authentication_information
     role_permissions = users_models.ROLE_MAPPING[user.role]
@@ -36,7 +39,9 @@ class PermissionValidation:
 
     def __call__(
         self,
-        actual_scope: t.Annotated[models.GlobalScopes, fastapi.Depends(get_scope)],
+        actual_scope: t.Annotated[
+            models.GlobalScopes, fastapi.Depends(get_scope)
+        ],
     ) -> None:
         if self.required_scope is None:
             self.required_scope = models.GlobalScopes()

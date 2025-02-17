@@ -46,10 +46,13 @@ router = fastapi.APIRouter()
     ],
 )
 async def get_diagram_metadata(
-    handler: t.Annotated[git_handler.GitHandler, fastapi.Depends(
-        git_injectables.get_git_handler
-    )],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
+    handler: t.Annotated[
+        git_handler.GitHandler,
+        fastapi.Depends(git_injectables.get_git_handler),
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
 ):
     try:
         (
@@ -97,8 +100,13 @@ async def get_diagram_metadata(
 )
 async def get_diagram(
     diagram_uuid_or_filename: str,
-    handler: t.Annotated[git_handler.GitHandler, fastapi.Depends(git_injectables.get_git_handler)],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
+    handler: t.Annotated[
+        git_handler.GitHandler,
+        fastapi.Depends(git_injectables.get_git_handler),
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
     job_id: str | None = None,
 ):
     fileextension = pathlib.PurePosixPath(diagram_uuid_or_filename).suffix

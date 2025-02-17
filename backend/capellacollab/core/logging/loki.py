@@ -115,8 +115,6 @@ def fetch_logs_from_loki(
         logs = response.json()
         return logs["data"]["result"]
     except requests.exceptions.RequestException as e:
-        logging.exception(
-            "Error fetching logs from Grafana Loki"
-        )
+        logging.exception("Error fetching logs from Grafana Loki")
         logging.info("Response from Loki API: %s", e.response.content.decode())
         return None

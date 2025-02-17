@@ -30,7 +30,9 @@ router = fastapi.APIRouter()
 
 
 @router.get("/general", response_model=models.StatusResponse)
-def general_status(db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]):
+def general_status(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+):
     return models.StatusResponse(
         guacamole=guacamole.GuacamoleIntegration.validate_guacamole(),
         database=database.validate_database_session(db),
@@ -55,9 +57,9 @@ def general_status(db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)
 )
 async def model_status(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(
-        core_logging.get_request_logger
-    )],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(core_logging.get_request_logger)
+    ],
 ):
     toolmodels = toolmodels_crud.get_models(db)
 
@@ -103,7 +105,9 @@ async def model_status(
         )
     ],
 )
-def project_status(db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]):
+def project_status(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+):
     return [
         models.ProjectStatus(
             project_slug=project.slug,

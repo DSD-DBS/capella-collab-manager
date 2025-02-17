@@ -53,9 +53,10 @@ router = fastapi.APIRouter()
     ],
 )
 def get_models(
-    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
 ) -> list[models.DatabaseToolModel]:
     return project.models
 
@@ -75,9 +76,10 @@ def get_models(
     ],
 )
 def get_model_by_slug(
-    model: t.Annotated[models.DatabaseToolModel, fastapi.Depends(
-        injectables.get_existing_capella_model
-    )],
+    model: t.Annotated[
+        models.DatabaseToolModel,
+        fastapi.Depends(injectables.get_existing_capella_model),
+    ],
 ) -> models.DatabaseToolModel:
     return model
 
@@ -98,9 +100,10 @@ def get_model_by_slug(
 )
 def create_new_tool_model(
     new_model: models.PostToolModel,
-    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseToolModel:
     tool = tools_injectables.get_existing_tool(
@@ -144,21 +147,27 @@ def create_new_tool_model(
 )
 def patch_tool_model(
     body: models.PatchToolModel,
-    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
-    model: t.Annotated[models.DatabaseToolModel, fastapi.Depends(
-        injectables.get_existing_capella_model
-    )],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
+    model: t.Annotated[
+        models.DatabaseToolModel,
+        fastapi.Depends(injectables.get_existing_capella_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    authentication_information: t.Annotated[tuple[
-        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ], fastapi.Depends(
-        auth_injectables.AuthenticationInformationValidation()
-    )],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    authentication_information: t.Annotated[
+        tuple[
+            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+        ],
+        fastapi.Depends(
+            auth_injectables.AuthenticationInformationValidation()
+        ),
+    ],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ) -> models.DatabaseToolModel:
     """Update or move a tool model.
 
@@ -237,9 +246,10 @@ def patch_tool_model(
     tags=["Projects - Models"],
 )
 def delete_tool_model(
-    model: t.Annotated[models.DatabaseToolModel, fastapi.Depends(
-        injectables.get_existing_capella_model
-    )],
+    model: t.Annotated[
+        models.DatabaseToolModel,
+        fastapi.Depends(injectables.get_existing_capella_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     dependencies = []

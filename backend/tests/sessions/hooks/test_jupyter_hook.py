@@ -18,7 +18,6 @@ def test_jupyter_successful_volume_mount(
     configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
     class MockOperator:
-    
         def persistent_volume_exists(self, name: str) -> bool:
             return True
 
@@ -46,7 +45,6 @@ def test_jupyter_volume_mount_not_found(
     configuration_hook_request: hooks_interface.ConfigurationHookRequest,
 ):
     class MockOperator:
-    
         def persistent_volume_exists(self, name: str) -> bool:
             return False
 

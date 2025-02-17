@@ -23,7 +23,6 @@ from capellacollab.users import models as users_models
 class MockOperator:
     environment: dict[str, str] = {}
 
-
     def start_session(self, environment, *args, **kwargs):
         self.environment = environment
         return {"port": "", "host": "", "created_at": ""}
@@ -156,7 +155,7 @@ async def test_environment_behavior(
         authentication_information=(user, None),
         global_scope=permissions_models.GlobalScopes(
             user=users_models.USER_TOKEN_SCOPE,
-        )
+        ),
     )
 
     env = operator.environment

@@ -77,20 +77,29 @@ users_router = fastapi.APIRouter()
 )
 async def request_session(
     body: models.PostSessionRequest,
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_own_user
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    operator: t.Annotated[k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
-    authentication_information: t.Annotated[tuple[
-        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ], fastapi.Depends(
-        auth_injectables.AuthenticationInformationValidation()
-    )],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    operator: t.Annotated[
+        k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
+    authentication_information: t.Annotated[
+        tuple[
+            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+        ],
+        fastapi.Depends(
+            auth_injectables.AuthenticationInformationValidation()
+        ),
+    ],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ):
     """Request a session.
 
@@ -315,9 +324,10 @@ def get_all_sessions(
     ],
 )
 def get_session(
-    session: t.Annotated[models.DatabaseSession, fastapi.Depends(
-        injectables.get_existing_session_including_shared
-    )],
+    session: t.Annotated[
+        models.DatabaseSession,
+        fastapi.Depends(injectables.get_existing_session_including_shared),
+    ],
 ):
     return session
 
@@ -349,9 +359,10 @@ def get_session(
 )
 def share_session(
     body: models.ShareSessionRequest,
-    session: t.Annotated[models.DatabaseSession, fastapi.Depends(
-        injectables.get_existing_session
-    )],
+    session: t.Annotated[
+        models.DatabaseSession,
+        fastapi.Depends(injectables.get_existing_session),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     user_to_share_with = users_crud.get_user_by_name(db, body.username)
@@ -407,13 +418,17 @@ def share_session(
 def get_session_connection_information(
     response: fastapi.Response,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    session: t.Annotated[models.DatabaseSession, fastapi.Depends(
-        injectables.get_existing_session_including_shared
-    )],
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_own_user
-    )],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
+    session: t.Annotated[
+        models.DatabaseSession,
+        fastapi.Depends(injectables.get_existing_session_including_shared),
+    ],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
 ):
     connection_method = util.get_connection_method(
         session.tool, session.connection_method_id
@@ -518,13 +533,17 @@ def validate_session_token(
 )
 def terminate_session(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    session: t.Annotated[models.DatabaseSession, fastapi.Depends(
-        injectables.get_existing_session
-    )],
-    operator: t.Annotated[k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    session: t.Annotated[
+        models.DatabaseSession,
+        fastapi.Depends(injectables.get_existing_session),
+    ],
+    operator: t.Annotated[
+        k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)
+    ],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ):
     util.terminate_session(db, session, operator, global_scope)
 
@@ -555,16 +574,19 @@ router.include_router(router=files_routes.router, prefix="/{session_id}/files")
     ],
 )
 def get_sessions_for_user(
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_existing_user
-    )],
-    current_user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_own_user
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_existing_user),
+    ],
+    current_user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ):
     """Get all sessions for a user.
 

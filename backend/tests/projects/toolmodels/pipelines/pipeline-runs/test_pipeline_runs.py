@@ -178,9 +178,9 @@ def fixture_mock_pipeline_run():
     # Assign the values you want the mock object to return
     mock_pipeline_run.id = "mock_id"
     mock_pipeline_run.reference_id = "mock_reference_id"
-    mock_pipeline_run.trigger_time = (
-        datetime.datetime.now(tz=datetime.UTC) - datetime.timedelta(minutes=1)
-    )
+    mock_pipeline_run.trigger_time = datetime.datetime.now(
+        tz=datetime.UTC
+    ) - datetime.timedelta(minutes=1)
     mock_pipeline_run.end_time = datetime.datetime.now(tz=datetime.UTC)
 
     # These values will be masked

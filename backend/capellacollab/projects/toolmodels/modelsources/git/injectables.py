@@ -20,9 +20,10 @@ from .handler import factory, handler
 
 def get_existing_git_model(
     git_model_id: int,
-    capella_model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    )],
+    capella_model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> git_models.DatabaseGitModel:
     git_model = crud.get_git_model_by_id(db, git_model_id)
@@ -35,9 +36,10 @@ def get_existing_git_model(
 
 
 def get_existing_primary_git_model(
-    tool_model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    )],
+    tool_model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> git_models.DatabaseGitModel:
     primary_git_model = crud.get_primary_git_model_of_capellamodel(
@@ -51,9 +53,10 @@ def get_existing_primary_git_model(
 
 
 async def get_git_handler(
-    git_model: t.Annotated[git_models.DatabaseGitModel, fastapi.Depends(
-        get_existing_primary_git_model
-    )],
+    git_model: t.Annotated[
+        git_models.DatabaseGitModel,
+        fastapi.Depends(get_existing_primary_git_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> handler.GitHandler:
     return await factory.GitHandlerFactory.create_git_handler(db, git_model)

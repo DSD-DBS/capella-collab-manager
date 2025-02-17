@@ -40,10 +40,12 @@ router = fastapi.APIRouter()
     ],
 )
 async def get_model_complexity_badge(
-    git_handler: t.Annotated[handler.GitHandler, fastapi.Depends(
-        git_injectables.get_git_handler
-    )],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
+    git_handler: t.Annotated[
+        handler.GitHandler, fastapi.Depends(git_injectables.get_git_handler)
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
 ):
     try:
         file_or_artifact = await git_handler.get_file_or_artifact(

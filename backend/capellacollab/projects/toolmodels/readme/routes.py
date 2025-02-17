@@ -38,10 +38,12 @@ router = fastapi.APIRouter()
     ],
 )
 async def get_readme(
-    git_handler: t.Annotated[handler.GitHandler, fastapi.Depends(
-        git_injectables.get_git_handler
-    )],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
+    git_handler: t.Annotated[
+        handler.GitHandler, fastapi.Depends(git_injectables.get_git_handler)
+    ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
 ):
     _, file = await git_handler.get_file("README.md", logger, None)
     return responses.MarkdownResponse(content=file)

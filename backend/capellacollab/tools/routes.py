@@ -76,7 +76,8 @@ def get_tool_by_id(
     ],
 )
 def create_tool(
-    body: models.CreateTool, db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]
+    body: models.CreateTool,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseTool:
     """
     Creates a new tool, which can be used for tool models in projects and for
@@ -109,7 +110,9 @@ def create_tool(
 )
 def update_tool(
     body: models.CreateTool,
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseTool:
     if (
@@ -137,7 +140,9 @@ def update_tool(
     ],
 )
 def delete_tool(
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     raise_when_tool_dependency_exist(db, tool)
@@ -175,7 +180,9 @@ def get_versions_for_all_tools(
     ],
 )
 def get_tool_versions(
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.DatabaseVersion]:
     return crud.get_versions_for_tool_id(db, tool.id)
@@ -203,7 +210,9 @@ def get_default_tool_version(_tool_id: int) -> models.CreateToolVersion:
 )
 def create_tool_version(
     body: models.CreateToolVersion,
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseVersion:
     if crud.get_version_by_tool_id_version_name(db, tool.id, body.name):
@@ -226,9 +235,10 @@ def create_tool_version(
     ],
 )
 def get_tool_version(
-    version: t.Annotated[models.DatabaseVersion, fastapi.Depends(
-        injectables.get_existing_tool_version
-    )],
+    version: t.Annotated[
+        models.DatabaseVersion,
+        fastapi.Depends(injectables.get_existing_tool_version),
+    ],
 ) -> models.DatabaseVersion:
     return version
 
@@ -250,10 +260,13 @@ def get_tool_version(
 )
 def update_tool_version(
     body: models.CreateToolVersion,
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
-    version: t.Annotated[models.DatabaseVersion, fastapi.Depends(
-        injectables.get_existing_tool_version
-    )],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
+    version: t.Annotated[
+        models.DatabaseVersion,
+        fastapi.Depends(injectables.get_existing_tool_version),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseVersion:
     existing_version = crud.get_version_by_tool_id_version_name(
@@ -291,9 +304,10 @@ def validate_version_doesnt_reference_itself(
     ],
 )
 def delete_tool_version(
-    version: t.Annotated[models.DatabaseVersion, fastapi.Depends(
-        injectables.get_existing_tool_version
-    )],
+    version: t.Annotated[
+        models.DatabaseVersion,
+        fastapi.Depends(injectables.get_existing_tool_version),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     raise_when_tool_version_dependency_exist(db, version)
@@ -313,7 +327,9 @@ def delete_tool_version(
     ],
 )
 def get_tool_natures(
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> abc.Sequence[models.DatabaseNature]:
     return crud.get_natures_by_tool_id(db, tool.id)
@@ -341,7 +357,9 @@ def get_default_tool_nature(_tool_id: int) -> models.CreateToolNature:
 )
 def create_tool_nature(
     body: models.CreateToolNature,
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseNature:
     if crud.get_nature_by_name(db, tool, body.name):
@@ -361,9 +379,10 @@ def create_tool_nature(
     ],
 )
 def get_tool_nature(
-    nature: t.Annotated[models.DatabaseNature, fastapi.Depends(
-        injectables.get_existing_tool_nature
-    )],
+    nature: t.Annotated[
+        models.DatabaseNature,
+        fastapi.Depends(injectables.get_existing_tool_nature),
+    ],
 ) -> models.DatabaseNature:
     return nature
 
@@ -385,10 +404,13 @@ def get_tool_nature(
 )
 def update_tool_nature(
     body: models.CreateToolNature,
-    tool: t.Annotated[models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)],
-    nature: t.Annotated[models.DatabaseNature, fastapi.Depends(
-        injectables.get_existing_tool_nature
-    )],
+    tool: t.Annotated[
+        models.DatabaseTool, fastapi.Depends(injectables.get_existing_tool)
+    ],
+    nature: t.Annotated[
+        models.DatabaseNature,
+        fastapi.Depends(injectables.get_existing_tool_nature),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseNature:
     existing_nature = crud.get_nature_by_name(db, tool, body.name)
@@ -413,9 +435,10 @@ def update_tool_nature(
     ],
 )
 def delete_tool_nature(
-    nature: t.Annotated[models.DatabaseNature, fastapi.Depends(
-        injectables.get_existing_tool_nature
-    )],
+    nature: t.Annotated[
+        models.DatabaseNature,
+        fastapi.Depends(injectables.get_existing_tool_nature),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     raise_when_tool_nature_dependency_exist(db, nature)

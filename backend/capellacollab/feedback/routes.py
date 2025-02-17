@@ -39,11 +39,14 @@ router = fastapi.APIRouter()
 def submit_feedback(
     feedback: models.Feedback,
     background_tasks: fastapi.BackgroundTasks,
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        user_injectables.get_own_user
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(user_injectables.get_own_user),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    logger: t.Annotated[logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
     user_agent: t.Annotated[str | None, fastapi.Header()] = None,
 ):
     util.check_if_feedback_is_allowed(db)

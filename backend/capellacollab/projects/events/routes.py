@@ -39,9 +39,10 @@ router = fastapi.APIRouter()
 )
 def get_project_events(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
 ) -> fastapi_pagination.Page[events_models.DatabaseUserHistoryEvent]:
     return crud.get_events_per_project_paginated(db, project)
 

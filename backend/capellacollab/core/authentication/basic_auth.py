@@ -45,7 +45,10 @@ class HTTPBasicAuth(security.HTTPBasic):
             logger.info("Token invalid for user %s", credentials.username)
             raise exceptions.InvalidPersonalAccessTokenError()
 
-        if db_token.expiration_date < datetime.datetime.now(tz=datetime.UTC).date():
+        if (
+            db_token.expiration_date
+            < datetime.datetime.now(tz=datetime.UTC).date()
+        ):
             logger.info("Token expired for user %s", credentials.username)
             raise exceptions.PersonalAccessTokenExpired()
 

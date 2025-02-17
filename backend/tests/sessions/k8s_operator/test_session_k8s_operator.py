@@ -23,7 +23,6 @@ def test_start_session(monkeypatch: pytest.MonkeyPatch):
     service_counter = 0
     disruption_budget_counter = 0
 
-
     def create_namespaced_pod(namespace, deployment):
         nonlocal pod_counter
         pod_counter += 1

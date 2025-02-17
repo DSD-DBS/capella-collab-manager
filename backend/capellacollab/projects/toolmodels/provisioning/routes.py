@@ -40,9 +40,10 @@ router = fastapi.APIRouter()
     ],
 )
 def get_provisioning(
-    provisioning: t.Annotated[models.DatabaseModelProvisioning, fastapi.Depends(
-        injectables.get_model_provisioning
-    )],
+    provisioning: t.Annotated[
+        models.DatabaseModelProvisioning,
+        fastapi.Depends(injectables.get_model_provisioning),
+    ],
 ) -> models.DatabaseModelProvisioning:
     return provisioning
 
@@ -61,15 +62,18 @@ def get_provisioning(
     ],
 )
 def reset_provisioning(
-    provisioning: t.Annotated[models.DatabaseModelProvisioning | None, fastapi.Depends(
-        injectables.get_model_provisioning
-    )],
-    model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    )],
-    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    provisioning: t.Annotated[
+        models.DatabaseModelProvisioning | None,
+        fastapi.Depends(injectables.get_model_provisioning),
+    ],
+    model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     """This will delete the provisioning data from the workspace.

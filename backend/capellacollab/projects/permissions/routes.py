@@ -30,19 +30,23 @@ def get_available_project_permissions():
     "",
 )
 def get_actual_project_permissions(
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_existing_user
-    )],
-    own_user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_own_user
-    )],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_existing_user),
+    ],
+    own_user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    project: t.Annotated[projects_models.DatabaseProject, fastapi.Depends(
-        projects_injectables.get_existing_project
-    )],
+    project: t.Annotated[
+        projects_models.DatabaseProject,
+        fastapi.Depends(projects_injectables.get_existing_project),
+    ],
 ) -> models.ProjectUserScopes:
     """Get the actual permissions for a user in a project.
 

@@ -14,10 +14,11 @@ from . import crud, exceptions, models
 
 def get_existing_user_workspace(
     workspace_id: int,
-    user: t.Annotated[users_models.DatabaseUser, fastapi.Depends(
-        users_injectables.get_existing_user
-    )],
-    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_existing_user),
+    ],
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseWorkspace:
     if workspace := crud.get_workspace_by_id_and_user(db, user, workspace_id):
         return workspace

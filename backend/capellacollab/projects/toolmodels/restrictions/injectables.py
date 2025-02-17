@@ -10,9 +10,10 @@ from . import models
 
 
 def get_model_restrictions(
-    model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    )],
+    model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
 ) -> models.DatabaseToolModelRestrictions | None:
     restrictions = model.restrictions
     assert (

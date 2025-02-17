@@ -25,15 +25,16 @@ from capellacollab.users import models as users_models
 
 
 class MockOperator:
-
     def start_session(self, *args, **kwargs) -> k8s.Session:
         return k8s.Session(
-            id="test", port=1, created_at=datetime.datetime.now(tz=datetime.UTC), host="test"
+            id="test",
+            port=1,
+            created_at=datetime.datetime.now(tz=datetime.UTC),
+            host="test",
         )
 
     def kill_session(self, *args, **kwargs) -> None:
         pass
-
 
     def create_persistent_volume(self, *args, **kwargs):
         return
@@ -142,7 +143,7 @@ async def test_hook_calls_during_session_request(
         authentication_information=(user, None),
         global_scope=permissions_models.GlobalScopes(
             user=users_models.USER_TOKEN_SCOPE,
-        )
+        ),
     )
 
     assert session_hook.configuration_hook_counter == 1

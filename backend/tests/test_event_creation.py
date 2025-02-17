@@ -265,7 +265,8 @@ def test_create_manager_added_to_project_event(
         [
             events_models.EventType.ADDED_TO_PROJECT,
             events_models.EventType.ASSIGNED_PROJECT_ROLE_MANAGER,
-        ], strict=False,
+        ],
+        strict=False,
     ):
         assert event.event_type == expected_event_type
         assert event.executor_id == admin.id
@@ -275,7 +276,11 @@ def test_create_manager_added_to_project_event(
 
 
 @pytest.mark.parametrize(
-    ("initial_permission", "target_permission", "expected_permission_event_type"),
+    (
+        "initial_permission",
+        "target_permission",
+        "expected_permission_event_type",
+    ),
     [
         (
             projects_users_models.ProjectUserPermission.READ,

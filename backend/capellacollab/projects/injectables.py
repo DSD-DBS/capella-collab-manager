@@ -13,7 +13,8 @@ from . import exceptions
 
 
 def get_existing_project(
-    project_slug: str, db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]
+    project_slug: str,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> projects_models.DatabaseProject:
     project = projects_crud.get_project_by_slug(db, project_slug)
     if not project:

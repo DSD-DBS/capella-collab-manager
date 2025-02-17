@@ -64,9 +64,10 @@ def get_t4c_instances(
     ],
 )
 def get_t4c_instance(
-    instance: t.Annotated[models.DatabaseT4CInstance, fastapi.Depends(
-        injectables.get_existing_instance
-    )],
+    instance: t.Annotated[
+        models.DatabaseT4CInstance,
+        fastapi.Depends(injectables.get_existing_instance),
+    ],
 ) -> models.DatabaseT4CInstance:
     return instance
 
@@ -133,9 +134,10 @@ def create_t4c_instance(
 )
 def edit_t4c_instance(
     body: models.PatchT4CInstance,
-    instance: t.Annotated[models.DatabaseT4CInstance, fastapi.Depends(
-        injectables.get_existing_instance
-    )],
+    instance: t.Annotated[
+        models.DatabaseT4CInstance,
+        fastapi.Depends(injectables.get_existing_instance),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseT4CInstance:
     if instance.is_archived and (body.is_archived is None or body.is_archived):
@@ -166,9 +168,10 @@ def edit_t4c_instance(
     ],
 )
 def delete_t4c_instance(
-    instance: t.Annotated[models.DatabaseT4CInstance, fastapi.Depends(
-        injectables.get_existing_instance
-    )],
+    instance: t.Annotated[
+        models.DatabaseT4CInstance,
+        fastapi.Depends(injectables.get_existing_instance),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     crud.delete_t4c_instance(db, instance)

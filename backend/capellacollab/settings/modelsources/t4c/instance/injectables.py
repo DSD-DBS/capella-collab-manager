@@ -14,7 +14,8 @@ from capellacollab.settings.modelsources.t4c.instance import (
 
 
 def get_existing_instance(
-    t4c_instance_id: int, db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]
+    t4c_instance_id: int,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseT4CInstance:
     if t4c_instance := crud.get_t4c_instance_by_id(db, t4c_instance_id):
         return t4c_instance
@@ -23,7 +24,8 @@ def get_existing_instance(
 
 
 def get_existing_unarchived_instance(
-    t4c_instance_id: int, db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]
+    t4c_instance_id: int,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     t4c_instance = get_existing_instance(t4c_instance_id, db)
     if t4c_instance.is_archived:

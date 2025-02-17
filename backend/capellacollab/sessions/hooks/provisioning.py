@@ -261,7 +261,12 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         version: tools_models.DatabaseVersion,
         resolved_entries: list[ResolvedSessionProvisioning],
     ):
-        allowed_versions = [version, *tools_crud.get_compatible_versions_for_tool_versions(db, tool_version=version)]
+        allowed_versions = [
+            version,
+            *tools_crud.get_compatible_versions_for_tool_versions(
+                db, tool_version=version
+            ),
+        ]
         for entry in resolved_entries:
             if entry["model"].version not in allowed_versions:
                 raise sessions_exceptions.ToolAndModelMismatchError(
@@ -368,7 +373,9 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             username=git_model.username,
             password=git_model.password,
         ):
-            rev_without_prefix = rev.removeprefix("refs/heads/").removeprefix("refs/tags/")
+            rev_without_prefix = rev.removeprefix("refs/heads/").removeprefix(
+                "refs/tags/"
+            )
             if rev_without_prefix == revision:
                 return revision, hash
 

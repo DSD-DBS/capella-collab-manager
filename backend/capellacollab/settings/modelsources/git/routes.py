@@ -46,9 +46,10 @@ def list_git_instances(
     ],
 )
 def get_git_instance(
-    git_instance: t.Annotated[models.DatabaseGitInstance, fastapi.Depends(
-        injectables.get_existing_git_instance
-    )],
+    git_instance: t.Annotated[
+        models.DatabaseGitInstance,
+        fastapi.Depends(injectables.get_existing_git_instance),
+    ],
 ):
     return git_instance
 
@@ -92,9 +93,10 @@ def create_git_instance(
 )
 def edit_git_instance(
     put_git_instance: models.PostGitInstance,
-    db_git_instance: t.Annotated[models.DatabaseGitInstance, fastapi.Depends(
-        injectables.get_existing_git_instance
-    )],
+    db_git_instance: t.Annotated[
+        models.DatabaseGitInstance,
+        fastapi.Depends(injectables.get_existing_git_instance),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseGitInstance:
     return crud.update_git_instance(db, db_git_instance, put_git_instance)
@@ -115,9 +117,10 @@ def edit_git_instance(
     ],
 )
 def delete_git_instance(
-    git_instance: t.Annotated[models.DatabaseGitInstance, fastapi.Depends(
-        injectables.get_existing_git_instance
-    )],
+    git_instance: t.Annotated[
+        models.DatabaseGitInstance,
+        fastapi.Depends(injectables.get_existing_git_instance),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return crud.delete_git_instance(db, git_instance)

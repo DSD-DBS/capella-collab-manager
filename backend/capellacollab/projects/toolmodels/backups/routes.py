@@ -57,9 +57,10 @@ log = logging.getLogger(__name__)
     ],
 )
 def get_pipelines(
-    model: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    )],
+    model: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return crud.get_pipelines_for_tool_model(db, model)
@@ -79,9 +80,10 @@ def get_pipelines(
     ],
 )
 def get_pipeline(
-    pipeline: t.Annotated[models.DatabaseBackup, fastapi.Depends(
-        injectables.get_existing_pipeline
-    )],
+    pipeline: t.Annotated[
+        models.DatabaseBackup,
+        fastapi.Depends(injectables.get_existing_pipeline),
+    ],
 ):
     return pipeline
 
@@ -101,9 +103,10 @@ def get_pipeline(
 )
 def create_backup(
     body: models.CreateBackup,
-    toolmodel: t.Annotated[toolmodels_models.DatabaseToolModel, fastapi.Depends(
-        toolmodels_injectables.get_existing_capella_model
-    )],
+    toolmodel: t.Annotated[
+        toolmodels_models.DatabaseToolModel,
+        fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     git_model = git_injectables.get_existing_git_model(
@@ -186,13 +189,15 @@ def create_backup(
     ],
 )
 def delete_pipeline(
-    pipeline: t.Annotated[models.DatabaseBackup, fastapi.Depends(
-        injectables.get_existing_pipeline
-    )],
+    pipeline: t.Annotated[
+        models.DatabaseBackup,
+        fastapi.Depends(injectables.get_existing_pipeline),
+    ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    global_scope: t.Annotated[permissions_models.GlobalScopes, fastapi.Depends(
-        permissions_injectables.get_scope
-    )],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
     force: bool = False,
 ):
     """Remove a pipeline.

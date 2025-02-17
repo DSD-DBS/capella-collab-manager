@@ -22,7 +22,6 @@ def fixture_tool(
 
     database_tool = tools_crud.create_tool(db, tool)
 
-
     def mock_get_existing_tool(*args, **kwargs) -> tools_models.DatabaseTool:
         return database_tool
 

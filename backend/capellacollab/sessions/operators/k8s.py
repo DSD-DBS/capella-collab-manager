@@ -252,9 +252,7 @@ class KubernetesOperator:
             ):
                 return pod_log
         except Exception:
-            log.exception(
-                "Failed fetching logs from Kubernetes"
-            )
+            log.exception("Failed fetching logs from Kubernetes")
         return None
 
     def get_events_for_involved_object(
@@ -1065,7 +1063,7 @@ class KubernetesOperator:
                 textwrap.indent(
                     stderr,
                     "[STDERR] ",
-                )
+                ),
             )
             raise
 

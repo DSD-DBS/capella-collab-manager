@@ -36,7 +36,6 @@ def fixture_tool_version(
     version = tools_crud.create_version(db, tool, tool_version)
 
     def get_existing_tool_version(
-    
         *args,
         **kwargs,
     ) -> tools_models.DatabaseVersion:

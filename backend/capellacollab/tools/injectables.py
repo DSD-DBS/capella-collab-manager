@@ -11,7 +11,8 @@ from . import crud, exceptions, models
 
 
 def get_existing_tool(
-    tool_id: int, db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)]
+    tool_id: int,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseTool:
     if tool := crud.get_tool_by_id(db, tool_id):
         return tool
