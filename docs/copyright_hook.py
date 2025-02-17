@@ -5,6 +5,4 @@ import datetime
 
 
 def on_config(config, **kwargs):
-    config.copyright = (
-        f"Copyright &copy; 2022-{datetime.datetime.now(tz=datetime.UTC).year} DB InfraGO AG"
-    )
+    config.copyright = f"Copyright &copy; 2022-{datetime.datetime.now(tz=datetime.UTC).year} DB InfraGO AG"
