@@ -25,7 +25,7 @@ from capellacollab.routes import router
 from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import idletimeout, operators
 
-from . import __version__, metrics
+from . import __version__, metrics, redirects
 
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(core_logging.CustomFormatter())
@@ -160,6 +160,7 @@ async def healthcheck():
 
 app.add_route("/metrics", starlette_prometheus.metrics)
 app.include_router(router, prefix="/api/v1")
+app.include_router(redirects.router)
 
 
 def custom_openapi():
