@@ -44,25 +44,14 @@ spec:
           ports:
             - containerPort: 9118
           resources:
-            {{ if .Values.development }}
+            requests:
+              cpu: "10m"
+              memory: 100Mi
+              ephemeral-storage: '1Gi'
             limits:
-              cpu: "0.2"
+              cpu: "25m"
               memory: 200Mi
               ephemeral-storage: "2Gi"
-            requests:
-              cpu: "0.05"
-              memory: 50Mi
-              ephemeral-storage: '1Gi'
-            {{ else }}
-            limits:
-              cpu: 1
-              memory: 1Gi
-              ephemeral-storage: "2Gi"
-            requests:
-              cpu: 500m
-              memory: 500M
-              ephemeral-storage: '1Gi'
-            {{ end }}
           volumeMounts:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/

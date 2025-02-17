@@ -60,25 +60,14 @@ spec:
             initialDelaySeconds: 45
             timeoutSeconds: 2
           resources:
-            {{ if .Values.development }}
-            limits:
-              cpu: "0.25"
-              memory: 150Mi
-              ephemeral-storage: "2Gi"
             requests:
-              cpu: "0.06"
-              memory: 20Mi
-              ephemeral-storage: "1Gi"
-            {{ else }}
+              cpu: "25m"
+              memory: 50Mi
+              ephemeral-storage: '1Gi'
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              cpu: "0.1"
+              memory: 250Mi
               ephemeral-storage: "2Gi"
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-              ephemeral-storage: "1Gi"
-            {{ end }}
           {{ if not .Values.development }}
           volumeMounts:
             - name: {{ .Release.Name }}-data

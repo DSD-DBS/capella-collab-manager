@@ -36,22 +36,11 @@ spec:
               path: /
               port: http
           resources:
-            {{ if .Values.development }}
-            limits:
-              cpu: "0.2"
-              memory: 20Mi
-              ephemeral-storage: "2Gi"
             requests:
-              cpu: "0.01"
+              cpu: "0.1m"
               memory: 5Mi
               ephemeral-storage: "1Gi"
-            {{ else }}
             limits:
-              cpu: "0.2"
-              memory: 50Mi
+              cpu: "1m"
+              memory: 20Mi
               ephemeral-storage: "2Gi"
-            requests:
-              cpu: "0.05"
-              memory: 10Mi
-              ephemeral-storage: "1Gi"
-            {{ end }}
