@@ -938,7 +938,7 @@ class KubernetesOperator:
             import pathlib
             import sys
 
-            print(  # pylint: disable=bad-builtin
+            print(  # noqa: T201
                 "Using CLI arguments: " + str(sys.argv[1:]), file=sys.stderr
             )
 
@@ -968,7 +968,7 @@ class KubernetesOperator:
 
                 return file
 
-            print(  # pylint: disable=bad-builtin
+            print(  # noqa: T201
                 json.dumps(
                     get_files(
                         pathlib.Path(sys.argv[1]), json.loads(sys.argv[2])

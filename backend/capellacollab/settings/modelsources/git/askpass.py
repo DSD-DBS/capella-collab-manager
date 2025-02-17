@@ -7,7 +7,7 @@ import os
 import sys
 
 if __name__ == "__main__":
-    print(  # pylint: disable=bad-builtin
+    print(  # noqa: T201
         os.environ["GIT_" + sys.argv[1].split()[0].upper()]
     )
     raise SystemExit(0)
