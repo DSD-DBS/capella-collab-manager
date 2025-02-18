@@ -256,7 +256,7 @@ synchronize-rsa-keys:
 		-n $(NAMESPACE) \
 		--container $(RELEASE)-backend \
 		$$POD_NAME \
-		-- python -m capellacollab.cli keys export /tmp/private.key
+		-- /opt/backend/.venv/bin/python -m capellacollab.cli keys export /tmp/private.key
 
 	kubectl cp \
 		--context k3d-$(CLUSTER_NAME) \

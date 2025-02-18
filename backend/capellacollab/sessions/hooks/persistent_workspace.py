@@ -42,6 +42,7 @@ class PersistentWorkspaceHook(interface.HookRegistration):
             read_only=False,
             container_path=pathlib.PurePosixPath("/workspace"),
             volume_name=volume_name,
+            sub_path=None,
         )
 
         return interface.ConfigurationHookResult(

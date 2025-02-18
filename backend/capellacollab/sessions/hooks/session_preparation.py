@@ -28,6 +28,7 @@ class GitRepositoryCloningHook(interface.HookRegistration):
                 request.tool.config.provisioning.directory
             ),
             read_only=False,
+            sub_path=None,
         )
 
         return interface.ConfigurationHookResult(

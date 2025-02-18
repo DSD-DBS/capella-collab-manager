@@ -419,6 +419,7 @@ class KubernetesOperator:
                     name=volume.name,
                     mount_path=str(volume.container_path),
                     read_only=volume.read_only,
+                    sub_path=volume.sub_path,
                 )
             )
 

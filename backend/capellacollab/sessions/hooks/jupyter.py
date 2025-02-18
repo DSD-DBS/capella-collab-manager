@@ -102,6 +102,7 @@ class JupyterIntegration(interface.HookRegistration):
                     / model.project.slug
                     / model.slug,
                     volume_name=volume_name,
+                    sub_path=None,
                 )
             )
 
