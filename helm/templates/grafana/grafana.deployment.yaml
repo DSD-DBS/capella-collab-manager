@@ -39,7 +39,7 @@ spec:
           {{ if .Values.docker.images.grafana }}
           image: {{ .Values.docker.images.grafana }}
           {{ else }}
-          image: {{ .Values.docker.registry.external }}/grafana/grafana:11.1.0
+          image: {{ .Values.docker.registry.external }}/grafana/grafana:11.5.1
           {{ end }}
           ports:
             - containerPort: 3000
