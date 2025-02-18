@@ -44,24 +44,29 @@ build: backend frontend docs guacamole session-preparation
 backend:
 	python backend/generate_git_archival.py;
 	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) backend
-	docker push -a $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG)
 
 frontend:
 	$(MAKE) -C frontend fetch-version
 	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) frontend
-	docker push -a $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG)
 
 guacamole:
 	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) images/guacamole
-	docker push -a $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG)
 
 session-preparation:
 	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) images/session-preparation
-	docker push -a $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG)
 
 docs:
 	docker build -t $@ -t $(DOCKER_REGISTRY)/$@ -t $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG) docs
-	docker push -a $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@
+	docker push $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG)
 
 capella:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" capella/remote
