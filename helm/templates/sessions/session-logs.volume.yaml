@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+{{ if .Values.loki.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-session-logs
+  namespace: {{ .Values.backend.k8sSessionNamespace }}
+  labels:
+    id: {{ .Release.Name }}-pvc-session-logs
+  annotations:
+    "helm.sh/resource-policy": keep
+spec:
+  accessModes:
+    - {{ .Values.backend.storageAccessMode }}
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: {{ .Values.backend.storageClassName }}
+{{ end }}

@@ -82,6 +82,7 @@ class PureVariantsIntegration(interface.HookRegistration):
             container_path=pathlib.PurePosixPath("/inputs/pure-variants"),
             secret_name="pure-variants",
             optional=True,
+            sub_path=None,
         )
 
         return interface.ConfigurationHookResult(

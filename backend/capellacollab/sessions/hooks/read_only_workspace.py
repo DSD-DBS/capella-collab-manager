@@ -25,6 +25,7 @@ class ReadOnlyWorkspaceHook(interface.HookRegistration):
                     name="workspace",
                     read_only=False,
                     container_path=pathlib.PurePosixPath("/workspace"),
+                    sub_path=None,
                 )
             ],
         )

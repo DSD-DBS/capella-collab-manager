@@ -19,9 +19,5 @@ export interface LoggingConfigurationOutput {
      * If enabled, logs will be pushed to Grafana Loki.
      */
     enabled: boolean;
-    /**
-     * Path to the log files, can be a glob string.
-     */
-    path: string;
 }
 

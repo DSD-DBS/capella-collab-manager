@@ -93,7 +93,6 @@ const defaultToolConfig: ToolSessionConfigurationOutput = {
     },
     logging: {
       enabled: true,
-      path: '/workspace/*.log',
     },
   },
   supported_project_types: ['general', 'training'],
