@@ -92,6 +92,46 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <a
+          [href]="
+            GRAFANA_URL +
+            'd/individual-session/individual-session?orgId=1&var-session_id=' +
+            element.id +
+            '&from=' +
+            Date.parse(element.created_at) +
+            '&to=' +
+            Date.now() +
+            '&timezone=UTC'
+          "
+          mat-icon-button
+          target="_blank"
+          matTooltip="Open session in Grafana"
+          ><mat-icon>monitoring</mat-icon></a
+        >
+        @if (element.connection_method.sharing.enabled) {
+          <button
+            (click)="openConnectDialog(element)"
+            mat-icon-button
+            matTooltip="Connect to Session"
+          >
+            <mat-icon>open_in_browser</mat-icon>
+          </button>
+        }
+
+        <button
+          (click)="openSingleDeletionDialog(element)"
+          mat-icon-button
+          matTooltip="Terminate Session"
+          color="warn"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
@@ -119,7 +159,7 @@
   class="mt-4"
   mat-flat-button
   color="primary"
-  (click)="openDeletionDialog()"
+  (click)="openMultiDeletionDialog()"
   [disabled]="!getAnySessionSelected()"
 >
   Terminate selected sessions
