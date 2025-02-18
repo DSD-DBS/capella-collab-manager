@@ -3,7 +3,7 @@
 
 {{- define "capellacollab.promtail.default.config" }}
 clients:
-  - url: http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
+  - url: http://{{.Release.Name}}-loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1/push
     basic_auth:
       username: {{ .Values.loki.gateway.basicAuth.username }}
       password: {{ .Values.loki.gateway.basicAuth.password }}

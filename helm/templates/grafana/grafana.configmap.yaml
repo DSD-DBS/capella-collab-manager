@@ -62,12 +62,12 @@ data:
         uid: loki_ccm
         access: proxy
         orgId: 1
-        url: http://loki-gateway.{{ .Release.Namespace }}.svc.cluster.local
+        url: http://{{.Release.Name}}-loki-gateway.{{ .Release.Namespace }}.svc.cluster.local
         basicAuth: true
         basicAuthUser: {{ .Values.loki.gateway.basicAuth.username }}
         secureJsonData:
           basicAuthPassword: {{ .Values.loki.gateway.basicAuth.password | required ".Values.loki.gateway.basicAuth.password is required. Please generate a random password and set it in the values.yaml." }}
-        version: 1
+        version: 2
         editable: false
       {{ end }}
       - name: Prometheus (Capella Collaboration Manager)
@@ -76,6 +76,10 @@ data:
         uid: prometheus_ccm
         version: 1
         editable: false
+    prune: true
+    deleteDatasources:
+      # Removed in https://github.com/DSD-DBS/capella-collab-manager/commit/9db351feb659a9cace46791a2a4954ddc727a895
+      - name: 'Loki (Capella Collaboration Manager)'
   dashboards.yaml: |
     apiVersion: 1
 

@@ -271,14 +271,22 @@ grafana:
 loki:
   enabled: true
   global:
-    image:
-      registry: *externalRegistry
+    imageRegistry: *externalRegistry
     dnsService: kube-dns # dns-default for OpenShift
     dnsNamespace: kube-system # openshift-dns for OpenShift
   loki:
     # Disabled X-Scope-OrgID authentication
     auth_enabled: False
     podSecurityContext: *podSecurityContext
+    schemaConfig:
+      configs:
+        - from: 2023-01-01
+          store: tsdb
+          object_store: s3
+          schema: v13
+          index:
+            prefix: index_
+            period: 24h
   gateway:
     basicAuth:
       enabled: True
@@ -293,28 +301,28 @@ loki:
         cpu: '0.03'
         memory: 5Mi
         ephemeral-storage: '1Gi'
-    affinity: ''
+    affinity: null
     podSecurityContext: *podSecurityContext
   read:
     # Minimum 2 is required
     replicas: 2
 
     # We don't want to limit to specific nodes
-    affinity: ''
+    affinity: null
     resources: *resourcesLoki
   write:
     # Minimum 2 is required
     replicas: 2
 
     # We don't want to limit to specific nodes
-    affinity: ''
+    affinity: null
     resources: *resourcesLoki
   backend:
     # Minimum 2 is required
     replicas: 2
 
     # We don't want to limit to specific nodes
-    affinity: ''
+    affinity: null
     resources: *resourcesLoki
   sidecar:
     rules:

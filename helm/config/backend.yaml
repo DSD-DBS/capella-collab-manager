@@ -29,7 +29,7 @@ k8s:
 
   promtail:
     lokiEnabled: {{ .Values.loki.enabled }}
-    lokiURL: http://loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1
+    lokiURL: http://{{.Release.Name}}-loki-gateway.{{- .Release.Namespace -}}.svc.cluster.local/loki/api/v1
     lokiUsername: {{ .Values.loki.gateway.basicAuth.username }}
     lokiPassword: {{ .Values.loki.gateway.basicAuth.password }}
     serverPort: 3101
