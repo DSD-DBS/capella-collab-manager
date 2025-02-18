@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
 import logging
 import pathlib
 
@@ -62,7 +63,11 @@ def format_email(
     ccm_url = f"{config.general.scheme}://{config.general.host}:{config.general.port}"
 
     html_content = template.render(
-        feedback=feedback, user=user, user_agent=user_agent, ccm_url=ccm_url
+        feedback=feedback,
+        user=user,
+        user_agent=user_agent,
+        ccm_url=ccm_url,
+        datetime=datetime,
     )
 
     if feedback.sessions:

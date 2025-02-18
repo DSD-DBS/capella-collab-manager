@@ -38,13 +38,15 @@
         {% endif %}
     </div>
 
+    {% set current_unix_timestamp = (datetime.datetime.now(datetime.UTC).timestamp() | int) * 1000 %}
     {% if feedback.sessions %}
     <div>
         <p><strong>Sessions:</strong></p>
         {% for session in feedback.sessions %}
         <pre>{{ session.model_dump_json(indent=2) }}</pre>
-        {% set grafana_url
-        = ccm_url ~ '/grafana/d/individual-session/individual-session?orgId=1&var-session_id=' ~ session.id %}
+        {% set session_created_at_unix = (session.created_at.timestamp() | int) * 1000 %}
+        {% set grafana_url = ccm_url ~ '/grafana/d/individual-session/individual-session?orgId=1&var-session_id=' ~
+        session.id ~ '&from=' ~ session_created_at_unix ~ '&to=' ~ current_unix_timestamp ~ '&timezone=UTC' %}
         <p>Get more insights in our Grafana dashboard: <a href="{{ grafana_url }}">{{ grafana_url }}</a></p>
         {% endfor %}
     </div>
