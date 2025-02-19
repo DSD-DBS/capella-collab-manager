@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minimal-dev-nginx-sessions
+  labels:
+    id: minimal-dev-nginx-sessions
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: '0'
+    nginx.ingress.kubernetes.io/proxy-buffering: 'off'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '70'
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '70'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '70'
+    nginx.ingress.kubernetes.io/proxy-request-buffering: 'off'
+spec:
+  ingressClassName: { { .Values.cluster.ingressClassName } }
+  rules:
+    - http:
+        paths:
+          - path: /session/
+            pathType: Prefix
+            backend:
+              service:
+                name: minimal-dev-session-nginx
+                port:
+                  name: http
