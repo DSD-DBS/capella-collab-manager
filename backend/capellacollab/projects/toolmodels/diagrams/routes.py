@@ -27,7 +27,7 @@ from capellacollab.projects.toolmodels.modelsources.git.handler import (
     handler as git_handler,
 )
 
-from . import exceptions
+from . import core, exceptions
 
 router = fastapi.APIRouter()
 
@@ -54,24 +54,11 @@ async def get_diagram_metadata(
         logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
     ],
 ):
-    try:
-        (
-            job_id,
-            last_updated,
-            diagram_metadata_entries,
-        ) = await handler.get_file_or_artifact(
-            trusted_file_path="diagram_cache/index.json",
-            logger=logger,
-            job_name="update_capella_diagram_cache",
-            file_revision=f"diagram-cache/{handler.revision}",
-        )
-    except requests.HTTPError as e:
-        logger.info(
-            "Failed fetching diagram metadata file or artifact for %s",
-            handler.path,
-            exc_info=True,
-        )
-        raise exceptions.DiagramCacheNotConfiguredProperlyError() from e
+    (
+        job_id,
+        last_updated,
+        diagram_metadata_entries,
+    ) = await core.fetch_diagram_cache_metadata(logger, handler)
 
     diagram_metadata_entries = json.loads(diagram_metadata_entries)
     return models.DiagramCacheMetadata(
@@ -114,6 +101,28 @@ async def get_diagram(
         raise exceptions.FileExtensionNotSupportedError(fileextension)
 
     diagram_uuid = pathlib.PurePosixPath(diagram_uuid_or_filename).stem
+
+    (
+        job_id,
+        _,
+        diagram_metadata_entries,
+    ) = await core.fetch_diagram_cache_metadata(logger, handler, job_id)
+
+    diagrams = [
+        models.DiagramMetadata.model_validate(diagram_metadata)
+        for diagram_metadata in json.loads(diagram_metadata_entries)
+    ]
+
+    try:
+        diagram = next(
+            diagram for diagram in diagrams if diagram.uuid == diagram_uuid
+        )
+    except StopIteration:
+        raise exceptions.DiagramNotFoundError(diagram_uuid) from None
+
+    if not diagram.success:
+        raise exceptions.DiagramNotSuccessfulError(diagram_uuid)
+
     file_path = f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg"
 
     try:

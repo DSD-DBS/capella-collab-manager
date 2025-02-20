@@ -5,6 +5,12 @@
 import datetime
 
 from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.permissions import (
+    crud as projects_permissions_crud,
+)
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.users.tokens import crud as tokens_crud
 
 from . import interface
@@ -38,6 +44,16 @@ class SessionTokenIntegration(interface.HookRegistration):
             ),  # Maximum duration is until end of the next day.
             source="session automation",
         )
+
+        if request.project_scope:
+            projects_permissions_crud.create_personal_access_token_link(
+                request.db,
+                request.project_scope,
+                token,
+                projects_permissions_models.ProjectUserScopes(
+                    diagram_cache={permissions_models.UserTokenVerb.GET}
+                ),
+            )
 
         return interface.ConfigurationHookResult(
             environment={"CAPELLACOLLAB_SESSION_API_TOKEN": password},

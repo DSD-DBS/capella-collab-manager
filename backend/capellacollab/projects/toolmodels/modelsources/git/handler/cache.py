@@ -20,11 +20,11 @@ class GitValkeyCache:
         self.git_model_id = git_model_id
         super().__init__()
 
-    def get_file_data(
+    async def get_file_data(
         self, file_path: str, revision: str, logger: logging.LoggerAdapter
     ) -> tuple[datetime.datetime, bytes] | None:
         try:
-            file_data = self._valkey.hmget(
+            file_data = await self._valkey.hmget(
                 name=self._get_file_key(file_path, revision),
                 keys=["last_updated", "content"],
             )
@@ -37,11 +37,11 @@ class GitValkeyCache:
 
         return None
 
-    def get_artifact_data(
+    async def get_artifact_data(
         self, job_id: str, file_path: str, logger: logging.LoggerAdapter
     ) -> tuple[datetime.datetime, bytes] | None:
         try:
-            artifact_data = self._valkey.hmget(
+            artifact_data = await self._valkey.hmget(
                 name=self._get_artifact_key(job_id, file_path),
                 keys=["started_at", "content"],
             )
@@ -54,7 +54,7 @@ class GitValkeyCache:
 
         return None
 
-    def put_file_data(
+    async def put_file_data(
         self,
         file_path: str,
         last_updated: datetime.datetime,
@@ -63,7 +63,7 @@ class GitValkeyCache:
         logger: logging.LoggerAdapter,
     ) -> None:
         try:
-            self._valkey.hset(
+            await self._valkey.hset(
                 name=self._get_file_key(file_path, revision),
                 mapping={
                     "last_updated": last_updated.isoformat(),
@@ -76,7 +76,7 @@ class GitValkeyCache:
         except valkey.exceptions.ValkeyError:
             logger.exception("Failed to save file data to valkey")
 
-    def put_artifact_data(
+    async def put_artifact_data(
         self,
         job_id: str,
         file_path: str,
@@ -85,7 +85,7 @@ class GitValkeyCache:
         logger: logging.LoggerAdapter,
     ) -> None:
         try:
-            self._valkey.hset(
+            await self._valkey.hset(
                 name=self._get_artifact_key(job_id, file_path),
                 mapping={
                     "started_at": started_at.isoformat(),
@@ -99,8 +99,10 @@ class GitValkeyCache:
         except valkey.exceptions.ValkeyError:
             logger.exception("Failed to save artifact data to valkey")
 
-    def clear(self) -> None:
-        for key in self._valkey.scan_iter(match=f"{self.git_model_id}:*"):
+    async def clear(self) -> None:
+        async for key in self._valkey.scan_iter(
+            match=f"{self.git_model_id}:*"
+        ):
             self._valkey.delete(key)
 
     def _get_file_key(self, file_path: str, revision: str) -> str:

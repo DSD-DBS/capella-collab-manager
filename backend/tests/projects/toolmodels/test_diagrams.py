@@ -13,7 +13,9 @@ from fastapi import testclient
 
 import capellacollab.projects.models as project_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
+import capellacollab.projects.toolmodels.modelsources.git.models as projects_git_models
 import capellacollab.settings.modelsources.git.models as git_models
+from capellacollab.projects.toolmodels.diagrams import core as diagrams_core
 
 EXAMPLE_SVG = b"""
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -120,6 +122,22 @@ def fixture_mock_git_diagram_cache_from_repo_api(
                     "content": base64.b64encode(EXAMPLE_SVG).decode(),
                 },
             )
+
+
+@pytest.fixture(name="mock_fetch_diagram_cache_metadata")
+def fixture_mock_fetch_diagram_cache_metadata(monkeypatch: pytest.MonkeyPatch):
+    async def mock_fetch_diagram_cache_metadata(logger, handler, job_id):
+        return (
+            None,
+            None,
+            json.dumps(get_diagram_cache_index()),
+        )
+
+    monkeypatch.setattr(
+        diagrams_core,
+        "fetch_diagram_cache_metadata",
+        mock_fetch_diagram_cache_metadata,
+    )
 
 
 @pytest.fixture(name="mock_git_diagram_cache_svg")
@@ -424,6 +442,7 @@ def test_get_diagrams_failed_diagram_cache_job_found(
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
+    "mock_fetch_diagram_cache_metadata",
 )
 def test_get_single_diagram_from_artifacts(
     project: project_models.DatabaseProject,
@@ -482,6 +501,7 @@ def test_get_single_diagram_from_artifacts(
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
+    "mock_fetch_diagram_cache_metadata",
 )
 def test_get_single_diagram_from_artifacts_with_file_ending(
     project: project_models.DatabaseProject,
@@ -594,6 +614,7 @@ def test_get_single_diagram_from_artifacts_with_wrong_file_ending(
     "mock_git_diagram_cache_svg",
     "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
+    "mock_fetch_diagram_cache_metadata",
 )
 def test_get_single_diagram_from_file_and_cache(
     project: project_models.DatabaseProject,
@@ -613,3 +634,77 @@ def test_get_single_diagram_from_file_and_cache(
     )
 
     assert len(mock_git_valkey_cache.cache) == 1
+
+
+@pytest.mark.usefixtures(
+    "project_user",
+    "git_instance",
+)
+def test_diagram_not_found_in_cache(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    client: testclient.TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    git_model: projects_git_models.DatabaseGitModel,
+):
+    git_model.repository_id = "10000"
+
+    async def mock_fetch_diagram_cache_metadata(logger, handler, job_id):
+        return None, None, json.dumps([])
+
+    monkeypatch.setattr(
+        diagrams_core,
+        "fetch_diagram_cache_metadata",
+        mock_fetch_diagram_cache_metadata,
+    )
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/_invalid-diagram",
+    )
+    assert response.status_code == 404
+    assert (
+        response.json()["detail"]["err_code"]
+        == "DIAGRAM_CACHE_DIAGRAM_NOT_FOUND"
+    )
+
+
+@pytest.mark.usefixtures(
+    "project_user",
+    "git_instance",
+)
+def test_diagram_unsuccessful(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    client: testclient.TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    git_model: projects_git_models.DatabaseGitModel,
+):
+    git_model.repository_id = "10000"
+
+    async def mock_fetch_diagram_cache_metadata(logger, handler, job_id):
+        return (
+            None,
+            None,
+            json.dumps(
+                [
+                    {
+                        "name": "Diagram 1",
+                        "uuid": "_c90e4Hdf2d2UosmJBo0GTw",
+                        "success": False,
+                    }
+                ]
+            ),
+        )
+
+    monkeypatch.setattr(
+        diagrams_core,
+        "fetch_diagram_cache_metadata",
+        mock_fetch_diagram_cache_metadata,
+    )
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/_c90e4Hdf2d2UosmJBo0GTw",
+    )
+    assert response.status_code == 400
+    assert (
+        response.json()["detail"]["err_code"]
+        == "DIAGRAM_CACHE_DIAGRAM_NOT_SUCCESSFUL"
+    )

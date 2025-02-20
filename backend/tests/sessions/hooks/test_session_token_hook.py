@@ -3,6 +3,7 @@
 
 from sqlalchemy import orm
 
+from capellacollab.projects import models as projects_models
 from capellacollab.sessions.hooks import interface as sessions_hooks_interface
 from capellacollab.sessions.hooks import session_token
 from capellacollab.users import models as users_models
@@ -11,10 +12,12 @@ from capellacollab.users.tokens import crud as tokens_crud
 
 def test_session_token_hook_lifecycle(
     user: users_models.DatabaseUser,
+    project: projects_models.DatabaseProject,
     configuration_hook_request: sessions_hooks_interface.ConfigurationHookRequest,
     pre_session_termination_hook_request: sessions_hooks_interface.PreSessionTerminationHookRequest,
     db: orm.Session,
 ):
+    configuration_hook_request.project_scope = project
     result = session_token.SessionTokenIntegration().configuration_hook(
         configuration_hook_request
     )

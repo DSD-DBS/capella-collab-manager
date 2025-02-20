@@ -7,7 +7,7 @@ import typing as t
 
 import pydantic
 import sqlalchemy as sa
-import valkey
+import valkey.asyncio
 from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
 
@@ -54,8 +54,10 @@ def get_db() -> t.Iterator[orm.Session]:
 
 
 @functools.lru_cache
-def get_valkey() -> valkey.Valkey:
-    return valkey.Valkey.from_url(config.valkey.url, decode_responses=True)
+def get_valkey() -> valkey.asyncio.Valkey:
+    return valkey.asyncio.Valkey.from_url(
+        config.valkey.url, decode_responses=True
+    )
 
 
 def patch_database_with_pydantic_object(

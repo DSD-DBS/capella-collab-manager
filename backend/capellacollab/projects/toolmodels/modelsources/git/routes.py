@@ -168,7 +168,7 @@ def create_git_model(
         )
     ],
 )
-def update_git_model_by_id(
+async def update_git_model_by_id(
     put_git_model: models.PutGitModel,
     db_git_model: t.Annotated[
         models.DatabaseGitModel,
@@ -177,7 +177,7 @@ def update_git_model_by_id(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseGitModel:
     git_util.verify_path_prefix(db, put_git_model.path)
-    cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
+    await cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
     return crud.update_git_model(db, db_git_model, put_git_model)
 
 
@@ -193,13 +193,13 @@ def update_git_model_by_id(
         )
     ],
 )
-def empty_cache(
+async def empty_cache(
     git_model: t.Annotated[
         models.DatabaseGitModel,
         fastapi.Depends(injectables.get_existing_primary_git_model),
     ],
 ):
-    cache.GitValkeyCache(git_model_id=git_model.id).clear()
+    await cache.GitValkeyCache(git_model_id=git_model.id).clear()
 
 
 @router.delete(
@@ -215,7 +215,7 @@ def empty_cache(
         )
     ],
 )
-def delete_git_model_by_id(
+async def delete_git_model_by_id(
     db_git_model: t.Annotated[
         models.DatabaseGitModel,
         fastapi.Depends(injectables.get_existing_git_model),
@@ -224,5 +224,5 @@ def delete_git_model_by_id(
 ):
     if backups_crud.get_pipelines_for_git_model(db, db_git_model):
         raise exceptions.GitRepositoryUsedInPipelines(db_git_model.id)
-    cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
+    await cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
     crud.delete_git_model(db, db_git_model)

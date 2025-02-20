@@ -24,7 +24,7 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
         def __init__(self, *args, **kwargs) -> None:
             super().__init__()
 
-        def get_file_data(
+        async def get_file_data(
             self,
             file_path: str,
             revision: str,
@@ -32,7 +32,7 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
         ) -> tuple[datetime.datetime, bytes] | None:
             return MockGitValkeyCache.cache.get(f"f:{file_path}", None)
 
-        def get_artifact_data(
+        async def get_artifact_data(
             self,
             job_id: str,
             file_path: str,
@@ -40,7 +40,7 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
         ) -> tuple[datetime.datetime, bytes] | None:
             return MockGitValkeyCache.cache.get(f"a:{file_path}:{job_id}")
 
-        def put_file_data(
+        async def put_file_data(
             self,
             file_path: str,
             last_updated: datetime.datetime,
@@ -53,7 +53,7 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
                 content,
             )
 
-        def put_artifact_data(
+        async def put_artifact_data(
             self,
             job_id: str,
             file_path: str,
@@ -66,7 +66,7 @@ def fixture_mock_git_valkey_cache(monkeypatch: pytest.MonkeyPatch):
                 content,
             )
 
-        def clear(self) -> None:
+        async def clear(self) -> None:
             MockGitValkeyCache.cache.clear()
 
     monkeypatch.setattr(

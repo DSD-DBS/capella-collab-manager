@@ -56,3 +56,11 @@ def test_environment_resolution():
         "http": 8080,
         "restapi": 5007,
     }
+
+
+def test_after_stage_allows_only_string():
+    with pytest.raises(ValueError):
+        tools_models.ToolSessionEnvironment(
+            stage=tools_models.ToolSessionEnvironmentStage.AFTER,
+            value={"test": "test"},
+        )

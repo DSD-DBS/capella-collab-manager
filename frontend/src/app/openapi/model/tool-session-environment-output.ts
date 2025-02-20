@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { Value } from './value';
 import { ToolSessionEnvironmentStage } from './tool-session-environment-stage';
 
 
@@ -17,10 +18,7 @@ export interface ToolSessionEnvironmentOutput {
      * Stage of the environment variable injection. \'before\' runs before the environment variable is stringified, allowing extended filtering and manipulation. For example, you can access the path of the first provisioned model with \'{CAPELLACOLLAB_SESSION_PROVISIONING[0][path]}\'. If you provide a dict, it will use Pythons default dict serialization and will not JSON serialization! \'after\' runs after the environment variable is JSON serialized, allowing to access a dict in the JSON format. 
      */
     stage: ToolSessionEnvironmentStage;
-    /**
-     * Environment variables, which are mounted into session containers. You can use f-strings to reference other environment variables in the value. 
-     */
-    value: string;
+    value: Value;
 }
 export namespace ToolSessionEnvironmentOutput {
 }

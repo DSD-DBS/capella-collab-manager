@@ -21,5 +21,9 @@ export interface ToolModelProvisioningInput {
      * Specifies if a tool requires provisioning. If enabled and a session without provisioning is requested, it will be declined.
      */
     required?: boolean;
+    /**
+     * If enabled, the diagram_cache attribute will be added to the provisioning dictionary.
+     */
+    provide_diagram_cache?: boolean;
 }
 

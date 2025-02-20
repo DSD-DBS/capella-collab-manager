@@ -72,6 +72,7 @@ const defaultToolConfig: ToolSessionConfigurationOutput = {
     directory: '/tmp',
     max_number_of_models: null,
     required: false,
+    provide_diagram_cache: false,
   },
   persistent_workspaces: {
     mounting_enabled: true,

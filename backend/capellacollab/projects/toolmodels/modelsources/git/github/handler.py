@@ -132,7 +132,13 @@ class GithubHandler(handler.GitHandler):
     ) -> bytes:
         with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:
             file_list = zip_file.namelist()
-            file_index = file_list.index(trusted_file_path.split("/")[-1])
+
+            try:
+                file_index = file_list.index(trusted_file_path.split("/")[-1])
+            except ValueError as e:
+                raise git_exceptions.GitRepositoryFileNotFoundError(
+                    filename=trusted_file_path
+                ) from e
 
             with zip_file.open(file_list[file_index], "r") as file:
                 return file.read()
