@@ -9,9 +9,14 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import {
+  MatButton,
+  MatIconAnchor,
+  MatIconButton,
+} from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import {
   MatTable,
   MatColumnDef,
@@ -24,11 +29,14 @@ import {
   MatRowDef,
   MatRow,
 } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
 import { subMinutes } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Session, SessionsService } from 'src/app/openapi';
+import { GRAFANA_URL } from '../../environment';
 import { RelativeTimeComponent } from '../../general/relative-time/relative-time.component';
 import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-session-dialog.component';
+import { ConnectionDialogComponent } from '../user-sessions-wrapper/active-sessions/connection-dialog/connection-dialog.component';
 
 @Component({
   selector: 'app-session-overview',
@@ -50,6 +58,10 @@ import { DeleteSessionDialogComponent } from '../delete-session-dialog/delete-se
     MatButton,
     NgxSkeletonLoaderModule,
     RelativeTimeComponent,
+    MatIcon,
+    MatTooltip,
+    MatIconButton,
+    MatIconAnchor,
   ],
 })
 export class SessionOverviewComponent implements OnInit {
@@ -72,6 +84,7 @@ export class SessionOverviewComponent implements OnInit {
     'tool',
     'connection_method',
     'type',
+    'actions',
   ];
 
   ngOnInit(): void {
@@ -90,7 +103,7 @@ export class SessionOverviewComponent implements OnInit {
     });
   }
 
-  openDeletionDialog(): void {
+  openMultiDeletionDialog(): void {
     const sessions = this.sessions?.filter(
       (session: Session) => this.deletionFormGroup.get(session.id)?.value,
     );
@@ -101,6 +114,22 @@ export class SessionOverviewComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((_) => {
       this.refreshSessions();
+    });
+  }
+
+  openSingleDeletionDialog(session: Session): void {
+    const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
+      data: [session],
+    });
+
+    dialogRef.afterClosed().subscribe((_) => {
+      this.refreshSessions();
+    });
+  }
+
+  openConnectDialog(session: Session): void {
+    this.dialog.open(ConnectionDialogComponent, {
+      data: session,
     });
   }
 
@@ -132,4 +161,5 @@ export class SessionOverviewComponent implements OnInit {
 
   protected readonly subMinutes = subMinutes;
   protected readonly Date = Date;
+  protected readonly GRAFANA_URL = GRAFANA_URL;
 }
