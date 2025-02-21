@@ -32,6 +32,7 @@ from capellacollab.projects.tools import routes as projects_tools_routes
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.projects.users import routes as projects_users_routes
+from capellacollab.projects.volumes import routes as volumes_routes
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import models as tokens_models
@@ -57,13 +58,13 @@ def get_projects(
         permissions_models.GlobalScopes,
         fastapi.Depends(permissions_injectables.get_scope),
     ],
-    authentication_information: t.Annotated[
-        tuple[
-            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-        ],
-        fastapi.Depends(
-            auth_injectables.authentication_information_validation
-        ),
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    token: t.Annotated[
+        tokens_models.DatabaseUserToken | None,
+        fastapi.Depends(auth_injectables.get_auth_pat),
     ],
     minimum_role: projects_users_models.ProjectUserRole | None = None,
 ) -> list[models.DatabaseProject]:
@@ -76,7 +77,7 @@ def get_projects(
 
     for project in crud.get_projects(db):
         project_scope = projects_permissions_injectables.get_scope(
-            authentication_information, global_scope, project, db
+            user, token, global_scope, project, db
         )
 
         if permissions_models.UserTokenVerb.GET in project_scope.root:
@@ -282,4 +283,9 @@ router.include_router(
     projects_permissions_routes.router,
     prefix="/-/permissions",
     tags=["Projects - Permissions"],
+)
+router.include_router(
+    volumes_routes.router,
+    prefix="/{project_slug}/volumes",
+    tags=["Projects - Volumes"],
 )

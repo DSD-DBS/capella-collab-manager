@@ -128,4 +128,4 @@ def get_actual_permissions(
             "admin.users", {models.UserTokenVerb.GET}
         )
 
-    return injectables.get_scope((user, None))
+    return injectables.get_scope(user, None)

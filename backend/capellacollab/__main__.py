@@ -184,7 +184,7 @@ def custom_openapi():
     )
 
     openapi_schema["security"] = [
-        {"PersonalAccessToken": ["test"]},
+        {"PersonalAccessToken": []},
         {"Cookie": []},
     ]
 

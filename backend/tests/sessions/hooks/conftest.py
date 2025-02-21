@@ -35,7 +35,7 @@ def fixture_configuration_hook_request(
         session_id="nxylxqbmfqwvswlqlcbsirvrt",
         project_scope=None,
         pat=None,
-        global_scope=permissions_injectables.get_scope((user, None)),
+        global_scope=permissions_injectables.get_scope(user, None),
         logger=logger,
     )
 
@@ -92,6 +92,6 @@ def fixture_pre_session_termination_hook_request(
         connection_method=tools_models.GuacamoleConnectionMethod(),
         operator=k8s_operator.KubernetesOperator(),
         session=session,
-        global_scope=permissions_injectables.get_scope((user, None)),
+        global_scope=permissions_injectables.get_scope(user, None),
         logger=logger,
     )

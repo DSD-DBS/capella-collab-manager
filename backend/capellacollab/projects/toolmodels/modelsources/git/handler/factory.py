@@ -58,7 +58,7 @@ class GitHandlerFactory:
             repository_id = await GitHandlerFactory._get_repository_id(
                 git_model, git_instance.api_url, git_instance.type
             )
-            asyncer.asyncify(git_crud.update_git_model_repository_id)(
+            await asyncer.asyncify(git_crud.update_git_model_repository_id)(
                 db, git_model, repository_id
             )
         else:

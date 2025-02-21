@@ -39,9 +39,7 @@ def terminate_idle_session():
                         db,
                         session,
                         operators.get_operator(),
-                        permissions_injectables.get_scope(
-                            (session.owner, None)
-                        ),
+                        permissions_injectables.get_scope(session.owner, None),
                         logging.LoggerAdapter(log),
                     )
                 else:

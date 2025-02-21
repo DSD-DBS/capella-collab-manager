@@ -66,7 +66,7 @@ future.
         Please follow the official instructions: <https://microk8s.io/docs/how-to-nfs>.
 
         Make sure to update the `backend.storageClassName` in the `values.yaml` in step 6 to `nfs-csi`.
-        All new Jupyter file-shares and personal workspaces will use the new storage class then.
+        All new project file-shares and personal workspaces will use the new storage class then.
 
         Set the IP address (in the storageclass and in `/etc/exports`) to the IP range of the microK8S nodes. When running on a single node, use the IP address of the node.
 
@@ -129,7 +129,7 @@ overview reasons, they are separated:
   you won't need to touch it. In the session namespace, the following services
   run:
     - Storage for persistent workspaces
-    - Storage for Jupyter file-shares
+    - Storage for project volumes
     - Pipeline jobs for TeamForCapella to Git synchronization
     - Session containers (Capella, Papyrus, Jupyter, pure::variants)
 

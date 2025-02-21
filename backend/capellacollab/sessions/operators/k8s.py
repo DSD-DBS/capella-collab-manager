@@ -829,7 +829,7 @@ class KubernetesOperator:
             for key, value in environment.items()
         ]
 
-    def create_configmap(
+    def create_config_map(
         self,
         name: str,
         data: dict,

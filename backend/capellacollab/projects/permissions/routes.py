@@ -64,8 +64,9 @@ def get_actual_project_permissions(
         )
 
     return injectables.get_scope(
-        (user, None),
-        permissions_injectables.get_scope((user, None)),
+        user,
+        None,
+        permissions_injectables.get_scope(user, None),
         project,
         db,
     )

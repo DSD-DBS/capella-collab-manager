@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import typing as t
-import uuid
 
 import fastapi
 import slugify
@@ -23,10 +22,11 @@ from capellacollab.projects.permissions import (
 )
 from capellacollab.projects.toolmodels.modelsources.t4c import util as t4c_util
 from capellacollab.tools import injectables as tools_injectables
+from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import models as tokens_models
 
-from . import crud, exceptions, injectables, models, workspace
+from . import crud, exceptions, injectables, models
 from .backups import routes as backups_routes
 from .diagrams import routes as diagrams_routes
 from .modelbadge import routes as complexity_badge_routes
@@ -109,9 +109,6 @@ def create_new_tool_model(
     tool = tools_injectables.get_existing_tool(
         tool_id=new_model.tool_id, db=db
     )
-    configuration = {}
-    if tool.integrations.jupyter:
-        configuration["workspace"] = str(uuid.uuid4())
 
     slug = slugify.slugify(new_model.name)
     if project.type not in tool.config.supported_project_types:
@@ -119,16 +116,7 @@ def create_new_tool_model(
     if crud.get_model_by_slugs(db, project.slug, slug):
         raise exceptions.ToolModelAlreadyExistsError(project.slug, slug)
 
-    model = crud.create_model(
-        db, project, new_model, tool, configuration=configuration
-    )
-
-    if tool.integrations.jupyter:
-        workspace.create_shared_workspace(
-            configuration["workspace"], project, model, "2Gi"
-        )
-
-    return model
+    return crud.create_model(db, project, new_model, tool)
 
 
 @router.patch(
@@ -156,13 +144,13 @@ def patch_tool_model(
         fastapi.Depends(injectables.get_existing_capella_model),
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-    authentication_information: t.Annotated[
-        tuple[
-            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-        ],
-        fastapi.Depends(
-            auth_injectables.authentication_information_validation
-        ),
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    token: t.Annotated[
+        tokens_models.DatabaseUserToken | None,
+        fastapi.Depends(auth_injectables.get_auth_pat),
     ],
     global_scope: t.Annotated[
         permissions_models.GlobalScopes,
@@ -212,7 +200,8 @@ def patch_tool_model(
         new_project = determine_new_project_to_move_model(
             body.project_slug,
             db,
-            authentication_information,
+            user,
+            token,
             global_scope,
         )
         raise_if_model_exists_in_project(model, new_project)
@@ -269,22 +258,14 @@ def delete_tool_model(
             model.name, f"{model.tool.name} model", dependencies
         )
 
-    if (
-        model.tool.integrations.jupyter
-        and model.configuration
-        and "workspace" in model.configuration
-    ):
-        workspace.delete_shared_workspace(model.configuration["workspace"])
-
     crud.delete_model(db, model)
 
 
 def determine_new_project_to_move_model(
     project_slug: str,
     db: orm.Session,
-    authentication_information: tuple[
-        users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-    ],
+    user: users_models.DatabaseUser,
+    token: tokens_models.DatabaseUserToken | None,
     global_scope: permissions_models.GlobalScopes,
 ) -> projects_models.DatabaseProject:
     """Find the project to move the model to.
@@ -295,7 +276,7 @@ def determine_new_project_to_move_model(
     new_project = projects_injectables.get_existing_project(project_slug, db)
 
     project_scope = projects_permissions_injectables.get_scope(
-        authentication_information, global_scope, new_project, db
+        user, token, global_scope, new_project, db
     )
     projects_permissions_injectables.ProjectPermissionValidation(
         required_scope=projects_permissions_models.ProjectUserScopes(
