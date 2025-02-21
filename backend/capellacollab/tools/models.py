@@ -195,10 +195,6 @@ class ToolIntegrations(core_pydantic.BaseModelStrict):
             "Please refer to the documentation for more details. "
         ),
     )
-    jupyter: bool = pydantic.Field(
-        default=False,
-        description="Activate if the used tool is Jupyter. ",
-    )
 
 
 RESOURCES_DOCS = (
