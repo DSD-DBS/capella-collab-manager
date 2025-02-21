@@ -5,11 +5,9 @@
 <div class="dialog">
   <h2 class="mb-5 text-xl font-medium">View diagrams</h2>
   <div class="mb-2">
-    Last update:
-    {{
-      (diagramMetadata?.last_updated | date: "EE, dd MMM y HH:mm:ss") ||
-        "loading..."
-    }}
+    @if (diagramMetadata?.last_updated) {
+      Last updated <app-relative-time [date]="diagramMetadata!.last_updated" />
+    }
   </div>
 
   <app-model-diagram-code-block

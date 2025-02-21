@@ -4,6 +4,7 @@
  */
 import { MatTableDataSource } from '@angular/material/table';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import MockDate from 'mockdate';
 import { EventType, HistoryEvent } from 'src/app/openapi';
 import { mockProject } from 'src/storybook/project';
 import {
@@ -27,6 +28,9 @@ const meta: Meta<UserInformationComponent> = {
       ],
     }),
   ],
+  beforeEach: () => {
+    MockDate.set(new Date('2024-05-01'));
+  },
 };
 
 export default meta;

@@ -52,9 +52,11 @@
                     <div>
                       {{ model.name }}
                       @if (model.provisioning; as provisioning) {
-                        was provisioned at
-                        {{ provisioning.provisioned_at | date }} with the
-                        revision {{ provisioning.revision }} ({{
+                        was provisioned
+                        <app-relative-time
+                          [date]="provisioning.provisioned_at"
+                        />
+                        with the revision {{ provisioning.revision }} ({{
                           provisioning.commit_hash
                         }}).
                       } @else {
