@@ -29,8 +29,8 @@ class GuacamoleConfig(t.TypedDict):
 
 
 class GuacamoleIntegration(interface.HookRegistration):
-    _baseURI = config.extensions.guacamole.base_uri
-    _prefix = f"{_baseURI}/api/session/data/postgresql"
+    _base_uri = config.extensions.guacamole.base_uri
+    _prefix = f"{_base_uri}/api/session/data/postgresql"
     _headers = {"Content-Type": "application/x-www-form-urlencoded"}
     _proxies = {
         "http": None,
@@ -115,7 +115,7 @@ class GuacamoleIntegration(interface.HookRegistration):
     @classmethod
     def _get_admin_token(cls) -> str:
         r = requests.post(
-            f"{cls._baseURI}/api/tokens",
+            f"{cls._base_uri}/api/tokens",
             auth=requests_auth.HTTPBasicAuth(
                 config.extensions.guacamole.username,
                 config.extensions.guacamole.password,
@@ -142,7 +142,7 @@ class GuacamoleIntegration(interface.HookRegistration):
     @classmethod
     def _get_token(cls, username: str, password: str) -> str:
         r = requests.post(
-            f"{cls._baseURI}/api/tokens",
+            f"{cls._base_uri}/api/tokens",
             auth=requests_auth.HTTPBasicAuth(username, password),
             headers=cls._headers,
             timeout=config.requests.timeout,
