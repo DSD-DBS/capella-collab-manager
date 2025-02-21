@@ -82,11 +82,7 @@ class TestSessionHook(hooks_interface.HookRegistration):
 def fixture_session_hook(monkeypatch: pytest.MonkeyPatch) -> TestSessionHook:
     hook = TestSessionHook()
 
-    REGISTER_HOOKS_AUTO_USE: list[hooks_interface.HookRegistration] = [hook]
-
-    monkeypatch.setattr(
-        sessions_hooks, "REGISTER_HOOKS_AUTO_USE", REGISTER_HOOKS_AUTO_USE
-    )
+    monkeypatch.setattr(sessions_hooks, "REGISTER_HOOKS_AUTO_USE", [hook])
     return hook
 
 

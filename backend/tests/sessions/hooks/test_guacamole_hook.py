@@ -40,7 +40,7 @@ def fixture_session() -> sessions_models.DatabaseSession:
 def fixture_guacamole_configuration(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
         guacamole.GuacamoleIntegration,
-        "_baseURI",
+        "_base_uri",
         "https://guacamole-mock",
     )
 
