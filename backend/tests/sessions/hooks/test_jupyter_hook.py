@@ -6,7 +6,7 @@ import pytest
 
 import capellacollab.projects.toolmodels.models as toolmodels_models
 from capellacollab.sessions.hooks import interface as hooks_interface
-from capellacollab.sessions.hooks import jupyter as jupyter_hook
+from capellacollab.sessions.hooks import project_volume as jupyter_hook
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
 
@@ -24,7 +24,7 @@ def test_jupyter_successful_volume_mount(
     configuration_hook_request.operator = MockOperator()  # type: ignore
     configuration_hook_request.tool = jupyter_tool
 
-    result = jupyter_hook.JupyterIntegration().configuration_hook(
+    result = jupyter_hook.ProjectVolumeIntegration().configuration_hook(
         configuration_hook_request
     )
 
@@ -51,7 +51,7 @@ def test_jupyter_volume_mount_not_found(
     configuration_hook_request.operator = MockOperator()  # type: ignore
     configuration_hook_request.tool = jupyter_tool
 
-    result = jupyter_hook.JupyterIntegration().configuration_hook(
+    result = jupyter_hook.ProjectVolumeIntegration().configuration_hook(
         configuration_hook_request
     )
 
@@ -69,7 +69,7 @@ def test_jupyter_volume_mount_without_project_access(
 ):
     configuration_hook_request.tool = jupyter_tool
 
-    result = jupyter_hook.JupyterIntegration().configuration_hook(
+    result = jupyter_hook.ProjectVolumeIntegration().configuration_hook(
         configuration_hook_request
     )
 

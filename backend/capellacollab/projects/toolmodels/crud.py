@@ -82,7 +82,6 @@ def create_model(
     tool: tools_models.DatabaseTool,
     version: tools_models.DatabaseVersion | None = None,
     nature: tools_models.DatabaseNature | None = None,
-    configuration: dict[str, str] | None = None,
     display_order: int | None = None,
 ) -> models.DatabaseToolModel:
     model = models.DatabaseToolModel(
@@ -93,7 +92,6 @@ def create_model(
         tool=tool,
         version=version,
         nature=nature,
-        configuration=configuration,
         display_order=display_order,
     )
 

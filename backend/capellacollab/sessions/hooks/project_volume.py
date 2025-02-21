@@ -24,7 +24,9 @@ from . import interface
 log = logging.getLogger(__name__)
 
 
-class JupyterIntegration(interface.HookRegistration):
+class ProjectVolumeIntegration(interface.HookRegistration):
+    """Mount project volumes into related sessions"""
+
     def configuration_hook(
         self,
         request: interface.ConfigurationHookRequest,
@@ -77,11 +79,11 @@ class JupyterIntegration(interface.HookRegistration):
             if not operator.persistent_volume_exists(volume_name):
                 warnings.append(
                     core_models.Message(
-                        err_code="JUPYTER_FILE_SHARE_VOLUME_NOT_FOUND",
-                        title="Jupyter file-share volume not found",
+                        err_code="PROJECT_FILE_SHARE_VOLUME_NOT_FOUND",
+                        title="File-share volume not found",
                         reason=(
-                            f"The Jupyter file-share volume for the model '{model.name}' in the project '{model.project.name}' couldn't be located. "
-                            "Please contact your system administrator or recreate the model (this will erase all data in the file-share)."
+                            f"The shared volume in the project '{model.project.name}' couldn't be located. "
+                            "Please contact your system administrator or recreate the project volume (this will erase all data in the file-share)."
                         ),
                     )
                 )

@@ -8,11 +8,11 @@ from . import (
     guacamole,
     http,
     interface,
-    jupyter,
     log_collector,
     networking,
     persistent_workspace,
     project_scope,
+    project_volume,
     provisioning,
     pure_variants,
     read_only_workspace,
@@ -22,7 +22,7 @@ from . import (
 )
 
 REGISTERED_HOOKS: dict[str, interface.HookRegistration] = {
-    "jupyter": jupyter.JupyterIntegration(),
+    "jupyter": project_volume.ProjectVolumeIntegration(),
     "t4c": t4c.T4CIntegration(),
     "pure_variants": pure_variants.PureVariantsIntegration(),
 }

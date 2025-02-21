@@ -19,6 +19,7 @@ import capellacollab.projects.toolmodels.provisioning.models
 import capellacollab.projects.toolmodels.restrictions.models
 import capellacollab.projects.tools.models
 import capellacollab.projects.users.models
+import capellacollab.projects.volumes.models
 import capellacollab.sessions.models
 import capellacollab.settings.integrations.purevariants.models
 import capellacollab.settings.modelsources.git.models
