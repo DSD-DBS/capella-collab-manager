@@ -49,6 +49,8 @@ class ConfigurationHookRequest:
         Personal access token if used for authentication
     global_scope: permissions_models.GlobalScopes
         Global permission scope of the user
+    logger: logging.LoggerAdapter
+        Logger for the specific request
     """
 
     db: orm.Session
@@ -63,6 +65,7 @@ class ConfigurationHookRequest:
     session_id: str
     pat: tokens_models.DatabaseUserToken | None
     global_scope: permissions_models.GlobalScopes
+    logger: logging.LoggerAdapter
 
 
 class ConfigurationHookResult(t.TypedDict):
@@ -201,6 +204,8 @@ class PreSessionTerminationHookRequest:
         Connection method of the session
     global_scope: permissions_models.GlobalScopes
         Global permission scope of the user
+    logger: logging.LoggerAdapter
+        Logger for the specific request
     """
 
     db: orm.Session
@@ -208,6 +213,7 @@ class PreSessionTerminationHookRequest:
     session: sessions_models.DatabaseSession
     connection_method: tools_models.ToolSessionConnectionMethod
     global_scope: permissions_models.GlobalScopes
+    logger: logging.LoggerAdapter
 
 
 class PreSessionTerminationHookResult(t.TypedDict):

@@ -50,6 +50,18 @@ def fixture_mock_add_user_to_repository_failed(
     )
 
 
+@pytest.fixture(name="mock_remove_user_from_repository")
+def fixture_mock_remove_user_from_repository(
+    user: users_models.DatabaseUser,
+    t4c_instance: t4c_models.DatabaseT4CInstance,
+) -> responses.BaseResponse:
+    return responses.add(
+        responses.DELETE,
+        f"{t4c_instance.rest_api}/users/{user.name}?repositoryName=test",
+        status=200,
+    )
+
+
 @responses.activate
 @pytest.mark.usefixtures("t4c_model", "project_user")
 def test_t4c_configuration_hook(
@@ -281,20 +293,49 @@ def test_t4c_connection_hook(
 @pytest.mark.usefixtures("t4c_model", "project_user")
 def test_t4c_termination_hook(
     session: sessions_models.DatabaseSession,
-    user: users_models.DatabaseUser,
-    t4c_instance: t4c_models.DatabaseT4CInstance,
     capella_tool_version: tools_models.DatabaseVersion,
     pre_session_termination_hook_request: sessions_hooks_interface.PreSessionTerminationHookRequest,
+    mock_remove_user_from_repository: responses.BaseResponse,
 ):
     session.version = capella_tool_version
     pre_session_termination_hook_request.session = session
-    rsp = responses.delete(
-        f"{t4c_instance.rest_api}/users/{user.name}?repositoryName=test",
-        status=200,
-    )
 
     t4c.T4CIntegration().pre_session_termination_hook(
         pre_session_termination_hook_request
     )
 
-    assert rsp.call_count == 1
+    assert mock_remove_user_from_repository.call_count == 1
+
+
+@responses.activate
+@pytest.mark.usefixtures("t4c_model", "project_user")
+def test_t4c_non_legacy_lifecycle(
+    configuration_hook_request: sessions_hooks_interface.ConfigurationHookRequest,
+    pre_session_termination_hook_request: sessions_hooks_interface.PreSessionTerminationHookRequest,
+    mock_add_user_to_repository: responses.BaseResponse,
+    mock_remove_user_from_repository: responses.BaseResponse,
+):
+    """Test a complete lifecycle and test that the user is removed from the repository
+
+    This test uses the new configuration based non-legacy workflow."""
+
+    result = t4c.T4CIntegration().configuration_hook(
+        configuration_hook_request
+    )
+
+    assert mock_add_user_to_repository.call_count == 1
+    assert result["config"]["t4c_repositories"]
+
+    # Add invalid repository_id to test handling of not found / removed repository
+    config = json.dumps(
+        [*json.loads(result["config"]["t4c_repositories"]), -1]
+    )
+
+    pre_session_termination_hook_request.session.config["t4c_repositories"] = (
+        config
+    )
+    t4c.T4CIntegration().pre_session_termination_hook(
+        pre_session_termination_hook_request
+    )
+
+    assert mock_remove_user_from_repository.call_count == 1

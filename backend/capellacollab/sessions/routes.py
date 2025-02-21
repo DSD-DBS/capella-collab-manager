@@ -166,6 +166,7 @@ async def request_session(
         project_scope=project_scope,
         pat=authentication_information[1],
         global_scope=global_scope,
+        logger=logger,
     )
 
     for hook_result in await util.schedule_configuration_hooks(
@@ -544,8 +545,11 @@ def terminate_session(
         permissions_models.GlobalScopes,
         fastapi.Depends(permissions_injectables.get_scope),
     ],
+    logger: t.Annotated[
+        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+    ],
 ):
-    util.terminate_session(db, session, operator, global_scope)
+    util.terminate_session(db, session, operator, global_scope, logger)
 
 
 router.include_router(router=files_routes.router, prefix="/{session_id}/files")
