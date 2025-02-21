@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import typing as t
-import uuid
 
 import fastapi
 import slugify
@@ -26,7 +25,7 @@ from capellacollab.tools import injectables as tools_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import models as tokens_models
 
-from . import crud, exceptions, injectables, models, workspace
+from . import crud, exceptions, injectables, models
 from .backups import routes as backups_routes
 from .diagrams import routes as diagrams_routes
 from .modelbadge import routes as complexity_badge_routes
@@ -109,9 +108,6 @@ def create_new_tool_model(
     tool = tools_injectables.get_existing_tool(
         tool_id=new_model.tool_id, db=db
     )
-    configuration = {}
-    if tool.integrations.jupyter:
-        configuration["workspace"] = str(uuid.uuid4())
 
     slug = slugify.slugify(new_model.name)
     if project.type not in tool.config.supported_project_types:
@@ -119,16 +115,7 @@ def create_new_tool_model(
     if crud.get_model_by_slugs(db, project.slug, slug):
         raise exceptions.ToolModelAlreadyExistsError(project.slug, slug)
 
-    model = crud.create_model(
-        db, project, new_model, tool, configuration=configuration
-    )
-
-    if tool.integrations.jupyter:
-        workspace.create_shared_workspace(
-            configuration["workspace"], project, model, "2Gi"
-        )
-
-    return model
+    return crud.create_model(db, project, new_model, tool)
 
 
 @router.patch(
@@ -268,13 +255,6 @@ def delete_tool_model(
         raise core_exceptions.ExistingDependenciesError(
             model.name, f"{model.tool.name} model", dependencies
         )
-
-    if (
-        model.tool.integrations.jupyter
-        and model.configuration
-        and "workspace" in model.configuration
-    ):
-        workspace.delete_shared_workspace(model.configuration["workspace"])
 
     crud.delete_model(db, model)
 
