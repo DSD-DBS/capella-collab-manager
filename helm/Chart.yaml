@@ -15,7 +15,7 @@ dependencies:
   - name: loki
     alias: loki
     condition: loki.enabled
-    version: 5.30.0
+    version: 6.27.0
     repository: https://grafana.github.io/helm-charts/
   - name: kube-state-metrics
     version: 5.21.0
