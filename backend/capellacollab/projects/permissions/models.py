@@ -168,14 +168,18 @@ class ProjectUserScopes(core_pydantic.BaseModel):
         t.Literal[
             permissions_models.UserTokenVerb.GET,
             permissions_models.UserTokenVerb.UPDATE,
+            permissions_models.UserTokenVerb.CREATE,
+            permissions_models.UserTokenVerb.DELETE,
         ]
     ] = pydantic.Field(
         default_factory=set,
         title="Shared Workspaces",
         description=(
-            "Access to shared Jupyter workspaces."
+            "Access to shared project volumes."
             " GET will provide read-only access,"
-            " UPDATE will provide read & write access."
+            " UPDATE will provide read & write access,"
+            " CREATE will provide the ability to create a new shared volume,"
+            " DELETE will provide the ability to delete shared volumes."
         ),
     )
 

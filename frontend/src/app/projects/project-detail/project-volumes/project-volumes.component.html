@@ -1,0 +1,85 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="mb-2 flex h-9 items-center gap-2">
+  <h2 class="text-xl font-medium">Project Volume</h2>
+  <mat-icon
+    class="hover:cursor-help"
+    [matTooltip]="
+      'A project volume is a shared workspace in the project.' +
+      ' It can be used to exchange files between project members.'
+    "
+    >help</mat-icon
+  >
+  @if (projectVolume() === null && projectUserService.verifyRole("manager")) {
+    <div
+      [matTooltip]="
+        (projectWrapperService.project$ | async)?.is_archived
+          ? 'You cannot add a volume to an archived project'
+          : 'Add a new volume to the project'
+      "
+    >
+      <a
+        mat-stroked-button
+        class="!ml-2"
+        (click)="addVolume()"
+        [disabled]="
+          (projectWrapperService.project$ | async)?.is_archived ||
+          volumeCreationInProgress()
+        "
+        ><div class="flex items-center">
+          <mat-icon id="add-icon">add</mat-icon>
+        </div>
+      </a>
+    </div>
+  }
+</div>
+
+<div class="collab-card">
+  @if (projectVolume() === undefined) {
+    <div class="flex flex-col">
+      <ngx-skeleton-loader
+        appearance="circle"
+        [theme]="{
+          'border-radius': '5px',
+          height: '54px',
+          width: '250px',
+          'max-width': '100%',
+          margin: '0',
+          border: '1px solid white',
+        }"
+      ></ngx-skeleton-loader>
+    </div>
+  } @else if (projectVolume() === null) {
+    There is no shared volume in the project yet.
+    @if (!projectUserService.verifyRole("manager")) {
+      Ask a project administrator to create one.
+    }
+  } @else {
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div>
+        The project volume was created
+        <app-relative-time
+          [date]="projectVolume()!.created_at"
+        ></app-relative-time
+        >, has a size of {{ projectVolume()!.size }}, and will be mounted as
+        <span class="select-all font-mono"
+          >/shared/{{ (projectWrapperService.project$ | async)!.slug }}</span
+        >
+        to sessions.
+      </div>
+      @if (projectUserService.verifyRole("manager")) {
+        <button
+          (click)="deleteVolume(projectVolume()!)"
+          class="w-full sm:w-fit"
+          mat-flat-button
+          color="warn"
+        >
+          <mat-icon>delete_forever</mat-icon> Remove project volume
+        </button>
+      }
+    </div>
+  }
+</div>

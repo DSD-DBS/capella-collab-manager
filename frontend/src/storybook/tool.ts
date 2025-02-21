@@ -105,7 +105,6 @@ export const mockCapellaTool: Readonly<Tool> = {
   integrations: {
     t4c: true,
     pure_variants: true,
-    jupyter: false,
   },
   config: defaultToolConfig,
 };
@@ -116,7 +115,6 @@ export const mockTrainingControllerTool: Readonly<Tool> = {
   integrations: {
     t4c: false,
     pure_variants: false,
-    jupyter: false,
   },
   config: { ...defaultToolConfig, supported_project_types: ['training'] },
 };

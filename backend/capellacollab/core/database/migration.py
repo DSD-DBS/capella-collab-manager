@@ -193,7 +193,7 @@ def create_capella_tool(
     capella = tools_models.CreateTool(
         name="Capella",
         integrations=tools_models.ToolIntegrations(
-            t4c=True, pure_variants=False, jupyter=False
+            t4c=True, pure_variants=False
         ),
         config=get_eclipse_session_configuration(),
     )
@@ -323,7 +323,7 @@ def create_papyrus_tool(db: orm.Session) -> tools_models.DatabaseTool:
     papyrus = tools_models.CreateTool(
         name="Papyrus",
         integrations=tools_models.ToolIntegrations(
-            t4c=False, pure_variants=False, jupyter=False
+            t4c=False, pure_variants=False
         ),
         config=get_eclipse_session_configuration(),
     )
@@ -363,7 +363,6 @@ def create_papyrus_tool(db: orm.Session) -> tools_models.DatabaseTool:
 def create_jupyter_tool(db: orm.Session) -> tools_models.DatabaseTool:
     jupyter = tools_models.CreateTool(
         name="Jupyter",
-        integrations=tools_models.ToolIntegrations(jupyter=True),
         config=tools_models.ToolSessionConfiguration(
             resources=tools_models.Resources(
                 cpu=tools_models.CPUResources(requests=1, limits=2),

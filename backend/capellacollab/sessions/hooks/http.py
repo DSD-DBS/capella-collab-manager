@@ -19,7 +19,7 @@ class HTTPIntegration(interface.HookRegistration):
 
         try:
             redirect_url = request.connection_method.redirect_url.format(
-                **request.db_session.environment
+                **request.db_session.environment,
             )
         except Exception:
             request.logger.exception("Error while formatting the redirect URL")

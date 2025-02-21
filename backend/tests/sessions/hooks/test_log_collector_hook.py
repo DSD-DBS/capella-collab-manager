@@ -52,16 +52,16 @@ def test_log_volume_mounting(
         result["volumes"][0].sub_path == configuration_hook_request.session_id
     )
 
-    create_configmap_called = 0
+    create_config_map_called = 0
 
-    def mock_create_configmap(*args, **kwargs):
-        nonlocal create_configmap_called
-        create_configmap_called += 1
+    def mock_create_config_map(*args, **kwargs):
+        nonlocal create_config_map_called
+        create_config_map_called += 1
 
     monkeypatch.setattr(
         k8s.KubernetesOperator,
-        "create_configmap",
-        mock_create_configmap,
+        "create_config_map",
+        mock_create_config_map,
     )
 
     create_sidecar_pod_called = 0
@@ -80,7 +80,7 @@ def test_log_volume_mounting(
         post_session_creation_hook_request
     )
 
-    assert create_configmap_called == 1
+    assert create_config_map_called == 1
     assert create_sidecar_pod_called == 1
 
     delete_configmap_called = 0

@@ -38,5 +38,4 @@ def fixture_jupyter_model(
         project,
         jupyter_model,
         tool=jupyter_tool,
-        configuration={"workspace": "test"},
     )

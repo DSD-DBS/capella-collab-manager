@@ -375,7 +375,6 @@ To help you configure your tools, we provide some examples as part of our
     integrations:
       t4c: true # (2)
       pure_variants: false # (3)
-      jupyter: false
     config:
       resources:
         cpu:
@@ -435,7 +434,6 @@ To help you configure your tools, we provide some examples as part of our
     integrations:
       t4c: false
       pure_variants: false
-      jupyter: true
     config:
       resources:
         cpu:

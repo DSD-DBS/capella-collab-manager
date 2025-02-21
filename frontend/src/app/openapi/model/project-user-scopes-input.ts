@@ -65,7 +65,7 @@ export interface ProjectUserScopesInput {
      */
     restrictions?: Array<ProjectUserScopesInput.RestrictionsEnum>;
     /**
-     * Access to shared Jupyter workspaces. GET will provide read-only access, UPDATE will provide read & write access.
+     * Access to shared project volumes. GET will provide read-only access, UPDATE will provide read & write access, CREATE will provide the ability to create a new shared volume, DELETE will provide the ability to delete shared volumes.
      */
     shared_volumes?: Array<ProjectUserScopesInput.SharedVolumesEnum>;
 }
@@ -143,10 +143,12 @@ export namespace ProjectUserScopesInput {
         Get: 'GET' as RestrictionsEnum,
         Update: 'UPDATE' as RestrictionsEnum
     };
-    export type SharedVolumesEnum = 'GET' | 'UPDATE';
+    export type SharedVolumesEnum = 'GET' | 'UPDATE' | 'CREATE' | 'DELETE';
     export const SharedVolumesEnum = {
         Get: 'GET' as SharedVolumesEnum,
-        Update: 'UPDATE' as SharedVolumesEnum
+        Update: 'UPDATE' as SharedVolumesEnum,
+        Create: 'CREATE' as SharedVolumesEnum,
+        Delete: 'DELETE' as SharedVolumesEnum
     };
 }
 
