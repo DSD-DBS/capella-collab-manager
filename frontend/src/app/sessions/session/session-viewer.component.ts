@@ -65,5 +65,6 @@ export class SessionViewerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sessionViewerService.clearSessions();
+    this.fullscreenService.disableFullscreen();
   }
 }
