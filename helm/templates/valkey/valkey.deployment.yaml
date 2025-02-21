@@ -39,25 +39,14 @@ spec:
               containerPort: 6379
               protocol: TCP
           resources:
-            {{ if .Values.development }}
             requests:
-              cpu: "0.005"
-              memory: 20Mi
+              cpu: "25m"
+              memory: 25Mi
               ephemeral-storage: '1Gi'
             limits:
-              cpu: "0.1"
-              memory: 250Mi
-              ephemeral-storage: "2Gi"
-            {{ else }}
-            requests:
-              cpu: "0.01"
-              memory: "500Mi"
-              ephemeral-storage: '1Gi'
-            limits:
-              cpu: "0.2"
-              memory: "3Gi"
+              cpu: "25m"
+              memory: 500Mi
               ephemeral-storage: "5Gi"
-            {{ end }}
           volumeMounts:
             - mountPath: /data
               name: data

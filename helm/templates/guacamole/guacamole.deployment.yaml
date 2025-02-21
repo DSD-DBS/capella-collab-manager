@@ -94,25 +94,14 @@ spec:
               mountPath: /home/guacamole/tomcat/logs
             {{ end }}
           resources:
-            {{ if .Values.development }}
             requests:
-              cpu: "0.1"
-              memory: 20Mi
+              cpu: "30m"
+              memory: 370Mi
               ephemeral-storage: "1Gi"
             limits:
-              cpu: "1"
-              memory: 1Gi
+              cpu: "50m"
+              memory: 500Mi
               ephemeral-storage: "2Gi"
-            {{ else }}
-            requests:
-              memory: "1Gi"
-              cpu: "500m"
-              ephemeral-storage: "1Gi"
-            limits:
-              memory: "2Gi"
-              cpu: "2"
-              ephemeral-storage: "2Gi"
-            {{ end }}
         {{ if .Values.loki.enabled }}
         - name: promtail
           {{- include "capellacollab.container.spec" . | indent 10 -}}
@@ -129,25 +118,14 @@ spec:
               containerPort: 3101
               protocol: TCP
           resources:
-            {{ if .Values.development }}
-            limits:
-              cpu: "0.1"
+            requests:
+              cpu: "10m"
               memory: 50Mi
-              ephemeral-storage: "2Gi"
-            requests:
-              cpu: "0.02"
-              memory: 5Mi
               ephemeral-storage: '1Gi'
-            {{ else }}
             limits:
-              cpu: "1"
-              memory: 1Gi
+              cpu: "12m"
+              memory: 125Mi
               ephemeral-storage: "2Gi"
-            requests:
-              cpu: "0.2"
-              memory: 250Mi
-              ephemeral-storage: '1Gi'
-            {{ end }}
           volumeMounts:
             - name: prom-config
               mountPath: /etc/promtail

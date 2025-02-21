@@ -61,25 +61,14 @@ spec:
             initialDelaySeconds: 15
             periodSeconds: 20
           resources:
-            {{ if .Values.development }}
+            requests:
+              cpu: "0.02"
+              memory: 15Mi
+              ephemeral-storage: "1Gi"
             limits:
               cpu: "0.2"
-              memory: 100Mi
+              memory: 50Mi
               ephemeral-storage: "2Gi"
-            requests:
-              cpu: "0.06"
-              memory: 10Mi
-              ephemeral-storage: "1Gi"
-            {{ else }}
-            limits:
-              memory: "1Gi"
-              cpu: "1"
-              ephemeral-storage: "2Gi"
-            requests:
-              memory: "512Mi"
-              cpu: "250m"
-              ephemeral-storage: "1Gi"
-            {{ end }}
           volumeMounts:
             {{ if .Values.loki.enabled }}
             - name: logs
@@ -101,25 +90,14 @@ spec:
               containerPort: 3101
               protocol: TCP
           resources:
-            {{ if .Values.development }}
-            limits:
-              cpu: "0.1"
+            requests:
+              cpu: "0.01"
               memory: 50Mi
-              ephemeral-storage: "2Gi"
-            requests:
-              cpu: "0.02"
-              memory: 5Mi
               ephemeral-storage: "1Gi"
-            {{ else }}
             limits:
-              cpu: "1"
-              memory: 1Gi
+              cpu: "0.02"
+              memory: 100Mi
               ephemeral-storage: "2Gi"
-            requests:
-              cpu: "0.2"
-              memory: 250Mi
-              ephemeral-storage: "1Gi"
-            {{ end }}
           volumeMounts:
             - name: prom-config
               mountPath: /etc/promtail

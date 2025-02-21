@@ -70,30 +70,30 @@ spec:
             httpGet:
               path: /healthcheck
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
           readinessProbe:
             httpGet:
               path: /healthcheck
               port: http
           resources:
             {{ if .Values.development }}
-            limits:
-              cpu: "0.25"
-              memory: 500Mi
-              ephemeral-storage: "2Gi"
             requests:
               cpu: "0.06"
               memory: 20Mi
               ephemeral-storage: '1Gi'
-            {{ else }}
             limits:
-              cpu: "1"
+              cpu: "0.25"
               memory: 500Mi
               ephemeral-storage: "2Gi"
+            {{ else }}
             requests:
-              cpu: "0.25"
-              memory: 20Mi
+              cpu: "0.15"
+              memory: 350Mi
               ephemeral-storage: '1Gi'
+            limits:
+              cpu: "0.25"
+              memory: 500Mi
+              ephemeral-storage: "2Gi"
             {{ end }}
           volumeMounts:
             - name: config
@@ -121,23 +121,23 @@ spec:
               protocol: TCP
           resources:
             {{ if .Values.development }}
-            limits:
-              cpu: "0.1"
-              memory: 50Mi
-              ephemeral-storage: "2Gi"
             requests:
-              cpu: "0.02"
+              cpu: "12m"
               memory: 5Mi
               ephemeral-storage: "1Gi"
-            {{ else }}
             limits:
-              cpu: "1"
-              memory: 1Gi
+              cpu: "50m"
+              memory: 50Mi
               ephemeral-storage: "2Gi"
+            {{ else }}
             requests:
-              cpu: "0.2"
-              memory: 250Mi
+              cpu: "12m"
+              memory: 120Mi
               ephemeral-storage: "1Gi"
+            limits:
+              cpu: "50m"
+              memory: 200Mi
+              ephemeral-storage: "2Gi"
             {{ end }}
           volumeMounts:
             - name: prom-config
