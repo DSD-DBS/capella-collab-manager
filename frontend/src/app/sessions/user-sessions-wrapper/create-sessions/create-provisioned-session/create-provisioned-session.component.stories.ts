@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import MockDate from 'mockdate';
 import { mockSimpleToolModelWithoutProject } from 'src/storybook/model';
 import {
   mockProject,
@@ -14,6 +15,9 @@ import { CreateProvisionedSessionComponent } from './create-provisioned-session.
 const meta: Meta<CreateProvisionedSessionComponent> = {
   title: 'Session Components/Create Provisioned Session',
   component: CreateProvisionedSessionComponent,
+  beforeEach: () => {
+    MockDate.set(new Date('2024-05-01'));
+  },
 };
 
 export default meta;

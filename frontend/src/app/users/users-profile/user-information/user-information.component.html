@@ -10,10 +10,7 @@
       <mat-divider></mat-divider>
     </div>
     @if (user.last_login) {
-      <div>
-        Last login:
-        {{ user.last_login | date: "EE, dd MMM y HH:mm:ss" }}
-      </div>
+      <div>Last login <app-relative-time [date]="user.last_login" /></div>
     }
     <div>Identity provider identifier: {{ user.idp_identifier }}</div>
     @if (user.email) {

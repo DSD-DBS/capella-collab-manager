@@ -28,6 +28,7 @@ import { getPrimaryGitModel } from 'src/app/projects/models/service/model.servic
 import { ProjectToolsWrapperService } from 'src/app/projects/project-detail/project-tools/project-tools-wrapper.service';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
+import { RelativeTimeComponent } from '../../../../general/relative-time/relative-time.component';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +39,7 @@ import { SessionService } from 'src/app/sessions/service/session.service';
     MatButtonModule,
     NgxSkeletonLoaderModule,
     MatIconComponent,
+    RelativeTimeComponent,
   ],
   templateUrl: './create-provisioned-session.component.html',
   styles: `

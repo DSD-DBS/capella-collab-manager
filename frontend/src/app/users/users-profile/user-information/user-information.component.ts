@@ -18,6 +18,7 @@ import { of, switchMap } from 'rxjs';
 import { HistoryEvent, UsersService } from 'src/app/openapi';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
+import { RelativeTimeComponent } from '../../../general/relative-time/relative-time.component';
 
 @Component({
   selector: 'app-user-information',
@@ -27,6 +28,7 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
     NgxSkeletonLoaderModule,
     MatPaginator,
     MatDividerModule,
+    RelativeTimeComponent,
   ],
   styles: `
     .mat-cell,

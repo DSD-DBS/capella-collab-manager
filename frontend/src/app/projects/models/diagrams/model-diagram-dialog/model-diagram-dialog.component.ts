@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { DatePipe } from '@angular/common';
 import {
   Component,
   Inject,
@@ -43,6 +42,7 @@ import {
   MatDialogPreviewData,
   ModelDiagramPreviewDialogComponent,
 } from 'src/app/projects/models/diagrams/model-diagram-preview-dialog/model-diagram-preview-dialog.component';
+import { RelativeTimeComponent } from '../../../../general/relative-time/relative-time.component';
 import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model-diagram-code-block.component';
 
 @Component({
@@ -61,7 +61,7 @@ import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model
     MatButton,
     MatDivider,
     MatDialogClose,
-    DatePipe,
+    RelativeTimeComponent,
   ],
 })
 export class ModelDiagramDialogComponent implements OnInit {
