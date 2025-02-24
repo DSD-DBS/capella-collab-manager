@@ -23,11 +23,17 @@ def test_get_idle_status_disabled_in_development_mode(
 
 
 def test_get_idle_status_exception():
-    assert injection.get_idle_state("test") == models2_sessions.IdleState(
-        available=False,
-        unavailable_reason="Exception during fetching of idle state",
-        terminate_after_minutes=90,
-    )
+    with responses.RequestsMock() as rsps:
+        rsps.get(
+            f'{config.prometheus.url}/api/v1/query?query=idletime_minutes{{session_id="test"}}',
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+        assert injection.get_idle_state("test") == models2_sessions.IdleState(
+            available=False,
+            unavailable_reason="Exception during fetching of idle state",
+            terminate_after_minutes=90,
+        )
 
 
 def test_get_idle_status_unknown_session():

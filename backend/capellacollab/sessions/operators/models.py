@@ -11,6 +11,7 @@ class Volume(metaclass=abc.ABCMeta):
     name: str
     read_only: bool
     container_path: pathlib.PurePosixPath
+    sub_path: str | None
 
 
 @dataclasses.dataclass

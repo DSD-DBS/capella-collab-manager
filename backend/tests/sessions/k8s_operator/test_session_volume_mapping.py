@@ -19,6 +19,7 @@ def test_secret_reference_volume_mapping():
             container_path=pathlib.PurePosixPath("/inputs/test"),
             secret_name="test",
             optional=True,
+            sub_path=None,
         )
     ]
 
@@ -47,6 +48,7 @@ def test_persistent_volume_mapping():
             read_only=True,
             container_path=pathlib.PurePosixPath("/inputs/test"),
             volume_name="volume_test",
+            sub_path=None,
         )
     ]
 
@@ -73,6 +75,7 @@ def test_empty_volume_mapping():
             name="test",
             read_only=True,
             container_path=pathlib.PurePosixPath("/inputs/test"),
+            sub_path=None,
         )
     ]
 
@@ -102,6 +105,7 @@ def test_invalid_volume_mapping():
             name="test",
             read_only=True,
             container_path=pathlib.PurePosixPath("/inputs/test"),
+            sub_path=None,
         )
     ]
 

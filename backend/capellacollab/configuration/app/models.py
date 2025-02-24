@@ -118,7 +118,7 @@ class K8sPromtailConfig(BaseConfig):
         examples=[True],
     )
     loki_url: str | None = pydantic.Field(
-        default="http://localhost:30001/loki/api/v1/push",
+        default="http://dev-loki-gateway.collab-manager.svc.cluster.local/loki/api/v1",
         alias="lokiURL",
         description="The URL of the Loki instance to which to push logs.",
         examples=["http://localhost:30001/loki/api/v1/push"],

@@ -276,11 +276,6 @@ class LoggingConfiguration(core_pydantic.BaseModel):
         description="If enabled, logs will be pushed to Grafana Loki.",
     )
 
-    path: str = pydantic.Field(
-        default="/workspace/**/*.log",
-        description="Path to the log files, can be a glob string.",
-    )
-
 
 class SessionMonitoring(core_pydantic.BaseModel):
     prometheus: PrometheusConfiguration = pydantic.Field(
