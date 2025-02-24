@@ -21,7 +21,7 @@ from capellacollab.core import pydantic as core_pydantic
 from capellacollab.core.database import decorator
 from capellacollab.projects import models as project_models
 
-DOCKER_IMAGE_PATTERN = r"^[a-zA-Z0-9][a-zA-Z0-9_\-/.:${}]*$"
+DOCKER_IMAGE_PATTERN = r"^[a-zA-Z0-9][a-zA-Z0-9_\-/.:@${}]*$"
 
 
 class SessionPorts(core_pydantic.BaseModel):
