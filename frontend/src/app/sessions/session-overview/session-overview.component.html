@@ -2,29 +2,15 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<mat-checkbox
-  class="ml-4"
-  [ngModel]="getAllSessionsSelected()"
-  (change)="selectAllSessions($event.checked)"
-  [disabled]="!sessions?.length"
->
-  <span data-testid="select-all-sessions">Select all sessions</span>
-</mat-checkbox>
-<form
-  [formGroup]="deletionFormGroup"
-  class="max-w-[100vw] overflow-y-auto shadow-lg"
->
+<div class="max-w-[100vw] overflow-y-auto shadow-lg">
   <table mat-table [dataSource]="sessions ?? []">
-    <ng-container matColumnDef="checkbox">
-      <th mat-header-cell *matHeaderCellDef class="w-[72px]"></th>
-      <td mat-cell *matCellDef="let element">
-        <mat-checkbox [formControlName]="element.id"></mat-checkbox>
-      </td>
-    </ng-container>
-
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef class="w-[212px]">ID</th>
-      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+      <td mat-cell *matCellDef="let element">
+        <span class="select-all font-mono">
+          {{ element.id }}
+        </span>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="user">
@@ -33,21 +19,21 @@
     </ng-container>
 
     <ng-container matColumnDef="created_at">
-      <th mat-header-cell *matHeaderCellDef>Creation date</th>
+      <th mat-header-cell *matHeaderCellDef>Created</th>
       <td mat-cell *matCellDef="let element">
         <app-relative-time [date]="element.created_at" />
       </td>
     </ng-container>
 
     <ng-container matColumnDef="preparation_state">
-      <th mat-header-cell *matHeaderCellDef>Session Preparation</th>
+      <th mat-header-cell *matHeaderCellDef>Preparation</th>
       <td mat-cell *matCellDef="let element">
         {{ element.preparation_state }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="state">
-      <th mat-header-cell *matHeaderCellDef>Session State</th>
+      <th mat-header-cell *matHeaderCellDef>State</th>
       <td mat-cell *matCellDef="let element">{{ element.state }}</td>
     </ng-container>
 
@@ -74,19 +60,13 @@
     <ng-container matColumnDef="tool">
       <th mat-header-cell *matHeaderCellDef>Tool</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.version?.tool?.name }} ({{ element.version?.name }})
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="connection_method">
-      <th mat-header-cell *matHeaderCellDef>Connection method</th>
-      <td mat-cell *matCellDef="let element">
+        {{ element.version?.tool?.name }} ({{ element.version?.name }}) via
         {{ element.connection_method?.name }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef>Session type</th>
+      <th mat-header-cell *matHeaderCellDef>Type</th>
       <td mat-cell *matCellDef="let element">
         {{ element.type }}
       </td>
@@ -153,14 +133,14 @@
       <p>No sessions found</p>
     </div>
   }
-</form>
+</div>
 
 <button
   class="mt-4"
   mat-flat-button
-  color="primary"
+  color="warn"
   (click)="openMultiDeletionDialog()"
-  [disabled]="!getAnySessionSelected()"
+  [disabled]="sessions ? sessions.length < 1 : true"
 >
-  Terminate selected sessions
+  Terminate all sessions
 </button>

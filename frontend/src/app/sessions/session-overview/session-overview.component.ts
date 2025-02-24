@@ -4,17 +4,10 @@
  */
 import { Component, OnInit } from '@angular/core';
 import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import {
   MatButton,
   MatIconAnchor,
   MatIconButton,
 } from '@angular/material/button';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import {
@@ -42,9 +35,6 @@ import { ConnectionDialogComponent } from '../user-sessions-wrapper/active-sessi
   selector: 'app-session-overview',
   templateUrl: './session-overview.component.html',
   imports: [
-    MatCheckbox,
-    FormsModule,
-    ReactiveFormsModule,
     MatTable,
     MatColumnDef,
     MatHeaderCellDef,
@@ -70,11 +60,8 @@ export class SessionOverviewComponent implements OnInit {
     private dialog: MatDialog,
   ) {}
 
-  deletionFormGroup = new FormGroup({});
-
   sessions: Session[] | undefined = undefined;
   displayedColumns = [
-    'checkbox',
     'id',
     'user',
     'created_at',
@@ -82,7 +69,6 @@ export class SessionOverviewComponent implements OnInit {
     'state',
     'last_seen',
     'tool',
-    'connection_method',
     'type',
     'actions',
   ];
@@ -94,22 +80,13 @@ export class SessionOverviewComponent implements OnInit {
   refreshSessions() {
     this.sessionsService.getAllSessions().subscribe((res: Session[]) => {
       this.sessions = res;
-      for (const id in this.deletionFormGroup.controls) {
-        this.deletionFormGroup.removeControl(id);
-      }
-      this.sessions.forEach((session: Session) => {
-        this.deletionFormGroup.addControl(session.id, new FormControl(false));
-      });
     });
   }
 
   openMultiDeletionDialog(): void {
-    const sessions = this.sessions?.filter(
-      (session: Session) => this.deletionFormGroup.get(session.id)?.value,
-    );
-
+    if (!this.sessions) return;
     const dialogRef = this.dialog.open(DeleteSessionDialogComponent, {
-      data: sessions,
+      data: this.sessions,
     });
 
     dialogRef.afterClosed().subscribe((_) => {
@@ -131,32 +108,6 @@ export class SessionOverviewComponent implements OnInit {
     this.dialog.open(ConnectionDialogComponent, {
       data: session,
     });
-  }
-
-  selectAllSessions(checked: boolean): void {
-    for (const id in this.deletionFormGroup.controls) {
-      this.deletionFormGroup.get(id)?.setValue(checked);
-    }
-  }
-
-  getAllSessionsSelected(): boolean {
-    for (const id in this.deletionFormGroup.controls) {
-      if (!this.deletionFormGroup.get(id)?.value) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  getAnySessionSelected(): boolean {
-    for (const id in this.deletionFormGroup.controls) {
-      if (this.deletionFormGroup.get(id)?.value) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   protected readonly subMinutes = subMinutes;
