@@ -15,4 +15,8 @@ export class FullscreenService {
   toggleFullscreen(): void {
     this._isFullscreen.next(!this._isFullscreen.value);
   }
+
+  disableFullscreen(): void {
+    this._isFullscreen.next(false);
+  }
 }
