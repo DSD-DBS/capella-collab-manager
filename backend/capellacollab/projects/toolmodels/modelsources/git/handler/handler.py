@@ -44,15 +44,22 @@ class GitHandler:
         """
         Retrieve the ID and start time of the most recent run for a specified job.
 
-        Args:
-            job_name (str): The name of the job whose last run information is to be retrieved.
+        Args
+        ----
+        job_name : str
+            The name of the job whose last run information is to be retrieved.
 
-        Returns:
-            tuple[str, datetime.datetime]: A tuple containing the job ID and the start time (as a datetime object) of the most recent run.
+        Returns
+        -------
+        tuple : tuple[str, datetime.datetime]
+            A tuple containing the job ID and the start time (as a datetime object) of the most recent run.
 
-        Raises:
-            GitPipelineJobNotFoundError: If the job cannot be found in any of the recent pipeline runs.
-            GitPipelineJobUnsuccessfulError: If the last job state indicates that the job was not successful.
+        Raises
+        ------
+        GitPipelineJobNotFoundError
+            If the job cannot be found in any of the recent pipeline runs.
+        GitPipelineJobUnsuccessfulError
+            If the last job state indicates that the job was not successful.
         """
 
     @abc.abstractmethod
@@ -62,12 +69,17 @@ class GitHandler:
         """
         Retrieve an artifact from a specified job.
 
-        Args:
-            job_id (str): The unique identifier of the job from which to retrieve the artifact.
-            trusted_path_to_artifact (str): The path within the job's artifacts where the desired artifact is stored.
+        Args
+        ----
+        job_id : str
+            The unique identifier of the job from which to retrieve the artifact.
+        trusted_path_to_artifact : str
+            The path within the job's artifacts where the desired artifact is stored.
 
-        Returns:
-            bytes: The content of the artifact as a byte stream.
+        Returns
+        -------
+        bytes
+            The content of the artifact as a byte stream.
         """
 
     @abc.abstractmethod
@@ -77,15 +89,22 @@ class GitHandler:
         """
         Retrieve the contents of a specified file from the repository.
 
-        Args:
-            trusted_file_path (str): The path to the file within the repository.
-            revision (str | None): The specific revision to use. If None, the handler revision is used.
+        Args
+        ----
+        trusted_file_path : str
+            The path to the file within the repository.
+        revision : str | None
+            The specific revision to use. If None, the handler revision is used.
 
-        Returns:
-            bytes: The content of the file.
+        Returns
+        -------
+        bytes
+            The content of the file.
 
-        Raises:
-            GitRepositoryFileNotFoundError: If the file does not exist in the specified revision.
+        Raises
+        ------
+        GitRepositoryFileNotFoundError
+            If the file does not exist in the specified revision.
         """
 
     @abc.abstractmethod
@@ -95,15 +114,22 @@ class GitHandler:
         """
         Retrieve the last update datetime for the specified file in the repository.
 
-        Args:
-            file_path (str): The path to the file within the repository.
-            revision (str | None): The specific revision to use. If None, the handler revision is used.
+        Args
+        ----
+        file_path : str
+            The path to the file within the repository.
+        revision : str | None
+            The specific revision to use. If None, the handler revision is used.
 
-        Returns:
-            datetime.datetime: The datetime of the last update to the specified file.
+        Returns
+        -------
+        datetime.datetime
+            The datetime of the last update to the specified file.
 
-        Raises:
-            GitRepositoryFileNotFoundError: If the file does not exist in the revision.
+        Raises
+        ------
+        GitRepositoryFileNotFoundError
+            If the file does not exist in the revision.
         """
 
     @abc.abstractmethod
@@ -111,11 +137,15 @@ class GitHandler:
         """
         Retrieve the start datetime for the specified job in the repository.
 
-        Args:
-            job_id (str): The unique identifier of the job from which to retrieve the artifact.
+        Args
+        ----
+        job_id : str
+            The unique identifier of the job from which to retrieve the artifact.
 
-        Returns:
-            datetime.datetime: The datetime of the start time of the specified job.
+        Returns
+        -------
+        datetime.datetime
+            The datetime of the start time of the specified job.
         """
 
     async def get_file(

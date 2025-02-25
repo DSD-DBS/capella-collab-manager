@@ -237,17 +237,25 @@ def get_backup_image_for_tool_version(db: orm.Session, version_id: int) -> str:
 
     Finally, it replaces the placeholder "$version" in the backup image template with the actual version name and returns it.
 
-    Args:
-        db (orm.Session): The database session to use for database operations.
-        version_id (int): The ID of the tool version for which to get the backup image.
+    Args
+    ----
+    db : orm.Session
+        The database session to use for database operations.
+    version_id : int
+        The ID of the tool version for which to get the backup image.
 
-    Returns:
-        str: The backup image name for the specified tool version. The "$version" placeholder in the template
-             is replaced with the actual version name.
+    Returns
+    -------
+    str:
+        The backup image name for the specified tool version. The "$version" placeholder in the template
+        is replaced with the actual version name.
 
-    Raises:
-        ToolVersionNotFoundError: If a tool version with the specified version_id does not exist.
-        ToolImageNotFoundError: If the tool corresponding to the version does not have an associated backup image template.
+    Raises
+    ------
+    ToolVersionNotFoundError
+        If a tool version with the specified version_id does not exist.
+    ToolImageNotFoundError
+        If the tool corresponding to the version does not have an associated backup image template.
     """
     if not (version := get_version_by_id(db, version_id)):
         raise exceptions.ToolVersionNotFoundError(version_id)

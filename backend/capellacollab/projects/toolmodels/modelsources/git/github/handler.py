@@ -120,7 +120,7 @@ class GithubHandler(handler.GitHandler):
 
     def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
         response = requests.get(
-            f"{self.api_url}/repos/{self.repository_id}/actions/runs/{job_id}",
+            f"{self.api_url}/repos/{self.repository_id}/actions/runs/{parse.quote(job_id, safe='')}",
             headers=self.__get_headers(),
             timeout=config.requests.timeout,
         )
@@ -155,7 +155,7 @@ class GithubHandler(handler.GitHandler):
 
     def __get_latest_artifact_metadata(self, job_id: str):
         response = requests.get(
-            f"{self.api_url}/repos/{self.repository_id}/actions/runs/{job_id}/artifacts",
+            f"{self.api_url}/repos/{self.repository_id}/actions/runs/{parse.quote(job_id, safe='')}/artifacts",
             headers=self.__get_headers(),
             timeout=config.requests.timeout,
         )
