@@ -49,6 +49,7 @@ dependencies = [
   "croniter",
   "pyinstrument",
   "Jinja2",
+  "pydantic-extra-types>=2.10.2",
 ]
 
 [project.urls]
@@ -124,7 +125,8 @@ module = [
   "websocket.*",
   "testcontainers.*",
   "valkey.*",
-  "jinja2.*"
+  "jinja2.*",
+  "pydantic_extra_types.*"
 ]
 ignore_missing_imports = true
 

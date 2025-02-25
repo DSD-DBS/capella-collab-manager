@@ -4,11 +4,11 @@
 import abc
 import enum
 import typing as t
-import zoneinfo
 from collections import abc as collections_abc
 
 import pydantic
 from croniter import croniter
+from pydantic_extra_types import timezone_name
 from sqlalchemy import orm
 
 from capellacollab import core
@@ -236,7 +236,7 @@ class PipelineConfiguration(core_pydantic.BaseModelStrict):
     @pydantic.field_validator("timezone")
     @classmethod
     def validate_timezone(cls, v: str) -> str:
-        if v in zoneinfo.available_timezones():
+        if v in timezone_name.get_timezones():
             return v
 
         raise ValueError(
