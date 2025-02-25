@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import MockDate from 'mockdate';
 import { of } from 'rxjs';
 import {
@@ -57,6 +56,7 @@ const sessions = [
   { ...mockReadonlySession, id: 'vjmczglcgeltbfcronujtelwx' },
   {
     ...mockPersistentSession,
+    created_at: '2024-04-30T12:00:00Z',
     preparation_state: SessionPreparationState.Failed,
     state: SessionState.Pending,
     owner: {
@@ -79,23 +79,4 @@ export const Overview: Story = {
       ],
     }),
   ],
-};
-
-export const AllSelected: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        {
-          provide: SessionsService,
-          useValue: new MockSessionsService(sessions),
-        },
-      ],
-    }),
-  ],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const checkbox = canvas.getByTestId('select-all-sessions');
-    await userEvent.click(checkbox);
-  },
 };
