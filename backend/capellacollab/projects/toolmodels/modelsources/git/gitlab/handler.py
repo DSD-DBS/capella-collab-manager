@@ -72,7 +72,7 @@ class GitlabHandler(handler.GitHandler):
 
     def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
         response = requests.get(
-            f"{self.api_url}/projects/{self.repository_id}/jobs/{job_id}",
+            f"{self.api_url}/projects/{self.repository_id}/jobs/{parse.quote(job_id, safe='')}",
             headers={"PRIVATE-TOKEN": self.password},
             timeout=config.requests.timeout,
         )
@@ -120,7 +120,7 @@ class GitlabHandler(handler.GitHandler):
         self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
         response = requests.get(
-            f"{self.api_url}/projects/{self.repository_id}/jobs/{job_id}/artifacts/{trusted_path_to_artifact}",
+            f"{self.api_url}/projects/{self.repository_id}/jobs/{parse.quote(job_id, safe='')}/artifacts/{trusted_path_to_artifact}",
             headers={"PRIVATE-TOKEN": self.password},
             timeout=config.requests.timeout,
         )

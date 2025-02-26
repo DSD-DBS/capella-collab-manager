@@ -22,16 +22,24 @@ class GitHandlerFactory:
         """
         Create a git handler for the given git model.
 
-        Args:
-            db (orm.Session): Database session.
-            git_model (git_models.DatabaseGitModel): The git model instance.
+        Args
+        ----
+        db : orm.Session
+            Database session
+        git_model : git_models.DatabaseGitModel
+            The git model instance.
 
-        Returns:
-            handler.GitHandler: An instance of GitHandler.
+        Returns
+        -------
+        handler.GitHandler
+            An instance of GitHandler.
 
-        Raises:
-            GitInstanceAPIEndpointNotFoundError: If the git instance API endpoint is not found.
-            GitInstanceUnsupportedError: If the git instance type is unsupported.
+        Raises
+        ------
+        GitInstanceAPIEndpointNotFoundError
+            If the git instance API endpoint is not found.
+        GitInstanceUnsupportedError
+            If the git instance type is unsupported.
         """
         git_instance = GitHandlerFactory.get_git_instance_for_git_model(
             db, git_model
