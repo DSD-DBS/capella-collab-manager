@@ -33,7 +33,7 @@ def get_available_permissions():
         ]
     ),
 )
-async def validate_permissions(
+def validate_permissions(
     required_scopes: t.Annotated[
         list[str],
         fastapi.Query(

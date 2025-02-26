@@ -50,7 +50,7 @@ def get_unified_config(
         )
     ],
 )
-async def get_configuration(
+def get_configuration(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     return core.get_global_configuration(db)
@@ -71,7 +71,7 @@ async def get_configuration(
         )
     ],
 )
-async def update_configuration(
+def update_configuration(
     body: models.GlobalConfiguration,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
@@ -101,5 +101,5 @@ async def update_configuration(
 @router.get(
     f"/{models.GlobalConfiguration._name}/schema", response_model=t.Any
 )
-async def get_json_schema():
+def get_json_schema():
     return models.GlobalConfiguration.model_json_schema()
