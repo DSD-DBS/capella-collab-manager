@@ -20,7 +20,7 @@ router = fastapi.APIRouter(tags=["Authentication"])
 
 
 @router.get("")
-async def get_authorization_url(
+def get_authorization_url(
     response: fastapi.Response,
 ) -> models.AuthorizationResponse:
     authorization_response = (
@@ -32,7 +32,7 @@ async def get_authorization_url(
 
 
 @router.post("/tokens")
-async def get_identity_token(
+def get_identity_token(
     token_request: models.TokenRequest,
     response: fastapi.Response,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
@@ -50,7 +50,7 @@ async def get_identity_token(
 
 
 @router.put("/tokens")
-async def refresh_identity_token(
+def refresh_identity_token(
     response: fastapi.Response,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
     refresh_token: t.Annotated[str | None, fastapi.Cookie()] = None,
@@ -69,7 +69,7 @@ async def refresh_identity_token(
 
 
 @router.delete("/tokens")
-async def logout(response: fastapi.Response):
+def logout(response: fastapi.Response):
     delete_token_cookies(response)
 
 

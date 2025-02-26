@@ -152,7 +152,7 @@ async def handle_exceptions(request: fastapi.Request, exc: Exception):  # noqa: 
 
 
 @app.get("/healthcheck", tags=["Healthcheck"], include_in_schema=False)
-async def healthcheck():
+def healthcheck():
     return {"status": "alive"}
 
 
