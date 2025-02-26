@@ -17,7 +17,9 @@ from . import exceptions, handler
 class GitHandlerFactory:
     @staticmethod
     async def create_git_handler(
-        db: orm.Session, git_model: git_models.DatabaseGitModel
+        db: orm.Session,
+        git_model: git_models.DatabaseGitModel,
+        revision: str | None = None,
     ) -> handler.GitHandler:
         """
         Create a git handler for the given git model.
@@ -45,6 +47,9 @@ class GitHandlerFactory:
             db, git_model
         )
 
+        if not revision:
+            revision = git_model.revision
+
         if not git_instance.api_url:
             raise exceptions.GitInstanceAPIEndpointNotFoundError()
 
@@ -63,6 +68,7 @@ class GitHandlerFactory:
             repository_id,
             git_instance.api_url,
             git_instance.type,
+            revision,
         )
 
     @staticmethod
@@ -109,13 +115,14 @@ class GitHandlerFactory:
         git_model_repository_id: str,
         git_instance_api_url: str,
         git_instance_type: settings_git_models.GitType,
+        revision: str,
     ) -> handler.GitHandler:
         match git_instance_type:
             case settings_git_models.GitType.GITLAB:
                 return gitlab_handler.GitlabHandler(
                     git_model.id,
                     git_model.path,
-                    git_model.revision,
+                    revision,
                     git_model.password,
                     git_instance_api_url,
                     git_model_repository_id,
@@ -124,7 +131,7 @@ class GitHandlerFactory:
                 return github_handler.GithubHandler(
                     git_model.id,
                     git_model.path,
-                    git_model.revision,
+                    revision,
                     git_model.password,
                     git_instance_api_url,
                     git_model_repository_id,

@@ -189,15 +189,7 @@ export class ModelDiagramDialogComponent implements OnInit {
     if (!loadingDiagram.loading) {
       this.dialog.open(ModelDiagramPreviewDialogComponent, {
         maxWidth: '100vw',
-        panelClass: [
-          'md:w-[85vw]',
-          'md:h-[85vw]',
-          'md:max-h-[85vh]',
-          'max-h-full',
-          'w-full',
-          'h-full',
-          '!max-w-full',
-        ],
+        maxHeight: '100vh',
         data: {
           diagram: diagram,
           content: loadingDiagram.content,

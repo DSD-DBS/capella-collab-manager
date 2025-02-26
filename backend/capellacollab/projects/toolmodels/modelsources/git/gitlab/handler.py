@@ -124,8 +124,14 @@ class GitlabHandler(handler.GitHandler):
             headers={"PRIVATE-TOKEN": self.password},
             timeout=config.requests.timeout,
         )
-        response.raise_for_status()
-
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
+            if e.response.status_code == 404:
+                raise git_exceptions.GitRepositoryFileNotFoundError(
+                    filename=trusted_path_to_artifact
+                ) from e
+            raise
         return response.content
 
     def get_file_from_repository(

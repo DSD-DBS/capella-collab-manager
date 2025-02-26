@@ -20,6 +20,7 @@ from capellacollab.projects.toolmodels import (
     injectables as toolmodels_injectables,
 )
 from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.diagrams import core as diagrams_core
 from capellacollab.projects.toolmodels.modelsources.git import (
     injectables as git_injectables,
 )
@@ -96,7 +97,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
                 warnings,
             )
         else:
-            cls._read_only_provisioning(
+            await cls._read_only_provisioning(
                 request, resolved_entries, init_environment, environment
             )
 
@@ -162,21 +163,21 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
 
             if not existing_provisioning:
                 init_provisioning.append(
-                    cls._git_model_as_json(
-                        git_model,
-                        entry.revision or git_model.revision,
-                        entry.deep_clone,
-                        request.session_type,
+                    await cls._git_model_as_json(
+                        request=request,
+                        git_model=git_model,
+                        revision=entry.revision or git_model.revision,
+                        deep_clone=entry.deep_clone,
                         include_credentials=True,
                     )
                 )
 
             session_provisioning.append(
-                cls._git_model_as_json(
-                    git_model,
-                    entry.revision or git_model.revision,
-                    entry.deep_clone,
-                    request.session_type,
+                await cls._git_model_as_json(
+                    request=request,
+                    git_model=git_model,
+                    revision=entry.revision or git_model.revision,
+                    deep_clone=entry.deep_clone,
                     include_credentials=False,
                 )
             )
@@ -187,7 +188,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         )
 
     @classmethod
-    def _read_only_provisioning(
+    async def _read_only_provisioning(
         cls,
         request: interface.ConfigurationHookRequest,
         resolved_entries: list[ResolvedSessionProvisioning],
@@ -196,20 +197,21 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
     ):
         """Provisioning of read-only sessions"""
 
-        init_environment["CAPELLACOLLAB_PROVISIONING"] = (
-            cls._get_git_repos_json(
-                resolved_entries,
-                request.session_type,
-                include_credentials=True,
-            )
+        init_environment[
+            "CAPELLACOLLAB_PROVISIONING"
+        ] = await cls._get_git_repos_json(
+            request,
+            resolved_entries,
+            include_credentials=True,
         )
 
-        environment["CAPELLACOLLAB_SESSION_PROVISIONING"] = (
-            cls._get_git_repos_json(
-                resolved_entries,
-                request.session_type,
-                include_credentials=False,
-            )
+        environment[
+            "CAPELLACOLLAB_SESSION_PROVISIONING"
+        ] = await cls._get_git_repos_json(
+            request,
+            resolved_entries,
+            include_credentials=False,
+            diagram_cache=request.tool.config.provisioning.provide_diagram_cache,
         )
 
     @classmethod
@@ -310,32 +312,35 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             )(project_scope, entry["project"])
 
     @classmethod
-    def _get_git_repos_json(
+    async def _get_git_repos_json(
         cls,
+        request: interface.ConfigurationHookRequest,
         resolved_entries: list[ResolvedSessionProvisioning],
-        session_type: sessions_models.SessionType,
         include_credentials: bool = False,
+        diagram_cache: bool = False,
     ) -> list[dict[str, str | int]]:
         """Get the git repos as a JSON-serializable list"""
         return [
-            cls._git_model_as_json(
+            await cls._git_model_as_json(
+                request,
                 entry["git_model"],
                 entry["entry"].revision or entry["git_model"].revision,
                 entry["entry"].deep_clone,
-                session_type,
                 include_credentials,
+                diagram_cache,
             )
             for entry in resolved_entries
         ]
 
     @classmethod
-    def _git_model_as_json(
+    async def _git_model_as_json(
         cls,
+        request: interface.ConfigurationHookRequest,
         git_model: git_models.DatabaseGitModel,
         revision: str,
         deep_clone: bool,
-        session_type: sessions_models.SessionType,
         include_credentials: bool,
+        diagram_cache: bool = False,
     ) -> dict[str, str | int]:
         """Convert a DatabaseGitModel to a JSON-serializable dictionary."""
         toolmodel = git_model.model
@@ -351,16 +356,26 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             "path": str(
                 pathlib.PurePosixPath(
                     toolmodel.tool.config.provisioning.directory
-                    if session_type == sessions_models.SessionType.READONLY
+                    if request.session_type
+                    == sessions_models.SessionType.READONLY
                     else "/workspace"
                 )
                 / toolmodel.project.slug
                 / toolmodel.slug
             ),
         }
+
         if include_credentials and git_model.username:
             git_dict["username"] = git_model.username
             git_dict["password"] = git_model.password
+
+        if diagram_cache:
+            git_dict[
+                "diagram_cache"
+            ] = await diagrams_core.build_diagram_cache_api_url(
+                request.logger, git_model, request.db, revision
+            )
+
         return git_dict
 
     @classmethod

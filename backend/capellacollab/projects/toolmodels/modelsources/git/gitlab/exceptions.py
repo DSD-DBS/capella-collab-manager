@@ -34,7 +34,7 @@ class GitlabProjectNotFoundError(git_exceptions.RepositoryNotFoundError):
                 f"We couldn't find the project in your Gitlab instance. "
                 f"Please make sure that a project with the encoded name '{project_name}' does exist."
             ),
-            err_code="PROJECT_NOT_FOUND",
+            err_code="GITLAB_PROJECT_NOT_FOUND",
         )
 
     @classmethod

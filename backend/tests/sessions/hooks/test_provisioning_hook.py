@@ -8,8 +8,12 @@ from sqlalchemy import orm
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.toolmodels import models as toolmodels_models
+from capellacollab.projects.toolmodels.diagrams import core as diagrams_core
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
+)
+from capellacollab.projects.toolmodels.modelsources.git.handler import (
+    factory as git_handler_factory,
 )
 from capellacollab.projects.toolmodels.provisioning import (
     crud as provisioning_crud,
@@ -387,4 +391,58 @@ async def test_provisioning_fallback_without_revision(
     assert (
         session_provisioning[0]["revision"]
         == "0665eb5bf5dc3a7bdcb30b4354c85eddde2bd847"
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.usefixtures("project_user")
+async def test_provision_diagram_cache(
+    project: projects_models.DatabaseProject,
+    capella_model: toolmodels_models.DatabaseToolModel,
+    git_model: git_models.DatabaseGitModel,
+    configuration_hook_request: hooks_interface.ConfigurationHookRequest,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    async def mock_create_git_handler(*args):
+        return None
+
+    monkeypatch.setattr(
+        git_handler_factory.GitHandlerFactory,
+        "create_git_handler",
+        mock_create_git_handler,
+    )
+
+    async def mock_fetch_diagram_cache_metadata(*args):
+        return ("12345", None, None)
+
+    monkeypatch.setattr(
+        diagrams_core,
+        "fetch_diagram_cache_metadata",
+        mock_fetch_diagram_cache_metadata,
+    )
+
+    configuration_hook_request.session_type = (
+        sessions_models.SessionType.READONLY
+    )
+    configuration_hook_request.provisioning = [
+        sessions_models.SessionProvisioningRequest(
+            project_slug=project.slug,
+            model_slug=capella_model.slug,
+            git_model_id=git_model.id,
+            revision="test",
+            deep_clone=False,
+        )
+    ]
+    configuration_hook_request.tool.config.provisioning.provide_diagram_cache = True
+    response = await hooks_provisioning.ProvisionWorkspaceHook().async_configuration_hook(
+        configuration_hook_request
+    )
+
+    session_provisioning = response["environment"][
+        "CAPELLACOLLAB_SESSION_PROVISIONING"
+    ]
+    assert len(session_provisioning) == 1
+    assert (
+        session_provisioning[0]["diagram_cache"]
+        == f"http://dev-backend.collab-manager.svc.cluster.local/api/v1/projects/{project.slug}/models/{capella_model.slug}/diagrams/%s?job_id=12345"
     )

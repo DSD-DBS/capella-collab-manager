@@ -203,6 +203,30 @@ def test_environment_resolution_before_stage(logger: logging.LoggerAdapter):
     assert resolved["TEST2"] == "test2"
 
 
+def test_environment_resolution_before_stage_recursive(
+    logger: logging.LoggerAdapter,
+):
+    environment = {"TEST": [{"test": "test2"}], "TEST2": "test3"}
+    rules = {
+        "TEST": tools_models.ToolSessionEnvironment(
+            stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
+            value=[
+                {"test": "{TEST[0][test]}", "test2": "{TEST2}"},
+            ],
+        )
+    }
+
+    resolved, warnings = sessions_util.resolve_environment_variables(
+        logger,
+        environment,
+        rules,
+        stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
+    )
+
+    assert not warnings
+    assert resolved["TEST"] == [{"test": "test2", "test2": "test3"}]
+
+
 def test_environment_resolution_wrong_stage(logger: logging.LoggerAdapter):
     environment = {"TEST": [{"test": "test2"}]}
     rules = {

@@ -35,3 +35,36 @@ class FileExtensionNotSupportedError(core_exceptions.BaseError):
     @classmethod
     def openapi_example(cls) -> "FileExtensionNotSupportedError":
         return cls("png")
+
+
+class DiagramNotFoundError(core_exceptions.BaseError):
+    def __init__(self, diagram_uuid: str):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            title="Couldn't find the requested diagram",
+            reason=(
+                f"The diagram with the UUID '{diagram_uuid}' could not be found in the diagram cache index."
+            ),
+            err_code="DIAGRAM_CACHE_DIAGRAM_NOT_FOUND",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "DiagramNotFoundError":
+        return cls("_yYhrh3jqEea__MYrXGSERA")
+
+
+class DiagramNotSuccessfulError(core_exceptions.BaseError):
+    def __init__(self, diagram_uuid: str):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="The requested diagram export was not successful",
+            reason=(
+                f"The diagram with the UUID '{diagram_uuid}' has been marked"
+                " as unsuccessful in the diagram cache index."
+            ),
+            err_code="DIAGRAM_CACHE_DIAGRAM_NOT_SUCCESSFUL",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "DiagramNotSuccessfulError":
+        return cls("_yYhrh3jqEea__MYrXGSERA")

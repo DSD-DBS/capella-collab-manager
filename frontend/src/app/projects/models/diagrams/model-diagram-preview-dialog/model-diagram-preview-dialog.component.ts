@@ -18,7 +18,6 @@ import { DiagramMetadata } from 'src/app/openapi';
 @Component({
   selector: 'app-model-diagram-preview-dialog',
   templateUrl: './model-diagram-preview-dialog.component.html',
-  styleUrls: ['./model-diagram-preview-dialog.component.css'],
   imports: [MatDivider, MatButton, MatDialogClose],
 })
 export class ModelDiagramPreviewDialogComponent implements AfterViewInit {

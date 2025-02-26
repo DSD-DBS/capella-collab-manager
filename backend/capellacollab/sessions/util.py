@@ -80,8 +80,12 @@ def get_environment(
         "CAPELLACOLLAB_SESSIONS_HOST": config.general.host,
         "CAPELLACOLLAB_SESSIONS_PORT": str(config.general.port),
         "CAPELLACOLLAB_SESSION_CONTAINER_PORT": str(container_port),
-        "CAPELLACOLLAB_API_BASE_URL": f"http://{config.k8s.release_name}-backend.{config.k8s.management_portal_namespace}.svc.cluster.local/api",
+        "CAPELLACOLLAB_API_BASE_URL": get_api_base_url(),
     }
+
+
+def get_api_base_url() -> str:
+    return f"http://{config.k8s.release_name}-backend.{config.k8s.management_portal_namespace}.svc.cluster.local/api"
 
 
 def raise_if_conflicting_sessions(
@@ -121,7 +125,9 @@ def resolve_environment_variables(
             env_value = value
 
         try:
-            resolved[key] = env_value.format(**environment)
+            resolved[key] = format_environment_variable(
+                key, environment, env_value
+            )
         except Exception:
             logger.warning(
                 "Failed to resolve environment variable '%s'",
@@ -142,6 +148,24 @@ def resolve_environment_variables(
             ]
 
     return resolved, warnings
+
+
+def format_environment_variable(
+    key: str, environment: dict[str, t.Any], value: str | t.Any
+):
+    if isinstance(value, str):
+        return value.format(**environment)
+    if isinstance(value, t.Mapping):
+        return {
+            key: format_environment_variable(key, environment, val)
+            for key, val in value.items()
+        }
+    if isinstance(value, list):
+        return [
+            format_environment_variable(key, environment, val) for val in value
+        ]
+
+    raise TypeError(f"Unsupported type for environment variable {key}")
 
 
 def stringify_environment_variables(

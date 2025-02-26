@@ -161,16 +161,17 @@ class GitHandler:
             trusted_file_path, revision
         )
 
-        if file_data := self.cache.get_file_data(
+        if file_data := await self.cache.get_file_data(
             trusted_file_path, revision, logger
         ):
+            logger.debug("Found file '%s' in cache", trusted_file_path)
             last_updated_cache, content_cache = file_data
 
             if last_updated == last_updated_cache:
                 return last_updated_cache, content_cache
 
         content = self.get_file_from_repository(trusted_file_path, revision)
-        self.cache.put_file_data(
+        await self.cache.put_file_data(
             trusted_file_path, last_updated, content, revision, logger
         )
 
@@ -183,20 +184,27 @@ class GitHandler:
         logger: logging.LoggerAdapter,
         job_id: str | None = None,
     ) -> tuple[str, datetime.datetime, bytes]:
+        started_at = None
         if not job_id:
             job_id, started_at = await self.get_last_successful_job_run(
                 job_name
             )
-        else:
-            started_at = self.get_started_at_for_job(job_id)
 
-        if artifact_data := self.cache.get_artifact_data(
+        if artifact_data := await self.cache.get_artifact_data(
             job_id, trusted_file_path, logger
         ):
+            logger.debug(
+                "Found artifact '%s' with job id '%s' in cache",
+                trusted_file_path,
+                job_id,
+            )
             return job_id, artifact_data[0], artifact_data[1]
 
+        if not started_at:
+            started_at = self.get_started_at_for_job(job_id)
+
         content = self.get_artifact_from_job(job_id, trusted_file_path)
-        self.cache.put_artifact_data(
+        await self.cache.put_artifact_data(
             job_id, trusted_file_path, started_at, content, logger
         )
 

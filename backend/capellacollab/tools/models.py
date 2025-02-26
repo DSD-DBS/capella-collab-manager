@@ -86,7 +86,7 @@ class ToolSessionEnvironment(core_pydantic.BaseModel):
             "'after' runs after the environment variable is JSON serialized, allowing to access a dict in the JSON format. "
         ),
     )
-    value: str = pydantic.Field(
+    value: list | dict | str = pydantic.Field(
         default="{CAPELLACOLLAB_SESSION_TOKEN}",
         description=(
             "Environment variables, which are mounted into session containers. "
@@ -94,8 +94,28 @@ class ToolSessionEnvironment(core_pydantic.BaseModel):
         ),
         examples=[
             "test_{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}",
+            {
+                "path": "{CAPELLACOLLAB_SESSION_PROVISIONING[0][path]}",
+                "diagram_cache": {
+                    "path": "{CAPELLACOLLAB_SESSION_PROVISIONING[0][diagram_cache]}",
+                    "password": "{CAPELLACOLLAB_SESSION_API_TOKEN}",
+                    "username": "{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}",
+                },
+            },
+            ["test1", "test2"],
         ],
     )
+
+    @pydantic.model_validator(mode="after")
+    def check_after_stage_users_str_as_value(
+        self,
+    ):
+        if (
+            not isinstance(self.value, str)
+            and self.stage == ToolSessionEnvironmentStage.AFTER
+        ):
+            raise ValueError("After stage only accepts str")
+        return self
 
 
 class ToolSessionSharingConfiguration(core_pydantic.BaseModel):
@@ -310,6 +330,12 @@ class ToolModelProvisioning(core_pydantic.BaseModel):
         description=(
             "Specifies if a tool requires provisioning."
             " If enabled and a session without provisioning is requested, it will be declined."
+        ),
+    )
+    provide_diagram_cache: bool = pydantic.Field(
+        default=False,
+        description=(
+            "If enabled, the diagram_cache attribute will be added to the provisioning dictionary."
         ),
     )
 
