@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
-
-
+import asyncio
 import contextlib
 import logging
 import os
@@ -50,6 +49,10 @@ ALLOW_ORIGINS = [
 @contextlib.asynccontextmanager
 async def lifespan(_app: fastapi.FastAPI):
     del _app
+
+    if config.logging.async_debug:
+        asyncio.get_event_loop().slow_callback_duration = 0.02
+        asyncio.get_event_loop().set_debug(enabled=True)
 
     migration.migrate_db(engine, config.database.url)
 

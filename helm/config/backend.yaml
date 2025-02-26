@@ -88,6 +88,7 @@ logging:
   level: DEBUG
   logPath: /var/log/backend/
   profiling: {{ .Values.backend.profiling }}
+  asyncDebug: {{ .Values.backend.asyncDebug }}
 
 requests:
   timeout: 5

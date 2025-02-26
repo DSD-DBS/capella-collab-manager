@@ -181,6 +181,7 @@ backend:
   storageClassName: local-path
   storageAccessMode: ReadWriteOnce
   profiling: false
+  asyncDebug: false
 
 guacamole:
   username: guacadmin
