@@ -25,7 +25,7 @@ def create_token(
     source: str,
 ) -> tuple[models.DatabaseUserToken, str]:
     password = "collabmanager_" + credentials.generate_password(32)
-    ph = argon2.PasswordHasher()
+    ph = argon2.PasswordHasher(time_cost=1, memory_cost=2048, parallelism=1)
     if not expiration_date:
         expiration_date = datetime.datetime.now(
             tz=datetime.UTC
@@ -48,7 +48,7 @@ def create_token(
 def get_token_by_token_and_user(
     db: orm.Session, password: str, user_id: int
 ) -> models.DatabaseUserToken | None:
-    ph = argon2.PasswordHasher()
+    ph = argon2.PasswordHasher(time_cost=1, memory_cost=2048, parallelism=1)
 
     for token in get_token_by_user(db, user_id):
         try:
