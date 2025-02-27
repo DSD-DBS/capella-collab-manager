@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+import asyncer
 from sqlalchemy import orm
 
 import capellacollab.projects.toolmodels.modelsources.git.crud as git_crud
@@ -43,9 +44,9 @@ class GitHandlerFactory:
         GitInstanceUnsupportedError
             If the git instance type is unsupported.
         """
-        git_instance = GitHandlerFactory.get_git_instance_for_git_model(
-            db, git_model
-        )
+        git_instance = await asyncer.asyncify(
+            GitHandlerFactory.get_git_instance_for_git_model
+        )(db, git_model)
 
         if not revision:
             revision = git_model.revision
@@ -57,7 +58,7 @@ class GitHandlerFactory:
             repository_id = await GitHandlerFactory._get_repository_id(
                 git_model, git_instance.api_url, git_instance.type
             )
-            git_crud.update_git_model_repository_id(
+            asyncer.asyncify(git_crud.update_git_model_repository_id)(
                 db, git_model, repository_id
             )
         else:

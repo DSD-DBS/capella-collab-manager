@@ -6,7 +6,6 @@ import datetime
 from urllib import parse
 
 import aiohttp
-import requests
 
 from capellacollab.configuration.app import config
 
@@ -53,31 +52,36 @@ class GitlabHandler(handler.GitHandler):
             job_name=job_name, revision=self.revision
         )
 
-    def get_last_updated_for_file(
+    async def get_last_updated_for_file(
         self, file_path: str, revision: str | None = None
     ) -> datetime.datetime:
-        response = requests.get(
-            f"{self.api_url}/projects/{self.repository_id}/repository/commits?ref_name={revision or self.revision}&path={file_path}",
-            headers={"PRIVATE-TOKEN": self.password},
-            timeout=config.requests.timeout,
-        )
-        response.raise_for_status()
-        if len(response.json()) == 0:
-            raise git_exceptions.GitRepositoryFileNotFoundError(
-                filename=file_path
-            )
-        return datetime.datetime.fromisoformat(
-            response.json()[0]["authored_date"]
-        )
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"{self.api_url}/projects/{self.repository_id}/repository/commits?ref_name={revision or self.revision}&path={file_path}",
+                headers={"PRIVATE-TOKEN": self.password},
+                timeout=config.requests.timeout,
+            ) as response:
+                response.raise_for_status()
+                json = await response.json()
+                if len(json) == 0:
+                    raise git_exceptions.GitRepositoryFileNotFoundError(
+                        filename=file_path
+                    )
+                return datetime.datetime.fromisoformat(
+                    json[0]["authored_date"]
+                )
 
-    def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
-        response = requests.get(
-            f"{self.api_url}/projects/{self.repository_id}/jobs/{parse.quote(job_id, safe='')}",
-            headers={"PRIVATE-TOKEN": self.password},
-            timeout=config.requests.timeout,
-        )
-        response.raise_for_status()
-        return datetime.datetime.fromisoformat(response.json()["started_at"])
+    async def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"{self.api_url}/projects/{self.repository_id}/jobs/{parse.quote(job_id, safe='')}",
+                headers={"PRIVATE-TOKEN": self.password},
+                timeout=config.requests.timeout,
+            ) as response:
+                response.raise_for_status()
+                return datetime.datetime.fromisoformat(
+                    (await response.json())["started_at"]
+                )
 
     async def __get_last_pipeline_run_ids(self) -> list[str]:
         async with aiohttp.ClientSession() as session:
@@ -116,38 +120,38 @@ class GitlabHandler(handler.GitHandler):
 
                 return None
 
-    def get_artifact_from_job(
+    async def get_artifact_from_job(
         self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
-        response = requests.get(
-            f"{self.api_url}/projects/{self.repository_id}/jobs/{parse.quote(job_id, safe='')}/artifacts/{trusted_path_to_artifact}",
-            headers={"PRIVATE-TOKEN": self.password},
-            timeout=config.requests.timeout,
-        )
-        try:
-            response.raise_for_status()
-        except requests.HTTPError as e:
-            if e.response.status_code == 404:
-                raise git_exceptions.GitRepositoryFileNotFoundError(
-                    filename=trusted_path_to_artifact
-                ) from e
-            raise
-        return response.content
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"{self.api_url}/projects/{self.repository_id}/jobs/{parse.quote(job_id, safe='')}/artifacts/{trusted_path_to_artifact}",
+                headers={"PRIVATE-TOKEN": self.password},
+                timeout=config.requests.timeout,
+            ) as response:
+                if response.status == 404:
+                    raise git_exceptions.GitRepositoryFileNotFoundError(
+                        filename=trusted_path_to_artifact
+                    )
 
-    def get_file_from_repository(
+                response.raise_for_status()
+                return await response.content.read()
+
+    async def get_file_from_repository(
         self, trusted_file_path: str, revision: str | None = None
     ) -> bytes:
         branch = revision if revision else self.revision
-        response = requests.get(
-            f"{self.api_url}/projects/{self.repository_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(branch, safe='')}",
-            headers={"PRIVATE-TOKEN": self.password},
-            timeout=config.requests.timeout,
-        )
 
-        if response.status_code == 404:
-            raise git_exceptions.GitRepositoryFileNotFoundError(
-                filename=trusted_file_path
-            )
-        response.raise_for_status()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                f"{self.api_url}/projects/{self.repository_id}/repository/files/{parse.quote(trusted_file_path, safe='')}?ref={parse.quote(branch, safe='')}",
+                headers={"PRIVATE-TOKEN": self.password},
+                timeout=config.requests.timeout,
+            ) as response:
+                if response.status == 404:
+                    raise git_exceptions.GitRepositoryFileNotFoundError(
+                        filename=trusted_file_path
+                    )
+                response.raise_for_status()
 
-        return base64.b64decode(response.json()["content"])
+                return base64.b64decode((await response.json())["content"])

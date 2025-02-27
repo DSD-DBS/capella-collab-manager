@@ -4,6 +4,7 @@
 import logging
 import typing as t
 
+import asyncer
 import fastapi
 from sqlalchemy import orm
 
@@ -178,7 +179,9 @@ async def update_git_model_by_id(
 ) -> models.DatabaseGitModel:
     git_util.verify_path_prefix(db, put_git_model.path)
     await cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
-    return crud.update_git_model(db, db_git_model, put_git_model)
+    return await asyncer.asyncify(crud.update_git_model)(
+        db, db_git_model, put_git_model
+    )
 
 
 @router.delete(
