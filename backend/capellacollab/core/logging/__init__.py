@@ -149,6 +149,7 @@ def _get_log_args(request: fastapi.Request) -> dict[str, t.Any]:
         "method": request.method,
         "path": request.url.path,
         "user": request.state.user_name,
+        "query_params": request.url.query,
     }
 
 
