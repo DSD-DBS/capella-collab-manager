@@ -115,7 +115,7 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
         get_request_logger(request).debug("request started")
         response: fastapi.Response = await call_next(request)
         get_request_logger(request).debug(
-            "request finished", {"status_code": response.status_code}
+            "request finished", extra={"status_code": response.status_code}
         )
 
         return response
