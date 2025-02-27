@@ -26,7 +26,7 @@ def get_scope(
             users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
         ],
         fastapi.Depends(
-            auth_injectables.AuthenticationInformationValidation()
+            auth_injectables.authentication_information_validation
         ),
     ],
     global_scope: t.Annotated[

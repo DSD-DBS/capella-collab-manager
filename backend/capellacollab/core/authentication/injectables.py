@@ -20,7 +20,7 @@ from . import exceptions
 logger = logging.getLogger(__name__)
 
 
-class AuthenticationInformationValidation:
+class _AuthenticationInformationValidation:
     exceptions = [
         exceptions.JWTInvalidToken(),
         exceptions.TokenSignatureExpired(),
@@ -32,8 +32,9 @@ class AuthenticationInformationValidation:
         exceptions.UnknownScheme("unknown"),
     ]
 
+    @classmethod
     async def __call__(
-        self,
+        cls,
         request: fastapi.Request,
         db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
     ) -> tuple[
@@ -58,3 +59,6 @@ class AuthenticationInformationValidation:
                 raise exceptions.UnauthenticatedError()
             case _:
                 raise exceptions.UnknownScheme(scheme)
+
+
+authentication_information_validation = _AuthenticationInformationValidation()
