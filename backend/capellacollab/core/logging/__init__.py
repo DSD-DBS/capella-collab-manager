@@ -85,7 +85,7 @@ class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
                 (
                     user,
                     _,
-                ) = await auth_injectables.AuthenticationInformationValidation()(
+                ) = await auth_injectables.authentication_information_validation(
                     request, session
                 )
             username = user.name

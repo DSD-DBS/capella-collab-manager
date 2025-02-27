@@ -65,7 +65,7 @@ def derive_permissions_and_dependencies_from_dependencies(
 
         if isinstance(
             dependency.call,
-            auth_injectables.AuthenticationInformationValidation,
+            auth_injectables._AuthenticationInformationValidation,
         ):
             authenticated_route = True
 

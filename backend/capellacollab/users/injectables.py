@@ -15,7 +15,7 @@ def get_own_user(
     authentication_information: t.Annotated[
         tuple[models.DatabaseUser, tokens_models.DatabaseUserToken | None],
         fastapi.Depends(
-            auth_injectables.AuthenticationInformationValidation()
+            auth_injectables.authentication_information_validation
         ),
     ],
 ) -> models.DatabaseUser:

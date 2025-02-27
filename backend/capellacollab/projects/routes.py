@@ -62,7 +62,7 @@ def get_projects(
             users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
         ],
         fastapi.Depends(
-            auth_injectables.AuthenticationInformationValidation()
+            auth_injectables.authentication_information_validation
         ),
     ],
     minimum_role: projects_users_models.ProjectUserRole | None = None,
