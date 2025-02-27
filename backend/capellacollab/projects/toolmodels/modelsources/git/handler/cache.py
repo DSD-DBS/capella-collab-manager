@@ -70,7 +70,7 @@ class GitValkeyCache:
                     "content": content,
                 },
             )
-            self._valkey.expire(
+            await self._valkey.expire(
                 name=self._get_file_key(file_path, revision), time=DEFAULT_TTL
             )
         except valkey.exceptions.ValkeyError:
@@ -92,7 +92,7 @@ class GitValkeyCache:
                     "content": content,
                 },
             )
-            self._valkey.expire(
+            await self._valkey.expire(
                 name=self._get_artifact_key(job_id, file_path),
                 time=DEFAULT_TTL,
             )
