@@ -50,6 +50,7 @@ dependencies = [
   "pyinstrument",
   "Jinja2",
   "pydantic-extra-types>=2.10.2",
+  "asyncer==0.0.8",
 ]
 
 [project.urls]

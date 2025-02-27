@@ -8,6 +8,7 @@ import typing as t
 
 import fastapi
 import jwt
+from asyncer import asyncify
 from fastapi import status
 from sqlalchemy import orm
 
@@ -110,8 +111,10 @@ async def request_session(
         "Starting %s session for user %s", body.session_type, user.name
     )
 
-    tool = tools_injectables.get_existing_tool(body.tool_id, db)
-    version = tools_injectables.get_existing_tool_version(
+    tool = await asyncify(tools_injectables.get_existing_tool)(
+        body.tool_id, db
+    )
+    version = await asyncify(tools_injectables.get_existing_tool_version)(
         tool.id, body.version_id, db
     )
 
@@ -124,20 +127,22 @@ async def request_session(
 
     session_id = util.generate_id()
 
-    util.raise_if_conflicting_sessions(tool, version, body.session_type, user)
+    await asyncify(util.raise_if_conflicting_sessions)(
+        tool, version, body.session_type, user
+    )
 
     project_scope = None
     if body.project_slug:
-        project_scope = projects_injectables.get_existing_project(
-            body.project_slug, db
-        )
+        project_scope = await asyncify(
+            projects_injectables.get_existing_project
+        )(body.project_slug, db)
 
         projects_permissions_injectables.ProjectPermissionValidation(
             required_scope=projects_permissions_models.ProjectUserScopes(
                 provisioning={permissions_models.UserTokenVerb.GET}
             )
         )(
-            projects_permissions_injectables.get_scope(
+            await asyncify(projects_permissions_injectables.get_scope)(
                 authentication_information, global_scope, project_scope, db
             ),
             project_scope,
@@ -223,7 +228,7 @@ async def request_session(
         "capellacollab/owner-id": str(user.id),
     }
 
-    session = operator.start_session(
+    session = await asyncify(operator.start_session)(
         session_id=session_id,
         image=docker_image,
         username=user.name,
@@ -240,7 +245,7 @@ async def request_session(
         prometheus_port=connection_method.ports.metrics,
     )
 
-    db_session = crud.create_session(
+    db_session = await asyncify(crud.create_session)(
         db,
         models.DatabaseSession(
             id=session_id,
@@ -260,7 +265,7 @@ async def request_session(
     )
 
     for hook in sessions_hooks.get_activated_integration_hooks(tool):
-        result = hook.post_session_creation_hook(
+        result = await asyncify(hook.post_session_creation_hook)(
             hooks_interface.PostSessionCreationHookRequest(
                 session_id=session_id,
                 operator=operator,
@@ -274,7 +279,7 @@ async def request_session(
 
         hook_config |= result.get("config", {})
 
-    crud.update_session_config(db, db_session, hook_config)
+    await asyncify(crud.update_session_config)(db, db_session, hook_config)
 
     response = models.Session.model_validate(db_session)
     response.warnings += warnings
