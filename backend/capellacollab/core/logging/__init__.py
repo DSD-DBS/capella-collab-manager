@@ -7,6 +7,7 @@ import os
 import pathlib
 import random
 import string
+import time
 import typing as t
 from logging import handlers
 
@@ -112,13 +113,18 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
         self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
+        started_at = time.perf_counter()
         is_health_check_route = request.url.path == "/healthcheck"
         if not is_health_check_route:
             get_request_logger(request).debug("request started")
         response: fastapi.Response = await call_next(request)
         if not is_health_check_route:
             get_request_logger(request).debug(
-                "request finished", extra={"status_code": response.status_code}
+                "request finished",
+                extra={
+                    "status_code": response.status_code,
+                    "duration": f"{(time.perf_counter() - started_at):.4f}",
+                },
             )
 
         return response
