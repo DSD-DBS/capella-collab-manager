@@ -63,7 +63,7 @@ future.
         This can be exploited by a user uploading so much data to their workspace that
         the server goes out of disk storage.
 
-        Please follow the official instructions: <https://microk8s.io/docs/nfs>.
+        Please follow the official instructions: <https://microk8s.io/docs/how-to-nfs>.
 
         Make sure to update the `backend.storageClassName` in the `values.yaml` in step 6 to `nfs-csi`.
         All new Jupyter file-shares and personal workspaces will use the new storage class then.
@@ -82,7 +82,7 @@ future.
 
             Replace `<user-id-of-session-containers>` with the value of the `runAsUser` value of the Kubernetes Pod security context.
 
-            Then, apply the new configuration by running `exportfs -ra`.
+            Then, apply the new configuration by running `sudo exportfs -ra`.
 
 === "k3d"
 
@@ -100,9 +100,10 @@ and around 2,5GiB of memory for the management platform. Depending on the load,
 the instance can scale up and is limited to 10 Kubernetes CPU cores and ~8GiB
 of memory.
 
-Each session requires a minimum of 0.4 Kubernetes CPU cores and 1.6Gi of
-memory. A session can scale up until it reaches 2 Kubernetes CPU cores and 6Gi
-of memory.
+The required resources for the sessions can be configured in the admin
+interface later on. However, for Eclipse based sessions we recommend a minimum
+of 0.4 Kubernetes CPU cores and 1.6Gi of memory. Those sessions can scale up
+until it reaches 2 Kubernetes CPU cores and 6Gi of memory.
 
 ## Step 3: Set up the Required Namespaces (Optional)
 
