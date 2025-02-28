@@ -112,21 +112,16 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
     async def dispatch(
         self, request: fastapi.Request, call_next: base.RequestResponseEndpoint
     ):
-        get_request_logger(request).debug("request started")
+        is_health_check_route = request.url.path == "/healthcheck"
+        if not is_health_check_route:
+            get_request_logger(request).debug("request started")
         response: fastapi.Response = await call_next(request)
-        get_request_logger(request).debug(
-            "request finished", extra={"status_code": response.status_code}
-        )
+        if not is_health_check_route:
+            get_request_logger(request).debug(
+                "request finished", extra={"status_code": response.status_code}
+            )
 
         return response
-
-
-class HealthcheckFilter(logging.Filter):
-    def filter(self, record: logging.LogRecord) -> bool:
-        return (
-            record.getMessage().find('path="/healthcheck"') == -1
-            or record.levelno > logging.DEBUG
-        )
 
 
 class LogAdapter(logging.LoggerAdapter):
@@ -155,7 +150,6 @@ def _get_log_args(request: fastapi.Request) -> dict[str, t.Any]:
 
 def get_request_logger(request: fastapi.Request) -> logging.LoggerAdapter:
     logger: logging.Logger = logging.getLogger("capellacollab.request")
-    logger.addFilter(HealthcheckFilter())
     logger.setLevel(LOGGING_LEVEL)
 
     return LogAdapter(logger, _get_log_args(request))
