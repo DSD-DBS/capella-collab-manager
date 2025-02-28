@@ -8,6 +8,7 @@ import random
 import string
 import typing as t
 
+from asyncer import asyncify
 from sqlalchemy import orm
 
 from capellacollab.configuration.app import config
@@ -255,6 +256,9 @@ async def schedule_configuration_hooks(
         hook.async_configuration_hook(request) for hook in activated_hooks
     ]
 
-    return [
-        hook.configuration_hook(request) for hook in activated_hooks
-    ] + await asyncio.gather(*async_hooks)
+    sync_hooks = [
+        await asyncify(hook.configuration_hook)(request)
+        for hook in activated_hooks
+    ]
+
+    return await asyncio.gather(*async_hooks) + sync_hooks

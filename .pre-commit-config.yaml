@@ -67,6 +67,7 @@ repos:
           - cryptography
           - types-croniter
           - pyinstrument
+          - asyncer
   - repo: local
     hooks:
       - id: tsc
