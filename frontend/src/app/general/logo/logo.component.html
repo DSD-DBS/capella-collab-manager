@@ -3,17 +3,30 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="flex select-none items-center gap-2">
+<div
+  class="flex select-none items-center gap-2"
+  [ngClass]="{ 'font-special': specialService.enabled() }"
+>
   @if (navBarService.logoUrl$ | async; as logoUrl) {
     <img
       [src]="logoUrl"
       aria-hidden="true"
       alt=""
       class="h-8 max-w-24 py-0.5"
+      [ngClass]="{ 'rotate-180': specialService.enabled() }"
     />
   }
 
-  <div class="text-2xl font-semibold text-primary">CCM</div>
+  <div
+    class="text-2xl font-semibold text-primary"
+    [ngClass]="{
+      'inline-block rotate-180 bg-gradient-to-r': specialService.enabled(),
+      'from-blue-600 via-green-500 to-indigo-400 bg-clip-text text-transparent':
+        specialService.enabled(),
+    }"
+  >
+    CCM
+  </div>
   @if ((navBarService.badge$ | async)?.show) {
     <div
       class="whitespace-nowrap rounded-md px-1 py-0.5 text-xs font-semibold uppercase

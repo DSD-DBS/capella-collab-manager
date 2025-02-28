@@ -11,6 +11,11 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ["Roboto", ...defaultTheme.fontFamily.sans],
+        special: [
+          "Comic Sans MS",
+          "Chalkboard",
+          ...defaultTheme.fontFamily.sans,
+        ],
       },
       colors: {
         primary: "var(--primary-color)",
