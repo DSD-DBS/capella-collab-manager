@@ -4,6 +4,7 @@
 import datetime
 import logging
 
+import asyncer
 import fastapi
 from fastapi import security
 from sqlalchemy import orm
@@ -31,15 +32,18 @@ class HTTPBasicAuth(security.HTTPBasic):
         if not credentials:
             raise exceptions.UnauthenticatedError()
 
-        user = user_crud.get_user_by_name(db, credentials.username)
+        user = await asyncer.asyncify(user_crud.get_user_by_name)(
+            db, credentials.username
+        )
+
         if not user:
             logger.info(
                 "User with username '%s' not found.", credentials.username
             )
             raise exceptions.InvalidPersonalAccessTokenError()
-        db_token = token_crud.get_token_by_token_and_user(
-            db, credentials.password, user.id
-        )
+        db_token = await asyncer.asyncify(
+            token_crud.get_token_by_token_and_user
+        )(db, credentials.password, user.id)
 
         if not db_token:
             logger.info("Token invalid for user %s", credentials.username)

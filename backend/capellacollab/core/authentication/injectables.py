@@ -4,6 +4,7 @@
 import logging
 import typing as t
 
+import asyncer
 import fastapi
 from fastapi.security import utils as security_utils
 from sqlalchemy import orm
@@ -42,7 +43,9 @@ class _AuthenticationInformationValidation:
     ]:
         if request.cookies.get("id_token"):
             username = await api_key_cookie.JWTAPIKeyCookie()(request)
-            user = users_crud.get_user_by_name(db, username)
+            user = await asyncer.asyncify(users_crud.get_user_by_name)(
+                db, username
+            )
             if not user:
                 raise users_exceptions.UserNotFoundError(username)
             return user, None
