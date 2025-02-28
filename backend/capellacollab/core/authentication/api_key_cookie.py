@@ -4,6 +4,7 @@
 import logging
 import typing as t
 
+import asyncer
 import fastapi
 import jwt
 from fastapi import security
@@ -43,7 +44,7 @@ class JWTAPIKeyCookie(security.APIKeyCookie):
         if not token:
             raise exceptions.UnauthenticatedError()
 
-        token_decoded = self.validate_token(token)
+        token_decoded = await asyncer.asyncify(self.validate_token)(token)
         return self.get_username(token_decoded)
 
     def validate_token(self, token: str) -> dict[str, t.Any]:
