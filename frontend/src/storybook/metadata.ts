@@ -3,10 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Observable, of } from 'rxjs';
-import {
-  MetadataService,
-  Version,
-} from 'src/app/general/metadata/metadata.service';
+import { MetadataService } from 'src/app/general/metadata/metadata.service';
 import { Metadata } from 'src/app/openapi';
 
 export const mockMetadata: Metadata = {
@@ -15,7 +12,6 @@ export const mockMetadata: Metadata = {
   imprint_url: 'https://example.com/imprint',
   provider: 'Provider',
   authentication_provider: 'Identity Provider',
-  environment: 'Storybook Environment',
   host: 'localhost',
   port: '6006',
   protocol: 'http',
@@ -24,36 +20,15 @@ export const mockMetadata: Metadata = {
 class MockMetadataService implements Partial<MetadataService> {
   public readonly backendMetadata: Observable<Metadata | undefined> =
     of(undefined);
-  public version: Version | undefined;
-  public oldVersion: string | undefined;
-  public changedVersion = false;
 
-  constructor(
-    metadata: Metadata | undefined,
-    version?: Version | undefined,
-    oldVersion?: string | undefined,
-    changedVersion?: boolean,
-  ) {
+  constructor(metadata: Metadata | undefined) {
     this.backendMetadata = of(metadata);
-    this.version = version;
-    this.oldVersion = oldVersion;
-    if (changedVersion) this.changedVersion = changedVersion;
   }
 }
 
-export const mockMetadataServiceProvider = (
-  metadata: Metadata | undefined,
-  version?: Version | undefined,
-  oldVersion?: string | undefined,
-  changedVersion?: boolean,
-) => {
+export const mockMetadataServiceProvider = (metadata: Metadata | undefined) => {
   return {
     provide: MetadataService,
-    useValue: new MockMetadataService(
-      metadata,
-      version,
-      oldVersion,
-      changedVersion,
-    ),
+    useValue: new MockMetadataService(metadata),
   };
 };

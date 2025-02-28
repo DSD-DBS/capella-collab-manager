@@ -4,30 +4,35 @@
  -->
 
 <div class="wrapper text-center md:text-left">
-  <a
-    [href]="docsURL + '/release-notes/'"
-    target="_blank"
-    (click)="metadataService.clickedOnVersionNotes()"
-  >
-    @if (metadataService.changedVersion && metadataService.version) {
-      <div class="text-error">
-        New version. What's new?
-        @if (metadataService.oldVersion) {
-          ({{ metadataService.oldVersion }}
-          <mat-icon inline="true" class="align-top">arrow_right_alt</mat-icon>
-          {{ metadataService.version.git.tag }})
-        } @else {
-          ({{ metadataService.version.git.tag }})
-        }
+  <div (click)="openDialog()">
+    @if (versionService.versionsHaveChanged()) {
+      <div>
+        <span class="text-error"> New version. What's new? </span>
       </div>
+      <div>
+        Frontend: {{ versionService.viewedVersion()?.frontend }}
+        <mat-icon inline="true" class="align-top">arrow_right_alt</mat-icon>
+        {{ versionService.frontendVersion() }}
+      </div>
+      <div>
+        Backend: {{ versionService.viewedVersion()?.backend }}
+        <mat-icon inline="true" class="align-top">arrow_right_alt</mat-icon>
+        {{ versionService.backendVersion() }}
+      </div>
+    } @else if (versionService.showBothVersions()) {
+      <div>Frontend: {{ versionService.frontendVersion() || "-" }}</div>
+      <div>Backend: {{ versionService.backendVersion() || "-" }}</div>
+    } @else {
+      <div>Version: {{ versionService.frontendVersion() || "-" }}</div>
     }
-    <span>
-      Environment:
-      {{ (metadataService.backendMetadata | async)?.environment || "-" }} <br />
-      Frontend version: {{ metadataService.version?.git?.version || "-" }}
-      <br />
-      Backend version:
-      {{ (metadataService.backendMetadata | async)?.version || "-" }}
-    </span>
+  </div>
+
+  <a
+    target="_blank"
+    [href]="docsURL + '/release-notes/'"
+    (click)="versionService.markVersionsAsViewed()"
+  >
+    Release Notes
+    <mat-icon inline="true" class="align-top">open_in_new</mat-icon>
   </a>
 </div>
