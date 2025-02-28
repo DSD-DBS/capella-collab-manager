@@ -11,7 +11,6 @@ from capellacollab.configuration import routes as configuration_routes
 from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
 from capellacollab.feedback import routes as feedback_routes
-from capellacollab.health import routes as health_routes
 from capellacollab.permissions import routes as permissions_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
@@ -23,11 +22,6 @@ log = logging.getLogger(__name__)
 
 
 router = fastapi.APIRouter()
-router.include_router(
-    health_routes.router,
-    prefix="/health",
-    tags=["Health"],
-)
 router.include_router(
     feedback_routes.router, prefix="/feedback", tags=["Feedback"]
 )

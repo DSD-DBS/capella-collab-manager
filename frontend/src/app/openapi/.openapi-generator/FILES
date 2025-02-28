@@ -5,7 +5,6 @@ api/authentication.service.ts
 api/configuration.service.ts
 api/events.service.ts
 api/feedback.service.ts
-api/health.service.ts
 api/integrations-pure-variants.service.ts
 api/permissions.service.ts
 api/projects-events.service.ts
@@ -82,7 +81,6 @@ model/get-revision-model.ts
 model/get-revisions-response-model.ts
 model/git-credentials.ts
 model/git-instance.ts
-model/git-model-status.ts
 model/git-model.ts
 model/git-type.ts
 model/global-configuration-input.ts
@@ -108,7 +106,6 @@ model/metadata.ts
 model/minimal-tool-session-connection-method.ts
 model/minimal-tool-version-with-tool.ts
 model/minimal-tool.ts
-model/model-artifact-status.ts
 model/model-provisioning.ts
 model/models.ts
 model/navbar-configuration-input-external-links-inner.ts
@@ -145,7 +142,6 @@ model/post-session-request.ts
 model/post-token.ts
 model/post-tool-model.ts
 model/post-user.ts
-model/project-status.ts
 model/project-tool.ts
 model/project-type.ts
 model/project-user-permission.ts
@@ -190,7 +186,6 @@ model/simple-t4-c-repository.ts
 model/simple-tool-model-without-project.ts
 model/simple-tool-model.ts
 model/simple-tool-version.ts
-model/status-response.ts
 model/submit-t4-c-model.ts
 model/t4-c-instance.ts
 model/t4-c-license-server-base.ts
@@ -226,7 +221,6 @@ model/tool-version-configuration-output.ts
 model/tool-version-with-tool.ts
 model/tool-version.ts
 model/tool.ts
-model/toolmodel-status.ts
 model/unified-config.ts
 model/user-metadata.ts
 model/user-scopes-input.ts
