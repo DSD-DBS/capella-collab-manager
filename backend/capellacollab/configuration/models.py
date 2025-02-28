@@ -40,7 +40,6 @@ class MetadataConfiguration(core_pydantic.BaseModelStrict):
         default="OAuth2",
         description="Authentication provides which is displayed in the frontend.",
     )
-    environment: str = pydantic.Field(default="-", description="general")
 
 
 class BuiltInLinkItem(str, enum.Enum):
@@ -281,7 +280,6 @@ class Metadata(core_pydantic.BaseModel):
     imprint_url: str | None
     provider: str | None
     authentication_provider: str | None
-    environment: str | None
 
     host: str | None
     port: str | None

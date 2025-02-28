@@ -48,9 +48,7 @@ def get_navbar(
             elif core.LOCAL_DEVELOPMENT_MODE:
                 navbar_config.badge.text = "Local Development"
             else:
-                navbar_config.badge.text = (
-                    global_config.metadata.environment or "Unknown Environment"
-                )
+                navbar_config.badge.text = "Unknown Environment"
 
         if navbar_config.badge.variant == models.BadgeVariant.AUTO:
             words = ["dev", "development", "unknown", "staging"]

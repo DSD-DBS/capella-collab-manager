@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { Version } from 'src/app/general/metadata/metadata.service';
 import { VersionComponent } from 'src/app/general/metadata/version/version.component';
 import {
-  mockMetadata,
-  mockMetadataServiceProvider,
-} from 'src/storybook/metadata';
+  mockBackendVersion,
+  mockVersion,
+  mockVersionServiceProvider,
+  mockViewedVersion,
+} from '../../../../storybook/version';
 
 const meta: Meta<VersionComponent> = {
   title: 'General Components/Version',
@@ -18,19 +19,16 @@ const meta: Meta<VersionComponent> = {
 export default meta;
 type Story = StoryObj<VersionComponent>;
 
-const version: Version = {
-  git: {
-    version: '1.0.0',
-    tag: '1.0.0',
-  },
-};
-
 export const VersionUnchanged: Story = {
   args: {},
   decorators: [
     moduleMetadata({
       providers: [
-        mockMetadataServiceProvider(mockMetadata, version, 'v1.0.0', false),
+        mockVersionServiceProvider(
+          mockVersion,
+          mockBackendVersion,
+          mockViewedVersion,
+        ),
       ],
     }),
   ],
@@ -41,18 +39,28 @@ export const NewVersionAvailable: Story = {
   decorators: [
     moduleMetadata({
       providers: [
-        mockMetadataServiceProvider(mockMetadata, version, 'v0.1.0', true),
+        mockVersionServiceProvider(
+          {
+            ...mockVersion,
+            git: {
+              ...mockVersion.git,
+              version: 'v2.0.0',
+            },
+          },
+          '2.0.0',
+          mockViewedVersion,
+        ),
       ],
     }),
   ],
 };
 
-export const FirstTimeAccessed: Story = {
+export const DifferentFrontendBackend: Story = {
   args: {},
   decorators: [
     moduleMetadata({
       providers: [
-        mockMetadataServiceProvider(mockMetadata, version, undefined, true),
+        mockVersionServiceProvider(mockVersion, '2.0.0', mockViewedVersion),
       ],
     }),
   ],
