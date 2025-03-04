@@ -113,6 +113,9 @@ helm-deploy:
 		--set database.backend.internal.password="secret" \
 		--set database.guacamole.internal.password="secret" \
 		--set valkey.password="secret" \
+		--set replicaCount.frontend=1 \
+		--set replicaCount.backend=1 \
+		--set replicaCount.routing=1 \
 		$(RELEASE) $$HELM_PACKAGE_DIR/collab-manager-*.tgz
 	rm -rf "$$HELM_PACKAGE_DIR"
 	$(MAKE) provision-guacamole wait
