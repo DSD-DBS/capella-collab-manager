@@ -271,7 +271,8 @@ grafana:
 loki:
   enabled: true
   global:
-    imageRegistry: *externalRegistry
+    image:
+      registry: *externalRegistry
     dnsService: kube-dns # dns-default for OpenShift
     dnsNamespace: kube-system # openshift-dns for OpenShift
   loki:
