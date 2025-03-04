@@ -359,6 +359,10 @@ class LoggingConfig(BaseConfig):
         default=False,
         description="Enable profiling of requests.",
     )
+    async_debug: bool = pydantic.Field(
+        default=False,
+        description="Enable async debugging.",
+    )
 
 
 class RequestsConfig(BaseConfig):

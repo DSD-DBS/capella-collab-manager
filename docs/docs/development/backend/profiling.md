@@ -36,3 +36,10 @@ For example, to profile the `/api/v1/metadata` route, you would call
     ```
 
     [More Information on GitHub](https://github.com/joerick/pyinstrument/issues/257)
+
+# Enable async debugging
+
+In the `config.yaml`, set the `logging.asyncDebug` key to `True`. This will set
+`PYTHONASYNCIODEBUG=1`, which will enable asyncio debug logging. Check the
+[python docs](https://docs.python.org/3/library/asyncio-dev.html) for more
+information.
