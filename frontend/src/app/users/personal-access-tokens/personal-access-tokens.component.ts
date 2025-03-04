@@ -21,15 +21,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, tap } from 'rxjs';
-import { RelativeTimeComponent } from 'src/app/general/relative-time/relative-time.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
-  AdminScopesOutput,
   FineGrainedResourceOutput,
   PermissionsService,
   ProjectsPermissionsService,
-  ProjectUserScopesOutput,
-  UserScopesOutput,
   UsersTokenService,
   UserToken,
 } from 'src/app/openapi';
@@ -41,6 +37,7 @@ import {
   TokenPermissionSelectionEvent,
 } from 'src/app/users/personal-access-tokens/token-permission-selection/token-permission-selection.component';
 import { DisplayValueComponent } from '../../helpers/display-value/display-value.component';
+import { TokenCardComponent } from './token-card/token-card.component';
 
 @Component({
   selector: 'app-personal-access-tokens',
@@ -58,9 +55,9 @@ import { DisplayValueComponent } from '../../helpers/display-value/display-value
     MatCheckboxModule,
     KeyValuePipe,
     TokenPermissionSelectionComponent,
-    RelativeTimeComponent,
     MatExpansionModule,
     MatTooltipModule,
+    TokenCardComponent,
   ],
   providers: [
     provideMomentDateAdapter({
@@ -244,35 +241,11 @@ export class PersonalAccessTokensComponent implements OnInit {
     }
   }
 
-  isTokenExpired(expirationDate: string): boolean {
-    return new Date(expirationDate) < new Date();
-  }
-
-  showClipboardMessage(): void {
-    this.toastService.showSuccess(
-      'Token copied',
-      'The token was copied to your clipboard.',
-    );
-  }
-
   loadTokens(): void {
     this.tokenService.getAllTokensOfUser().subscribe({
       next: (token) => this._tokens.next(token),
       error: () => this._tokens.next(undefined),
     });
-  }
-
-  deleteToken(token: UserToken) {
-    this.generatedToken = undefined;
-    this.tokenService
-      .deleteTokenForUser(token.id)
-      .pipe(tap(() => this.loadTokens()))
-      .subscribe(() => {
-        this.toastService.showSuccess(
-          'Token deleted',
-          `The token ${token.description} was successfully deleted!`,
-        );
-      });
   }
 
   getPermissionByRef(ref: string) {
@@ -300,45 +273,6 @@ export class PersonalAccessTokensComponent implements OnInit {
     );
     delete this.selectedScopes.projects[projectSlug];
   }
-
-  flattenScope(scope: FineGrainedResourceOutput): FlattenedScopes {
-    const flattenedScopes: FlattenedScopes = {};
-    flattenedScopes.user = scope.user;
-    flattenedScopes.admin = scope.admin;
-    for (const project in scope.projects) {
-      flattenedScopes[project] = scope.projects[project];
-    }
-    return flattenedScopes;
-  }
-
-  countScopes(scopes: FlattenedScopes) {
-    let counter = 0;
-    for (const scope in scopes) {
-      Object.values(scopes[scope]).forEach((element) => {
-        counter += element.length;
-      });
-    }
-    return counter;
-  }
-
-  containsVerb(
-    scopes: FlattenedScopes,
-    scope: string,
-    permission: string,
-    verb: UserTokenVerb,
-  ) {
-    const resolvedScope = scopes[scope];
-    const resolvedPermission = Object.entries(resolvedScope).find(
-      (element) => element[0] === permission,
-    );
-    if (!resolvedPermission) {
-      return false;
-    }
-    if (resolvedPermission[1].find((element) => element === verb)) {
-      return true;
-    }
-    return false;
-  }
 }
 
 export interface Scopes {
@@ -362,8 +296,3 @@ export interface ProjectScopes {
   properties: TokenProperties;
   title: string;
 }
-
-type FlattenedScopes = Record<
-  string,
-  UserScopesOutput | AdminScopesOutput | ProjectUserScopesOutput
->;
