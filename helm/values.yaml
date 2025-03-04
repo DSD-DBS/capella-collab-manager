@@ -7,11 +7,11 @@
 
 # Replicas for all deployments (defaults to 1)
 replicaCount:
-  backend: 1
+  backend: 2
   backendPostgres: 1
   valkey: 1
   docs: 1
-  frontend: 1
+  frontend: 2
   grafana: 1
   grafanaNginx: 1
   guacamole: 1
@@ -19,7 +19,7 @@ replicaCount:
   guacd: 1
   prometheus: 1
   prometheusNginx: 1
-  routing: 1
+  routing: 2
 
 docker:
   registry:
