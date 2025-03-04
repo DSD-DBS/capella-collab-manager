@@ -10,7 +10,7 @@ import fastapi
 from sqlalchemy import orm
 
 from capellacollab.core import database
-from capellacollab.core import logging as log
+from capellacollab.core.logging import injectables as logging_injectables
 from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.permissions import models as permissions_models
 from capellacollab.users import injectables as user_injectables
@@ -45,7 +45,8 @@ def submit_feedback(
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
     logger: t.Annotated[
-        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+        logging.LoggerAdapter,
+        fastapi.Depends(logging_injectables.get_request_logger),
     ],
     user_agent: t.Annotated[str | None, fastapi.Header()] = None,
 ):

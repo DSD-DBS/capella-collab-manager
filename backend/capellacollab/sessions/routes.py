@@ -13,10 +13,10 @@ from fastapi import status
 from sqlalchemy import orm
 
 from capellacollab.core import database, responses
-from capellacollab.core import logging as log
 from capellacollab.core import models as core_models
 from capellacollab.core.authentication import exceptions as auth_exceptions
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.core.logging import injectables as logging_injectables
 from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
@@ -87,7 +87,8 @@ async def request_session(
         k8s.KubernetesOperator, fastapi.Depends(operators.get_operator)
     ],
     logger: t.Annotated[
-        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+        logging.LoggerAdapter,
+        fastapi.Depends(logging_injectables.get_request_logger),
     ],
     authentication_information: t.Annotated[
         tuple[
@@ -433,7 +434,8 @@ def get_session_connection_information(
         fastapi.Depends(users_injectables.get_own_user),
     ],
     logger: t.Annotated[
-        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+        logging.LoggerAdapter,
+        fastapi.Depends(logging_injectables.get_request_logger),
     ],
 ):
     connection_method = util.get_connection_method(
@@ -551,7 +553,8 @@ def terminate_session(
         fastapi.Depends(permissions_injectables.get_scope),
     ],
     logger: t.Annotated[
-        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+        logging.LoggerAdapter,
+        fastapi.Depends(logging_injectables.get_request_logger),
     ],
 ):
     util.terminate_session(db, session, operator, global_scope, logger)

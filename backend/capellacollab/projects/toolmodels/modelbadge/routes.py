@@ -9,8 +9,8 @@ import typing as t
 import fastapi
 
 import capellacollab.projects.toolmodels.modelsources.git.injectables as git_injectables
-from capellacollab.core import logging as log
 from capellacollab.core import responses
+from capellacollab.core.logging import injectables as logging_injectables
 from capellacollab.permissions import models as permissions_models
 from capellacollab.projects.permissions import (
     injectables as projects_permissions_injectables,
@@ -44,7 +44,8 @@ async def get_model_complexity_badge(
         handler.GitHandler, fastapi.Depends(git_injectables.get_git_handler)
     ],
     logger: t.Annotated[
-        logging.LoggerAdapter, fastapi.Depends(log.get_request_logger)
+        logging.LoggerAdapter,
+        fastapi.Depends(logging_injectables.get_request_logger),
     ],
 ):
     try:

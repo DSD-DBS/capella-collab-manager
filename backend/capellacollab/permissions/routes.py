@@ -7,8 +7,8 @@ import typing as t
 import fastapi
 import pydantic
 
-from capellacollab.core import logging as core_logging
 from capellacollab.core import responses
+from capellacollab.core.logging import injectables as logging_injectables
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 
@@ -51,7 +51,8 @@ def validate_permissions(
         models.GlobalScopes, fastapi.Depends(injectables.get_scope)
     ],
     logger: t.Annotated[
-        logging.LoggerAdapter, fastapi.Depends(core_logging.get_request_logger)
+        logging.LoggerAdapter,
+        fastapi.Depends(logging_injectables.get_request_logger),
     ],
 ):
     """Validate permissions against required scopes"""

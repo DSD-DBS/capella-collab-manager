@@ -3,7 +3,9 @@
 
 import datetime
 import logging
+import typing as t
 
+import argon2
 import asyncer
 import fastapi
 from fastapi import security
@@ -24,7 +26,10 @@ class HTTPBasicAuth(security.HTTPBasic):
         super().__init__(auto_error=True)
 
     async def validate(
-        self, db: orm.Session, request: fastapi.Request
+        self,
+        db: orm.Session,
+        request: fastapi.Request,
+        logger: logging.LoggerAdapter,
     ) -> tuple[users_models.DatabaseUser, tokens_models.DatabaseUserToken]:
         credentials: (
             security.HTTPBasicCredentials | None
@@ -41,12 +46,41 @@ class HTTPBasicAuth(security.HTTPBasic):
                 "User with username '%s' not found.", credentials.username
             )
             raise exceptions.InvalidPersonalAccessTokenError()
-        db_token = await asyncer.asyncify(
-            token_crud.get_token_by_token_and_user
-        )(db, credentials.password, user.id)
 
-        if not db_token:
-            logger.info("Token invalid for user %s", credentials.username)
+        password = credentials.password.split("_")
+        if len(password) == 2:
+            # Legacy token
+            tokens = await asyncer.asyncify(
+                token_crud.get_all_tokens_for_user
+            )(db, user.id)
+            db_token = await asyncer.asyncify(
+                self.validate_password_hash_legacy
+            )(tokens, credentials.password)
+            if not db_token:
+                logger.info(
+                    "Token not valid for user %s", credentials.username
+                )
+                raise exceptions.InvalidPersonalAccessTokenError()
+        elif len(password) == 3:
+            token_id = int(password[2])
+            db_token = await asyncer.asyncify(
+                token_crud.get_token_by_id_and_user
+            )(db, token_id, user)
+
+            if not db_token:
+                logger.info(
+                    "Token not found for user %s", credentials.username
+                )
+                raise exceptions.InvalidPersonalAccessTokenError()
+
+            await asyncer.asyncify(self.validate_password_hash)(
+                db_token, password[1]
+            )
+        else:
+            logger.info(
+                "Token has invalid structure, resolved length is %d",
+                len(password),
+            )
             raise exceptions.InvalidPersonalAccessTokenError()
 
         if (
@@ -57,3 +91,32 @@ class HTTPBasicAuth(security.HTTPBasic):
             raise exceptions.PersonalAccessTokenExpired()
 
         return user, db_token
+
+    @classmethod
+    def validate_password_hash(
+        cls, token: tokens_models.DatabaseUserToken, password: str
+    ):
+        ph = argon2.PasswordHasher(
+            time_cost=1, memory_cost=2048, parallelism=1
+        )
+
+        try:
+            ph.verify(token.hash, password)
+        except argon2.exceptions.VerifyMismatchError as e:
+            raise exceptions.InvalidPersonalAccessTokenError() from e
+
+    @classmethod
+    def validate_password_hash_legacy(
+        cls, tokens: t.Sequence[tokens_models.DatabaseUserToken], password: str
+    ):
+        ph = argon2.PasswordHasher(
+            time_cost=1, memory_cost=2048, parallelism=1
+        )
+
+        for token in tokens:
+            try:
+                ph.verify(token.hash, password)
+                return token
+            except argon2.exceptions.VerifyMismatchError:
+                pass
+        return None

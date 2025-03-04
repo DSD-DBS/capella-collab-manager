@@ -20,7 +20,7 @@ def get_own_user_tokens(
         fastapi.Depends(user_injectables.get_own_user),
     ],
 ) -> abc.Sequence[models.DatabaseUserToken]:
-    return crud.get_token_by_user(db, user.id)
+    return crud.get_all_tokens_for_user(db, user.id)
 
 
 def get_exisiting_own_user_token(

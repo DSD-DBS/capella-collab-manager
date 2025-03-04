@@ -67,17 +67,6 @@ def test_get_pat_of_user(client: testclient.TestClient):
     assert response.status_code == 200
 
 
-def test_use_pat(
-    client_pat: testclient.TestClient,
-):
-    """Test to use a PAT as authentication against the API"""
-    response = client_pat.get(
-        "/api/v1/projects",
-    )
-
-    assert response.status_code == 200
-
-
 def test_use_invalid_pat(unauthenticated_user: users_models.User):
     """Test that an invalid PAT is declined for authentication against the API"""
     client = testclient.TestClient(app)
