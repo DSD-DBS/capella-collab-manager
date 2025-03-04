@@ -10,7 +10,6 @@ import { MatIconComponent } from '../helpers/mat-icon/mat-icon.component';
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css'],
   imports: [RouterLink, MatRipple, MatIconComponent],
 })
 export class SettingsComponent {}

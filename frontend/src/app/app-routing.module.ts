@@ -18,7 +18,6 @@ import { CreateProjectToolsComponent } from 'src/app/projects/project-detail/cre
 import { EditProjectMetadataComponent } from 'src/app/projects/project-detail/edit-project-metadata/edit-project-metadata.component';
 import { SessionViewerComponent } from 'src/app/sessions/session/session-viewer.component';
 import { ConfigurationSettingsComponent } from 'src/app/settings/core/configuration-settings/configuration-settings.component';
-import { PipelinesOverviewComponent } from 'src/app/settings/core/pipelines-overview/pipelines-overview.component';
 import { CreateToolComponent } from 'src/app/settings/core/tools-settings/create-tool/create-tool.component';
 import { AddGitInstanceComponent } from 'src/app/settings/modelsources/git-instances/add-git-instance/add-git-instance.component';
 import { PersonalAccessTokensComponent } from 'src/app/users/personal-access-tokens/personal-access-tokens.component';
@@ -364,11 +363,6 @@ export const routes: Routes = [
                 path: 'announcements',
                 data: { breadcrumb: 'Announcements' },
                 component: AnnouncementSettingsComponent,
-              },
-              {
-                path: 'pipelines',
-                data: { breadcrumb: 'Pipelines' },
-                component: PipelinesOverviewComponent,
               },
               {
                 path: 'tools',
