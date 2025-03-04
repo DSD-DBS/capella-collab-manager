@@ -53,7 +53,7 @@ def fixture_tool_nature(
     return nature
 
 
-@pytest.fixture(name="capella_tool", params=["6.0.0"])
+@pytest.fixture(name="capella_tool")
 def fixture_capella_tool(db: orm.Session) -> tools_models.DatabaseTool:
     capella_tool = tools_crud.get_tool_by_name(db, "Capella")
     assert capella_tool

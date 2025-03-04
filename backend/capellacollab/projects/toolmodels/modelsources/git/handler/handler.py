@@ -63,7 +63,7 @@ class GitHandler:
         """
 
     @abc.abstractmethod
-    def get_artifact_from_job(
+    async def get_artifact_from_job(
         self, job_id: str, trusted_path_to_artifact: str
     ) -> bytes:
         """
@@ -83,7 +83,7 @@ class GitHandler:
         """
 
     @abc.abstractmethod
-    def get_file_from_repository(
+    async def get_file_from_repository(
         self, trusted_file_path: str, revision: str | None = None
     ) -> bytes:
         """
@@ -108,7 +108,7 @@ class GitHandler:
         """
 
     @abc.abstractmethod
-    def get_last_updated_for_file(
+    async def get_last_updated_for_file(
         self, file_path: str, revision: str | None = None
     ) -> datetime.datetime:
         """
@@ -133,7 +133,7 @@ class GitHandler:
         """
 
     @abc.abstractmethod
-    def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
+    async def get_started_at_for_job(self, job_id: str) -> datetime.datetime:
         """
         Retrieve the start datetime for the specified job in the repository.
 
@@ -157,7 +157,7 @@ class GitHandler:
         if not revision:
             revision = self.revision
 
-        last_updated = self.get_last_updated_for_file(
+        last_updated = await self.get_last_updated_for_file(
             trusted_file_path, revision
         )
 
@@ -170,7 +170,9 @@ class GitHandler:
             if last_updated == last_updated_cache:
                 return last_updated_cache, content_cache
 
-        content = self.get_file_from_repository(trusted_file_path, revision)
+        content = await self.get_file_from_repository(
+            trusted_file_path, revision
+        )
         await self.cache.put_file_data(
             trusted_file_path, last_updated, content, revision, logger
         )
@@ -201,9 +203,9 @@ class GitHandler:
             return job_id, artifact_data[0], artifact_data[1]
 
         if not started_at:
-            started_at = self.get_started_at_for_job(job_id)
+            started_at = await self.get_started_at_for_job(job_id)
 
-        content = self.get_artifact_from_job(job_id, trusted_file_path)
+        content = await self.get_artifact_from_job(job_id, trusted_file_path)
         await self.cache.put_artifact_data(
             job_id, trusted_file_path, started_at, content, logger
         )

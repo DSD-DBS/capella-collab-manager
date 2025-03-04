@@ -6,43 +6,47 @@ import base64
 import io
 import zipfile
 
+import aioresponses
 import pytest
-import responses
-from aioresponses import aioresponses
 from fastapi import testclient
 
 import capellacollab.projects.models as project_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
 import capellacollab.settings.modelsources.git.models as git_models
+from tests.projects.toolmodels.modelsources.handler import (
+    mocks as git_handler_mocks,
+)
 
 # Example model badge
 EXAMPLE_MODEL_BADGE = b"<svg>badge placeholder</svg>"
 
 
 @pytest.fixture(name="mock_git_rest_api")
-def fixture_mock_git_rest_api(git_type: git_models.GitType):
+def fixture_mock_git_rest_api(
+    git_type: git_models.GitType, aiomock: aioresponses.aioresponses
+):
     match git_type:
         case git_models.GitType.GITHUB:
-            responses.get("https://api.example.com/", status=200)
-            yield responses
+            aiomock.get("https://api.example.com/", status=200)
         case git_models.GitType.GITLAB:
-            with aioresponses() as mocked:
-                mocked.get(
-                    "https://example.com/api/v4/projects/test%2Fproject",
-                    status=200,
-                    payload={"id": "10000"},
-                )
-                yield mocked
+            aiomock.get(
+                "https://example.com/api/v4/projects/test%2Fproject",
+                status=200,
+                payload={"id": "10000"},
+            )
 
 
-@pytest.fixture(name="mock_git_model_badge_file_api")
-def fixture_mock_git_model_badge_file_api(git_type: git_models.GitType):
+def mock_git_model_badge_file_api(
+    git_type: git_models.GitType,
+    aiomock: aioresponses.aioresponses,
+    status_code: int = 200,
+):
     match git_type:
         case git_models.GitType.GITLAB:
-            responses.get(
+            aiomock.get(
                 "https://example.com/api/v4/projects/10000/repository/files/model-complexity-badge.svg?ref=main",
-                status=200,
-                json={
+                status=status_code,
+                payload={
                     "file_name": "model-complexity-badge.svg",
                     "file_path": "model-complexity-badge.svg",
                     "size": 2428,
@@ -57,10 +61,11 @@ def fixture_mock_git_model_badge_file_api(git_type: git_models.GitType):
                 },
             )
         case git_models.GitType.GITHUB:
-            responses.get(
+            aiomock.get(
                 "https://example.com/api/v4/repos/test/project/contents/model-complexity-badge.svg?ref=main",
-                status=200,
-                json={
+                status=status_code,
+                repeat=True,
+                payload={
                     "name": "model-complexity-badge.svg",
                     "path": "model-complexity-badge.svg",
                     "size": 2428,
@@ -68,23 +73,6 @@ def fixture_mock_git_model_badge_file_api(git_type: git_models.GitType):
                     "sha": "528b30485e043489df3e103e6cfb2f6d16f84cf5",
                     "content": base64.b64encode(EXAMPLE_MODEL_BADGE).decode(),
                 },
-            )
-
-
-@pytest.fixture(name="mock_git_model_badge_file_api_not_found")
-def fixture_mock_git_model_badge_file_api_not_found(
-    git_type: git_models.GitType,
-):
-    match git_type:
-        case git_models.GitType.GITLAB:
-            responses.get(
-                "https://example.com/api/v4/projects/10000/repository/files/model-complexity-badge.svg?ref=main",
-                status=404,
-            )
-        case git_models.GitType.GITHUB:
-            responses.get(
-                "https://example.com/api/v4/repos/test/project/contents/model-complexity-badge.svg?ref=main",
-                status=404,
             )
 
 
@@ -96,27 +84,6 @@ def get_zipfile():
     return byte_io.read()
 
 
-@pytest.fixture(name="mock_get_model_badge_from_artifacts_api")
-def fixture_mock_get_model_badge_from_artifacts_api(
-    git_type: git_models.GitType,
-):
-    match git_type:
-        case git_models.GitType.GITLAB:
-            responses.get(
-                "https://example.com/api/v4/projects/10000/jobs/00002/artifacts/model-complexity-badge.svg",
-                status=200,
-                body=EXAMPLE_MODEL_BADGE,
-            )
-        case git_models.GitType.GITHUB:
-            responses.get(
-                "https://example.com/api/v4/repos/test/project/actions/artifacts/12347/zip",
-                status=200,
-                body=get_zipfile(),
-                content_type="application/zip",
-            )
-
-
-@responses.activate
 @pytest.mark.usefixtures("project_user", "git_type", "git_model")
 def test_model_has_no_git_instance(
     project: project_models.DatabaseProject,
@@ -130,10 +97,9 @@ def test_model_has_no_git_instance(
     assert response.json()["detail"]["err_code"] == "NO_MATCHING_GIT_INSTANCE"
 
 
-@responses.activate
 @pytest.mark.parametrize(
-    ("git_type", "git_instance_api_url"),
-    [(git_models.GitType.GENERAL, "https://example.com/api/v4")],
+    ("git_type"),
+    [(git_models.GitType.GENERAL)],
 )
 @pytest.mark.usefixtures("project_user", "git_instance", "git_model")
 def test_get_model_badge_fails_with_unsupported_git_instance(
@@ -148,11 +114,6 @@ def test_get_model_badge_fails_with_unsupported_git_instance(
     assert response.json()["detail"]["err_code"] == "GIT_INSTANCE_UNSUPPORTED"
 
 
-@responses.activate
-@pytest.mark.parametrize(
-    ("git_type", "git_instance_api_url"),
-    [(git_models.GitType.GITLAB, ""), (git_models.GitType.GITHUB, "")],
-)
 @pytest.mark.usefixtures(
     "project_user",
     "git_instance",
@@ -161,8 +122,10 @@ def test_get_model_badge_fails_with_unsupported_git_instance(
 def test_get_model_badge_fails_without_api_endpoint(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
+    git_instance: git_models.DatabaseGitInstance,
     client: testclient.TestClient,
 ):
+    git_instance.api_url = ""
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
     )
@@ -173,34 +136,34 @@ def test_get_model_badge_fails_without_api_endpoint(
     )
 
 
-@responses.activate
-@pytest.mark.parametrize(
-    ("git_type", "git_query_params"),
-    [
-        (
-            git_models.GitType.GITLAB,
-            [{"path": "model-complexity-badge.svg", "ref_name": "main"}],
-        ),
-        (
-            git_models.GitType.GITHUB,
-            [{"path": "model-complexity-badge.svg", "sha": "main"}],
-        ),
-    ],
-)
 @pytest.mark.usefixtures(
     "project_user",
     "git_instance",
     "git_model",
-    "mock_git_rest_api",
-    "mock_git_model_badge_file_api",
-    "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
+    "mock_git_rest_api",
 )
 def test_get_model_badge(
+    git_type: git_models.GitType,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
+    aiomock: aioresponses.aioresponses,
 ):
+    git_handler_mocks.mock_git_get_commit_information_api(
+        git_type=git_type,
+        aiomock=aiomock,
+        path="model-complexity-badge.svg",
+    )
+    mock_git_model_badge_file_api(git_type, aiomock)
+    git_handler_mocks.mock_git_rest_api_for_artifacts(
+        git_type,
+        "generate-model-badge",
+        "success",
+        ["12345", "12346"],
+        aiomock,
+    )
+    mock_get_model_badge_from_artifacts_api(git_type, aiomock)
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
     )
@@ -209,37 +172,54 @@ def test_get_model_badge(
     assert response.content == EXAMPLE_MODEL_BADGE
 
 
-@responses.activate
-@pytest.mark.parametrize(
-    ("git_type", "job_name", "git_query_params"),
-    [
-        (
-            git_models.GitType.GITLAB,
-            "generate-model-badge",
-            [{"path": "model-complexity-badge.svg", "ref_name": "main"}],
-        ),
-        (
-            git_models.GitType.GITHUB,
-            "generate-model-badge",
-            [{"path": "model-complexity-badge.svg", "sha": "main"}],
-        ),
-    ],
-)
+def mock_get_model_badge_from_artifacts_api(
+    git_type: git_models.GitType, aiomock: aioresponses.aioresponses
+):
+    match git_type:
+        case git_models.GitType.GITLAB:
+            aiomock.get(
+                "https://example.com/api/v4/projects/10000/jobs/00002/artifacts/model-complexity-badge.svg",
+                status=200,
+                body=EXAMPLE_MODEL_BADGE,
+            )
+        case git_models.GitType.GITHUB:
+            aiomock.get(
+                "https://example.com/api/v4/repos/test/project/actions/artifacts/12347/zip",
+                status=200,
+                body=get_zipfile(),
+                content_type="application/zip",
+            )
+
+
 @pytest.mark.usefixtures(
     "project_user",
     "git_instance",
     "git_model",
-    "mock_git_rest_api_for_artifacts",
-    "mock_git_model_badge_file_api_not_found",
-    "mock_get_model_badge_from_artifacts_api",
-    "mock_git_get_commit_information_api",
     "mock_git_valkey_cache",
+    "mock_git_rest_api",
 )
 def test_get_model_badge_from_artifacts(
+    git_type: git_models.GitType,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
+    aiomock: aioresponses.aioresponses,
 ):
+    git_handler_mocks.mock_git_get_commit_information_api(
+        git_type=git_type,
+        aiomock=aiomock,
+        path="model-complexity-badge.svg",
+    )
+    mock_git_model_badge_file_api(git_type, aiomock, status_code=404)
+    git_handler_mocks.mock_git_rest_api_for_artifacts(
+        git_type,
+        "generate-model-badge",
+        "success",
+        ["12345", "12346"],
+        aiomock,
+    )
+    mock_get_model_badge_from_artifacts_api(git_type, aiomock)
+
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/badges/complexity",
     )

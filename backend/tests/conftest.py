@@ -8,6 +8,7 @@ import os
 import pathlib
 import typing as t
 
+import aioresponses
 import jwt
 import pytest
 import sqlalchemy
@@ -149,3 +150,9 @@ def fixture_client_unauthenticated() -> testclient.TestClient:
 @pytest.fixture(name="logger")
 def fixture_logger() -> logging.LoggerAdapter:
     return logging.LoggerAdapter(logging.getLogger())
+
+
+@pytest.fixture(name="aiomock")
+def fixture_aiomock() -> t.Generator[aioresponses.aioresponses, None, None]:
+    with aioresponses.aioresponses() as _aioresponses:
+        yield _aioresponses

@@ -103,7 +103,7 @@ class GitValkeyCache:
         async for key in self._valkey.scan_iter(
             match=f"{self.git_model_id}:*"
         ):
-            self._valkey.delete(key)
+            await self._valkey.delete(key)
 
     def _get_file_key(self, file_path: str, revision: str) -> str:
         return f"{self.git_model_id}:f:{self._escape_string(revision)}:{self._escape_string(file_path)}"
