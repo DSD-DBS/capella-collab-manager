@@ -117,6 +117,9 @@ jobs:
           --set database.guacamole.internal.password="secret" \
           --set valkey.password="secret" \
           --set backend.authentication.oauth.endpoints.wellKnown="http://test-oauth-mock:8080/default/.well-known/openid-configuration" \
+          --set replicaCount.frontend=1 \
+          --set replicaCount.backend=1 \
+          --set replicaCount.routing=1 \
           ./helm
       - name: Wait for all containers to be ready
         run: |
