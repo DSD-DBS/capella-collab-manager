@@ -8,9 +8,6 @@ from fastapi import testclient
 from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.permissions import (
-    exceptions as projects_permissions_exceptions,
-)
-from capellacollab.projects.permissions import (
     injectables as projects_permissions_injectables,
 )
 from capellacollab.projects.permissions import (
@@ -31,15 +28,15 @@ def test_get_available_project_permissions(
     assert "properties" in response.json()
 
 
-@pytest.mark.usefixtures("user", "project_user")
+@pytest.mark.usefixtures("user", "project_user", "mock_request_logger")
 def test_project_permission_validation_injectable_fails_with_insufficient_permission(
     id_token: str,
     project: projects_models.DatabaseProject,
+    mock_router: fastapi.APIRouter,
 ):
     """Test that the project permission validation fails if the user has insufficient permissions"""
-    app = fastapi.APIRouter()
 
-    @app.get(
+    @mock_router.get(
         "/{project_slug}",
         dependencies=[
             fastapi.Depends(
@@ -54,28 +51,29 @@ def test_project_permission_validation_injectable_fails_with_insufficient_permis
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
-    with pytest.raises(
-        projects_permissions_exceptions.InsufficientProjectPermissionError
-    ):
-        client.get(
-            f"/{project.slug}",
-            cookies={"id_token": id_token},
-        )
+    client = testclient.TestClient(mock_router)
+    response = client.get(
+        f"/{project.slug}",
+        cookies={"id_token": id_token},
+    )
+    assert response.status_code == 403
+    assert (
+        response.json()["detail"]["err_code"]
+        == "INSUFFICIENT_PROJECT_PERMISSION"
+    )
 
 
-@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("user", "mock_request_logger")
 def test_project_permission_validation_injectable_passes(
     id_token: str,
     project: projects_models.DatabaseProject,
     project_user: projects_users_models.DatabaseProjectUserAssociation,
+    mock_router: fastapi.APIRouter,
 ):
     """Test that the project permission validation passes if permissions are sufficient"""
     project_user.role = projects_users_models.ProjectUserRole.MANAGER
 
-    app = fastapi.APIRouter()
-
-    @app.get(
+    @mock_router.get(
         "/{project_slug}",
         dependencies=[
             fastapi.Depends(
@@ -90,7 +88,7 @@ def test_project_permission_validation_injectable_passes(
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
+    client = testclient.TestClient(mock_router)
     response = client.get(
         f"/{project.slug}",
         cookies={"id_token": id_token},
@@ -99,7 +97,7 @@ def test_project_permission_validation_injectable_passes(
     assert response.status_code == 200
 
 
-@pytest.mark.usefixtures("user", "project_user")
+@pytest.mark.usefixtures("user", "project_user", "mock_request_logger")
 @pytest.mark.parametrize(
     "pat_scope",
     [
@@ -113,11 +111,11 @@ def test_project_permission_validation_injectable_fails_with_insufficient_permis
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
     pat: tuple[tokens_models.DatabaseUserToken, str],
+    mock_router: fastapi.APIRouter,
 ):
     """Test that the project permission validation fails if the user has insufficient permissions of the PAT"""
-    app = fastapi.APIRouter()
 
-    @app.get(
+    @mock_router.get(
         "/{project_slug}",
         dependencies=[
             fastapi.Depends(
@@ -132,17 +130,19 @@ def test_project_permission_validation_injectable_fails_with_insufficient_permis
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
-    with pytest.raises(
-        projects_permissions_exceptions.InsufficientProjectPermissionError
-    ):
-        client.get(
-            f"/{project.slug}",
-            auth=(user.name, pat[1]),
-        )
+    client = testclient.TestClient(mock_router)
+    response = client.get(
+        f"/{project.slug}",
+        auth=(user.name, pat[1]),
+    )
+    assert response.status_code == 403
+    assert (
+        response.json()["detail"]["err_code"]
+        == "INSUFFICIENT_PROJECT_PERMISSION"
+    )
 
 
-@pytest.mark.usefixtures("user", "project_user")
+@pytest.mark.usefixtures("user", "project_user", "mock_request_logger")
 @pytest.mark.parametrize(
     "pat_scope",
     [
@@ -158,11 +158,11 @@ def test_project_permission_validation_injectable_passes_pat(
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
     pat: tuple[tokens_models.DatabaseUserToken, str],
+    mock_router: fastapi.APIRouter,
 ):
     """Test that the project permission validation passes if PAT permissions are sufficient"""
-    app = fastapi.APIRouter()
 
-    @app.get(
+    @mock_router.get(
         "/{project_slug}",
         dependencies=[
             fastapi.Depends(
@@ -177,7 +177,7 @@ def test_project_permission_validation_injectable_passes_pat(
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
+    client = testclient.TestClient(mock_router)
     response = client.get(
         f"/{project.slug}",
         auth=(user.name, pat[1]),

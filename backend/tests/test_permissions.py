@@ -5,7 +5,6 @@ import fastapi
 import pytest
 from fastapi import testclient
 
-from capellacollab.permissions import exceptions as permissions_exceptions
 from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.permissions import models as permissions_models
 from capellacollab.users import models as users_models
@@ -164,13 +163,12 @@ def test_permission_validation_fails_with_insufficient_permission_pat(
     assert response.status_code == 403
 
 
-@pytest.mark.usefixtures("admin")
+@pytest.mark.usefixtures("admin", "mock_request_logger")
 def test_permission_validation_injectable_passes(
     id_token: str,
+    mock_router: fastapi.FastAPI,
 ):
-    app = fastapi.APIRouter()
-
-    @app.get(
+    @mock_router.get(
         "/",
         dependencies=[
             fastapi.Depends(
@@ -187,7 +185,7 @@ def test_permission_validation_injectable_passes(
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
+    client = testclient.TestClient(mock_router)
     response = client.get(
         "/",
         cookies={"id_token": id_token},
@@ -195,6 +193,7 @@ def test_permission_validation_injectable_passes(
     assert response.status_code == 200
 
 
+@pytest.mark.usefixtures("mock_request_logger")
 @pytest.mark.parametrize(
     "pat_scope",
     [
@@ -211,11 +210,11 @@ def test_permission_validation_injectable_passes(
 def test_permission_validation_injectable_passes_pat(
     user: users_models.DatabaseUser,
     pat: tuple[tokens_models.DatabaseUserToken, str],
+    mock_router: fastapi.FastAPI,
 ):
     user.role = users_models.Role.ADMIN
-    app = fastapi.APIRouter()
 
-    @app.get(
+    @mock_router.get(
         "/",
         dependencies=[
             fastapi.Depends(
@@ -232,7 +231,7 @@ def test_permission_validation_injectable_passes_pat(
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
+    client = testclient.TestClient(mock_router)
     response = client.get(
         "/",
         auth=(user.name, pat[1]),
@@ -240,14 +239,14 @@ def test_permission_validation_injectable_passes_pat(
     assert response.status_code == 200
 
 
-@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("user", "mock_request_logger")
 def test_permission_validation_injectable_insufficient_permission(
     id_token: str,
+    mock_router: fastapi.FastAPI,
 ):
     """Test that the permission validation fails if the user has insufficient permissions"""
-    app = fastapi.APIRouter()
 
-    @app.get(
+    @mock_router.get(
         "/",
         dependencies=[
             fastapi.Depends(
@@ -264,24 +263,25 @@ def test_permission_validation_injectable_insufficient_permission(
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
-    with pytest.raises(permissions_exceptions.InsufficientPermissionError):
-        client.get(
-            "/",
-            cookies={"id_token": id_token},
-        )
+    client = testclient.TestClient(mock_router)
+    response = client.get(
+        "/",
+        cookies={"id_token": id_token},
+    )
+    assert response.status_code == 403
+    assert response.json()["detail"]["err_code"] == "INSUFFICIENT_PERMISSION"
 
 
-@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("user", "mock_request_logger")
 def test_permission_validation_injectable_insufficient_permission_pat(
     user: users_models.DatabaseUser,
     pat: tuple[tokens_models.DatabaseUserToken, str],
+    mock_router: fastapi.FastAPI,
 ):
     """Test that the permission validation fails if the user has insufficient permissions"""
     user.role = users_models.Role.ADMIN
-    app = fastapi.APIRouter()
 
-    @app.get(
+    @mock_router.get(
         "/",
         dependencies=[
             fastapi.Depends(
@@ -298,12 +298,13 @@ def test_permission_validation_injectable_insufficient_permission_pat(
     def test_route():
         pass
 
-    client = testclient.TestClient(app)
-    with pytest.raises(permissions_exceptions.InsufficientPermissionError):
-        client.get(
-            "/",
-            auth=(user.name, pat[1]),
-        )
+    client = testclient.TestClient(mock_router)
+    response = client.get(
+        "/",
+        auth=(user.name, pat[1]),
+    )
+    assert response.status_code == 403
+    assert response.json()["detail"]["err_code"] == "INSUFFICIENT_PERMISSION"
 
 
 def test_global_scope_merging():

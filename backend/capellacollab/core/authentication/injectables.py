@@ -11,14 +11,13 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core.authentication import api_key_cookie, basic_auth
+from capellacollab.core.logging import injectables as logging_injectables
 from capellacollab.users import crud as users_crud
 from capellacollab.users import exceptions as users_exceptions
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import models as tokens_models
 
 from . import exceptions
-
-logger = logging.getLogger(__name__)
 
 
 class _AuthenticationInformationValidation:
@@ -38,6 +37,10 @@ class _AuthenticationInformationValidation:
         cls,
         request: fastapi.Request,
         db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+        logger: t.Annotated[
+            logging.LoggerAdapter,
+            fastapi.Depends(logging_injectables.get_request_logger),
+        ],
     ) -> tuple[
         users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
     ]:
@@ -57,7 +60,9 @@ class _AuthenticationInformationValidation:
 
         match scheme.lower():
             case "basic":
-                return await basic_auth.HTTPBasicAuth().validate(db, request)
+                return await basic_auth.HTTPBasicAuth().validate(
+                    db, request, logger
+                )
             case "":
                 raise exceptions.UnauthenticatedError()
             case _:

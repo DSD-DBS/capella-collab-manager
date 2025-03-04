@@ -8,17 +8,15 @@ import pathlib
 import random
 import string
 import time
-import typing as t
 from logging import handlers
 
 import fastapi
 from starlette.middleware import base
 
-from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 
-LOGGING_LEVEL = config.logging.level
+from . import injectables
 
 
 class CustomFormatter(logging.Formatter):
@@ -87,7 +85,7 @@ class AttachUserNameMiddleware(base.BaseHTTPMiddleware):
                     user,
                     _,
                 ) = await auth_injectables.authentication_information_validation(
-                    request, session
+                    request, session, injectables.get_request_logger(request)
                 )
             username = user.name
         except fastapi.HTTPException:
@@ -105,7 +103,9 @@ class LogExceptionMiddleware(base.BaseHTTPMiddleware):
         try:
             return await call_next(request)
         except Exception as exc:
-            get_request_logger(request).exception(msg=exc, exc_info=True)
+            injectables.get_request_logger(request).exception(
+                msg=exc, exc_info=True
+            )
             raise
 
 
@@ -116,10 +116,10 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
         started_at = time.perf_counter()
         is_health_check_route = request.url.path == "/healthcheck"
         if not is_health_check_route:
-            get_request_logger(request).debug("request started")
+            injectables.get_request_logger(request).debug("request started")
         response: fastapi.Response = await call_next(request)
         if not is_health_check_route:
-            get_request_logger(request).debug(
+            injectables.get_request_logger(request).debug(
                 "request finished",
                 extra={
                     "status_code": response.status_code,
@@ -128,34 +128,3 @@ class LogRequestsMiddleware(base.BaseHTTPMiddleware):
             )
 
         return response
-
-
-class LogAdapter(logging.LoggerAdapter):
-    def process(self, msg: str, kwargs):
-        extra: dict = self.extra | kwargs.get("extra", {})
-
-        msg = (
-            " ".join([f'{key}="{value}"' for key, value in extra.items()])
-            + f' message="{msg}"'
-        )
-        return (msg, kwargs)
-
-
-def _get_log_args(request: fastapi.Request) -> dict[str, t.Any]:
-    log_args = {}
-    if client := request.client:
-        log_args["client"] = client.host + ":" + str(client.port)
-    return log_args | {
-        "trace_id": request.state.trace_id,
-        "method": request.method,
-        "path": request.url.path,
-        "user": request.state.user_name,
-        "query_params": request.url.query,
-    }
-
-
-def get_request_logger(request: fastapi.Request) -> logging.LoggerAdapter:
-    logger: logging.Logger = logging.getLogger("capellacollab.request")
-    logger.setLevel(LOGGING_LEVEL)
-
-    return LogAdapter(logger, _get_log_args(request))

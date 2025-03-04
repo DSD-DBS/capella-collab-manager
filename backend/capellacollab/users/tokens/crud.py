@@ -23,8 +23,9 @@ def create_token(
     description: str,
     expiration_date: datetime.date | None,
     source: str,
+    legacy: bool = False,
 ) -> tuple[models.DatabaseUserToken, str]:
-    password = "collabmanager_" + credentials.generate_password(32)
+    password = credentials.generate_password(32)
     ph = argon2.PasswordHasher(time_cost=1, memory_cost=2048, parallelism=1)
     if not expiration_date:
         expiration_date = datetime.datetime.now(
@@ -33,7 +34,7 @@ def create_token(
     db_token = models.DatabaseUserToken(
         user=user,
         title=title,
-        hash=ph.hash(password),
+        hash=ph.hash(f"collabmanager_{password}" if legacy else password),
         created_at=datetime.datetime.now(datetime.UTC),
         expiration_date=expiration_date,
         description=description,
@@ -42,24 +43,13 @@ def create_token(
     )
     db.add(db_token)
     db.commit()
-    return db_token, password
+
+    if legacy:
+        return db_token, f"collabmanager_{password}"
+    return db_token, f"collabmanager_{password}_{db_token.id}"
 
 
-def get_token_by_token_and_user(
-    db: orm.Session, password: str, user_id: int
-) -> models.DatabaseUserToken | None:
-    ph = argon2.PasswordHasher(time_cost=1, memory_cost=2048, parallelism=1)
-
-    for token in get_token_by_user(db, user_id):
-        try:
-            ph.verify(token.hash, password)
-            return token
-        except argon2.exceptions.VerifyMismatchError:
-            pass
-    return None
-
-
-def get_token_by_user(
+def get_all_tokens_for_user(
     db: orm.Session, user_id: int
 ) -> abc.Sequence[models.DatabaseUserToken]:
     return (
@@ -70,6 +60,22 @@ def get_token_by_user(
         )
         .scalars()
         .all()
+    )
+
+
+def get_token_by_id_and_user(
+    db: orm.Session,
+    token_id: int,
+    user: users_models.DatabaseUser,
+) -> models.DatabaseUserToken | None:
+    return (
+        db.execute(
+            sa.select(models.DatabaseUserToken)
+            .where(models.DatabaseUserToken.user == user)
+            .where(models.DatabaseUserToken.id == token_id)
+        )
+        .scalars()
+        .one_or_none()
     )
 
 
