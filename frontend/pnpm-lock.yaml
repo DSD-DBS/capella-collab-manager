@@ -234,6 +234,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.6.11
         version: 0.6.11(@trivago/prettier-plugin-sort-imports@5.2.2(prettier@3.4.2))(prettier@3.4.2)
+      rollup-plugin-gzip:
+        specifier: ^4.0.1
+        version: 4.0.1(rollup@4.30.1)
       shiki:
         specifier: ^2.3.2
         version: 2.3.2
@@ -8308,6 +8311,12 @@ packages:
 
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
+
+  rollup-plugin-gzip@4.0.1:
+    resolution: {integrity: sha512-HVukJ5vwTxgzKaNeKCNEqFRQ+/T/j/3zqoUaCN3VGTt8/Mn7Wu2nMCE8VBIDubjM5U+QGgiWs6fYysn63JZY1g==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      rollup: '>=2.0.0'
 
   rollup-plugin-visualizer@5.12.0:
     resolution: {integrity: sha512-8/NU9jXcHRs7Nnj07PF2o4gjxmm9lXIrZ8r175bT9dK8qoLlvKTwRMArRCMgpMGlq8CTLugRvEmyMeMXIU2pNQ==}
@@ -19100,6 +19109,10 @@ snapshots:
 
   robust-predicates@3.0.2:
     optional: true
+
+  rollup-plugin-gzip@4.0.1(rollup@4.30.1):
+    dependencies:
+      rollup: 4.30.1
 
   rollup-plugin-visualizer@5.12.0(rollup@4.30.1):
     dependencies:

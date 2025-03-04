@@ -4,9 +4,14 @@
  */
 import analog from '@analogjs/platform';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
+import gzipPlugin from 'rollup-plugin-gzip';
+import { promisify } from 'util';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
+import { brotliCompress } from 'zlib';
+
+const brotliPromise = promisify(brotliCompress);
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -41,6 +46,10 @@ export default defineConfig(() => {
         uploadToken: process.env.CODECOV_TOKEN,
         gitService: 'github',
         telemetry: false,
+      }),
+      gzipPlugin({
+        customCompression: (content) => brotliPromise(Buffer.from(content)),
+        fileName: '.br',
       }),
     ],
     server: {
