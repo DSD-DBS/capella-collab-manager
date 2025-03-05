@@ -36,13 +36,13 @@ class SessionTokenIntegration(interface.HookRegistration):
                 "This PAT is managed by the Collaboration Manager."
                 " It will be revoked when the session is terminated"
                 " and is only valid for the duration of the session."
-                " Manual deletion may lead to unexpected behavior."
             ),
             expiration_date=datetime.datetime.now(tz=datetime.UTC).date()
             + datetime.timedelta(
                 days=2
             ),  # Maximum duration is until end of the next day.
             source="session automation",
+            managed=True,
         )
 
         if request.project_scope:

@@ -24,6 +24,7 @@ def create_token(
     expiration_date: datetime.date | None,
     source: str,
     legacy: bool = False,
+    managed: bool = False,
 ) -> tuple[models.DatabaseUserToken, str]:
     password = credentials.generate_password(32)
     ph = argon2.PasswordHasher(time_cost=1, memory_cost=2048, parallelism=1)
@@ -40,6 +41,7 @@ def create_token(
         description=description,
         source=source,
         scope=scope,
+        managed=managed,
     )
     db.add(db_token)
     db.commit()

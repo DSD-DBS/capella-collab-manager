@@ -28,5 +28,6 @@ export interface UserToken {
     title: string;
     description: string;
     source: string;
+    managed: boolean;
 }
 

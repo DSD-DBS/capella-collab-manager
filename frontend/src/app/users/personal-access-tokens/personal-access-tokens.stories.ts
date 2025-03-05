@@ -14,7 +14,7 @@ import {
 } from './personal-access-tokens.component';
 
 const meta: Meta<PersonalAccessTokensComponent> = {
-  title: 'Arraytings Components/Personal Access Tokens',
+  title: 'Settings Components/Personal Access Tokens',
   component: PersonalAccessTokensComponent,
   decorators: [],
   beforeEach: () => {
@@ -311,6 +311,7 @@ const scope: FineGrainedResourceOutput = {
     events: [],
     sessions: [],
     workspaces: [],
+    personal_access_tokens: [],
   },
   projects: {},
 };
@@ -329,6 +330,7 @@ const userToken: UserToken = {
     admin: { ...scope.admin, users: ['GET'] },
     projects: {},
   },
+  managed: false,
 };
 
 export const TokenOverview: Story = {
@@ -350,6 +352,7 @@ export const TokenOverview: Story = {
         source: 'token overview',
         requested_scopes: scope,
         actual_scopes: scope,
+        managed: false,
       },
       {
         id: 3,
@@ -365,6 +368,7 @@ export const TokenOverview: Story = {
           projects: {},
         },
         actual_scopes: scope,
+        managed: false,
       },
       {
         id: 4,
@@ -380,6 +384,23 @@ export const TokenOverview: Story = {
           projects: {},
         },
         actual_scopes: scope,
+        managed: false,
+      },
+      {
+        id: 5,
+        user_id: 1,
+        expiration_date: '2024-07-11',
+        created_at: '2024-01-01T15:00:00Z',
+        title: 'Managed token',
+        description: 'This is an example of a managed token',
+        source: 'token overview',
+        requested_scopes: {
+          user: { ...scope.user },
+          admin: { ...scope.admin, users: [] },
+          projects: {},
+        },
+        actual_scopes: scope,
+        managed: true,
       },
     ]),
   },
