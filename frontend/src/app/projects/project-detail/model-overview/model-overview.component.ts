@@ -102,8 +102,8 @@ export class ModelOverviewComponent implements OnInit {
 
   openDiagramsDialog(model: ToolModel): void {
     this.dialog.open(ModelDiagramDialogComponent, {
-      maxWidth: '100vw',
-      maxHeight: '100vh',
+      maxWidth: '100dvw',
+      maxHeight: '100dvh',
       data: { model: model, project: this.project },
     });
   }
