@@ -144,7 +144,7 @@ class KubernetesOperator:
     def kill_session(self, _id: str):
         log.info("Terminating session %s", _id)
 
-        self._delete_pod(name=_id)
+        self.delete_pod(name=_id)
         self._delete_disruptionbudget(name=_id)
         self._delete_service(name=_id)
 
@@ -504,7 +504,7 @@ class KubernetesOperator:
                 return
             raise
 
-    def _create_sidecar_pod(
+    def create_sidecar_pod(
         self,
         image: str,
         name: str,
@@ -829,7 +829,7 @@ class KubernetesOperator:
             for key, value in environment.items()
         ]
 
-    def _create_configmap(
+    def create_configmap(
         self,
         name: str,
         data: dict,
@@ -842,7 +842,7 @@ class KubernetesOperator:
         )
         return self.v1_core.create_namespaced_config_map(namespace, config_map)
 
-    def _delete_pod(self, name: str) -> client.V1Status | None:
+    def delete_pod(self, name: str) -> client.V1Status | None:
         try:
             status: client.V1Status = self.v1_core.delete_namespaced_pod(
                 name, namespace
@@ -866,7 +866,7 @@ class KubernetesOperator:
                 return None
             raise
 
-    def _delete_config_map(self, name: str) -> client.V1Status | None:
+    def delete_config_map(self, name: str) -> client.V1Status | None:
         try:
             status: client.V1Status = (
                 self.v1_core.delete_namespaced_config_map(name, namespace)
