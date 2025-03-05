@@ -7,7 +7,6 @@ import pathlib
 import yaml
 
 from capellacollab.configuration.app import config
-from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.operators import models as operators_models
 from capellacollab.tools import models as tools_models
 
@@ -20,6 +19,9 @@ class LogCollectorIntegration(interface.HookRegistration):
     _loki_enabled: bool = config.k8s.promtail.loki_enabled
 
     def configuration_hook(self, request: interface.ConfigurationHookRequest):
+        if not self._log_collection_enabled(request.tool):
+            return interface.ConfigurationHookResult()
+
         return interface.ConfigurationHookResult(
             volumes=[self._get_logs_volume(session_id=request.session_id)]
         )
@@ -40,10 +42,10 @@ class LogCollectorIntegration(interface.HookRegistration):
         self,
         request: interface.PostSessionCreationHookRequest,
     ) -> interface.PostSessionCreationHookResult:
-        if not self._log_collection_enabled(request.db_session):
+        if not self._log_collection_enabled(request.db_session.tool):
             return interface.PostSessionCreationHookResult()
 
-        request.operator._create_configmap(
+        request.operator.create_configmap(
             name=request.db_session.id,
             data=self._promtail_configuration(
                 session_id=request.session_id,
@@ -73,7 +75,7 @@ class LogCollectorIntegration(interface.HookRegistration):
             self._get_logs_volume(session_id=request.db_session.id),
         ]
 
-        request.operator._create_sidecar_pod(
+        request.operator.create_sidecar_pod(
             image=f"{config.docker.external_registry}/grafana/promtail",
             name=f"{request.db_session.id}-promtail",
             labels=labels,
@@ -90,21 +92,16 @@ class LogCollectorIntegration(interface.HookRegistration):
         self,
         request: interface.PreSessionTerminationHookRequest,
     ) -> interface.PreSessionTerminationHookResult:
-        if not self._log_collection_enabled(request.session):
+        if not self._log_collection_enabled(request.session.tool):
             return interface.PostSessionCreationHookResult()
 
-        request.operator._delete_config_map(name=request.session.id)
-        request.operator._delete_pod(name=f"{request.session.id}-promtail")
+        request.operator.delete_config_map(name=request.session.id)
+        request.operator.delete_pod(name=f"{request.session.id}-promtail")
 
         return interface.PreSessionTerminationHookResult()
 
-    def _log_collection_enabled(
-        self, session: sessions_models.DatabaseSession
-    ) -> bool:
-        return (
-            self._loki_enabled
-            and session.tool.config.monitoring.logging.enabled
-        )
+    def _log_collection_enabled(self, tool: tools_models.DatabaseTool) -> bool:
+        return self._loki_enabled and tool.config.monitoring.logging.enabled
 
     @classmethod
     def _promtail_configuration(
