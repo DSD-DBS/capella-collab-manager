@@ -68,6 +68,8 @@ future.
         Make sure to update the `backend.storageClassName` in the `values.yaml` in step 6 to `nfs-csi`.
         All new Jupyter file-shares and personal workspaces will use the new storage class then.
 
+        Set the IP address (in the storageclass and in `/etc/exports`) to the IP range of the microK8S nodes. When running on a single node, use the IP address of the node.
+
         !!! warning "User mapping for non-root containers"
             If you want to run the session containers as non-root, you can set the `runAsUser` value in the `podSecurityContext` of the values.yaml.
             In the default configuration, `runAsUser` is set to `1004370000`.
@@ -83,6 +85,8 @@ future.
             Replace `<user-id-of-session-containers>` with the value of the `runAsUser` value of the Kubernetes Pod security context.
 
             Then, apply the new configuration by running `sudo exportfs -ra`.
+
+            Also, make sure that the `/srv/nfs` directory is owned by the user `1004370000`.
 
 === "k3d"
 
