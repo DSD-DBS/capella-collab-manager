@@ -299,20 +299,27 @@
               }
             </mat-expansion-panel>
 
-            <button
-              class="mt-2 w-full"
-              (click)="deleteToken(token)"
-              mat-raised-button
+            <div
+              class="mt-2"
+              matTooltip="Managed tokens can't be deleted manually."
+              [matTooltipDisabled]="!token.managed"
             >
-              <mat-icon color="warn">delete</mat-icon>
-              <span>
-                @if (isTokenExpired(token.expiration_date)) {
-                  Remove token from overview
-                } @else {
-                  Revoke token
-                }
-              </span>
-            </button>
+              <button
+                class="w-full"
+                (click)="deleteToken(token)"
+                mat-raised-button
+                [disabled]="token.managed"
+              >
+                <mat-icon color="warn">delete</mat-icon>
+                <span>
+                  @if (isTokenExpired(token.expiration_date)) {
+                    Remove token from overview
+                  } @else {
+                    Revoke token
+                  }
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       }

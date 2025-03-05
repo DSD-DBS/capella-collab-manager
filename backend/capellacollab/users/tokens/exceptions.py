@@ -18,3 +18,17 @@ class TokenNotFoundError(core_exceptions.BaseError):
     @classmethod
     def openapi_example(cls) -> "TokenNotFoundError":
         return cls(-1)
+
+
+class ManagedTokensRestrictionError(core_exceptions.BaseError):
+    def __init__(self, token_id: int):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            err_code="MANAGED_TOKEN_RESTRICTED",
+            title=f"Managed token {token_id} is restricted",
+            reason="Managed tokens are restricted and can't be removed.",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "ManagedTokensRestrictionError":
+        return cls(-1)

@@ -15,6 +15,7 @@ from capellacollab.projects.permissions import (
 )
 from capellacollab.projects.users import models as project_users_models
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import models as tokens_models
 
 POST_TOKEN = {
     "expiration_date": str(datetime.datetime.now(tz=datetime.UTC).date()),
@@ -91,9 +92,28 @@ def test_create_and_revoke_token(
     assert response.status_code == 204
 
 
-def test_token_lifecycle(
-    client: testclient.TestClient, user: users_models.User
+def test_revoke_managed_token_as_user(
+    client: testclient.TestClient, pat: tokens_models.DatabaseUserToken
 ):
+    """Test revocation of a managed PAT"""
+    pat[0].managed = True
+    response = client.delete(f"/api/v1/users/current/tokens/{pat[0].id}")
+    assert response.status_code == 400
+    assert response.json()["detail"]["err_code"] == "MANAGED_TOKEN_RESTRICTED"
+
+
+@pytest.mark.usefixtures("admin")
+def test_revoke_managed_token_as_admin(
+    client: testclient.TestClient, pat: tokens_models.DatabaseUserToken
+):
+    """Test revocation of a managed PAT as administrator"""
+    pat[0].managed = True
+    response = client.delete(f"/api/v1/users/current/tokens/{pat[0].id}")
+    assert response.status_code == 204
+
+
+@pytest.mark.usefixtures("user")
+def test_token_lifecycle(client: testclient.TestClient):
     """Test the lifecycle of a PAT (create, get, revoke, get)"""
     response = client.post("/api/v1/users/current/tokens", json=POST_TOKEN)
     assert response.status_code == 200

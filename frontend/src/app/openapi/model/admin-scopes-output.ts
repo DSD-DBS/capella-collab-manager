@@ -64,6 +64,10 @@ export interface AdminScopesOutput {
      * See user workspaces
      */
     workspaces: Array<AdminScopesOutput.WorkspacesEnum>;
+    /**
+     * Revoke personal access tokens of ALL users.
+     */
+    personal_access_tokens: Array<AdminScopesOutput.PersonalAccessTokensEnum>;
 }
 export namespace AdminScopesOutput {
     export type UsersEnum = 'GET' | 'CREATE' | 'UPDATE' | 'DELETE';
@@ -140,6 +144,10 @@ export namespace AdminScopesOutput {
     export const WorkspacesEnum = {
         Get: 'GET' as WorkspacesEnum,
         Delete: 'DELETE' as WorkspacesEnum
+    };
+    export type PersonalAccessTokensEnum = 'DELETE';
+    export const PersonalAccessTokensEnum = {
+        Delete: 'DELETE' as PersonalAccessTokensEnum
     };
 }
 

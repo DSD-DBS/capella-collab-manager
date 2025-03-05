@@ -15,7 +15,7 @@ from capellacollab.projects.permissions import crud as project_permissions_crud
 from capellacollab.users import injectables as user_injectables
 from capellacollab.users import models as users_models
 
-from . import crud, injectables, models, util
+from . import crud, exceptions, injectables, models, util
 
 router = fastapi.APIRouter()
 
@@ -79,6 +79,7 @@ def create_token_for_user(
         description=token.description,
         source=token.source,
         password=password,
+        managed=token.managed,
     )
 
 
@@ -114,6 +115,7 @@ def get_all_tokens_of_user(
             actual_scopes=util.get_actual_token_scopes(db, token),
             description=token.description,
             source=token.source,
+            managed=token.managed,
         )
         for token in token_list
     ]
@@ -137,8 +139,18 @@ def get_all_tokens_of_user(
 def delete_token_for_user(
     token: t.Annotated[
         models.DatabaseUserToken,
-        fastapi.Depends(injectables.get_exisiting_own_user_token),
+        fastapi.Depends(injectables.get_existing_own_user_token),
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    global_scope: t.Annotated[
+        permissions_models.GlobalScopes,
+        fastapi.Depends(permissions_injectables.get_scope),
+    ],
 ) -> None:
+    if (
+        token.managed
+        and permissions_models.UserTokenVerb.DELETE
+        not in global_scope.admin.personal_access_tokens
+    ):
+        raise exceptions.ManagedTokensRestrictionError(token.id)
     return crud.delete_token(db, token)

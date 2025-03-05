@@ -51,6 +51,7 @@ class UserToken(core_pydantic.BaseModel):
     title: str
     description: str
     source: str
+    managed: bool
 
     _validate_created_at = pydantic.field_serializer("created_at")(
         core_pydantic.datetime_serializer_optional
@@ -98,3 +99,5 @@ class DatabaseUserToken(database.Base):
             cascade="all, delete-orphan",
         )
     )
+
+    managed: orm.Mapped[bool] = orm.mapped_column(default=False)

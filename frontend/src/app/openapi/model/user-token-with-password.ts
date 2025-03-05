@@ -28,6 +28,7 @@ export interface UserTokenWithPassword {
     title: string;
     description: string;
     source: string;
+    managed: boolean;
     password: string;
 }
 

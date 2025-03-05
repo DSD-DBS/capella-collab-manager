@@ -180,6 +180,13 @@ class AdminScopes(core_pydantic.BaseModelStrict):
             description="See user workspaces",
         )
     )
+    personal_access_tokens: set[t.Literal[UserTokenVerb.DELETE]] = (
+        pydantic.Field(
+            default_factory=set,
+            title="Personal Access Tokens (Global)",
+            description="Revoke personal access tokens of ALL users.",
+        )
+    )
 
 
 class GlobalScopes(core_pydantic.BaseModelStrict):

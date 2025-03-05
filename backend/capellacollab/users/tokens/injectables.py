@@ -23,7 +23,7 @@ def get_own_user_tokens(
     return crud.get_all_tokens_for_user(db, user.id)
 
 
-def get_exisiting_own_user_token(
+def get_existing_own_user_token(
     token_id: int,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
     user: t.Annotated[
