@@ -7,6 +7,7 @@ import { userEvent, within } from '@storybook/test';
 import MockDate from 'mockdate';
 import { of } from 'rxjs';
 import { FineGrainedResourceOutput, UserToken } from 'src/app/openapi';
+import { mockUser } from '../../../storybook/user';
 import {
   PersonalAccessTokensComponent,
   ProjectScopes,
@@ -255,6 +256,7 @@ export const NoTokensInOverview: Story = {
       admin: true,
     },
     permissionsSchema: globalPermissionsSchema,
+    tokens$: of([]),
   },
 };
 
@@ -267,6 +269,7 @@ export const CreateTokenWithProjectScope: Story = {
     permissionsSchema: globalPermissionsSchema,
     projectPermissionsSchema: projectPermissionSchema,
     projectScopes: ['in-flight-entertainment'],
+    tokens$: of([]),
   },
   parameters: {
     screenshot: {
@@ -317,9 +320,9 @@ const scope: FineGrainedResourceOutput = {
   projects: {},
 };
 
-const userToken: UserToken = {
+export const userToken: UserToken = {
   id: 1,
-  user_id: 1,
+  user: mockUser,
   expiration_date: '2024-12-18',
   created_at: '2024-04-01T15:00:00Z',
   title: 'Visual Testing PAT',
@@ -345,7 +348,8 @@ export const TokenOverview: Story = {
       userToken,
       {
         id: 2,
-        user_id: 1,
+        user: mockUser,
+
         expiration_date: '2024-03-11',
         created_at: '2024-01-01T15:00:00Z',
         title: 'Expired token',
@@ -357,7 +361,8 @@ export const TokenOverview: Story = {
       },
       {
         id: 3,
-        user_id: 1,
+        user: mockUser,
+
         expiration_date: '2024-07-11',
         created_at: '2024-01-01T15:00:00Z',
         title: 'Example without scopes',
@@ -373,7 +378,8 @@ export const TokenOverview: Story = {
       },
       {
         id: 4,
-        user_id: 1,
+        user: mockUser,
+
         expiration_date: '2024-07-11',
         created_at: '2024-01-01T15:00:00Z',
         title: 'Example with one scope',
@@ -389,7 +395,7 @@ export const TokenOverview: Story = {
       },
       {
         id: 5,
-        user_id: 1,
+        user: mockUser,
         expiration_date: '2024-07-11',
         created_at: '2024-01-01T15:00:00Z',
         title: 'Managed token',

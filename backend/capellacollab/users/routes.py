@@ -339,7 +339,9 @@ router.include_router(
     tags=["Users - Workspaces"],
 )
 router.include_router(
-    tokens_routes.router, prefix="/current/tokens", tags=["Users - Token"]
+    tokens_routes.user_token_router,
+    prefix="/current/tokens",
+    tags=["Users - Token"],
 )
 router.include_router(
     permissions_routes.users_router,

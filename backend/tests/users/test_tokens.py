@@ -6,6 +6,7 @@ import json
 
 import pytest
 from fastapi import testclient
+from sqlalchemy import orm
 
 from capellacollab.__main__ import app
 from capellacollab.permissions import models as permissions_models
@@ -15,6 +16,7 @@ from capellacollab.projects.permissions import (
 )
 from capellacollab.projects.users import models as project_users_models
 from capellacollab.users import models as users_models
+from capellacollab.users.tokens import crud as tokens_crud
 from capellacollab.users.tokens import models as tokens_models
 
 POST_TOKEN = {
@@ -96,8 +98,8 @@ def test_revoke_managed_token_as_user(
     client: testclient.TestClient, pat: tokens_models.DatabaseUserToken
 ):
     """Test revocation of a managed PAT"""
-    pat[0].managed = True
-    response = client.delete(f"/api/v1/users/current/tokens/{pat[0].id}")
+    pat.managed = True
+    response = client.delete(f"/api/v1/users/current/tokens/{pat.id}")
     assert response.status_code == 400
     assert response.json()["detail"]["err_code"] == "MANAGED_TOKEN_RESTRICTED"
 
@@ -107,9 +109,46 @@ def test_revoke_managed_token_as_admin(
     client: testclient.TestClient, pat: tokens_models.DatabaseUserToken
 ):
     """Test revocation of a managed PAT as administrator"""
-    pat[0].managed = True
-    response = client.delete(f"/api/v1/users/current/tokens/{pat[0].id}")
+    pat.managed = True
+    response = client.delete(f"/api/v1/users/current/tokens/{pat.id}")
     assert response.status_code == 204
+
+
+@pytest.mark.usefixtures("admin")
+def test_get_all_tokens(
+    client: testclient.TestClient, pat: tokens_models.DatabaseUserToken
+):
+    """Test to get all personal access tokens of the own user"""
+
+    response = client.get("/api/v1/tokens")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["id"] == pat.id
+
+
+@pytest.mark.usefixtures("admin")
+def test_revoke_global_token(
+    client: testclient.TestClient,
+    pat: tokens_models.DatabaseUserToken,
+    db: orm.Session,
+):
+    """Test to revoke a token via the global endpoint"""
+
+    response = client.delete(f"/api/v1/tokens/{pat.id}")
+    assert response.status_code == 204
+
+    assert tokens_crud.get_all_tokens(db) == []
+
+
+@pytest.mark.usefixtures("admin")
+def test_revoke_global_token_not_found(
+    client: testclient.TestClient,
+):
+    """Test to revoke a token that does not exist via the global endpoint"""
+
+    response = client.delete("/api/v1/tokens/-1")
+    assert response.status_code == 404
+    assert response.json()["detail"]["err_code"] == "TOKEN_NOT_FOUND"
 
 
 @pytest.mark.usefixtures("user")

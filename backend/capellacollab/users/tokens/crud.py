@@ -65,20 +65,10 @@ def get_all_tokens_for_user(
     )
 
 
-def get_token_by_id_and_user(
+def get_all_tokens(
     db: orm.Session,
-    token_id: int,
-    user: users_models.DatabaseUser,
-) -> models.DatabaseUserToken | None:
-    return (
-        db.execute(
-            sa.select(models.DatabaseUserToken)
-            .where(models.DatabaseUserToken.user == user)
-            .where(models.DatabaseUserToken.id == token_id)
-        )
-        .scalars()
-        .one_or_none()
-    )
+) -> abc.Sequence[models.DatabaseUserToken]:
+    return db.execute(sa.select(models.DatabaseUserToken)).scalars().all()
 
 
 def get_token_by_user_and_id(
@@ -88,6 +78,16 @@ def get_token_by_user_and_id(
         sa.select(models.DatabaseUserToken)
         .where(models.DatabaseUserToken.user_id == user_id)
         .where(models.DatabaseUserToken.id == token_id)
+    ).scalar_one_or_none()
+
+
+def get_token_by_id(
+    db: orm.Session, token_id: int
+) -> models.DatabaseUserToken | None:
+    return db.execute(
+        sa.select(models.DatabaseUserToken).where(
+            models.DatabaseUserToken.id == token_id
+        )
     ).scalar_one_or_none()
 
 

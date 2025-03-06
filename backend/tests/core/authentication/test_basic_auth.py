@@ -70,11 +70,11 @@ def test_use_pat(
 
 def test_auth_with_invalid_pat(
     user: users_models.DatabaseUser,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat_password: str,
 ) -> None:
     """Try to authenticate with invalid PAT"""
 
-    tmp_pat = pat[1].split("_")
+    tmp_pat = pat_password.split("_")
     tmp_pat[1] = "invalid"
     modified_pat = "_".join(tmp_pat)
 
@@ -180,9 +180,9 @@ def test_auth_with_invalid_structured_pat(
 
 def test_invalid_basic_auth_expired_token(
     client_pat: testclient.TestClient,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat: tokens_models.DatabaseUserToken,
 ) -> None:
-    pat[0].expiration_date = datetime.datetime.now(
+    pat.expiration_date = datetime.datetime.now(
         tz=datetime.UTC
     ).date() - datetime.timedelta(days=1)
     response = client_pat.get("/api/v1/projects")

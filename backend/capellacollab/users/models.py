@@ -112,6 +112,7 @@ ROLE_MAPPING = {
             sessions={models.UserTokenVerb.GET},
             workspaces={models.UserTokenVerb.GET, models.UserTokenVerb.DELETE},
             personal_access_tokens={
+                models.UserTokenVerb.GET,
                 models.UserTokenVerb.DELETE,
             },
             tags={

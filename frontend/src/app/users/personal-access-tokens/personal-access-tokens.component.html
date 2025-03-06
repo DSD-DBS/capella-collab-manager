@@ -186,13 +186,32 @@
   <hr class="my-2" />
 
   <h2 class="mb-2 text-xl font-medium">Token Overview</h2>
-  @if ((tokens$ | async)?.length) {
+  @if (tokens$ | async) {
     <div class="flex flex-wrap gap-2">
       @for (token of tokens$ | async; track token) {
-        <app-token-card [token]="token"></app-token-card>
+        <app-token-card
+          class="contents"
+          (tokenDeleted)="loadTokens()"
+          [token]="token"
+        ></app-token-card>
+      } @empty {
+        No token created for your user yet.
       }
     </div>
   } @else {
-    No token created for your user yet.
+    <div class="flex flex-wrap gap-2">
+      @for (_ of Array(20).fill(0); track $index) {
+        <ngx-skeleton-loader
+          class="h-64 w-[350px]"
+          [theme]="{
+            'border-radius': '10px',
+            height: '100%',
+            margin: '0px',
+            padding: '0px',
+            border: '1px solid white',
+          }"
+        />
+      }
+    </div>
   }
 </div>

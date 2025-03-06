@@ -15,7 +15,6 @@ from capellacollab.projects.permissions import (
 )
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.users import models as users_models
-from capellacollab.users.tokens import models as tokens_models
 
 
 def test_get_available_project_permissions(
@@ -110,7 +109,7 @@ def test_project_permission_validation_injectable_passes(
 def test_project_permission_validation_injectable_fails_with_insufficient_permission_pat(
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat_password: str,
     mock_router: fastapi.APIRouter,
 ):
     """Test that the project permission validation fails if the user has insufficient permissions of the PAT"""
@@ -133,7 +132,7 @@ def test_project_permission_validation_injectable_fails_with_insufficient_permis
     client = testclient.TestClient(mock_router)
     response = client.get(
         f"/{project.slug}",
-        auth=(user.name, pat[1]),
+        auth=(user.name, pat_password),
     )
     assert response.status_code == 403
     assert (
@@ -157,7 +156,7 @@ def test_project_permission_validation_injectable_fails_with_insufficient_permis
 def test_project_permission_validation_injectable_passes_pat(
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat_password: str,
     mock_router: fastapi.APIRouter,
 ):
     """Test that the project permission validation passes if PAT permissions are sufficient"""
@@ -180,7 +179,7 @@ def test_project_permission_validation_injectable_passes_pat(
     client = testclient.TestClient(mock_router)
     response = client.get(
         f"/{project.slug}",
-        auth=(user.name, pat[1]),
+        auth=(user.name, pat_password),
     )
 
     assert response.status_code == 200
@@ -203,7 +202,7 @@ def test_project_permission_validation_injectable_passes_pat(
 def test_project_permission_validation_injectable_passes_admin_pat(
     project: projects_models.DatabaseProject,
     user: users_models.DatabaseUser,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat_password: str,
     mock_router: fastapi.APIRouter,
 ):
     """Test that the project permission validation passes with `admin.projects:get` permission"""
@@ -226,7 +225,7 @@ def test_project_permission_validation_injectable_passes_admin_pat(
     client = testclient.TestClient(mock_router)
     response = client.get(
         f"/{project.slug}",
-        auth=(user.name, pat[1]),
+        auth=(user.name, pat_password),
     )
 
     assert response.status_code == 200

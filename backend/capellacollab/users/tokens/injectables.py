@@ -35,3 +35,13 @@ def get_existing_own_user_token(
     if not token:
         raise exceptions.TokenNotFoundError(token_id)
     return token
+
+
+def get_existing_global_token(
+    token_id: int,
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+) -> models.DatabaseUserToken:
+    token = crud.get_token_by_id(db, token_id)
+    if not token:
+        raise exceptions.TokenNotFoundError(token_id)
+    return token

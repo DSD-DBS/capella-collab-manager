@@ -22,7 +22,6 @@ from capellacollab.__main__ import app
 from capellacollab.core import database
 from capellacollab.core.database import migration
 from capellacollab.users import models as users_models
-from capellacollab.users.tokens import models as tokens_models
 
 os.environ["DEVELOPMENT_MODE"] = "1"
 
@@ -132,10 +131,10 @@ def fixture_client(id_token: str) -> testclient.TestClient:
 @pytest.fixture(name="client_pat")
 def fixture_client_pat(
     user: users_models.DatabaseUser,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat_password: str,
 ) -> testclient.TestClient:
     encoded_credentials = base64.b64encode(
-        f"{user.name}:{pat[1]}".encode()
+        f"{user.name}:{pat_password}".encode()
     ).decode()
     return testclient.TestClient(
         app, headers={"Authorization": f"Basic {encoded_credentials}"}

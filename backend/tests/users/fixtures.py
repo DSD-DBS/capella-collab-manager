@@ -117,8 +117,8 @@ def fixture_pat_scope(
     return request.param
 
 
-@pytest.fixture(name="pat")
-def fixture_pat(
+@pytest.fixture(name="pat_combined")
+def fixture_pat_combined(
     db: orm.Session,
     user: users_models.DatabaseUser,
     pat_scope: tuple[
@@ -147,3 +147,17 @@ def fixture_pat(
         )
 
     return token, password
+
+
+@pytest.fixture(name="pat")
+def fixture_pat(
+    pat_combined: tuple[tokens_models.DatabaseUserToken, str],
+) -> tokens_models.DatabaseUserToken:
+    return pat_combined[0]
+
+
+@pytest.fixture(name="pat_password")
+def fixture_pat_password(
+    pat_combined: tuple[tokens_models.DatabaseUserToken, str],
+) -> str:
+    return pat_combined[1]

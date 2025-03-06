@@ -20,8 +20,8 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, tap } from 'rxjs';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   FineGrainedResourceOutput,
   PermissionsService,
@@ -58,6 +58,7 @@ import { TokenCardComponent } from './token-card/token-card.component';
     MatExpansionModule,
     MatTooltipModule,
     TokenCardComponent,
+    NgxSkeletonLoaderComponent,
   ],
   providers: [
     provideMomentDateAdapter({
@@ -75,7 +76,6 @@ import { TokenCardComponent } from './token-card/token-card.component';
 })
 export class PersonalAccessTokensComponent implements OnInit {
   tokenService = inject(UsersTokenService);
-  private toastService = inject(ToastService);
   private formBuilder = inject(FormBuilder);
   private permissionsService = inject(PermissionsService);
   private matDialog = inject(MatDialog);
@@ -126,7 +126,7 @@ export class PersonalAccessTokensComponent implements OnInit {
       '',
       [Validators.required, Validators.minLength(1), Validators.maxLength(50)],
     ],
-    description: ['', [Validators.required]],
+    description: [''],
     date: [this.getTomorrow(), [Validators.required]],
   });
   constructor() {
@@ -273,6 +273,8 @@ export class PersonalAccessTokensComponent implements OnInit {
     );
     delete this.selectedScopes.projects[projectSlug];
   }
+
+  protected readonly Array = Array;
 }
 
 export interface Scopes {

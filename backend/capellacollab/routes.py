@@ -18,6 +18,7 @@ from capellacollab.settings import routes as settings_routes
 from capellacollab.tags import routes as tags_routes
 from capellacollab.tools import routes as tools_routes
 from capellacollab.users import routes as users_routes
+from capellacollab.users.tokens import routes as tokens_routes
 
 log = logging.getLogger(__name__)
 
@@ -25,6 +26,9 @@ log = logging.getLogger(__name__)
 router = fastapi.APIRouter()
 router.include_router(
     feedback_routes.router, prefix="/feedback", tags=["Feedback"]
+)
+router.include_router(
+    tokens_routes.global_token_router, prefix="/tokens", tags=["Global Tokens"]
 )
 router.include_router(
     sessions_routes.router,

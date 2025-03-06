@@ -6,48 +6,57 @@
 <div class="collab-card flex flex-col justify-between sm:max-w-[350px]">
   <div>
     <div class="min-h-[131px]">
-      <b>{{ token.title }}</b>
+      <div>
+        <b>{{ token().title }}</b>
+        <br />
+        @if (global()) {
+          <div class="flex items-center gap-1">
+            <mat-icon inline class="align-bottom">account_circle</mat-icon>
+            <span>{{ token().user.name }}</span>
+          </div>
+        }
+      </div>
       <hr class="my-1" />
       The token was created
-      @if (token.created_at) {
-        <app-relative-time [date]="token.created_at"></app-relative-time>
+      @if (token().created_at; as createdAt) {
+        <app-relative-time [date]="createdAt"></app-relative-time>
       }
-      <span> in the {{ token.source }}</span>
-      @if (!isTokenExpired(token.expiration_date)) {
+      <span> in the {{ token().source }}</span>
+      @if (!isTokenExpired(token().expiration_date)) {
         and expires
         <app-relative-time
-          [date]="token.expiration_date"
+          [date]="token().expiration_date"
           dateFormat="PP"
         ></app-relative-time
         >.
       } @else {
         <span>.</span>
         <div
-          class="mt-2 flex items-center justify-center gap-2 rounded border p-2 text-sm
+          class="my-2 flex items-center justify-center gap-2 rounded-material border p-2 text-sm
             text-red-600 shadow"
         >
           <mat-icon class="shrink-0">warning</mat-icon>
           <span
             >The token has expired
             <app-relative-time
-              [date]="token.expiration_date"
+              [date]="token().expiration_date"
               dateFormat="PP"
             ></app-relative-time
             >!</span
           >
         </div>
       }
-      <div class="mt-1 text-sm">{{ token.description }}</div>
+      <div class="text-sm">{{ token().description }}</div>
     </div>
   </div>
   <div>
     <mat-expansion-panel class="!mt-2">
-      @let actualScopes = flattenScope(token.actual_scopes);
-      @let requestedScopes = flattenScope(token.requested_scopes);
+      @let actualScopes = flattenScope(token().actual_scopes);
+      @let requestedScopes = flattenScope(token().requested_scopes);
       @let count = countScopes(requestedScopes);
 
       <mat-expansion-panel-header
-        [attr.data-testId]="'scopes-expansion-' + token.id"
+        [attr.data-testId]="'scopes-expansion-' + token().id"
       >
         <mat-panel-title>
           <b>{{ count }} {{ count === 1 ? "Permission" : "Permissions" }}</b
@@ -110,17 +119,17 @@
     <div
       class="mt-2"
       matTooltip="Managed tokens can't be deleted manually."
-      [matTooltipDisabled]="!token.managed"
+      [matTooltipDisabled]="!token().managed || global()"
     >
       <button
         class="w-full"
-        (click)="deleteToken(token)"
+        (click)="deleteToken(token())"
         mat-raised-button
-        [disabled]="token.managed"
+        [disabled]="token().managed && !global()"
       >
         <mat-icon class="error-button">delete</mat-icon>
         <span>
-          @if (isTokenExpired(token.expiration_date)) {
+          @if (isTokenExpired(token().expiration_date)) {
             Remove token from overview
           } @else {
             Revoke token

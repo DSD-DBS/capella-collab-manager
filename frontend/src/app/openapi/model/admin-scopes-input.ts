@@ -65,7 +65,7 @@ export interface AdminScopesInput {
      */
     workspaces?: Array<AdminScopesInput.WorkspacesEnum>;
     /**
-     * Revoke personal access tokens of ALL users.
+     * Get and revoke personal access tokens of ALL users.
      */
     personal_access_tokens?: Array<AdminScopesInput.PersonalAccessTokensEnum>;
     /**
@@ -150,6 +150,7 @@ export namespace AdminScopesInput {
     } as const;
     export type WorkspacesEnum = typeof WorkspacesEnum[keyof typeof WorkspacesEnum];
     export const PersonalAccessTokensEnum = {
+        Get: 'GET',
         Delete: 'DELETE'
     } as const;
     export type PersonalAccessTokensEnum = typeof PersonalAccessTokensEnum[keyof typeof PersonalAccessTokensEnum];

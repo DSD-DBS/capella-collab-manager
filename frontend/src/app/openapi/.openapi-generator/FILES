@@ -6,6 +6,7 @@ api/authentication.service.ts
 api/configuration.service.ts
 api/events.service.ts
 api/feedback.service.ts
+api/global-tokens.service.ts
 api/integrations-pure-variants.service.ts
 api/permissions.service.ts
 api/projects-events.service.ts

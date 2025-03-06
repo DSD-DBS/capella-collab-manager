@@ -1,0 +1,35 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<h2 class="mb-2 text-xl font-medium">Global Token Overview</h2>
+@if (tokens()) {
+  <div class="flex flex-wrap gap-2">
+    @for (token of tokens()!; track token) {
+      <app-token-card
+        class="contents"
+        (tokenDeleted)="loadTokens()"
+        [token]="token"
+        [global]="true"
+      ></app-token-card>
+    } @empty {
+      No personal access tokens found.
+    }
+  </div>
+} @else {
+  <div class="flex flex-wrap gap-2">
+    @for (_ of Array(20).fill(0); track $index) {
+      <ngx-skeleton-loader
+        class="h-64 w-[350px]"
+        [theme]="{
+          'border-radius': '10px',
+          height: '100%',
+          margin: '0px',
+          padding: '0px',
+          border: '1px solid white',
+        }"
+      />
+    }
+  </div>
+}

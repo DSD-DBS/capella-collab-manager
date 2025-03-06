@@ -8,7 +8,6 @@ from fastapi import testclient
 from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.permissions import models as permissions_models
 from capellacollab.users import models as users_models
-from capellacollab.users.tokens import models as tokens_models
 
 
 def test_get_available_permissions(
@@ -209,7 +208,7 @@ def test_permission_validation_injectable_passes(
 )
 def test_permission_validation_injectable_passes_pat(
     user: users_models.DatabaseUser,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat_password: str,
     mock_router: fastapi.FastAPI,
 ):
     user.role = users_models.Role.ADMIN
@@ -234,7 +233,7 @@ def test_permission_validation_injectable_passes_pat(
     client = testclient.TestClient(mock_router)
     response = client.get(
         "/",
-        auth=(user.name, pat[1]),
+        auth=(user.name, pat_password),
     )
     assert response.status_code == 200
 
@@ -275,7 +274,7 @@ def test_permission_validation_injectable_insufficient_permission(
 @pytest.mark.usefixtures("user", "mock_request_logger")
 def test_permission_validation_injectable_insufficient_permission_pat(
     user: users_models.DatabaseUser,
-    pat: tuple[tokens_models.DatabaseUserToken, str],
+    pat_password: str,
     mock_router: fastapi.FastAPI,
 ):
     """Test that the permission validation fails if the user has insufficient permissions"""
@@ -301,7 +300,7 @@ def test_permission_validation_injectable_insufficient_permission_pat(
     client = testclient.TestClient(mock_router)
     response = client.get(
         "/",
-        auth=(user.name, pat[1]),
+        auth=(user.name, pat_password),
     )
     assert response.status_code == 403
     assert response.json()["detail"]["err_code"] == "INSUFFICIENT_PERMISSION"
