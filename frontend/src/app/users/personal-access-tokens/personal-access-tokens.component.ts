@@ -20,8 +20,8 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, tap } from 'rxjs';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   FineGrainedResourceOutput,
   PermissionsService,
@@ -58,6 +58,7 @@ import { TokenCardComponent } from './token-card/token-card.component';
     MatExpansionModule,
     MatTooltipModule,
     TokenCardComponent,
+    NgxSkeletonLoaderComponent,
   ],
   providers: [
     provideMomentDateAdapter({
@@ -123,7 +124,6 @@ export class PersonalAccessTokensComponent implements OnInit {
   });
   constructor(
     public tokenService: UsersTokenService,
-    private toastService: ToastService,
     private formBuilder: FormBuilder,
     private permissionsService: PermissionsService,
     private matDialog: MatDialog,
@@ -272,6 +272,8 @@ export class PersonalAccessTokensComponent implements OnInit {
     );
     delete this.selectedScopes.projects[projectSlug];
   }
+
+  protected readonly Array = Array;
 }
 
 export interface Scopes {

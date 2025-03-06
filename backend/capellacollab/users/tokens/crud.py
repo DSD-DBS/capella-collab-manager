@@ -65,6 +65,12 @@ def get_all_tokens_for_user(
     )
 
 
+def get_all_tokens(
+    db: orm.Session,
+) -> abc.Sequence[models.DatabaseUserToken]:
+    return db.execute(sa.select(models.DatabaseUserToken)).scalars().all()
+
+
 def get_token_by_id_and_user(
     db: orm.Session,
     token_id: int,

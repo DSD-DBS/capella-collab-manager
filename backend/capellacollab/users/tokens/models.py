@@ -14,6 +14,7 @@ from capellacollab.permissions import models as permissions_models
 from capellacollab.projects.permissions import (
     models as project_permissions_models,
 )
+from capellacollab.users import models as users_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.permissions.models import (
@@ -39,7 +40,7 @@ class FineGrainedResource(core_pydantic.BaseModel):
 
 class UserToken(core_pydantic.BaseModel):
     id: int
-    user_id: int
+    user: users_models.BaseUser
     expiration_date: datetime.date
     requested_scopes: FineGrainedResource = pydantic.Field(
         description="The scope the token was requested for."

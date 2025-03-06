@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { KeyValuePipe } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatExpansionPanel,
@@ -12,12 +12,15 @@ import {
 } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { tap } from 'rxjs';
 import { RelativeTimeComponent } from '../../../general/relative-time/relative-time.component';
+import { ToastService } from '../../../helpers/toast/toast.service';
 import {
   AdminScopesOutput,
   FineGrainedResourceOutput,
   ProjectUserScopesOutput,
   UserScopesOutput,
+  UsersTokenService,
   UserToken,
 } from '../../../openapi';
 import { UserTokenVerb } from '../token-permission-selection/token-permission-selection.component';
@@ -38,6 +41,9 @@ import { UserTokenVerb } from '../token-permission-selection/token-permission-se
 })
 export class TokenCardComponent {
   public token = input.required<UserToken>();
+  tokenDeleted = output<void>();
+  private tokenService = inject(UsersTokenService);
+  private toastService = inject(ToastService);
 
   isTokenExpired(expirationDate: string): boolean {
     return new Date(expirationDate) < new Date();
@@ -79,9 +85,16 @@ export class TokenCardComponent {
     return !!resolvedPermission[1].find((element) => element === verb);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteToken(token: UserToken) {
-    // TODO implement
+    this.tokenService
+      .deleteTokenForUser(token.id)
+      .pipe(tap(() => this.tokenDeleted.emit()))
+      .subscribe(() => {
+        this.toastService.showSuccess(
+          'Token deleted',
+          `The token ${token.description} was successfully deleted!`,
+        );
+      });
   }
 }
 
