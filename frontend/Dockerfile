@@ -18,12 +18,21 @@ RUN pnpm install --ignore-scripts
 COPY . /work
 RUN pnpm run build -- --configuration=${CONFIGURATION}
 
-FROM nginxinc/nginx-unprivileged:latest
+FROM caddy:2.9-alpine
 
 EXPOSE 8080
 
-COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /work/dist/capellacollab /usr/share/nginx/html
-USER root
-RUN chmod -R 777 /var/log/nginx
-USER nginx
+RUN adduser -S appuser \
+    && mkdir -p /var/log \
+                /data/caddy/locks \
+                /config/caddy \
+    && touch /var/log/access.log \
+    && chown -R appuser /var/log /data /config /srv /etc/caddy /usr/bin/caddy \
+    && chmod 666 /var/log/access.log \
+    && chmod -R 770 /data/caddy /config/caddy \
+    && chmod 755 /usr/bin/caddy
+
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY --from=build /work/dist/capellacollab /srv
+
+USER appuser
