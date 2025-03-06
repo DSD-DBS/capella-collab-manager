@@ -7,7 +7,15 @@ import {
   mockProject,
   mockProjectWrapperServiceProvider,
 } from 'src/storybook/project';
+import { ProjectFavoritesService } from './project-favorites.service';
 import { ProjectOverviewComponent } from './project-overview.component';
+
+const mockFavoritesServiceProvider = (favorites: number[] = []) => ({
+  provide: ProjectFavoritesService,
+  useValue: {
+    isFavorite: (id: number) => favorites.includes(id),
+  },
+});
 
 const meta: Meta<ProjectOverviewComponent> = {
   title: 'Project Components/Project Overview',
@@ -19,6 +27,11 @@ type Story = StoryObj<ProjectOverviewComponent>;
 
 export const Loading: Story = {
   args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [mockFavoritesServiceProvider()],
+    }),
+  ],
 };
 
 export const Overview: Story = {
@@ -67,6 +80,38 @@ export const Overview: Story = {
             is_archived: true,
           },
         ]),
+        mockFavoritesServiceProvider(),
+      ],
+    }),
+  ],
+};
+
+export const WithFavorites: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockProjectWrapperServiceProvider(undefined, [
+          {
+            ...mockProject,
+            id: 1,
+            name: 'Favorite Internal project',
+            visibility: 'internal',
+          },
+          {
+            ...mockProject,
+            id: 2,
+            name: 'Regular Private project',
+            visibility: 'private',
+          },
+          {
+            ...mockProject,
+            id: 3,
+            name: 'Favorite Training project',
+            type: 'training',
+          },
+        ]),
+        mockFavoritesServiceProvider([1, 3]), // Mark projects 1 and 3 as favorites
       ],
     }),
   ],
