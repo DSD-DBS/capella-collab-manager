@@ -16,6 +16,7 @@ import {
   mockReadonlySession,
 } from 'src/storybook/session';
 import { mockUser } from 'src/storybook/user';
+import { mockHttpConnectionMethod } from '../../../storybook/tool';
 import { SessionOverviewComponent } from './session-overview.component';
 
 const meta: Meta<SessionOverviewComponent> = {
@@ -54,6 +55,16 @@ export const NoSessions: Story = {
 const sessions = [
   mockPersistentSession,
   { ...mockReadonlySession, id: 'vjmczglcgeltbfcronujtelwx' },
+  {
+    ...mockReadonlySession,
+    connection_method: {
+      ...mockHttpConnectionMethod,
+      sharing: {
+        enabled: true,
+      },
+    },
+    id: 'afgbrmirzwxpjwfkxszemtlde',
+  },
   {
     ...mockPersistentSession,
     created_at: '2024-04-30T12:00:00Z',

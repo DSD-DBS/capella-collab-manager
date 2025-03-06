@@ -91,15 +91,21 @@
           matTooltip="Open session in Grafana"
           ><mat-icon>monitoring</mat-icon></a
         >
-        @if (element.connection_method.sharing.enabled) {
+        <span
+          [matTooltip]="
+            element.connection_method.sharing.enabled
+              ? 'Connect to Session'
+              : 'Session does not support sharing'
+          "
+        >
           <button
             (click)="openConnectDialog(element)"
             mat-icon-button
-            matTooltip="Connect to Session"
+            [disabled]="!element.connection_method.sharing.enabled"
           >
             <mat-icon>open_in_browser</mat-icon>
           </button>
-        }
+        </span>
 
         <button
           (click)="openSingleDeletionDialog(element)"
