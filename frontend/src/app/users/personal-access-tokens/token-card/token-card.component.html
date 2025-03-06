@@ -6,7 +6,14 @@
 <div class="collab-card flex flex-col justify-between sm:max-w-[350px]">
   <div>
     <div class="min-h-[131px]">
-      <b>{{ token().title }}</b>
+      <div class="flex justify-between">
+        <b>{{ token().title }} </b>
+        <span>
+          <mat-icon inline class="align-bottom">account_circle</mat-icon>
+          {{ token().user.name }}
+        </span>
+      </div>
+
       <hr class="my-1" />
       The token was created
       @if (token().created_at) {

@@ -21,7 +21,6 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, tap } from 'rxjs';
-import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   FineGrainedResourceOutput,
   PermissionsService,
@@ -123,7 +122,6 @@ export class PersonalAccessTokensComponent implements OnInit {
   });
   constructor(
     public tokenService: UsersTokenService,
-    private toastService: ToastService,
     private formBuilder: FormBuilder,
     private permissionsService: PermissionsService,
     private matDialog: MatDialog,

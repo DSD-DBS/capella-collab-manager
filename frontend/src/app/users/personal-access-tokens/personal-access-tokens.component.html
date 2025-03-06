@@ -190,7 +190,10 @@
   @if ((tokens$ | async)?.length) {
     <div class="flex flex-wrap gap-2">
       @for (token of tokens$ | async; track token) {
-        <app-token-card [token]="token"></app-token-card>
+        <app-token-card
+          (tokenDeleted)="loadTokens()"
+          [token]="token"
+        ></app-token-card>
       }
     </div>
   } @else {
