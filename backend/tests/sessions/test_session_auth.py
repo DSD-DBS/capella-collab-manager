@@ -6,9 +6,7 @@ from fastapi import testclient
 
 from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import models as sessions_models
-from capellacollab.sessions.hooks import (
-    authentication as sessions_authentication_hook,
-)
+from capellacollab.sessions.hooks import http as http_hook
 from capellacollab.users import models as users_models
 
 
@@ -22,7 +20,7 @@ def fixture_session_token(
     monkeypatch.setattr(sessions_auth, "PRIVATE_KEY", private_key)
     monkeypatch.setattr(sessions_auth, "PUBLIC_KEY", private_key.public_key())
 
-    return sessions_authentication_hook.PreAuthenticationHook()._issue_session_token(
+    return http_hook.HTTPIntegration()._issue_session_token(
         user=user, db_session=session
     )
 
@@ -102,7 +100,7 @@ def test_validate_session_token_with_invalid_signature(
         sessions_auth, "PUBLIC_KEY", another_private_key.public_key()
     )
 
-    token = sessions_authentication_hook.PreAuthenticationHook()._issue_session_token(
+    token = http_hook.HTTPIntegration()._issue_session_token(
         user=user, db_session=session
     )
 
