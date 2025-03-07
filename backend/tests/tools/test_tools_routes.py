@@ -14,7 +14,6 @@ def fixture_tools_json() -> dict:
         "integrations": {
             "t4c": False,
             "pure_variants": False,
-            "jupyter": False,
         },
         "config": {
             "resources": {

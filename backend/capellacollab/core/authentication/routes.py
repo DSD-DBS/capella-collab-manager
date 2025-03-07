@@ -135,7 +135,7 @@ def update_token_cookies(
 
     if (
         permissions_models.UserTokenVerb.GET
-        in permissions_injectables.get_scope((user, None)).admin.monitoring
+        in permissions_injectables.get_scope(user, None).admin.monitoring
     ):
         responses.set_secure_cookie(response, "id_token", id_token, "/grafana")
         responses.set_secure_cookie(

@@ -45,7 +45,7 @@ class LogCollectorIntegration(interface.HookRegistration):
         if not self._log_collection_enabled(request.db_session.tool):
             return interface.PostSessionCreationHookResult()
 
-        request.operator.create_configmap(
+        request.operator.create_config_map(
             name=request.db_session.id,
             data=self._promtail_configuration(
                 session_id=request.session_id,

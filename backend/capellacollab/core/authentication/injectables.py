@@ -70,3 +70,15 @@ class _AuthenticationInformationValidation:
 
 
 authentication_information_validation = _AuthenticationInformationValidation()
+
+
+def get_auth_pat(
+    authentication_information: t.Annotated[
+        tuple[
+            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
+        ],
+        fastapi.Depends(authentication_information_validation),
+    ],
+) -> tokens_models.DatabaseUserToken | None:
+    _, token = authentication_information
+    return token

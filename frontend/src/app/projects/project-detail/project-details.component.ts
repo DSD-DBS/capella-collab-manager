@@ -15,6 +15,7 @@ import { ProjectWrapperService } from '../service/project.service';
 import { ModelOverviewComponent } from './model-overview/model-overview.component';
 import { ProjectMetadataComponent } from './project-metadata/project-metadata.component';
 import { ProjectUserSettingsComponent } from './project-users/project-user-settings.component';
+import { ProjectVolumesComponent } from './project-volumes/project-volumes.component';
 
 @Component({
   selector: 'app-project-details',
@@ -28,6 +29,7 @@ import { ProjectUserSettingsComponent } from './project-users/project-user-setti
     CreateProvisionedSessionComponent,
     TrainingDetailsComponent,
     ProjectToolsComponent,
+    ProjectVolumesComponent,
   ],
 })
 export class ProjectDetailsComponent implements OnInit {

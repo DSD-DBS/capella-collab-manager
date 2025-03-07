@@ -303,7 +303,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
 
         for entry in resolved_entries:
             project_scope = projects_permissions_injectables.get_scope(
-                (user, pat), global_scope, entry["project"], db
+                user, pat, global_scope, entry["project"], db
             )
             projects_permissions_injectables.ProjectPermissionValidation(
                 projects_permissions_models.ProjectUserScopes(

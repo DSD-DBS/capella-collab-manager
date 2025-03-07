@@ -99,6 +99,10 @@ def derive_project_permissions_from_role(
         },
         access_log={permissions_models.UserTokenVerb.GET},
         restrictions={permissions_models.UserTokenVerb.UPDATE},
+        shared_volumes={
+            permissions_models.UserTokenVerb.CREATE,
+            permissions_models.UserTokenVerb.DELETE,
+        },
     )
 
     if user.role == users_models.Role.ADMIN:

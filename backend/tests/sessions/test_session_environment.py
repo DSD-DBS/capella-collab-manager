@@ -152,7 +152,7 @@ async def test_environment_behavior(
         db,
         operator,  # type: ignore
         logger,
-        authentication_information=(user, None),
+        token=None,
         global_scope=permissions_models.GlobalScopes(
             user=users_models.USER_TOKEN_SCOPE,
         ),

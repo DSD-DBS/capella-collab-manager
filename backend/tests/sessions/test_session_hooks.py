@@ -136,7 +136,7 @@ async def test_hook_calls_during_session_request(
         db,
         mockoperator,  # type: ignore
         logger,
-        authentication_information=(user, None),
+        token=None,
         global_scope=permissions_models.GlobalScopes(
             user=users_models.USER_TOKEN_SCOPE,
         ),
@@ -183,6 +183,6 @@ def test_hook_calls_during_session_termination(
         db,
         session,
         mockoperator,  # type: ignore
-        permissions_injectables.get_scope((user, None)),
+        permissions_injectables.get_scope(user, None),
         logger,
     )
