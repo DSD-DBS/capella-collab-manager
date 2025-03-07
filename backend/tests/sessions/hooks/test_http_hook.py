@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import pytest
+
+from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import http
 from capellacollab.sessions.hooks import interface as sessions_hooks_interface
@@ -55,3 +58,17 @@ def test_fail_derive_redirect_url(
 
     assert len(result["warnings"]) == 1
     assert result["warnings"][0].err_code == "REDIRECT_URL_DERIVATION_FAILED"
+
+
+def test_pre_auth_cookie(
+    session_connection_hook_request: sessions_hooks_interface.SessionConnectionHookRequest,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    private_key = sessions_auth.generate_private_key()
+    monkeypatch.setattr(sessions_auth, "PRIVATE_KEY", private_key)
+
+    result = http.HTTPIntegration().session_connection_hook(
+        session_connection_hook_request
+    )
+
+    assert "ccm_session_token" in result["cookies"]
