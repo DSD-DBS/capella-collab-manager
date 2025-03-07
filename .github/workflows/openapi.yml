@@ -78,7 +78,7 @@ jobs:
         working-directory: ./backend
         run: make openapi
       - name: Install oasdiff
-        run: go install github.com/tufin/oasdiff@latest
+        run: go install github.com/oasdiff/oasdiff@latest
       - name: Compare openapi schema files
         id: oasdiff
         run: |
