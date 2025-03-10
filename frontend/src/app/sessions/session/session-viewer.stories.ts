@@ -3,13 +3,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
+import {
+  componentWrapperDecorator,
+  Meta,
+  moduleMetadata,
+  StoryObj,
+} from '@storybook/angular';
 import { BehaviorSubject } from 'rxjs';
 import { SessionPreparationState, SessionState } from 'src/app/openapi';
 import {
   SessionViewerService,
   ViewerSession,
 } from 'src/app/sessions/session/session-viewer.service';
+import { mockFullscreenServiceProvider } from 'src/storybook/fullscreen';
 import {
   mockPersistentSession,
   mockReadonlySession,
@@ -17,9 +23,32 @@ import {
 import { mockHttpConnectionMethod } from 'src/storybook/tool';
 import { SessionViewerComponent } from './session-viewer.component';
 
+// Add some margin that usually used for the navbar in non-fullscreen mode
+const nonFullscreenWrapper = componentWrapperDecorator(
+  (story) =>
+    `<div class="mx-3 mb-2 md:mt-[100px] mt-[58px] md:mx-5">
+      ${story}
+    </div>`,
+);
+
+const nonFullscreenDecorators = [
+  moduleMetadata({
+    providers: [mockFullscreenServiceProvider(false)],
+  }),
+  nonFullscreenWrapper,
+];
+
 const meta: Meta<SessionViewerComponent> = {
   title: 'Session Components/Session Viewer',
   component: SessionViewerComponent,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  decorators: [
+    moduleMetadata({
+      providers: [mockFullscreenServiceProvider(true)],
+    }),
+  ],
 };
 
 export default meta;
@@ -72,10 +101,22 @@ const mockSessionServiceProvider = (sessions: ViewerSession[] | undefined) => {
 
 export const Loading: Story = {};
 
+export const OneSuccessfulSessionNonFullscreen: Story = {
+  decorators: [
+    ...nonFullscreenDecorators,
+    moduleMetadata({
+      providers: [mockSessionServiceProvider([mockPersistentViewerSession])],
+    }),
+  ],
+};
+
 export const OneSuccessfulSession: Story = {
   decorators: [
     moduleMetadata({
-      providers: [mockSessionServiceProvider([mockPersistentViewerSession])],
+      providers: [
+        mockSessionServiceProvider([mockPersistentViewerSession]),
+        mockFullscreenServiceProvider(true),
+      ],
     }),
   ],
 };
