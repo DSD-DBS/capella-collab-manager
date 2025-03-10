@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FullscreenService } from 'src/app/sessions/service/fullscreen.service';
 import { SessionService } from 'src/app/sessions/service/session.service';
-import { FloatingWindowManagerComponent } from './floating-window-manager/floating-window-manager.component';
 import { SessionViewerService } from './session-viewer.service';
 import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-window-manager.component';
 
@@ -26,7 +25,6 @@ import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-win
     MatButtonModule,
     MatIconModule,
     NgClass,
-    FloatingWindowManagerComponent,
     TilingWindowManagerComponent,
     MatFabButton,
     AsyncPipe,
@@ -35,8 +33,6 @@ import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-win
 })
 @UntilDestroy()
 export class SessionViewerComponent implements OnInit, OnDestroy {
-  selectedWindowType?: string = undefined;
-
   constructor(
     public sessionService: SessionService,
     public sessionViewerService: SessionViewerService,
@@ -51,7 +47,6 @@ export class SessionViewerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      this.selectedWindowType = params['window-manager'] || 'tiling';
       const sessionIDs = params['session-id'];
       if (typeof sessionIDs === 'string') {
         this.sessionViewerService.pushSession(sessionIDs);

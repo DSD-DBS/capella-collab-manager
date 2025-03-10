@@ -28,11 +28,12 @@
         </div>
 
         <div class="flex items-center gap-2">
-          @if (session.t4cToken) {
+          @let t4cToken = session.connectionInfo?.t4c_token;
+          @if (t4cToken) {
             <button
               class="m-0 flex items-center"
               matTooltip="Copy TeamForCapella token"
-              [cdkCopyToClipboard]="session.t4cToken"
+              [cdkCopyToClipboard]="t4cToken"
               (click)="
                 toastService.showSuccess(
                   'T4C Token copied',
