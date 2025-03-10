@@ -74,6 +74,15 @@ variables can be used by the tool:
         </td>
     </tr>
     <tr>
+        <td>`CAPELLACOLLAB_SESSION_COOKIE`</td>
+        <td>`eyJhbGciOiJSUzI1N[...]V1EFxboar4jmZBmFA94fQf9284;`</td>
+        <td>
+            `ccm_session_token` cookie, which external tools can use to authenticate the user.
+            <hr style="margin-bottom:4px">
+            :octicons-info-16: This is only available inside the redirect URL
+        </td>
+    </tr>
+    <tr>
         <td>`CAPELLACOLLAB_SESSION_API_TOKEN`</td>
         <td>`collabmanager_0KCYg7Rt3AzurbZgvTO74GEQzIoOg1DK`</td>
         <td>
