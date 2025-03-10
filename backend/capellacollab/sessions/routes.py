@@ -90,13 +90,9 @@ async def request_session(
         logging.LoggerAdapter,
         fastapi.Depends(logging_injectables.get_request_logger),
     ],
-    authentication_information: t.Annotated[
-        tuple[
-            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-        ],
-        fastapi.Depends(
-            auth_injectables.authentication_information_validation
-        ),
+    token: t.Annotated[
+        tokens_models.DatabaseUserToken | None,
+        fastapi.Depends(auth_injectables.get_auth_pat),
     ],
     global_scope: t.Annotated[
         permissions_models.GlobalScopes,
@@ -144,7 +140,7 @@ async def request_session(
             )
         )(
             await asyncify(projects_permissions_injectables.get_scope)(
-                authentication_information, global_scope, project_scope, db
+                user, token, global_scope, project_scope, db
             ),
             project_scope,
         )
@@ -170,7 +166,7 @@ async def request_session(
         provisioning=body.provisioning,
         session_id=session_id,
         project_scope=project_scope,
-        pat=authentication_information[1],
+        pat=token,
         global_scope=global_scope,
         logger=logger,
     )

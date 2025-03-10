@@ -126,6 +126,7 @@ export * from './project-user-role';
 export * from './project-user-scopes-input';
 export * from './project-user-scopes-output';
 export * from './project-visibility';
+export * from './project-volume';
 export * from './prometheus-configuration-input';
 export * from './prometheus-configuration-output';
 export * from './protocol';

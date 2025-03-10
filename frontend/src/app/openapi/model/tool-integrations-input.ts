@@ -20,9 +20,5 @@ export interface ToolIntegrationsInput {
      * Enables support for pure::variants. If enabled and the restrictions are met, pure::variants license secrets & information will be mounted to containers. Please refer to the documentation for more details. 
      */
     pure_variants?: boolean;
-    /**
-     * Activate if the used tool is Jupyter. 
-     */
-    jupyter?: boolean;
 }
 

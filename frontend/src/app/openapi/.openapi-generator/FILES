@@ -19,6 +19,7 @@ api/projects-models-t4-c.service.ts
 api/projects-models.service.ts
 api/projects-permissions.service.ts
 api/projects-tools.service.ts
+api/projects-volumes.service.ts
 api/projects.service.ts
 api/sessions.service.ts
 api/settings-modelsources-git.service.ts
@@ -150,6 +151,7 @@ model/project-user-scopes-input.ts
 model/project-user-scopes-output.ts
 model/project-user.ts
 model/project-visibility.ts
+model/project-volume.ts
 model/project.ts
 model/prometheus-configuration-input.ts
 model/prometheus-configuration-output.ts

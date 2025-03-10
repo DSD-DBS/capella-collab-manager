@@ -7,6 +7,7 @@ import typing as t
 import fastapi
 
 from capellacollab.core.authentication import injectables as auth_injectables
+from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import models as tokens_models
 
@@ -14,16 +15,15 @@ from . import exceptions, models
 
 
 def get_scope(
-    authentication_information: t.Annotated[
-        tuple[
-            users_models.DatabaseUser, tokens_models.DatabaseUserToken | None
-        ],
-        fastapi.Depends(
-            auth_injectables.authentication_information_validation
-        ),
+    user: t.Annotated[
+        users_models.DatabaseUser,
+        fastapi.Depends(users_injectables.get_own_user),
+    ],
+    token: t.Annotated[
+        tokens_models.DatabaseUserToken | None,
+        fastapi.Depends(auth_injectables.get_auth_pat),
     ],
 ) -> models.GlobalScopes:
-    user, token = authentication_information
     role_permissions = users_models.ROLE_MAPPING[user.role]
 
     if token:

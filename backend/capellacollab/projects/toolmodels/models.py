@@ -79,8 +79,6 @@ class DatabaseToolModel(database.Base):
     description: orm.Mapped[str]
     display_order: orm.Mapped[int | None]
 
-    configuration: orm.Mapped[dict[str, str] | None]
-
     project_id: orm.Mapped[int] = orm.mapped_column(
         sa.ForeignKey("projects.id"), init=False
     )

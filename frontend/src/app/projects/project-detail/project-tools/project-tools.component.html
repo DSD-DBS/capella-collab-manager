@@ -7,6 +7,7 @@
   <h2 class="text-xl font-medium">Used Tools</h2>
   @if (projectUserService.verifyRole("manager")) {
     <mat-icon
+      class="hover:cursor-help"
       [matTooltip]="
         'The listed tools are used in the project.' +
         ' Additional tools can be defined if they don’t have a model associated with them. They will be considered for session provisioning.'

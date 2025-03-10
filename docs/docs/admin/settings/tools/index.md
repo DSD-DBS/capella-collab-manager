@@ -11,8 +11,7 @@ administrators to use additional tools such as Eclipse, pure::variants or
 Papyrus, but also to expand the platform with their own tools.
 
 A tool can be added if it can run in a Docker container and can be reached via
-RDP. General web-based tool support is on our roadmap; currently only Jupyter
-can be used as a web-based tool.
+RDP or any HTTP-based protocol.
 
 Tools can be found in various places on the platform:
 

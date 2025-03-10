@@ -13,16 +13,16 @@ theme:
     - navigation.instant
     - navigation.instant.prefetch
   palette:
-    - media: "(prefers-color-scheme)"
+    - media: '(prefers-color-scheme)'
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
-    - media: "(prefers-color-scheme: light)"
+    - media: '(prefers-color-scheme: light)'
       scheme: default
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
+    - media: '(prefers-color-scheme: dark)'
       scheme: slate
       toggle:
         icon: material/brightness-4
@@ -59,6 +59,7 @@ nav:
                   - Setup Diagram Cache: user/projects/models/diagrams/setup_diagram_cache.md
                   - View Diagram Cache: user/projects/models/diagrams/view_diagram_cache.md
               - Model Complexity Badge: user/projects/models/complexity_badge.md
+          - Project Volumes: user/projects/volumes.md
       - Sessions:
           - Session Types:
               - Overview: user/sessions/types/index.md
@@ -87,8 +88,6 @@ nav:
           - Git:
               - Working with Git: user/tools/capella/git/index.md
           - Troubleshooting: user/tools/capella/troubleshooting/index.md
-      - Jupyter:
-          - Collaboration: user/sessions/jupyter/collaboration.md
   - API documentation:
       - Introduction: api/index.md
       - api/swagger.md
@@ -182,6 +181,7 @@ plugins:
         'user/tools/capella/teamforcapella/export/export-to-t4c.md': 'user/tools/capella/teamforcapella/export/index.md'
         'admin/settings/monitoring.md': 'admin/monitoring/frontend.md'
         'admin/alerts/create.md': 'admin/announcements/create.md'
+        'user/sessions/jupyter/collaboration.md': 'user/projects/volumes.md'
 
 markdown_extensions:
   - meta

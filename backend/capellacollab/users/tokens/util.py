@@ -24,13 +24,13 @@ def get_actual_token_scopes(
     db: orm.Session,
     token: models.DatabaseUserToken,
 ) -> models.FineGrainedResource:
-    global_scope = permissions_injectables.get_scope((token.user, token))
+    global_scope = permissions_injectables.get_scope(token.user, token)
     model = models.FineGrainedResource.model_validate(global_scope)
 
     for project_scope in token.project_scopes:
         model.projects[project_scope.project.slug] = (
             projects_injectables.get_scope(
-                (token.user, token), global_scope, project_scope.project, db
+                token.user, token, global_scope, project_scope.project, db
             )
         )
 
