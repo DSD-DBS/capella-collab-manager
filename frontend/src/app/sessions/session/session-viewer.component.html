@@ -19,11 +19,7 @@
         'h-screen': fullscreenService.isFullscreen$ | async,
       }"
     >
-      @if (this.selectedWindowType === "floating") {
-        <app-floating-window-manager />
-      } @else {
-        <app-tiling-window-manager />
-      }
+      <app-tiling-window-manager />
     </div>
   }
 }

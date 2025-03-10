@@ -107,15 +107,7 @@ export class SessionViewerService {
       return;
     }
 
-    const safeResourceURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
-      connectionInfo.redirect_url,
-    );
-
-    this.updateOrInsertSession(
-      session,
-      safeResourceURL,
-      connectionInfo.t4c_token ?? undefined,
-    );
+    this.updateOrInsertSession(session, connectionInfo);
   }
 
   focusSession(session: Session): void {
@@ -197,19 +189,25 @@ export class SessionViewerService {
 
   private updateOrInsertSession(
     session: Session,
-    safeResourceURL?: SafeResourceUrl,
-    t4cToken?: string,
+    connectionInfo?: SessionConnectionInformation,
   ): void {
     const currentSessions = this._sessions.value;
+
+    let safeResourceURL: SafeResourceUrl | undefined;
+    if (connectionInfo?.redirect_url) {
+      safeResourceURL = this.domSanitizer.bypassSecurityTrustResourceUrl(
+        connectionInfo.redirect_url,
+      );
+    }
 
     const viewerSession: ViewerSession = {
       ...session,
       focused: false,
       safeResourceURL: safeResourceURL,
-      t4cToken: t4cToken,
       reloadToResize: false,
       fullscreen: false,
       disabled: false,
+      connectionInfo: connectionInfo,
     };
 
     if (session.connection_method?.type === 'guacamole') {
@@ -240,9 +238,9 @@ export class SessionViewerService {
 
 export type ViewerSession = Session & {
   safeResourceURL?: SafeResourceUrl;
-  t4cToken?: string;
   focused: boolean;
   reloadToResize: boolean;
   fullscreen: boolean;
   disabled: boolean;
+  connectionInfo?: SessionConnectionInformation;
 };

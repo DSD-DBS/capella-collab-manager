@@ -46,7 +46,11 @@ const mockPersistentViewerSession: ViewerSession = {
   reloadToResize: false,
   fullscreen: false,
   disabled: false,
-  t4cToken: 'token',
+  connectionInfo: {
+    local_storage: {},
+    t4c_token: 'token',
+    redirect_url: 'about:blank',
+  },
 };
 
 const mockReadOnlyViewerSession: ViewerSession = {
@@ -75,26 +79,8 @@ export const OneSuccessfulSession: Story = {
   ],
 };
 
-export const TwoSessionsFloating: Story = {
-  args: {
-    selectedWindowType: 'floating',
-  },
-  decorators: [
-    moduleMetadata({
-      providers: [
-        mockSessionServiceProvider([
-          mockPersistentViewerSession,
-          mockReadOnlyViewerSession,
-        ]),
-      ],
-    }),
-  ],
-};
-
 export const TwoSessionsTiling: Story = {
-  args: {
-    selectedWindowType: 'tiling',
-  },
+  args: {},
   decorators: [
     moduleMetadata({
       providers: [
@@ -108,9 +94,7 @@ export const TwoSessionsTiling: Story = {
 };
 
 export const TwoSessionsTilingPending: Story = {
-  args: {
-    selectedWindowType: 'tiling',
-  },
+  args: {},
   decorators: [
     moduleMetadata({
       providers: [
@@ -132,9 +116,7 @@ export const TwoSessionsTilingPending: Story = {
 };
 
 export const OneSessionTilingPending: Story = {
-  args: {
-    selectedWindowType: 'tiling',
-  },
+  args: {},
   decorators: [
     moduleMetadata({
       providers: [
