@@ -69,6 +69,8 @@
     allow="clipboard-read; clipboard-write"
     [ngClass]="{
       'pointer-events-none': session.disabled,
+      'border border-slate-200':
+        (fullscreenService.isFullscreen$ | async) === false,
     }"
   >
   </iframe>
