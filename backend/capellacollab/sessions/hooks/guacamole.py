@@ -12,6 +12,7 @@ from requests import exceptions as requests_exceptions
 
 from capellacollab.configuration.app import config
 from capellacollab.core import credentials
+from capellacollab.sessions import exceptions as sessions_exceptions
 
 from . import interface
 
@@ -36,6 +37,18 @@ class GuacamoleIntegration(interface.HookRegistration):
         "http": None,
         "https": None,
     }
+
+    def configuration_hook(
+        self,
+        request: interface.ConfigurationHookRequest,
+    ) -> interface.ConfigurationHookResult:
+        if (
+            request.connection_method.type == "guacamole"
+            and not config.extensions.guacamole.enabled
+        ):
+            raise sessions_exceptions.GuacamoleDisabledError()
+
+        return interface.ConfigurationHookResult()
 
     def post_session_creation_hook(
         self,

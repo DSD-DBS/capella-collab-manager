@@ -47,6 +47,8 @@ extensions:
     username: "{{ .Values.guacamole.username }}"
     password: "{{ .Values.guacamole.password }}"
 
+    enabled: {{ .Values.guacamole.enabled }}
+
 authentication:
   endpoints:
     authorization: "{{ .Values.backend.authentication.endpoints.authorization }}"

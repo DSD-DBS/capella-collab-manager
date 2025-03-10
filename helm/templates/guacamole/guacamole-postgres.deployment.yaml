@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{ if .Values.database.guacamole.deploy }}
+{{ if and .Values.database.guacamole.deploy .Values.guacamole.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
