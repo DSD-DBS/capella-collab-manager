@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
-{{ if and .Values.cluster.vpa.enabled .Values.database.guacamole.deploy }}
+{{ if and .Values.cluster.vpa.enabled .Values.database.guacamole.deploy .Values.guacamole.enabled }}
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:

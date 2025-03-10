@@ -108,6 +108,11 @@ options can be changed at any time later:
 > Currently, we only provide amd64 images. If you want to run the
 > application on arm64, you need to build the images yourself (option 3 or 4).
 
+<!-- prettier-ignore -->
+> [!NOTE]
+> Since version v4.21.0, Guacamole is no longer deployed by default in local environments.
+> If you want to use Guacamole, you need to set the environment variable `DEPLOY_GUACAMOLE=1`.
+
 1. Fetch management portal and session images from GitHub (without
    TeamForCapella support). This option is recommended for the first
    deployment.

@@ -21,6 +21,7 @@ CAPELLA_VERSIONS ?= 6.0.0
 T4C_CLIENT_VERSIONS ?= 6.0.0
 
 DEVELOPMENT_MODE ?= 0
+DEPLOY_GUACAMOLE ?= 0
 
 TIMEOUT ?= 10m
 
@@ -116,6 +117,7 @@ helm-deploy:
 		--set replicaCount.frontend=1 \
 		--set replicaCount.backend=1 \
 		--set replicaCount.routing=1 \
+		--set guacamole.enabled=$(DEPLOY_GUACAMOLE) \
 		$(RELEASE) $$HELM_PACKAGE_DIR/collab-manager-*.tgz
 	rm -rf "$$HELM_PACKAGE_DIR"
 	$(MAKE) provision-guacamole wait
@@ -139,7 +141,11 @@ clear-backend-db:
 	$(MAKE) helm-deploy
 
 rollout:
-	DEPLOYMENTS="backend frontend docs guacamole-guacamole"
+	DEPLOYMENTS="backend frontend docs"
+
+	if [[ $(DEPLOY_GUACAMOLE) == 1 ]]; then
+		DEPLOYMENTS+=" guacamole-guacamole";
+	fi
 
 	for deployment in $$DEPLOYMENTS; do \
 		kubectl --context k3d-$(CLUSTER_NAME) rollout restart deployment -n $(NAMESPACE) $(RELEASE)-$$deployment; \
@@ -187,6 +193,10 @@ wait:
 	@kill %%
 
 provision-guacamole:
+	if [[ $(DEPLOY_GUACAMOLE) == 0 ]]; then
+		echo "Guacamole is not deployed. Skipping initialization.";
+		exit 0;
+	fi
 	echo "Waiting for guacamole container, before we can initialize the database..."
 	@kubectl get --context k3d-$(CLUSTER_NAME) -n $(NAMESPACE) --watch pods &
 	sleep 2
