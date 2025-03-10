@@ -7,7 +7,7 @@ import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
 import MockDate from 'mockdate';
 import { DiagramCacheMetadata } from 'src/app/openapi';
 import { dialogWrapper } from 'src/storybook/decorators';
-import { base64ModelDiagram } from 'src/storybook/diagram';
+import { base64LargeModelDiagram } from 'src/storybook/diagram';
 import { mockModel } from 'src/storybook/model';
 import { mockProject } from 'src/storybook/project';
 import {
@@ -31,6 +31,9 @@ const meta: Meta<ModelDiagramDialogComponent> = {
   ],
   beforeEach: () => {
     MockDate.set(new Date('2024-05-01'));
+  },
+  parameters: {
+    layout: 'fullscreen',
   },
 };
 
@@ -78,11 +81,11 @@ const diagrams: Diagrams =
   {
     "fakeUUID-Loaded": {
       loading: false,
-      content: base64ModelDiagram,
+      content: base64LargeModelDiagram,
     },
     "fakeUUID-Not-Loaded": {
       loading: true,
-      content: base64ModelDiagram,
+      content: base64LargeModelDiagram,
     }
   }
 

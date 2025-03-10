@@ -6,7 +6,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { PageNotFoundComponent } from './404.component';
 
 const meta: Meta<PageNotFoundComponent> = {
-  title: 'General Components/404 (Not Found)',
+  title: 'General Components/404 Not Found',
   component: PageNotFoundComponent,
 };
 

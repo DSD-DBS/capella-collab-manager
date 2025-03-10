@@ -3,8 +3,8 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<article class="flex flex-wrap">
-  <a [routerLink]="['create']" class="m-2.5">
+<article class="flex flex-wrap gap-5">
+  <a [routerLink]="['create']">
     <div matRipple class="mat-card-overview new collab-card !m-0">
       <div class="content flex flex-col items-center justify-center">
         Add a Tool <br />
@@ -18,7 +18,6 @@
   <a
     *ngFor="let tool of toolService.tools"
     [routerLink]="['..', 'tool', tool.id]"
-    class="m-2.5"
   >
     <div matRipple class="mat-card-overview collab-card !m-0">
       <div class="header">{{ tool.name }}</div>
