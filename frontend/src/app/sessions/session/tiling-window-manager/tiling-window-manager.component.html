@@ -48,18 +48,44 @@
           <div class="flex items-center gap-1">
             @if (session.index !== 0) {
               <button class="m-0" (click)="onLeftArrowClick(session)">
-                <mat-icon class="!flex items-center">arrow_back</mat-icon>
+                <mat-icon
+                  class="!flex items-center"
+                  matTooltip="Move the session to the left"
+                  >arrow_back</mat-icon
+                >
               </button>
             } @else if (session.index !== sessions.length - 1) {
-              <button class="m-0" (click)="onRightArrowClick(session)">
+              <button
+                class="m-0"
+                (click)="onRightArrowClick(session)"
+                matTooltip="Move the session to the right"
+              >
                 <mat-icon class="!flex items-center">arrow_forward</mat-icon>
               </button>
             }
           </div>
 
+          @if (
+            session.connection_method?.sharing?.enabled &&
+            session.connectionInfo?.redirect_url
+          ) {
+            <button
+              class="m-0"
+              (click)="openInNewTab(session)"
+              matTooltip="Open in new tab"
+            >
+              <mat-icon class="!flex items-center">open_in_new</mat-icon>
+            </button>
+          }
+
           @if ((sessionViewerService.allSessions$ | async)!.length > 1) {
             <button
               class="m-0 flex items-center"
+              [matTooltip]="
+                session.fullscreen
+                  ? 'Exit fullscreen'
+                  : 'Open session in fullscreen'
+              "
               (click)="sessionViewerService.toggleFullscreen(session)"
             >
               @if (session.fullscreen) {

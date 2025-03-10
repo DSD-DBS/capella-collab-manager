@@ -14,6 +14,7 @@ import {
   mockPersistentSession,
   mockReadonlySession,
 } from 'src/storybook/session';
+import { mockHttpConnectionMethod } from 'src/storybook/tool';
 import { SessionViewerComponent } from './session-viewer.component';
 
 const meta: Meta<SessionViewerComponent> = {
@@ -85,7 +86,21 @@ export const TwoSessionsTiling: Story = {
     moduleMetadata({
       providers: [
         mockSessionServiceProvider([
-          mockPersistentViewerSession,
+          {
+            ...mockPersistentViewerSession,
+            connection_method: {
+              ...mockHttpConnectionMethod,
+              sharing: { enabled: true },
+            },
+            version: {
+              ...mockPersistentViewerSession.version,
+              name: 'with sharing',
+              tool: {
+                ...mockPersistentViewerSession.version.tool,
+                name: 'Tool',
+              },
+            },
+          },
           mockReadOnlyViewerSession,
         ]),
       ],
@@ -103,9 +118,23 @@ export const TwoSessionsTilingPending: Story = {
             ...mockPersistentViewerSession,
             preparation_state: SessionPreparationState.Pending,
             state: SessionState.Pending,
+            connectionInfo: undefined,
+            connection_method: {
+              ...mockHttpConnectionMethod,
+              sharing: { enabled: true },
+            },
+            version: {
+              ...mockPersistentViewerSession.version,
+              name: 'with sharing',
+              tool: {
+                ...mockPersistentViewerSession.version.tool,
+                name: 'Tool',
+              },
+            },
           },
           {
             ...mockReadOnlyViewerSession,
+            connectionInfo: undefined,
             preparation_state: SessionPreparationState.Completed,
             state: SessionState.Failed,
           },

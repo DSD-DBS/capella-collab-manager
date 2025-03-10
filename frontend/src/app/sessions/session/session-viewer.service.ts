@@ -229,6 +229,7 @@ export class SessionViewerService {
           ...currentSessions[index],
           ...session,
           safeResourceURL,
+          connectionInfo,
         };
         this._sessions.next(currentSessions);
       }

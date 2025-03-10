@@ -213,6 +213,11 @@ export class TilingWindowManagerComponent implements OnInit {
     secondSession.index = firstSessionIndex;
     secondSession.width = firstSessionWidth;
   }
+
+  openInNewTab(session: ViewerSession) {
+    if (!session.connectionInfo?.redirect_url) return;
+    window.open(session.connectionInfo?.redirect_url, '_blank');
+  }
 }
 
 interface ResizeState {
