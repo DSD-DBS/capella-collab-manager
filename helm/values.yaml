@@ -183,6 +183,7 @@ backend:
   profiling: false
 
 guacamole:
+  enabled: true
   username: guacadmin
   password: guacadmin
 
