@@ -600,7 +600,7 @@ export class ProjectsService {
 
     /**
      * Get Projects
-     * List all projects the user has access to.  Internal projects are visible to all users. With the &#x60;minimum_role&#x60; query parameter, only projects where the user has at least the specified role are returned.
+     * List all projects  This endpoints lists all projects with the &#x60;root:get&#x60; permission. If the &#x60;minimum_role&#x60; parameter is set to &#x60;administrator&#x60; or &#x60;manager&#x60;, only projects with the &#x60;root:update&#x60; permission are returned.
      * @param minimumRole 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.

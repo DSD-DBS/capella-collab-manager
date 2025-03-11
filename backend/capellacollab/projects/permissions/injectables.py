@@ -54,7 +54,7 @@ def get_scope(
     if token:
         project_token = crud.get_personal_access_token_link(db, project, token)
         if not project_token:
-            return models.ProjectUserScopes()
+            return inherited_global_scope
 
         return inherited_global_scope | (
             project_token.scope & derived_project_scope
