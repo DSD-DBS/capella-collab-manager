@@ -186,6 +186,52 @@ def test_project_permission_validation_injectable_passes_pat(
     assert response.status_code == 200
 
 
+@pytest.mark.usefixtures("admin", "mock_request_logger")
+@pytest.mark.parametrize(
+    "pat_scope",
+    [
+        (
+            permissions_models.GlobalScopes(
+                admin=permissions_models.AdminScopes(
+                    projects={permissions_models.UserTokenVerb.GET}
+                )
+            ),
+            projects_permissions_models.ProjectUserScopes(),
+        )
+    ],
+)
+def test_project_permission_validation_injectable_passes_admin_pat(
+    project: projects_models.DatabaseProject,
+    user: users_models.DatabaseUser,
+    pat: tuple[tokens_models.DatabaseUserToken, str],
+    mock_router: fastapi.APIRouter,
+):
+    """Test that the project permission validation passes with `admin.projects:get` permission"""
+
+    @mock_router.get(
+        "/{project_slug}",
+        dependencies=[
+            fastapi.Depends(
+                projects_permissions_injectables.ProjectPermissionValidation(
+                    required_scope=projects_permissions_models.ProjectUserScopes(
+                        root={permissions_models.UserTokenVerb.GET}
+                    )
+                )
+            )
+        ],
+    )
+    def test_route():
+        pass
+
+    client = testclient.TestClient(mock_router)
+    response = client.get(
+        f"/{project.slug}",
+        auth=(user.name, pat[1]),
+    )
+
+    assert response.status_code == 200
+
+
 def test_project_scope_merging():
     assert projects_permissions_models.ProjectUserScopes(
         root={

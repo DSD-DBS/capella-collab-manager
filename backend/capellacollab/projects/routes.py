@@ -68,10 +68,11 @@ def get_projects(
     ],
     minimum_role: projects_users_models.ProjectUserRole | None = None,
 ) -> list[models.DatabaseProject]:
-    """List all projects the user has access to.
+    """List all projects
 
-    Internal projects are visible to all users. With the `minimum_role` query parameter,
-    only projects where the user has at least the specified role are returned.
+    This endpoints lists all projects with the `root:get` permission.
+    If the `minimum_role` parameter is set to `administrator` or `manager`, only projects with
+    the `root:update` permission are returned.
     """
     projects = []
 
