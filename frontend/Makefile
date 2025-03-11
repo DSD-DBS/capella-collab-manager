@@ -8,22 +8,13 @@ HOST ?= localhost
 .ONESHELL:
 
 dev: fetch-version
-	ng serve --open capellacollab
+	pnpm run dev --open
 
 types:
 	npx tsc --noEmit --watch
 
 fetch-version:
 	python fetch-version.py
-
-test:
-	if [ $(shell which chromium) ]; \
-	then \
-		export CHROME_BIN=$(shell which chromium); \
-		ng test; \
-	else \
-		echo "No binary for Chrome browser on your platform. Please, set "CHROME_BIN" env variable."; \
-	fi
 
 storybook:
 	pnpm run storybook
