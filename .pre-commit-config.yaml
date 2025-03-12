@@ -6,13 +6,13 @@ default_stages: [pre-commit, pre-merge-commit]
 minimum_pre_commit_version: 3.2.0
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.5
+    rev: v0.9.10
     hooks:
       - id: ruff
         args: [ --fix, --extend-ignore=FIX ]
       - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks.git
-    rev: v8.23.3
+    rev: v8.24.0
     hooks:
       - id: gitleaks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -87,11 +87,11 @@ repos:
         types_or: [ts, css, html, markdown]
         exclude: '^frontend/src/app/openapi'
         additional_dependencies:
-          - 'prettier@^3.4.2'
+          - 'prettier@^3.5.3'
           - 'prettier-plugin-tailwindcss@^0.6.11'
           - '@trivago/prettier-plugin-sort-imports@^5.2.2'
           - 'tailwindcss@^3.4.17'
-          - 'prettier-plugin-classnames@^0.7.6'
+          - 'prettier-plugin-classnames@^0.7.7'
           - 'prettier-plugin-merge@^0.7.2'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
@@ -160,18 +160,18 @@ repos:
     hooks:
       - id: reuse-lint-file
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.19.0
+    rev: v9.22.0
     hooks:
       - id: eslint
         additional_dependencies:
-          - 'eslint@^9.19.0'
-          - '@eslint/js@^9.19.0'
-          - 'angular-eslint@19.0.2'
-          - 'eslint-config-prettier@^10.0.1'
-          - 'typescript-eslint@8.22.0'
+          - 'eslint@^9.22.0'
+          - '@eslint/js@^9.22.0'
+          - 'angular-eslint@~19.2.1'
+          - 'eslint-config-prettier@^10.1.1'
+          - 'typescript-eslint@^8.26.1'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.18.0'
-          - 'eslint-plugin-storybook@0.11.2'
+          - 'eslint-plugin-storybook@^0.11.4'
           - 'tailwindcss@^3.4.17'
         args:
           [
@@ -185,7 +185,7 @@ repos:
         exclude: '.+\.spec(-helper)?\.ts$|^frontend/src/app/openapi'
         types_or: ['html', 'ts']
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: v9.20.0
+    rev: v9.22.0
     hooks:
       - id: commitlint
         stages: [commit-msg]

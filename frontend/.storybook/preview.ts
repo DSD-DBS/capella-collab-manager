@@ -13,6 +13,7 @@ import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
 import { DecoratorFunction } from 'storybook/internal/types';
 import { withScreenshot } from 'storycap';
+import 'zone.js';
 import { IconModule } from '../src/app/icon.module';
 
 const preview: Preview = {

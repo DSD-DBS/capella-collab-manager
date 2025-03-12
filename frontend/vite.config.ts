@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import analog from '@analogjs/platform';
+import angular from '@analogjs/vite-plugin-angular';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 import gzipPlugin from 'rollup-plugin-gzip';
 import { promisify } from 'util';
@@ -24,13 +24,7 @@ export default defineConfig(() => {
       target: ['es2020'],
     },
     plugins: [
-      analog({
-        ssr: false,
-        static: true,
-        prerender: {
-          routes: [],
-        },
-      }),
+      angular(),
       viteStaticCopy({
         targets: [
           {
@@ -48,7 +42,10 @@ export default defineConfig(() => {
         telemetry: false,
       }),
       gzipPlugin({
-        customCompression: (content) => brotliPromise(Buffer.from(content)),
+        customCompression: (content) =>
+          brotliPromise(
+            Buffer.isBuffer(content) ? content : Buffer.from(content),
+          ),
         fileName: '.br',
       }),
       gzipPlugin(),
