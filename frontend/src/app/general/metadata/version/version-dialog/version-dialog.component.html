@@ -1,0 +1,47 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog">
+  <div>Frontend: {{ versionService.frontendVersion() || "-" }}</div>
+  <div>Backend: {{ versionService.backendVersion() || "-" }}</div>
+  <div>Branch: {{ versionService.versionMeta()?.git?.branch || "-" }}</div>
+  <div>
+    Commit:
+    @if (versionService.versionMeta()?.git?.commit) {
+      <a
+        [href]="
+          'https://github.com/DSD-DBS/capella-collab-manager/commit/' +
+          versionService.versionMeta()!.git.commit
+        "
+        target="_blank"
+        rel="noopener"
+        >{{ versionService.versionMeta()!.git.commit }}
+        <mat-icon inline="true" class="align-top">open_in_new</mat-icon>
+      </a>
+    } @else {
+      "-"
+    }
+  </div>
+  <div>
+    Committed:
+    @if (versionService.versionMeta()?.git?.date) {
+      <app-relative-time
+        [date]="Date.parse(versionService.versionMeta()!.git.date)"
+      />
+    } @else {
+      "-"
+    }
+  </div>
+  <div>
+    Built:
+    @if (versionService.versionMeta()?.build?.date) {
+      <app-relative-time
+        [date]="Date.parse(versionService.versionMeta()!.build.date)"
+      />
+    } @else {
+      "-"
+    }
+  </div>
+</div>

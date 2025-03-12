@@ -17,7 +17,6 @@ export interface Metadata {
     imprint_url: string | null;
     provider: string | null;
     authentication_provider: string | null;
-    environment: string | null;
     host: string | null;
     port: string | null;
     protocol: string | null;

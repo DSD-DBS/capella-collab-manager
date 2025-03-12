@@ -19,9 +19,5 @@ export interface MetadataConfigurationOutput {
      * Authentication provides which is displayed in the frontend.
      */
     authentication_provider: string;
-    /**
-     * general
-     */
-    environment: string;
 }
 
