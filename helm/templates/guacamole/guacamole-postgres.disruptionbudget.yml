@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+{{ if and .Values.database.guacamole.deploy .Values.guacamole.enabled }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -10,3 +11,4 @@ spec:
   selector:
     matchLabels:
       id: {{ .Release.Name }}-deployment-guacamole-postgres
+{{ end }}

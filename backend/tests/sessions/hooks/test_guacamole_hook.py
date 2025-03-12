@@ -10,6 +10,8 @@ import pytest
 import requests
 import responses
 
+from capellacollab.configuration.app import config
+from capellacollab.sessions import exceptions as sessions_exceptions
 from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import guacamole
 from capellacollab.sessions.hooks import interface as session_hooks_interface
@@ -138,6 +140,19 @@ def test_guacamole_configuration_hook(
     assert response["config"]["guacamole_username"]
     assert response["config"]["guacamole_password"]
     assert response["config"]["guacamole_connection_id"] == "connection-id"
+
+
+def test_guacamole_configuration_hook_disabled(
+    configuration_hook_request: session_hooks_interface.ConfigurationHookRequest,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    """Test that the Guacamole hook fails if Guacamole is disabled"""
+    monkeypatch.setattr(config.extensions.guacamole, "enabled", False)
+
+    with pytest.raises(sessions_exceptions.GuacamoleDisabledError):
+        guacamole.GuacamoleIntegration().configuration_hook(
+            configuration_hook_request
+        )
 
 
 @responses.activate

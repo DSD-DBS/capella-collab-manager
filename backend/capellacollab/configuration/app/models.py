@@ -222,6 +222,9 @@ class GeneralConfig(BaseConfig):
 
 
 class ExtensionGuacamoleConfig(BaseConfig):
+    enabled: bool = pydantic.Field(
+        default=True, description="Whether to enable Guacamole."
+    )
     base_uri: str = pydantic.Field(
         default="http://localhost:8080/guacamole",
         alias="baseURI",

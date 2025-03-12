@@ -262,3 +262,17 @@ class ProjectScopeRequiredError(core_exceptions.BaseError):
     @classmethod
     def openapi_example(cls) -> "ProjectScopeRequiredError":
         return cls()
+
+
+class GuacamoleDisabledError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Can't spawn Guacamole session",
+            reason="Guacamole is not enabled for this instance. Ask your administrator for support.",
+            err_code="GUACAMOLE_DISABLED",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "GuacamoleDisabledError":
+        return cls()
