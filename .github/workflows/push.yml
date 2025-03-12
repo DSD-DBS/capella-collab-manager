@@ -68,6 +68,16 @@ jobs:
           tags: ${{ matrix.image }}:${{ steps.tag.outputs.branch }}
           labels: git-short-sha=${{ steps.tag.outputs.sha }}
           push: true
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.29.0
+        with:
+          image-ref: '${{ matrix.image }}:${{ steps.tag.outputs.branch }}'
+          format: 'table'
+          exit-code: '1'
+          trivyignores: ${{ matrix.context }}/.trivyignore
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
   install-chart:
     runs-on: ubuntu-latest
     if: github.actor != 'dependabot[bot]'

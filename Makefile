@@ -69,6 +69,14 @@ docs:
 	docker push $(DOCKER_REGISTRY)/$@
 	docker push $(DOCKER_REGISTRY)/$@:$(DOCKER_TAG)
 
+trivy:
+	COMMON_ARGS="--exit-code 0 --severity HIGH,CRITICAL --ignore-unfixed"
+	trivy image $$COMMON_ARGS --ignorefile backend/.trivyignore $(DOCKER_REGISTRY)/backend:$(DOCKER_TAG)
+	trivy image $$COMMON_ARGS --ignorefile frontend/.trivyignore $(DOCKER_REGISTRY)/frontend:$(DOCKER_TAG)
+	trivy image $$COMMON_ARGS --ignorefile images/guacamole/.trivyignore $(DOCKER_REGISTRY)/guacamole:$(DOCKER_TAG)
+	trivy image $$COMMON_ARGS --ignorefile images/session-preparation/.trivyignore $(DOCKER_REGISTRY)/session-preparation:$(DOCKER_TAG)
+	trivy image $$COMMON_ARGS --ignorefile docs/.trivyignore $(DOCKER_REGISTRY)/docs:$(DOCKER_TAG)
+
 capella:
 	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSIONS="$(CAPELLA_VERSIONS)" capella/remote
 
