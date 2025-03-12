@@ -96,6 +96,7 @@ nav:
   - System Administrator Documentation:
       - Introduction: admin/index.md
       - Installation: admin/installation.md
+      - 'Backup & Recovery Concept': admin/backup-recovery.md
       - Authentication:
           - Introduction: admin/authentication/index.md
           - Keycloak: admin/authentication/keycloak/index.md
