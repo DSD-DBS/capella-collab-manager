@@ -97,6 +97,7 @@ nav:
       - Introduction: admin/index.md
       - Installation: admin/installation.md
       - 'Backup & Recovery Concept': admin/backup-recovery.md
+      - Update: admin/update.md
       - Authentication:
           - Introduction: admin/authentication/index.md
           - Keycloak: admin/authentication/keycloak/index.md

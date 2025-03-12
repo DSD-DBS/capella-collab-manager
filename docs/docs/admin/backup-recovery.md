@@ -13,6 +13,8 @@ The backup- and restore concept covers 3 components:
 
 ## Backend database backups
 
+### Create backup
+
 If the Postgres database is hosted in the Kubernetes cluster, you can create a
 backup with:
 
@@ -20,7 +22,7 @@ backup with:
 kubectl exec -it deployment/${RELEASE_NAME:?}-backend-postgres -- pg_dump -U backend > backend-dump.sql
 ```
 
-**How to restore?**
+### Restore backup
 
 ```zsh
 cat backend-dump.sql | kubectl exec -i deployment/${RELEASE_NAME:?}-backend-postgres -- psql -U backend
@@ -33,6 +35,8 @@ automated backup strategy for personal workspaces and project volumes.
 
 Personal workspace can be backed up and restored via the CLI. The backups are
 not created automatically.
+
+### Create backup
 
 Install the command line tool as described in the
 [installation instructions](./cli.md). Verify the installation by executing:
@@ -61,7 +65,7 @@ This will produce two files, a `.tar.gz` and a `.json` side-car file. Make sure
 to keep both files as the side-car contains important information about the
 volume.
 
-**How to restore?**
+### Restore backup
 
 Install the command line tool as described in the
 [installation instructions](./cli.md). Verify the installation by executing:
