@@ -18,6 +18,7 @@ from capellacollab.users import models as users_models
 from . import crud, exceptions, injectables, models, util
 
 router = fastapi.APIRouter()
+all_token_router = fastapi.APIRouter()
 
 
 @router.post(
@@ -70,7 +71,7 @@ def create_token_for_user(
 
     return models.UserTokenWithPassword(
         id=token.id,
-        user_id=token.user_id,
+        user=users_models.User.model_validate(token.user),
         title=token.title,
         created_at=token.created_at,
         expiration_date=token.expiration_date,
@@ -107,7 +108,7 @@ def get_all_tokens_of_user(
     return [
         models.UserToken(
             id=token.id,
-            user_id=token.user_id,
+            user=users_models.User.model_validate(token.user),
             title=token.title,
             created_at=token.created_at,
             expiration_date=token.expiration_date,
@@ -154,3 +155,39 @@ def delete_token_for_user(
     ):
         raise exceptions.ManagedTokensRestrictionError(token.id)
     return crud.delete_token(db, token)
+
+
+@all_token_router.get(
+    "",
+    dependencies=[
+        fastapi.Depends(
+            permissions_injectables.PermissionValidation(
+                required_scope=permissions_models.GlobalScopes(
+                    admin=permissions_models.AdminScopes(
+                        personal_access_tokens={
+                            permissions_models.UserTokenVerb.GET
+                        }
+                    )
+                )
+            ),
+        )
+    ],
+)
+def get_all_tokens(
+    db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+) -> abc.Sequence[models.UserToken]:
+    return [
+        models.UserToken(
+            id=token.id,
+            user=users_models.User.model_validate(token.user),
+            title=token.title,
+            created_at=token.created_at,
+            expiration_date=token.expiration_date,
+            requested_scopes=util.get_database_token_scopes(token),
+            actual_scopes=util.get_actual_token_scopes(db, token),
+            description=token.description,
+            source=token.source,
+            managed=token.managed,
+        )
+        for token in crud.get_all_tokens(db)
+    ]

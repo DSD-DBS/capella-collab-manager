@@ -112,6 +112,18 @@ def test_revoke_managed_token_as_admin(
     assert response.status_code == 204
 
 
+@pytest.mark.usefixtures("admin")
+def test_get_all_tokens(
+    client: testclient.TestClient, pat: tokens_models.DatabaseUserToken
+):
+    """Test to get all personal access tokens of the own user"""
+
+    response = client.get("/api/v1/tokens")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+    assert response.json()[0]["id"] == pat[0].id
+
+
 @pytest.mark.usefixtures("user")
 def test_token_lifecycle(client: testclient.TestClient):
     """Test the lifecycle of a PAT (create, get, revoke, get)"""
