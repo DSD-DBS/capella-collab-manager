@@ -91,3 +91,21 @@
         This will close all projects except the selected one.
 
     If none of those steps help, please reach out to your system administrator.
+
+<!-- prettier-ignore -->
+??? question "Where are the Expert properties after switching to Capella 7? <a href="#expert-properties">:material-link:</a>"
+
+    <span id="expert-properties" />
+
+    In newer versions of Capella, the "Expert" and "Semantic" tabs in the Properties panel are hidden by default.
+
+    To re-enable them, follow these steps:
+
+    1. Go to the workspace settings through Window &gt; Preferences
+    1. In the left sidebar, go to General &gt; Capabilities
+    1. In the "Capella Advanced Modeling" category, tick the box for "Expert/Semantic Properties"
+    1. Click on "Apply and Close" to confirm
+
+    ![A screenshot further clarifying the steps described above](./expert-properties.png)
+
+    This will re-enable the "Expert" or "Semantic" tab in the Properties panel.
