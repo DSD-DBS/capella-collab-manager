@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ARG BASE_IMAGE=node:22
-FROM $BASE_IMAGE as build
+FROM $BASE_IMAGE AS build
 
 USER root
 
@@ -22,7 +22,8 @@ FROM caddy:2.9-alpine
 
 EXPOSE 8080
 
-RUN adduser -S appuser \
+RUN apk --no-cache upgrade \
+    && adduser -S appuser \
     && mkdir -p /var/log \
                 /data/caddy/locks \
                 /config/caddy \

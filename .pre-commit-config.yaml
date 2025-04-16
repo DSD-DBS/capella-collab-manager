@@ -9,7 +9,7 @@ repos:
     rev: v0.9.10
     hooks:
       - id: ruff
-        args: [ --fix, --extend-ignore=FIX ]
+        args: [--fix, --extend-ignore=FIX]
       - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks.git
     rev: v8.24.0
@@ -92,7 +92,7 @@ repos:
           - '@trivago/prettier-plugin-sort-imports@^5.2.2'
           - 'tailwindcss@^3.4.17'
           - 'prettier-plugin-classnames@^0.7.7'
-          - 'prettier-plugin-merge@^0.7.2'
+          - 'prettier-plugin-merge@^0.7.3'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
@@ -164,14 +164,14 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - 'eslint@^9.22.0'
-          - '@eslint/js@^9.22.0'
-          - 'angular-eslint@~19.2.1'
-          - 'eslint-config-prettier@^10.1.1'
-          - 'typescript-eslint@^8.26.1'
+          - 'eslint@^9.24.0'
+          - '@eslint/js@^9.24.0'
+          - 'angular-eslint@~19.3.0'
+          - 'eslint-config-prettier@^10.1.2'
+          - 'typescript-eslint@^8.30.1'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.18.0'
-          - 'eslint-plugin-storybook@^0.11.4'
+          - 'eslint-plugin-storybook@^0.12.0'
           - 'tailwindcss@^3.4.17'
         args:
           [
