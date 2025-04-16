@@ -199,7 +199,42 @@ def test_fail_update_user_no_reason(
         f"/api/v1/users/{test_user.id}", json={"role": users_models.Role.ADMIN}
     )
 
-    assert response.status_code == 403
-    assert (
-        response.json()["detail"]["err_code"] == "ROLE_UPDATE_REQUIRES_REASON"
+    assert response.status_code == 400
+    assert response.json()["detail"]["err_code"] == "REASON_REQUIRED"
+
+
+@pytest.mark.usefixtures("admin")
+def test_block_user_without_reason(
+    client: testclient.TestClient,
+    test_user: users_models.DatabaseUser,
+):
+    response = client.patch(
+        f"/api/v1/users/{test_user.id}", json={"blocked": True}
     )
+
+    assert response.status_code == 400
+    assert response.json()["detail"]["err_code"] == "REASON_REQUIRED"
+
+
+@pytest.mark.usefixtures("admin")
+def test_block_user(
+    client: testclient.TestClient,
+    test_user: users_models.DatabaseUser,
+):
+    response = client.patch(
+        f"/api/v1/users/{test_user.id}", json={"blocked": True}
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"]["err_code"] == "REASON_REQUIRED"
+
+
+def test_requests_with_blocked_user(
+    client: testclient.TestClient,
+    basic_user: users_models.DatabaseUser,
+):
+    basic_user.blocked = True
+    response = client.get("/api/v1/projects")
+
+    assert response.status_code == 403
+    assert response.json()["detail"]["err_code"] == "USER_BLOCKED"

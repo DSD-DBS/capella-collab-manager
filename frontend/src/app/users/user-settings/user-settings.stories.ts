@@ -55,7 +55,35 @@ export const Overview: Story = {
           },
           {
             ...mockUser,
-            name: 'userThatsAlsoABetaTester',
+            name: 'blockedUser',
+            blocked: true,
+          },
+          {
+            ...mockUser,
+            name: 'userWhoIsAlsoABetaTester',
+            beta_tester: true,
+          },
+        ]),
+        mockOwnUserWrapperServiceProvider(loggedInUser),
+      ],
+    }),
+  ],
+};
+
+export const Overview2: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockUserWrapperServiceProvider(undefined, [
+          {
+            ...mockUser,
+            name: 'blockedUser',
+            blocked: true,
+          },
+          {
+            ...mockUser,
+            name: 'userWhoIsAlsoABetaTester',
             beta_tester: true,
           },
         ]),

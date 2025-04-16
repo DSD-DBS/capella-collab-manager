@@ -19,7 +19,10 @@ def get_own_user(
         ),
     ],
 ) -> models.DatabaseUser:
-    return authentication_information[0]
+    user = authentication_information[0]
+    if user.blocked:
+        raise exceptions.UserBlockedError()
+    return user
 
 
 def get_existing_user(

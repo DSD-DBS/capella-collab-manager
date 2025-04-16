@@ -15,7 +15,11 @@ import {
   AsyncValidatorFn,
 } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatChipListbox, MatChipOption } from '@angular/material/chips';
+import {
+  MatChipListbox,
+  MatChipOption,
+  MatChipsModule,
+} from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import {
   MatFormField,
@@ -29,6 +33,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, Observable, take } from 'rxjs';
+import { ChipComponent } from 'src/app/helpers/chip/chip.component';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import {
   InputDialogComponent,
@@ -62,6 +67,8 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
     NgxSkeletonLoaderModule,
     MatChipListbox,
     MatChipOption,
+    MatChipsModule,
+    ChipComponent,
   ],
 })
 export class UserSettingsComponent implements OnInit {
@@ -218,6 +225,57 @@ export class UserSettingsComponent implements OnInit {
               this.toastService.showSuccess(
                 'Role of user updated',
                 user.name + ' has now the role user',
+              );
+              this.userWrapperService.loadUsers();
+            },
+          });
+      }
+    });
+  }
+
+  unblockUser(user: User) {
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Unblock User',
+        text: `Please provide a reason to unblock the user '${user.name}'.`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.usersService
+          .updateUser(user.id, { blocked: false, reason: result.text })
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'User unblocked',
+                user.name +
+                  ' has been unblocked and should be able log in again.',
+              );
+              this.userWrapperService.loadUsers();
+            },
+          });
+      }
+    });
+  }
+
+  blockUser(user: User) {
+    const dialogRef = this.dialog.open(InputDialogComponent, {
+      data: {
+        title: 'Block User',
+        text: `Please provide a reason to block the user '${user.name}'.`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: InputDialogResult) => {
+      if (result.success && result.text) {
+        this.usersService
+          .updateUser(user.id, { blocked: true, reason: result.text })
+          .subscribe({
+            next: () => {
+              this.toastService.showSuccess(
+                'User blocked',
+                user.name + ' has been blocked and is longer able to log in.',
               );
               this.userWrapperService.loadUsers();
             },

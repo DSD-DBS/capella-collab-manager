@@ -63,6 +63,14 @@
         @case ("session-expired") {
           <div>Your session has expired.</div>
         }
+        @case ("blocked") {
+          <div
+            class="mb-2 rounded-md bg-red-700 p-2 text-center text-white shadow-md"
+          >
+            Your account is blocked and all authenticated requests will be
+            rejected. Contact support for further assistance.
+          </div>
+        }
       }
     }
 

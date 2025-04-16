@@ -645,7 +645,7 @@ export class UsersService {
 
     /**
      * Update User
-     * Update the user.  The &#x60;reason&#x60; field is required when updating the role.  The &#x60;beta_user&#x60; field can only be updated when &#x60;beta.enabled&#x60; is activated in the global configuration.  The &#x60;beta_user&#x60; field can be updated for the own user when &#x60;beta.allow_self_enrollment&#x60; is activated in the global configuration. All other fields can only be updated with the &#x60;admin.users:update&#x60; scope.
+     * Update the user.  The &#x60;reason&#x60; field is required when updating the &#x60;role&#x60; or &#x60;blocked&#x60; fields.  The &#x60;beta_user&#x60; field can only be updated when &#x60;beta.enabled&#x60; is activated in the global configuration.  The &#x60;beta_user&#x60; field can be updated for the own user when &#x60;beta.allow_self_enrollment&#x60; is activated in the global configuration. All other fields can only be updated with the &#x60;admin.users:update&#x60; scope.
      * @param userId 
      * @param patchUser 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

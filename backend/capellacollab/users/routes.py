@@ -170,7 +170,7 @@ def update_user(
         models.DatabaseUser, fastapi.Depends(injectables.get_existing_user)
     ],
     own_user: t.Annotated[
-        models.DatabaseUser, fastapi.Depends(get_current_user)
+        models.DatabaseUser, fastapi.Depends(injectables.get_own_user)
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
     scope: t.Annotated[
@@ -180,7 +180,7 @@ def update_user(
 ):
     """Update the user.
 
-    The `reason` field is required when updating the role.
+    The `reason` field is required when updating the `role` or `blocked` fields.
 
     The `beta_user` field can only be updated when `beta.enabled` is activated in the
     global configuration.
@@ -209,12 +209,36 @@ def update_user(
             raise exceptions.BetaTestingSelfEnrollmentNotAllowedError()
 
     if patch_user.role and patch_user.role != user.role:
-        reason = patch_user.reason
-        if not reason:
-            raise exceptions.RoleUpdateRequiresReasonError()
-        user = update_user_role(db, user, own_user, patch_user.role, reason)
+        if reason := patch_user.reason:
+            user = update_user_role(
+                db, user, own_user, patch_user.role, reason
+            )
+        else:
+            raise exceptions.ReasonRequiredError()
 
+    if patch_user.blocked is not None and patch_user.blocked != user.blocked:
+        update_user_blocked_status(
+            db, user, patch_user.blocked, patch_user.reason
+        )
     return crud.update_user(db, user, patch_user)
+
+
+def update_user_blocked_status(
+    db: orm.Session,
+    user: models.DatabaseUser,
+    blocked: bool,
+    reason: str | None,
+):
+    if not reason:
+        raise exceptions.ReasonRequiredError()
+    events_crud.create_event(
+        db,
+        user,
+        event_type=events_models.EventType.BLOCKED_USER
+        if blocked
+        else events_models.EventType.UNBLOCKED_USER,
+        reason=reason,
+    )
 
 
 @router.delete(

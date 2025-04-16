@@ -20,6 +20,7 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, take } from 'rxjs';
+import { ChipComponent } from 'src/app/helpers/chip/chip.component';
 import {
   InputDialogComponent,
   InputDialogResult,
@@ -56,6 +57,7 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatTooltip,
     NgxSkeletonLoaderModule,
     AsyncPipe,
+    ChipComponent,
   ],
 })
 export class ProjectUserSettingsComponent implements OnInit {

@@ -52,7 +52,14 @@
                   >
                 </div>
                 <div>
-                  <div class="break-all text-[17.5px]">{{ user.name }}</div>
+                  <div class="break-all align-bottom text-[17.5px]">
+                    <span>{{ user.name }}</span> <br />
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    @if (user.blocked) {
+                      <app-chip>Blocked</app-chip>
+                    }
+                  </div>
                   <div class="text-[14px] text-gray-500">
                     {{ roleMapping[user.role]
                     }}{{ user.beta_tester ? ", Beta Tester" : "" }}
@@ -84,6 +91,28 @@
                   </button>
                 }
                 @if (user.id !== ownUserService.user?.id) {
+                  @if (user.blocked) {
+                    <button
+                      class="mx-0 px-0"
+                      mat-icon-button
+                      color="primary"
+                      (click)="unblockUser(user)"
+                      matTooltip="Unlock user"
+                    >
+                      <mat-icon>lock_reset</mat-icon>
+                    </button>
+                  } @else {
+                    <button
+                      class="mx-0 px-0"
+                      mat-icon-button
+                      color="warn"
+                      (click)="blockUser(user)"
+                      matTooltip="Block user"
+                    >
+                      <mat-icon color="warn">block</mat-icon>
+                    </button>
+                  }
+
                   <button
                     class="mx-0 px-0"
                     mat-icon-button

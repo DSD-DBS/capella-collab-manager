@@ -13,7 +13,7 @@ import { Message } from './message';
 import { SimpleT4CRepositoryWithIntegrations } from './simple-t4-c-repository-with-integrations';
 
 
-export interface PayloadResponseModelListSimpleT4CRepositoryWithIntegrations { 
+export interface T4CRepositoriesResponseModel { 
     warnings: Array<Message> | null;
     errors: Array<Message> | null;
     payload: Array<SimpleT4CRepositoryWithIntegrations>;

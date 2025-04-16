@@ -58,6 +58,9 @@ export class AuthInterceptor implements HttpInterceptor {
         this.router.navigateByUrl('/logout?reason=unauthorized');
       }
     }
+    if (err.status === 403 && err.error.detail.err_code == 'USER_BLOCKED') {
+      this.router.navigateByUrl('/logout?reason=blocked');
+    }
     throw err;
   }
 }
