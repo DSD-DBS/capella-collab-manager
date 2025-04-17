@@ -11,7 +11,7 @@
 
 
 
-export type EventType = 'CreatedUser' | 'AddedToProject' | 'RemovedFromProject' | 'AssignedProjectRoleUser' | 'AssignedProjectRoleManager' | 'AssignedProjectPermissionReadOnly' | 'AssignedProjectPermissionReadWrite' | 'AssignedRoleAdmin' | 'AssignedRoleUser';
+export type EventType = 'CreatedUser' | 'AddedToProject' | 'RemovedFromProject' | 'AssignedProjectRoleUser' | 'AssignedProjectRoleManager' | 'AssignedProjectPermissionReadOnly' | 'AssignedProjectPermissionReadWrite' | 'AssignedRoleAdmin' | 'AssignedRoleUser' | 'UserBlocked' | 'UserUnblocked';
 
 export const EventType = {
     CreatedUser: 'CreatedUser' as EventType,
@@ -22,6 +22,8 @@ export const EventType = {
     AssignedProjectPermissionReadOnly: 'AssignedProjectPermissionReadOnly' as EventType,
     AssignedProjectPermissionReadWrite: 'AssignedProjectPermissionReadWrite' as EventType,
     AssignedRoleAdmin: 'AssignedRoleAdmin' as EventType,
-    AssignedRoleUser: 'AssignedRoleUser' as EventType
+    AssignedRoleUser: 'AssignedRoleUser' as EventType,
+    UserBlocked: 'UserBlocked' as EventType,
+    UserUnblocked: 'UserUnblocked' as EventType
 };
 

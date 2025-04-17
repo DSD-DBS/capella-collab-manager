@@ -62,8 +62,11 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
         error: (err) => {
           if (
             this.isErrorHandlingSkipped(request) ||
-            err.error.detail?.err_code == 'TOKEN_SIGNATURE_EXPIRED' ||
-            err.error.detail?.err_code == 'UNAUTHENTICATED'
+            [
+              'TOKEN_SIGNATURE_EXPIRED',
+              'UNAUTHENTICATED',
+              'USER_BLOCKED',
+            ].includes(err.error.detail?.err_code)
           ) {
             return;
           }

@@ -19,6 +19,7 @@ export interface BaseUser {
     email: string | null;
     role: Role;
     beta_tester: boolean;
+    blocked: boolean;
 }
 export namespace BaseUser {
 }

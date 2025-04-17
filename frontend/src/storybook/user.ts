@@ -19,6 +19,7 @@ export const mockUser: Readonly<User> = {
   created: '2024-04-29T14:00:00Z',
   last_login: '2024-04-29T14:59:00Z',
   beta_tester: false,
+  blocked: false,
 };
 
 class MockOwnUserWrapperService implements Partial<OwnUserWrapperService> {

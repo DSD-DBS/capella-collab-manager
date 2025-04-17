@@ -19,6 +19,7 @@ export interface PatchUser {
     role?: Role | null;
     reason?: string | null;
     beta_tester?: boolean | null;
+    blocked?: boolean | null;
 }
 export namespace PatchUser {
 }

@@ -9,21 +9,11 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { Role } from './role';
 
 
-export interface User { 
-    id: number;
-    name: string;
-    idp_identifier: string;
-    email: string | null;
-    role: Role;
-    beta_tester: boolean;
-    blocked: boolean;
-    created: string | null;
-    last_login: string | null;
+/**
+ * Environment variables, which are mounted into session containers. You can use f-strings to reference other environment variables in the value. 
+ */
+export interface Value1 { 
 }
-export namespace User {
-}
-
 

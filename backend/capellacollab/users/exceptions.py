@@ -38,17 +38,17 @@ class NoProjectsInCommonError(core_exceptions.BaseError):
         return cls(-1)
 
 
-class RoleUpdateRequiresReasonError(core_exceptions.BaseError):
+class ReasonRequiredError(core_exceptions.BaseError):
     def __init__(self):
         super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN,
-            title="No reason provided",
-            reason=("You must provide a reason for updating the users roles."),
-            err_code="ROLE_UPDATE_REQUIRES_REASON",
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="No reason provided.",
+            reason="You must provide a reason for this request.",
+            err_code="REASON_REQUIRED",
         )
 
     @classmethod
-    def openapi_example(cls) -> "RoleUpdateRequiresReasonError":
+    def openapi_example(cls) -> "ReasonRequiredError":
         return cls()
 
 
@@ -105,4 +105,21 @@ class BetaTestingSelfEnrollmentNotAllowedError(core_exceptions.BaseError):
 
     @classmethod
     def openapi_example(cls) -> "BetaTestingSelfEnrollmentNotAllowedError":
+        return cls()
+
+
+class UserBlockedError(core_exceptions.BaseError):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            title="The user is blocked.",
+            reason=(
+                "The user is blocked and all authenticated requests are rejected."
+                " Contact your system administrator or support for help."
+            ),
+            err_code="USER_BLOCKED",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "UserBlockedError":
         return cls()

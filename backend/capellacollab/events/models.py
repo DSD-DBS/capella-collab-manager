@@ -26,6 +26,8 @@ class EventType(enum.Enum):
     )
     ASSIGNED_ROLE_ADMIN = "AssignedRoleAdmin"
     ASSIGNED_ROLE_USER = "AssignedRoleUser"
+    BLOCKED_USER = "UserBlocked"
+    UNBLOCKED_USER = "UserUnblocked"
 
 
 class BaseHistoryEvent(core_pydantic.BaseModel):

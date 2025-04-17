@@ -69,7 +69,12 @@
               >
             </div>
             <div>
-              <div class="break-all text-[17.5px]">{{ user.user.name }}</div>
+              <div class="break-all text-[17.5px]">
+                {{ user.user.name }}
+                @if (user.user.blocked) {
+                  <app-chip>Blocked</app-chip>
+                }
+              </div>
               <div class="text-[14px] text-gray-500">
                 {{ advanced_roles[user.role] }},
                 {{ permissions[user.permission] }}

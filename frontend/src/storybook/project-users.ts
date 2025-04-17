@@ -30,7 +30,7 @@ export const mockProjectUsers: ProjectUser[] = [
   {
     role: 'user',
     permission: 'read',
-    user: { ...mockUser, name: 'projectuserWithReallyLongName' },
+    user: { ...mockUser, name: 'projectuserWithReallyLongName', blocked: true },
   },
   {
     role: 'manager',

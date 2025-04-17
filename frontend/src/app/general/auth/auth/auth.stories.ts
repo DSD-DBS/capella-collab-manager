@@ -160,3 +160,24 @@ export const SessionExpired: Story = {
     }),
   ],
 };
+
+export const UserBlocked: Story = {
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockActivatedRouteProvider({
+          reason: 'blocked',
+        }),
+        mockNavbarServiceProvider(
+          '/test-assets/wide_logo.svg',
+          {
+            show: true,
+            variant: 'success',
+            text: 'Production',
+          },
+          true,
+        ),
+      ],
+    }),
+  ],
+};

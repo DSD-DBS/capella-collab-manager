@@ -124,6 +124,7 @@ class BaseUser(core_pydantic.BaseModel):
     email: str | None = None
     role: Role
     beta_tester: bool = False
+    blocked: bool = False
 
 
 class User(BaseUser):
@@ -145,6 +146,7 @@ class PatchUser(core_pydantic.BaseModel):
     role: Role | None = None
     reason: str | None = None
     beta_tester: bool | None = None
+    blocked: bool | None = None
 
 
 class PostUser(core_pydantic.BaseModel):
@@ -201,3 +203,4 @@ class DatabaseUser(database.Base):
     )
 
     beta_tester: orm.Mapped[bool] = orm.mapped_column(default=False)
+    blocked: orm.Mapped[bool] = orm.mapped_column(default=False)
