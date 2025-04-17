@@ -14,7 +14,9 @@
 export type ToolSessionEnvironmentStage = 'before' | 'after';
 
 export const ToolSessionEnvironmentStage = {
+
     Before: 'before' as ToolSessionEnvironmentStage,
+
     After: 'after' as ToolSessionEnvironmentStage
 };
 

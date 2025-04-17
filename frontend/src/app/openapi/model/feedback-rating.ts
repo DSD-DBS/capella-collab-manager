@@ -14,8 +14,11 @@
 export type FeedbackRating = 'bad' | 'okay' | 'good';
 
 export const FeedbackRating = {
+
     Bad: 'bad' as FeedbackRating,
+
     Okay: 'okay' as FeedbackRating,
+
     Good: 'good' as FeedbackRating
 };
 

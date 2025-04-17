@@ -14,9 +14,13 @@
 export type GitType = 'General' | 'GitLab' | 'GitHub' | 'AzureDevOps';
 
 export const GitType = {
+
     General: 'General' as GitType,
+
     GitLab: 'GitLab' as GitType,
+
     GitHub: 'GitHub' as GitType,
+
     AzureDevOps: 'AzureDevOps' as GitType
 };
 

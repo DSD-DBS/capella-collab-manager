@@ -14,12 +14,19 @@
 export type PipelineRunStatus = 'pending' | 'scheduled' | 'running' | 'success' | 'timeout' | 'failure' | 'unknown';
 
 export const PipelineRunStatus = {
+
     Pending: 'pending' as PipelineRunStatus,
+
     Scheduled: 'scheduled' as PipelineRunStatus,
+
     Running: 'running' as PipelineRunStatus,
+
     Success: 'success' as PipelineRunStatus,
+
     Timeout: 'timeout' as PipelineRunStatus,
+
     Failure: 'failure' as PipelineRunStatus,
+
     Unknown: 'unknown' as PipelineRunStatus
 };
 

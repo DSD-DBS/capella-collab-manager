@@ -14,7 +14,9 @@
 export type Role = 'administrator' | 'user';
 
 export const Role = {
+
     Administrator: 'administrator' as Role,
+
     User: 'user' as Role
 };
 

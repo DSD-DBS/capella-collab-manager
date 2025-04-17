@@ -14,7 +14,9 @@
 export type ProjectType = 'general' | 'training';
 
 export const ProjectType = {
+
     General: 'general' as ProjectType,
+
     Training: 'training' as ProjectType
 };
 
