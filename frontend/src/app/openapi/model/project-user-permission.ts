@@ -14,7 +14,9 @@
 export type ProjectUserPermission = 'read' | 'write';
 
 export const ProjectUserPermission = {
+
     Read: 'read' as ProjectUserPermission,
+
     Write: 'write' as ProjectUserPermission
 };
 

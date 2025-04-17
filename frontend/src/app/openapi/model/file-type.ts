@@ -14,7 +14,9 @@
 export type FileType = 'file' | 'directory';
 
 export const FileType = {
+
     File: 'file' as FileType,
+
     Directory: 'directory' as FileType
 };
 

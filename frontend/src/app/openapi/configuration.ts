@@ -97,26 +97,6 @@ export class Configuration {
         else {
             this.credentials = {};
         }
-
-        // init default PersonalAccessToken credential
-        if (!this.credentials['PersonalAccessToken']) {
-            this.credentials['PersonalAccessToken'] = () => {
-                return (this.username || this.password)
-                    ? btoa(this.username + ':' + this.password)
-                    : undefined;
-            };
-        }
-
-        // init default Cookie credential
-        if (!this.credentials['Cookie']) {
-            this.credentials['Cookie'] = () => {
-                if (this.apiKeys === null || this.apiKeys === undefined) {
-                    return undefined;
-                } else {
-                    return this.apiKeys['Cookie'] || this.apiKeys['id_token'];
-                }
-            };
-        }
     }
 
     /**

@@ -14,7 +14,9 @@
 export type ProjectVisibility = 'private' | 'internal';
 
 export const ProjectVisibility = {
+
     Private: 'private' as ProjectVisibility,
+
     Internal: 'internal' as ProjectVisibility
 };
 

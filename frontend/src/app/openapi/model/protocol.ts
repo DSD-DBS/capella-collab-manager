@@ -14,9 +14,13 @@
 export type Protocol = 'tcp' | 'ssl' | 'ws' | 'wss';
 
 export const Protocol = {
+
     Tcp: 'tcp' as Protocol,
+
     Ssl: 'ssl' as Protocol,
+
     Ws: 'ws' as Protocol,
+
     Wss: 'wss' as Protocol
 };
 

@@ -14,10 +14,15 @@
 export type T4CRepositoryStatus = 'ONLINE' | 'OFFLINE' | 'INSTANCE_UNREACHABLE' | 'NOT_FOUND' | 'INITIAL';
 
 export const T4CRepositoryStatus = {
+
     Online: 'ONLINE' as T4CRepositoryStatus,
+
     Offline: 'OFFLINE' as T4CRepositoryStatus,
+
     InstanceUnreachable: 'INSTANCE_UNREACHABLE' as T4CRepositoryStatus,
+
     NotFound: 'NOT_FOUND' as T4CRepositoryStatus,
+
     Initial: 'INITIAL' as T4CRepositoryStatus
 };
 
