@@ -11,10 +11,9 @@
 
 
 
-export type FileType = 'file' | 'directory';
-
 export const FileType = {
-    File: 'file' as FileType,
-    Directory: 'directory' as FileType
-};
+    File: 'file',
+    Directory: 'directory'
+} as const;
+export type FileType = typeof FileType[keyof typeof FileType];
 

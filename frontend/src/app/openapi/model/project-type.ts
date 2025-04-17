@@ -11,10 +11,9 @@
 
 
 
-export type ProjectType = 'general' | 'training';
-
 export const ProjectType = {
-    General: 'general' as ProjectType,
-    Training: 'training' as ProjectType
-};
+    General: 'general',
+    Training: 'training'
+} as const;
+export type ProjectType = typeof ProjectType[keyof typeof ProjectType];
 

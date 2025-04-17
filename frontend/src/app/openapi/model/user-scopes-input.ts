@@ -30,27 +30,27 @@ export interface UserScopesInput {
     feedback?: Array<UserScopesInput.FeedbackEnum>;
 }
 export namespace UserScopesInput {
-    export type SessionsEnum = 'GET' | 'CREATE' | 'UPDATE' | 'DELETE';
     export const SessionsEnum = {
-        Get: 'GET' as SessionsEnum,
-        Create: 'CREATE' as SessionsEnum,
-        Update: 'UPDATE' as SessionsEnum,
-        Delete: 'DELETE' as SessionsEnum
-    };
-    export type ProjectsEnum = 'CREATE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type SessionsEnum = typeof SessionsEnum[keyof typeof SessionsEnum];
     export const ProjectsEnum = {
-        Create: 'CREATE' as ProjectsEnum
-    };
-    export type TokensEnum = 'GET' | 'CREATE' | 'DELETE';
+        Create: 'CREATE'
+    } as const;
+    export type ProjectsEnum = typeof ProjectsEnum[keyof typeof ProjectsEnum];
     export const TokensEnum = {
-        Get: 'GET' as TokensEnum,
-        Create: 'CREATE' as TokensEnum,
-        Delete: 'DELETE' as TokensEnum
-    };
-    export type FeedbackEnum = 'CREATE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type TokensEnum = typeof TokensEnum[keyof typeof TokensEnum];
     export const FeedbackEnum = {
-        Create: 'CREATE' as FeedbackEnum
-    };
+        Create: 'CREATE'
+    } as const;
+    export type FeedbackEnum = typeof FeedbackEnum[keyof typeof FeedbackEnum];
 }
 
 

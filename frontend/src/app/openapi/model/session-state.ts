@@ -11,14 +11,13 @@
 
 
 
-export type SessionState = 'Running' | 'Failed' | 'Terminated' | 'Pending' | 'NotFound' | 'Unknown';
-
 export const SessionState = {
-    Running: 'Running' as SessionState,
-    Failed: 'Failed' as SessionState,
-    Terminated: 'Terminated' as SessionState,
-    Pending: 'Pending' as SessionState,
-    NotFound: 'NotFound' as SessionState,
-    Unknown: 'Unknown' as SessionState
-};
+    Running: 'Running',
+    Failed: 'Failed',
+    Terminated: 'Terminated',
+    Pending: 'Pending',
+    NotFound: 'NotFound',
+    Unknown: 'Unknown'
+} as const;
+export type SessionState = typeof SessionState[keyof typeof SessionState];
 

@@ -11,10 +11,9 @@
 
 
 
-export type SessionType = 'persistent' | 'readonly';
-
 export const SessionType = {
-    Persistent: 'persistent' as SessionType,
-    Readonly: 'readonly' as SessionType
-};
+    Persistent: 'persistent',
+    Readonly: 'readonly'
+} as const;
+export type SessionType = typeof SessionType[keyof typeof SessionType];
 

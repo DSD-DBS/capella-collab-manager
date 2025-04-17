@@ -11,14 +11,13 @@
 
 
 
-export type SessionPreparationState = 'Running' | 'Completed' | 'Failed' | 'Pending' | 'NotFound' | 'Unknown';
-
 export const SessionPreparationState = {
-    Running: 'Running' as SessionPreparationState,
-    Completed: 'Completed' as SessionPreparationState,
-    Failed: 'Failed' as SessionPreparationState,
-    Pending: 'Pending' as SessionPreparationState,
-    NotFound: 'NotFound' as SessionPreparationState,
-    Unknown: 'Unknown' as SessionPreparationState
-};
+    Running: 'Running',
+    Completed: 'Completed',
+    Failed: 'Failed',
+    Pending: 'Pending',
+    NotFound: 'NotFound',
+    Unknown: 'Unknown'
+} as const;
+export type SessionPreparationState = typeof SessionPreparationState[keyof typeof SessionPreparationState];
 

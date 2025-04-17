@@ -11,11 +11,10 @@
 
 
 
-export type ProjectUserRole = 'manager' | 'user' | 'administrator';
-
 export const ProjectUserRole = {
-    Manager: 'manager' as ProjectUserRole,
-    User: 'user' as ProjectUserRole,
-    Administrator: 'administrator' as ProjectUserRole
-};
+    Manager: 'manager',
+    User: 'user',
+    Administrator: 'administrator'
+} as const;
+export type ProjectUserRole = typeof ProjectUserRole[keyof typeof ProjectUserRole];
 

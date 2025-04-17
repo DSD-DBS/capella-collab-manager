@@ -11,13 +11,12 @@
 
 
 
-export type T4CRepositoryStatus = 'ONLINE' | 'OFFLINE' | 'INSTANCE_UNREACHABLE' | 'NOT_FOUND' | 'INITIAL';
-
 export const T4CRepositoryStatus = {
-    Online: 'ONLINE' as T4CRepositoryStatus,
-    Offline: 'OFFLINE' as T4CRepositoryStatus,
-    InstanceUnreachable: 'INSTANCE_UNREACHABLE' as T4CRepositoryStatus,
-    NotFound: 'NOT_FOUND' as T4CRepositoryStatus,
-    Initial: 'INITIAL' as T4CRepositoryStatus
-};
+    Online: 'ONLINE',
+    Offline: 'OFFLINE',
+    InstanceUnreachable: 'INSTANCE_UNREACHABLE',
+    NotFound: 'NOT_FOUND',
+    Initial: 'INITIAL'
+} as const;
+export type T4CRepositoryStatus = typeof T4CRepositoryStatus[keyof typeof T4CRepositoryStatus];
 

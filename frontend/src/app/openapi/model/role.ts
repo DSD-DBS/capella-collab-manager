@@ -11,10 +11,9 @@
 
 
 
-export type Role = 'administrator' | 'user';
-
 export const Role = {
-    Administrator: 'administrator' as Role,
-    User: 'user' as Role
-};
+    Administrator: 'administrator',
+    User: 'user'
+} as const;
+export type Role = typeof Role[keyof typeof Role];
 

@@ -11,15 +11,14 @@
 
 
 
-export type AnnouncementLevel = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'alert';
-
 export const AnnouncementLevel = {
-    Primary: 'primary' as AnnouncementLevel,
-    Secondary: 'secondary' as AnnouncementLevel,
-    Success: 'success' as AnnouncementLevel,
-    Danger: 'danger' as AnnouncementLevel,
-    Warning: 'warning' as AnnouncementLevel,
-    Info: 'info' as AnnouncementLevel,
-    Alert: 'alert' as AnnouncementLevel
-};
+    Primary: 'primary',
+    Secondary: 'secondary',
+    Success: 'success',
+    Danger: 'danger',
+    Warning: 'warning',
+    Info: 'info',
+    Alert: 'alert'
+} as const;
+export type AnnouncementLevel = typeof AnnouncementLevel[keyof typeof AnnouncementLevel];
 

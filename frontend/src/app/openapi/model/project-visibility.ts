@@ -11,10 +11,9 @@
 
 
 
-export type ProjectVisibility = 'private' | 'internal';
-
 export const ProjectVisibility = {
-    Private: 'private' as ProjectVisibility,
-    Internal: 'internal' as ProjectVisibility
-};
+    Private: 'private',
+    Internal: 'internal'
+} as const;
+export type ProjectVisibility = typeof ProjectVisibility[keyof typeof ProjectVisibility];
 

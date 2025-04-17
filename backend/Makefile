@@ -81,6 +81,7 @@ openapi:
 		--remove-min-max-keys \
 		--skip-error-responses \
 		--remove-unique-items-keys \
+		--remove-security-schemes \
 		/tmp/openapi.json
 
 import-rsa-key:
