@@ -39,7 +39,7 @@ spec:
           {{ if .Values.docker.images.postgres }}
           image: {{ .Values.docker.images.postgres }}
           {{ else }}
-          image: {{ .Values.docker.registry.external }}/postgres:14.1
+          image: {{ .Values.docker.registry.external }}/postgres:{{ .Values.database.guacamole.internal.postgresVersion }}
           {{ end }}
           env:
             - name: PGDATA

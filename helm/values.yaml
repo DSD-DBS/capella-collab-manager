@@ -102,6 +102,8 @@ database:
       # Admin password of the database
       password: null
 
+      postgresVersion: '14.1'
+
     external:
       ###### IF database.guacamole.deploy == False ######
 
@@ -136,6 +138,8 @@ database:
 
       # Admin password of the database
       password: null
+
+      postgresVersion: '14.1'
 
     external:
       ###### IF database.backend.deploy == False ######
