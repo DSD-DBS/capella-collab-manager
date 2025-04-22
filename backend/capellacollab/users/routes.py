@@ -218,7 +218,7 @@ def update_user(
 
     if patch_user.blocked is not None and patch_user.blocked != user.blocked:
         update_user_blocked_status(
-            db, user, patch_user.blocked, patch_user.reason
+            db, user, own_user, patch_user.blocked, patch_user.reason
         )
     return crud.update_user(db, user, patch_user)
 
@@ -226,6 +226,7 @@ def update_user(
 def update_user_blocked_status(
     db: orm.Session,
     user: models.DatabaseUser,
+    own_user: models.DatabaseUser,
     blocked: bool,
     reason: str | None,
 ):
@@ -238,6 +239,7 @@ def update_user_blocked_status(
         if blocked
         else events_models.EventType.UNBLOCKED_USER,
         reason=reason,
+        executor=own_user,
     )
 
 
