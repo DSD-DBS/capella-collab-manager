@@ -28,7 +28,7 @@ snapshots:
 
 openapi:
 	OPENAPI_DIR=$$(mktemp -d)
-	docker run --rm \
+	docker run --rm --pull=always \
   		-v /tmp/openapi.json:/tmp/openapi.json \
 		-v $$(pwd)/openapi_templates:/tmp/openapi_templates \
 		-v $$OPENAPI_DIR:/tmp/output \

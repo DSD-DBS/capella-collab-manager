@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ARG BASE_IMAGE=python:3.12-slim-bookworm
-FROM $BASE_IMAGE as build
+FROM $BASE_IMAGE AS build
 
 USER root
 
@@ -14,6 +14,12 @@ WORKDIR /opt/docs
 RUN pip install -r requirements.txt && mkdocs build
 
 FROM nginxinc/nginx-unprivileged:latest
+
+USER root
+RUN apt-get update \
+    && apt-get upgrade --yes \
+    && rm -rf /var/lib/apt/lists/*
+USER 101
 
 EXPOSE 8080
 

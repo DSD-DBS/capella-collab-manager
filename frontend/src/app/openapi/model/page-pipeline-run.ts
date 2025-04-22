@@ -14,7 +14,7 @@ import { PipelineRun } from './pipeline-run';
 
 export interface PagePipelineRun { 
     items: Array<PipelineRun>;
-    total: number | null;
+    total?: number | null;
     page: number | null;
     size: number | null;
     pages?: number | null;

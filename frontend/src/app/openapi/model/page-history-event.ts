@@ -14,7 +14,7 @@ import { HistoryEvent } from './history-event';
 
 export interface PageHistoryEvent { 
     items: Array<HistoryEvent>;
-    total: number | null;
+    total?: number | null;
     page: number | null;
     size: number | null;
     pages?: number | null;
