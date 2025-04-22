@@ -105,6 +105,23 @@ export const SessionTerminatingSoon: Story = {
   },
 };
 
+export const SessionTerminatingNow: Story = {
+  args: {
+    session: {
+      selected: false,
+      ...mockPersistentSession,
+      preparation_state: SessionPreparationState.Completed,
+      state: SessionState.Running,
+      idle_state: {
+        available: true,
+        terminate_after_minutes: 90,
+        idle_for_minutes: 91,
+        unavailable_reason: null,
+      },
+    },
+  },
+};
+
 export const SessionTerminatedState: Story = {
   args: {
     session: {
