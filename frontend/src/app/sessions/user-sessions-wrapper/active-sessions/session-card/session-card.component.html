@@ -68,12 +68,17 @@
       >
         <mat-icon class="shrink-0">warning</mat-icon>
         <div>
-          This session will automatically terminate
-          <app-relative-time
-            [date]="addMinutes(Date.now(), remainingMinutes)"
-            dateFormat="PPp"
-          />
-          if you do not interact with it.
+          @if (remainingMinutes > 0) {
+            This session will automatically terminate
+            <app-relative-time
+              [date]="addMinutes(Date.now(), remainingMinutes)"
+              dateFormat="PPp"
+            />
+            if you do not interact with it.
+          } @else {
+            This session has been marked for termination due to inactivity. It
+            will be terminated soon.
+          }
         </div>
       </div>
     }
