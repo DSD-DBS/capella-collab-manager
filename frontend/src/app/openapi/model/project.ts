@@ -12,6 +12,7 @@
 import { ProjectType } from './project-type';
 import { UserMetadata } from './user-metadata';
 import { ProjectVisibility } from './project-visibility';
+import { Tag } from './tag';
 
 
 export interface Project { 
@@ -23,6 +24,7 @@ export interface Project {
     type: ProjectType;
     users: UserMetadata;
     is_archived: boolean;
+    tags: Array<Tag> | null;
 }
 export namespace Project {
 }

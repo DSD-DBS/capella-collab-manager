@@ -4,7 +4,7 @@
  -->
 
 <ul class="select-none list-none break-all text-base text-primary">
-  @for (breadcrumb of breadcrumbService.breadcrumbs | async; track breadcrumb) {
+  @for (breadcrumb of breadcrumbService.breadcrumbs | async; track $index) {
     <li class="inline">
       /
       <a

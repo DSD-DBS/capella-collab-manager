@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { catchError, combineLatest, of, tap } from 'rxjs';
+import { TagComponent } from 'src/app/helpers/tag/tag.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Session, SessionsService } from 'src/app/openapi';
 
@@ -39,6 +40,7 @@ import { Session, SessionsService } from 'src/app/openapi';
     ReactiveFormsModule,
     MatChipsModule,
     MatTooltipModule,
+    TagComponent,
   ],
   templateUrl: './session-sharing-dialog.component.html',
   styles: `

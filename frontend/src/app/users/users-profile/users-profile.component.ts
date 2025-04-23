@@ -5,9 +5,12 @@
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { ChipComponent } from 'src/app/helpers/chip/chip.component';
+import { TagDisplayComponent } from 'src/app/helpers/tag-display/tag-display.component';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
-import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
+import {
+  getUserTags,
+  UserWrapperService,
+} from 'src/app/users/user-wrapper/user-wrapper.service';
 import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapper/unified-config-wrapper.service';
 import { BetaTestingComponent } from './beta-testing/beta-testing.component';
 import { CommonProjectsComponent } from './common-projects/common-projects.component';
@@ -27,11 +30,13 @@ import { UserWorkspacesComponent } from './user-workspaces/user-workspaces.compo
     AsyncPipe,
     BetaTestingComponent,
     ResetHiddenAnnouncementsComponent,
-    ChipComponent,
+    TagDisplayComponent,
   ],
 })
 export class UsersProfileComponent {
   ownUserService = inject(OwnUserWrapperService);
   userWrapperService = inject(UserWrapperService);
   unifiedConfigWrapperService = inject(UnifiedConfigWrapperService);
+
+  getUserTags = getUserTags;
 }

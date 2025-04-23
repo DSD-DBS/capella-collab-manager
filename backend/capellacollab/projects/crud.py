@@ -9,6 +9,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.projects.users import models as project_users_models
+from capellacollab.tags import models as tags_models
 from capellacollab.users import models as users_models
 
 from . import models
@@ -89,8 +90,10 @@ def update_project(
     db: orm.Session,
     project: models.DatabaseProject,
     patch_project: models.PatchProject,
+    tags: list[tags_models.DatabaseTag] | None = None,
 ) -> models.DatabaseProject:
     database.patch_database_with_pydantic_object(project, patch_project)
+    project.tags = tags or []
 
     db.commit()
     return project

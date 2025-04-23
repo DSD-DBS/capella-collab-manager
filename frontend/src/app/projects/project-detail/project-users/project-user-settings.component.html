@@ -70,9 +70,11 @@
             <div>
               <div class="break-all text-[17.5px]">
                 {{ user.user.name }}
-                @if (user.user.blocked) {
-                  <app-chip>Blocked</app-chip>
-                }
+                <div class="mb-1 flex flex-wrap gap-1">
+                  @for (tag of getUserTags(user.user); track tag.id) {
+                    <app-tag-display [tag]="tag" />
+                  }
+                </div>
               </div>
               <div class="text-[14px] text-gray-500">
                 {{ advanced_roles[user.role] }},

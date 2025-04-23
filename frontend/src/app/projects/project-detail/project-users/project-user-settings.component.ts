@@ -23,11 +23,11 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, take } from 'rxjs';
-import { ChipComponent } from 'src/app/helpers/chip/chip.component';
 import {
   InputDialogComponent,
   InputDialogResult,
 } from 'src/app/helpers/input-dialog/input-dialog.component';
+import { TagDisplayComponent } from 'src/app/helpers/tag-display/tag-display.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   Project,
@@ -40,6 +40,10 @@ import { AddUserToProjectDialogComponent } from 'src/app/projects/project-detail
 import { ProjectAuditLogComponent } from 'src/app/projects/project-detail/project-users/project-audit-log/project-audit-log.component';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
+import {
+  getUserTags,
+  UserWrapperService,
+} from 'src/app/users/user-wrapper/user-wrapper.service';
 import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
@@ -59,12 +63,13 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatTooltip,
     NgxSkeletonLoaderModule,
     AsyncPipe,
-    ChipComponent,
     MatButtonModule,
+    TagDisplayComponent,
   ],
 })
 export class ProjectUserSettingsComponent implements OnInit {
   projectUserService = inject(ProjectUserService);
+  userWrapperService = inject(UserWrapperService);
   private toastService = inject(ToastService);
   private projectService = inject(ProjectWrapperService);
   ownUserWrapperService = inject(OwnUserWrapperService);
@@ -72,6 +77,8 @@ export class ProjectUserSettingsComponent implements OnInit {
   private router = inject(Router);
 
   public project?: Project;
+
+  getUserTags = getUserTags;
 
   search = '';
 

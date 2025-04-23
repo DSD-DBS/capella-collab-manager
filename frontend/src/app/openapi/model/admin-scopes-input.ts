@@ -68,6 +68,10 @@ export interface AdminScopesInput {
      * Revoke personal access tokens of ALL users.
      */
     personal_access_tokens?: Array<AdminScopesInput.PersonalAccessTokensEnum>;
+    /**
+     * Manage the available tags globally
+     */
+    tags?: Array<AdminScopesInput.TagsEnum>;
 }
 export namespace AdminScopesInput {
     export const UsersEnum = {
@@ -149,6 +153,12 @@ export namespace AdminScopesInput {
         Delete: 'DELETE'
     } as const;
     export type PersonalAccessTokensEnum = typeof PersonalAccessTokensEnum[keyof typeof PersonalAccessTokensEnum];
+    export const TagsEnum = {
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type TagsEnum = typeof TagsEnum[keyof typeof TagsEnum];
 }
 
 

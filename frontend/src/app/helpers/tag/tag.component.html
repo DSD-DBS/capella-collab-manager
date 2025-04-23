@@ -1,0 +1,26 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<div
+  [style.color]="tagHelperService.identifyColor(hexBgColor())"
+  [style.backgroundColor]="hexBgColor()"
+  [matTooltip]="description()"
+  [ngClass]="{ 'cursor-help': description() }"
+  data-testid="tag"
+  class="flex h-[32px] w-fit items-center rounded-lg px-2 py-0.5 text-sm font-medium"
+>
+  @if (textIcon(); as textIcon) {
+    <mat-icon class="!mr-0">{{ textIcon }}</mat-icon>
+  }
+  <span class="ml-1.5 text-nowrap">{{ name() }}</span>
+  @if (actionIcon() !== null) {
+    <button
+      matRipple
+      (click)="actionClick.emit()"
+      class="ml-1 flex items-center rounded-full p-1"
+    >
+      <mat-icon class="!size-[18px] !text-[18px]">{{ actionIcon() }}</mat-icon>
+    </button>
+  }
+</div>

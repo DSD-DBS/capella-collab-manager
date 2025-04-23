@@ -18,6 +18,7 @@ import {
   ProjectUserRole,
   ProjectVisibility,
   ProjectsService,
+  Tag,
 } from 'src/app/openapi';
 
 @Injectable({
@@ -135,3 +136,49 @@ export const ProjectTypeDescriptions = {
   general: 'General (a project that contains related models)',
   training: 'Training (special project containing training material)',
 };
+
+export function getProjectTags(project: Project): Tag[] {
+  const tags = [...(project.tags || [])];
+  if (project.type === 'training') {
+    tags.push({
+      id: -1,
+      name: 'Training',
+      description: 'This is a special project containing training material',
+      hex_color: '#FF9800',
+      icon: 'school',
+    });
+  }
+  if (project.visibility === 'private') {
+    tags.push({
+      id: -2,
+      name: 'Restricted Visibility',
+      description: 'This project is only viewable by project members',
+      hex_color: '#70798C',
+      icon: 'lock',
+    });
+  }
+  if (project.visibility === 'internal') {
+    tags.push({
+      id: -3,
+      name: 'Public Visibility',
+      description: 'This project is viewable by all logged in users',
+      hex_color: '#70798C',
+      icon: 'public',
+    });
+  }
+  if (project.is_archived) {
+    tags.push({
+      id: -4,
+      name: 'Archived',
+      description:
+        'TeamForCapella repositories of this project will no longer be' +
+        ' available in persistent sessions and will no longer be' +
+        " synchronized to Git repositories. In addition, it's not possible" +
+        ' to create new models in this project.',
+      hex_color: '#a52606',
+      icon: 'warning',
+    });
+  }
+
+  return tags;
+}

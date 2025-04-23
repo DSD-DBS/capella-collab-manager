@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { combineLatest, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
-import { MatIconComponent } from 'src/app/helpers/mat-icon/mat-icon.component';
+import { TagComponent } from 'src/app/helpers/tag/tag.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
   ModelProvisioning,
@@ -38,8 +38,8 @@ import { RelativeTimeComponent } from '../../../../general/relative-time/relativ
     MatIconModule,
     MatButtonModule,
     NgxSkeletonLoaderModule,
-    MatIconComponent,
     RelativeTimeComponent,
+    TagComponent,
   ],
   templateUrl: './create-provisioned-session.component.html',
   styles: `

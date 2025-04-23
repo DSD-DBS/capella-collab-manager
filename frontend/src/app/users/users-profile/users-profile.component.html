@@ -10,9 +10,11 @@
     </div>
     <div class="flex flex-col">
       <h2 class="text-xl font-medium">Profile of {{ user?.name }}</h2>
-      @if (user.blocked) {
-        <app-chip>Blocked</app-chip>
-      }
+      <div class="my-1 flex flex-wrap gap-1">
+        @for (tag of getUserTags(user); track tag.id) {
+          <app-tag-display [tag]="tag" />
+        }
+      </div>
       @if (user?.created) {
         <div>
           Joined the Capella Collaboration Manager in

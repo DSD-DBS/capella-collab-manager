@@ -11,6 +11,7 @@
 
 import { ProjectType } from './project-type';
 import { ProjectVisibility } from './project-visibility';
+import { PatchProjectTagsInner } from './patch-project-tags-inner';
 
 
 export interface PatchProject { 
@@ -19,6 +20,7 @@ export interface PatchProject {
     visibility?: ProjectVisibility | null;
     type?: ProjectType | null;
     is_archived?: boolean | null;
+    tags?: Array<PatchProjectTagsInner> | null;
 }
 export namespace PatchProject {
 }

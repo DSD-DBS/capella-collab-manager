@@ -26,6 +26,7 @@ api/sessions.service.ts
 api/settings-modelsources-git.service.ts
 api/settings-modelsources-t4-c-instances.service.ts
 api/settings-modelsources-t4-c-license-servers.service.ts
+api/tags.service.ts
 api/tools.service.ts
 api/users-permissions.service.ts
 api/users-sessions.service.ts
@@ -57,6 +58,7 @@ model/create-announcement-request.ts
 model/create-backup.ts
 model/create-t4-c-instance.ts
 model/create-t4-c-repository.ts
+model/create-tag.ts
 model/create-tool-input.ts
 model/create-tool-nature-input.ts
 model/create-tool-nature-output.ts
@@ -115,6 +117,7 @@ model/navbar-configuration-input.ts
 model/navbar-configuration-output.ts
 model/page-history-event.ts
 model/page-pipeline-run.ts
+model/patch-project-tags-inner.ts
 model/patch-project-user.ts
 model/patch-project.ts
 model/patch-t4-c-instance.ts
@@ -196,6 +199,7 @@ model/t4-c-license-server.ts
 model/t4-c-repositories-response-model.ts
 model/t4-c-repository-status.ts
 model/t4-c-repository.ts
+model/tag.ts
 model/text.ts
 model/token-request.ts
 model/tool-backup-configuration-input.ts
