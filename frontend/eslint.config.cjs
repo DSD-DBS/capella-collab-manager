@@ -63,6 +63,7 @@ module.exports = tseslint.config(
         config: "frontend/tailwind.config.cjs",
         cssFiles: [
           "frontend/**/*.css",
+          "frontend/**/*.scss",
           "!**/node_modules",
           "!**/.*",
           "!**/dist",

@@ -2,7 +2,12 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { BehaviorSubject } from 'rxjs';
+import {
+  AbstractControl,
+  AsyncValidatorFn,
+  ValidationErrors,
+} from '@angular/forms';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import {
   SimpleToolModel,
   SimpleToolModelWithoutProject,
@@ -59,6 +64,12 @@ class MockModelWrapperService implements Partial<ModelWrapperService> {
   ) {
     this._model.next(model);
     this._models.next(models);
+  }
+
+  asyncSlugValidator(_ignoreModel?: ToolModel): AsyncValidatorFn {
+    return (_control: AbstractControl): Observable<ValidationErrors | null> => {
+      return of(null);
+    };
   }
 }
 

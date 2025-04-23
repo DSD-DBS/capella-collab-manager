@@ -41,23 +41,26 @@
         </ng-template>
         <h3 class="flex justify-center sm:hidden">Link source</h3>
 
-        <div [ngSwitch]="source">
-          <app-manage-git-model
-            *ngSwitchCase="'git-add'"
-            [asStepper]="true"
-            (create)="afterSourceCreated($event)"
-          ></app-manage-git-model>
-          <app-manage-t4c-model
-            *ngSwitchCase="'t4c-existing'"
-            [asStepper]="true"
-            (create)="afterSourceCreated($event)"
-          ></app-manage-t4c-model>
-          <app-create-t4c-model-new-repository
-            *ngSwitchCase="'t4c-new'"
-            [asStepper]="true"
-            (create)="afterSourceCreated($event)"
-          ></app-create-t4c-model-new-repository>
-        </div>
+        @switch (source) {
+          @case ("git-add") {
+            <app-manage-git-model
+              [asStepper]="true"
+              (create)="afterSourceCreated($event)"
+            ></app-manage-git-model>
+          }
+          @case ("t4c-existing") {
+            <app-manage-t4c-model
+              [asStepper]="true"
+              (create)="afterSourceCreated($event)"
+            ></app-manage-t4c-model>
+          }
+          @case ("t4c-new") {
+            <app-create-t4c-model-new-repository
+              [asStepper]="true"
+              (create)="afterSourceCreated($event)"
+            ></app-create-t4c-model-new-repository>
+          }
+        }
       </mat-step>
 
       <mat-step>

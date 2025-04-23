@@ -31,7 +31,7 @@
     <mat-chip-listbox formControlName="projectVisibility">
       <mat-chip-option value="internal">
         <div class="flex items-center gap-1">
-          <mat-icon inline>lock_open</mat-icon><span>Internal</span>
+          <mat-icon inline>public</mat-icon><span>Internal</span>
         </div>
       </mat-chip-option>
       <mat-chip-option value="private">
@@ -75,7 +75,7 @@
             @if (project.visibility === "private") {
               <mat-icon class="shrink-0">lock</mat-icon>
             } @else {
-              <mat-icon class="shrink-0">lock_open</mat-icon>
+              <mat-icon class="shrink-0">public</mat-icon>
             }
 
             <span class="line-clamp-1">{{ project.name }}</span>

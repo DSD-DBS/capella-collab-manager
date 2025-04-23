@@ -65,7 +65,7 @@
           >
             <button
               mat-flat-button
-              color="warn"
+              class="error-button"
               (click)="deleteModel()"
               [disabled]="!canDelete"
               type="button"
@@ -73,12 +73,7 @@
               Delete
             </button>
           </span>
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="!form.valid"
-          >
+          <button mat-flat-button type="submit" [disabled]="!form.valid">
             Submit
           </button>
         </div>

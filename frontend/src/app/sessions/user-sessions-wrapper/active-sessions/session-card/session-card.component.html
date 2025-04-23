@@ -9,10 +9,7 @@
 <div class="collab-card">
   <div class="ml-[-10px] flex min-h-12 items-center pb-2">
     @if (!hideActions) {
-      <mat-checkbox
-        color="primary"
-        [(ngModel)]="session.selected"
-      ></mat-checkbox>
+      <mat-checkbox [(ngModel)]="session.selected"></mat-checkbox>
     }
     <div class="grow" [class.ml-3]="hideActions">
       <h3 class="text-balance text-base font-bold leading-tight">
@@ -40,7 +37,6 @@
       ) {
         <button
           mat-icon-button
-          color="primary"
           (click)="feedbackService.showDialog([session], 'On session card')"
           matTooltip="Give feedback"
           matTooltipPosition="above"
@@ -122,7 +118,6 @@
     <div class="flex flex-wrap justify-between">
       <button
         mat-button
-        color="primary"
         (click)="openConnectDialog(session)"
         [disabled]="!sessionState.success"
       >
@@ -133,7 +128,6 @@
       @if (!isSessionShared(session)) {
         <button
           mat-button
-          color="primary"
           (click)="openShareDialog(session)"
           [disabled]="!session.connection_method?.sharing?.enabled"
         >
@@ -143,15 +137,18 @@
 
         <button
           mat-button
-          color="primary"
           (click)="uploadFileDialog(session)"
           [disabled]="!sessionState.success"
         >
-          File browser
+          Files
           <mat-icon>insert_drive_file</mat-icon>
         </button>
 
-        <button mat-button color="warn" (click)="openDeletionDialog([session])">
+        <button
+          mat-button
+          class="error-button"
+          (click)="openDeletionDialog([session])"
+        >
           Terminate
           <mat-icon>close</mat-icon>
         </button>

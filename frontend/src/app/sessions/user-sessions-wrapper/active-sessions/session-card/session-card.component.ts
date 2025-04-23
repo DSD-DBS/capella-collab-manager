@@ -106,6 +106,7 @@ export class SessionCardComponent {
   openShareDialog(session: Session): void {
     this.dialog.open(SessionSharingDialogComponent, {
       data: session,
+      maxWidth: '100%',
     });
   }
 

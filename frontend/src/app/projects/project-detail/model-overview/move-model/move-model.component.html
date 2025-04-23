@@ -16,29 +16,26 @@
     />
     <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
-  <div
-    class="max-h-72 overflow-y-scroll"
-    *ngIf="(filteredProjects$ | async)?.length; else elseBlock"
-  >
-    <div *ngFor="let project of searchAndFilteredProjects() | async">
-      <div class="flex items-center justify-between">
-        <span>{{ project.name }}</span>
-        <button
-          class="text-3xl"
-          mat-icon-button
-          (click)="moveModelToProject(project)"
-          color="primary"
-        >
-          <mat-icon>drive_file_move</mat-icon>
-        </button>
-      </div>
-      <hr color="hover" />
+  @if ((filteredProjects$ | async)?.length) {
+    <div class="max-h-72 overflow-y-scroll">
+      @for (project of searchAndFilteredProjects() | async; track project.id) {
+        <div class="flex items-center justify-between">
+          <span>{{ project.name }}</span>
+          <button
+            class="text-3xl"
+            mat-icon-button
+            (click)="moveModelToProject(project)"
+          >
+            <mat-icon>drive_file_move</mat-icon>
+          </button>
+        </div>
+        <hr />
+      }
     </div>
-  </div>
-  <ng-template #elseBlock
-    ><div>
+  } @else {
+    <div>
       You cannot move this model to another project. If this is an error please
       contact your administrator.
-    </div></ng-template
-  >
+    </div>
+  }
 </div>

@@ -186,7 +186,6 @@
         @if (!existing) {
           <button
             mat-flat-button
-            color="primary"
             class="ml-auto"
             type="submit"
             [disabled]="!form.valid"
@@ -194,22 +193,16 @@
             Create
           </button>
         } @else if (editing) {
-          <button
-            mat-flat-button
-            type="button"
-            color="primary"
-            (click)="cancelEditing()"
-          >
+          <button mat-flat-button type="button" (click)="cancelEditing()">
             Cancel
           </button>
-          <button mat-flat-button type="submit" color="primary">Submit</button>
+          <button mat-flat-button type="submit">Submit</button>
         } @else if (
           (t4cInstanceWrapperService.t4cInstance$ | async) !== undefined
         ) {
           @if (!isArchived) {
             <button
               mat-flat-button
-              color="primary"
               (click)="enableEditing()"
               data-testid="edit-button"
             >
@@ -222,12 +215,12 @@
             (click)="deleteT4CRepository()"
             mat-flat-button
             type="button"
-            color="warn"
+            class="error-button"
           >
             <mat-icon>delete_forever</mat-icon>
             <span>Delete</span>
           </button>
-          <button mat-flat-button color="primary" (click)="toggleArchive()">
+          <button mat-flat-button (click)="toggleArchive()">
             @if (!isArchived) {
               <mat-icon>archive</mat-icon>
             }

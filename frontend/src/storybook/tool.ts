@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { BehaviorSubject, filter, Observable } from 'rxjs';
 import {
   HTTPConnectionMethodOutput,
   Tool,
@@ -11,6 +12,7 @@ import {
   ToolVersionConfigurationOutput,
   ToolVersionWithTool,
 } from 'src/app/openapi';
+import { ToolWrapperService } from 'src/app/settings/core/tools-settings/tool.service';
 
 export const mockHttpConnectionMethod: Readonly<HTTPConnectionMethodOutput> = {
   id: '1',
@@ -129,3 +131,30 @@ export const mockTrainingControllerVersionWithTool: Readonly<ToolVersionWithTool
     ...mockOtherToolVersion,
     tool: mockTrainingControllerTool,
   };
+
+class MockToolWrapperService implements Partial<ToolWrapperService> {
+  _tools = new BehaviorSubject<Tool[] | undefined>(undefined);
+  get tools(): Tool[] | undefined {
+    return this._tools.getValue();
+  }
+  get tools$(): Observable<Tool[] | undefined> {
+    return this._tools.asObservable();
+  }
+
+  constructor(tools: Tool[] | undefined = undefined) {
+    this._tools.next(tools);
+  }
+
+  getTools(): Observable<Tool[]> {
+    return this._tools.asObservable().pipe(filter(Boolean));
+  }
+}
+
+export const mockToolWrapperServiceProvider = (
+  tools: Tool[] | undefined = undefined,
+) => {
+  return {
+    provide: ToolWrapperService,
+    useValue: new MockToolWrapperService(tools),
+  };
+};

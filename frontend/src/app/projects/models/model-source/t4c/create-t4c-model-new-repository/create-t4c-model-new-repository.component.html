@@ -65,14 +65,9 @@
         </fieldset>
 
         <div class="flex justify-end">
-          <button
-            mat-flat-button
-            [disabled]="!form.valid"
-            type="submit"
-            color="primary"
-          >
+          <button mat-flat-button [disabled]="!form.valid" type="submit">
             Save reference
-            <mat-icon class="mat-icon-position right">navigate_next</mat-icon>
+            <mat-icon iconPositionEnd>navigate_next</mat-icon>
           </button>
         </div>
       </form>

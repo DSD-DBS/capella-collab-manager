@@ -9,6 +9,7 @@
     <button
       mat-stroked-button
       [disabled]="!instance"
+      matTooltip="Refresh repositories"
       (click)="this.t4cRepoService.refreshRepositories(instance!.id)"
     >
       <div class="flex items-center">
@@ -65,16 +66,14 @@
                 } @else if (repository.status === "ONLINE") {
                   <button
                     mat-icon-button
-                    color="warn"
                     (click)="stopRepository(repository)"
                     matTooltip="Stop repository"
                   >
-                    <mat-icon>power_settings_new</mat-icon>
+                    <mat-icon class="text-warning">power_settings_new</mat-icon>
                   </button>
                 } @else if (repository.status === "NOT_FOUND") {
                   <button
                     mat-icon-button
-                    color="primary"
                     (click)="recreateRepository(repository)"
                     matTooltip="Recreate repository on instance"
                   >
@@ -83,11 +82,10 @@
                 }
                 <button
                   mat-icon-button
-                  color="warn"
                   (click)="deleteRepository(repository)"
                   matTooltip="Delete repository"
                 >
-                  <mat-icon>delete</mat-icon>
+                  <mat-icon class="text-error">delete</mat-icon>
                 </button>
               </div>
             </div>
@@ -147,7 +145,6 @@
       <button
         class="!h-[56px]"
         mat-stroked-button
-        color="primary"
         [disabled]="!form.valid || repositoryCreationInProgress"
         (click)="createRepository()"
       >

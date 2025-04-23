@@ -4,11 +4,12 @@
  */
 import { Component, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
 import { AnnouncementWrapperService } from '../../../general/announcement/announcement.service';
 
 @Component({
   selector: 'app-reset-hidden-announcements',
-  imports: [MatButton],
+  imports: [MatButton, MatDivider],
   templateUrl: './reset-hidden-announcements.component.html',
 })
 export class ResetHiddenAnnouncementsComponent {

@@ -21,7 +21,6 @@ import { DisplayValueComponent } from '../../../../helpers/display-value/display
 @Component({
   selector: 'app-connection-dialog',
   templateUrl: './connection-dialog.component.html',
-  styleUrls: ['./connection-dialog.component.css'],
   imports: [DisplayValueComponent, MatButton],
 })
 export class ConnectionDialogComponent {

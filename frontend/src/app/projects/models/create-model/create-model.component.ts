@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
-import { NgClass, NgSwitch, NgSwitchCase } from '@angular/common';
+import { NgClass } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -35,8 +35,6 @@ import { ManageT4CModelComponent } from '../model-source/t4c/manage-t4c-model/ma
     MatStepLabel,
     CreateModelBaseComponent,
     ChooseSourceComponent,
-    NgSwitch,
-    NgSwitchCase,
     ManageGitModelComponent,
     ManageT4CModelComponent,
     CreateT4cModelNewRepositoryComponent,

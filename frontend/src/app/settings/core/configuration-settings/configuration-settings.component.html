@@ -10,11 +10,11 @@
   type="globalconfig"
 />
 <div class="m-2 flex gap-2">
-  <button mat-stroked-button (click)="editor.submitValue()" color="primary">
+  <button mat-stroked-button (click)="editor.submitValue()">
     <span>Save</span>
     <mat-icon class="ml-2">save</mat-icon>
   </button>
-  <button mat-stroked-button (click)="editor.resetValue()" color="warn">
+  <button mat-stroked-button (click)="editor.resetValue()" class="error-button">
     <span>Reset</span> <mat-icon class="ml-2">clear</mat-icon>
   </button>
 </div>

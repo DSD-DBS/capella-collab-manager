@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
@@ -31,9 +31,7 @@ import { ProjectWrapperService } from '../../service/project.service';
 @Component({
   selector: 'app-create-model-base',
   templateUrl: './create-model-base.component.html',
-  styleUrls: ['./create-model-base.component.css'],
   imports: [
-    NgIf,
     FormsModule,
     ReactiveFormsModule,
     MatFormField,
@@ -41,7 +39,6 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatInput,
     MatError,
     MatSelect,
-    NgFor,
     MatOption,
     MatButton,
     MatIcon,

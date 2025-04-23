@@ -95,11 +95,10 @@
           <button
             matInput
             mat-flat-button
-            color="warn"
             type="submit"
             [disabled]="!provisioningPerTool?.length"
             (click)="resetProvisioning()"
-            class="w-full"
+            class="error-button w-full"
           >
             <span class="ml-2">Hard-reset provisioning </span>
             <span class="hidden lg:inline-block">
@@ -116,7 +115,6 @@
           (click)="provisionWorkspace()"
           matInput
           mat-flat-button
-          color="primary"
           type="submit"
         >
           @if (provisioningRequired) {

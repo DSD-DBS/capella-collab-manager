@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
@@ -15,8 +14,7 @@ import { ToolWrapperService } from './tool.service';
 @Component({
   selector: 'app-dockerimage-settings',
   templateUrl: './tools-settings.component.html',
-  styleUrls: ['./tools-settings.component.css'],
-  imports: [RouterLink, MatRipple, MatIconComponent, NgFor, NgIf, MatIcon],
+  imports: [RouterLink, MatRipple, MatIconComponent, MatIcon],
 })
 export class ToolsSettingsComponent {
   tools: Record<string, ToolExtended> = {};

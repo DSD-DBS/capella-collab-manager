@@ -3,13 +3,12 @@
 ~ SPDX-License-Identifier: Apache-2.0
 -->
 
-<h1 class="text-2xl">Active Sessions</h1>
+<h1 class="mb-2 text-center text-2xl font-bold">Active Sessions</h1>
 
 <div class="flex flex-col gap-2">
   <a
     class="w-full"
     mat-flat-button
-    color="primary"
     type="submit"
     routerLink="/session-viewer"
     [queryParams]="{
@@ -37,7 +36,7 @@
       }"
     ></ngx-skeleton-loader>
   } @else if ((sessions | async)?.length === 0) {
-    <div class="rounded-md border px-3 py-2">
+    <div class="rounded-material border px-3 py-2">
       <h2 class="text-xl font-medium">No active sessions</h2>
       <div class="text-sm">
         There are no active sessions for your user in our system. <br />
@@ -49,7 +48,8 @@
 
       @if (project) {
         <div
-          class="flex flex-col justify-between gap-2 rounded border bg-gray-50 p-2 shadow"
+          class="flex flex-col justify-between gap-2 rounded-material border bg-gray-50 p-2
+            shadow"
         >
           <div class="ml-1 mt-1 text-lg">
             <a
@@ -67,7 +67,6 @@
           <div class="hidden sm:block">
             <a
               mat-button
-              color="primary"
               type="submit"
               routerLink="/session-viewer"
               [queryParams]="{
@@ -79,7 +78,7 @@
             >
             <button
               mat-button
-              color="warn"
+              class="error-button"
               (click)="openTerminationDialog(item.value)"
             >
               Terminate

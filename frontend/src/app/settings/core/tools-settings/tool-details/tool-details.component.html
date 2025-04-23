@@ -21,13 +21,13 @@
       />
     </div>
     <div class="mt-2 flex flex-wrap justify-between gap-2">
-      <button mat-stroked-button (click)="deleteTool()" color="warn">
+      <button mat-stroked-button (click)="deleteTool()" class="error-button">
         <span>Delete tool</span> <mat-icon class="ml-2">delete</mat-icon>
       </button>
       <button mat-stroked-button (click)="editor.resetValue()">
         <span>Reset</span> <mat-icon class="ml-2">refresh</mat-icon>
       </button>
-      <button mat-stroked-button (click)="editor.submitValue()" color="primary">
+      <button mat-stroked-button (click)="editor.submitValue()">
         <span>Save</span>
         <mat-icon class="ml-2">save</mat-icon>
       </button>

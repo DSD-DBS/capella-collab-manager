@@ -15,23 +15,37 @@
     </div>
   </a>
 
-  <a
-    *ngFor="let tool of toolService.tools"
-    [routerLink]="['..', 'tool', tool.id]"
-  >
-    <div matRipple class="mat-card-overview collab-card !m-0">
-      <div class="header">{{ tool.name }}</div>
-      <div class="content" *ngIf="tools[tool.id]">
-        <mat-icon class="mat-icon-position top">history</mat-icon>
-        <b> Available versions:</b>
-        {{
-          mapToolVersionOrNatureToName(tools[tool.id]["versions"]).join(", ")
-        }}
-        <br />
-        <mat-icon class="mat-icon-position top">extension</mat-icon
-        ><b> Available types:</b>
-        {{ mapToolVersionOrNatureToName(tools[tool.id]["natures"]).join(", ") }}
+  @for (tool of toolService.tools; track tool.id) {
+    <a [routerLink]="['..', 'tool', tool.id]">
+      <div matRipple class="mat-card-overview collab-card !m-0">
+        <div class="header">{{ tool.name }}</div>
+        @if (tools[tool.id]) {
+          <div class="content flex flex-col gap-2">
+            <div class="flex items-center gap-1">
+              <div class="flex"><mat-icon>history</mat-icon></div>
+              <span>
+                <b>Available versions:</b>
+                {{
+                  mapToolVersionOrNatureToName(tools[tool.id]["versions"]).join(
+                    ", "
+                  )
+                }}
+              </span>
+            </div>
+            <div class="flex items-center gap-1">
+              <div class="flex"><mat-icon>extension</mat-icon></div>
+              <span
+                ><b>Available types:</b>
+                {{
+                  mapToolVersionOrNatureToName(tools[tool.id]["natures"]).join(
+                    ", "
+                  )
+                }}</span
+              >
+            </div>
+          </div>
+        }
       </div>
-    </div>
-  </a>
+    </a>
+  }
 </article>

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { NgFor, AsyncPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -28,7 +28,6 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
 @Component({
   selector: 'app-move-model',
   templateUrl: './move-model.component.html',
-  styleUrls: ['./move-model.component.css'],
   imports: [
     MatFormField,
     MatLabel,
@@ -36,7 +35,6 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
     FormsModule,
     MatIcon,
     MatSuffix,
-    NgIf,
     NgFor,
     MatIconButton,
     AsyncPipe,

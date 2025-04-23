@@ -5,7 +5,7 @@
 
 <div class="wrapper flex justify-center">
   <mat-horizontal-stepper
-    class="flex max-w-[360px] rounded-md shadow-md sm:max-w-[710px]"
+    class="flex max-w-[360px] rounded-material shadow-md sm:max-w-[710px]"
     linear
     #stepper
   >
@@ -89,15 +89,12 @@
               <div>
                 <button
                   mat-flat-button
-                  color="primary"
                   [disabled]="!form.valid"
                   (click)="createProject(stepper)"
                   data-testId="button-create-project"
                 >
                   Create project
-                  <mat-icon iconPositionEnd class="mat-icon-position right"
-                    >navigate_next</mat-icon
-                  >
+                  <mat-icon iconPositionEnd>navigate_next</mat-icon>
                 </button>
               </div>
             </div>
@@ -123,21 +120,14 @@
                 <a
                   class="mt-[5px]"
                   mat-button
-                  color="primary"
                   (click)="stepper.next()"
                   data-testId="button-skipAddMembers"
                 >
-                  @if (
-                    projectUserService.nonAdminProjectUsers$ | async;
-                    as users
-                  ) {
-                    {{
-                      !users || users.length === 0 ? "Skip for now" : "Continue"
-                    }}
-                  }
-                  <mat-icon iconPositionEnd class="mat-icon-position right"
-                    >navigate_next</mat-icon
-                  >
+                  @let users = projectUserService.nonAdminProjectUsers$ | async;
+                  {{
+                    !users || users.length === 0 ? "Skip for now" : "Continue"
+                  }}
+                  <mat-icon iconPositionEnd>navigate_next</mat-icon>
                 </a>
               </div>
             </div>
@@ -183,9 +173,7 @@
                 <span> Abort model creation and finish </span>
               }
 
-              <mat-icon iconPositionEnd class="mat-icon-position right"
-                >check</mat-icon
-              >
+              <mat-icon iconPositionEnd>check</mat-icon>
             </a>
           </div>
         </div>

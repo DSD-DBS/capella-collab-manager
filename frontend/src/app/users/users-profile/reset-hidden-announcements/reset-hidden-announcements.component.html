@@ -6,6 +6,9 @@
 @if (hiddenAnnouncements().length > 0) {
   <div class="collab-card">
     <h2 class="text-xl font-medium">Reset hidden announcements</h2>
+    <div class="my-1">
+      <mat-divider></mat-divider>
+    </div>
     <p>
       You currently have {{ hiddenAnnouncements().length }} hidden
       {{
@@ -14,7 +17,7 @@
     </p>
     <button
       mat-flat-button
-      color="warn"
+      class="error-button"
       (click)="announcementWrapperService.resetDismissedAnnouncements()"
     >
       Reset hidden announcements

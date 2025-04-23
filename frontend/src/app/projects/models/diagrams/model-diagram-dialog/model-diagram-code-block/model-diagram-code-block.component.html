@@ -3,13 +3,13 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<mat-expansion-panel [expanded]="expanded" color="bg-slate-400">
+<mat-expansion-panel [expanded]="expanded">
   <mat-expansion-panel-header>
     <mat-panel-title>
       Learn how to use the diagram cache with capellambse!
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <div class="px-3 pb-3">
+  <div class="px-3 pb-3 text-sm">
     <div>
       You can also access the diagrams via our Python library
       <i>capellambse</i>. Follow the installation instructions on
@@ -35,7 +35,6 @@
       <button
         [cdkCopyToClipboard]="this.codeBlockContent"
         matTooltip="Copy codeblock to clipboard"
-        color="bg-transparent"
         mat-raised-button
         (click)="showClipboardMessage()"
       >
@@ -46,7 +45,6 @@
         (click)="insertToken()"
         [disabled]="passwordValue"
         matTooltip="Insert new personal access token for your user"
-        color="primary"
         mat-raised-button
       >
         Insert token

@@ -29,7 +29,6 @@
       <div class="flex justify-between">
         <button
           mat-raised-button
-          color="primary"
           type="submit"
           [disabled]="licenseServerConfigurationForm.invalid"
         >
@@ -57,7 +56,7 @@
             current license file first. <br />
             <button
               type="button"
-              color="warn"
+              class="error-button"
               mat-raised-button
               (click)="onLicenseFileDeletionClick()"
             >
@@ -89,7 +88,6 @@
             <div class="flex justify-between">
               <button
                 mat-raised-button
-                color="primary"
                 type="submit"
                 [disabled]="licenseKeyUploadForm.invalid"
               >

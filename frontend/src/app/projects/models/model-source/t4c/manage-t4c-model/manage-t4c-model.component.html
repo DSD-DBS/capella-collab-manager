@@ -110,7 +110,7 @@
             <button
               (click)="unlinkT4CModel()"
               mat-flat-button
-              color="warn"
+              class="error-button"
               type="button"
             >
               Unlink
@@ -131,7 +131,6 @@
               mat-flat-button
               [disabled]="!form.valid"
               type="submit"
-              color="primary"
               class="ml-auto"
             >
               <div class="ml-auto flex items-center justify-between">

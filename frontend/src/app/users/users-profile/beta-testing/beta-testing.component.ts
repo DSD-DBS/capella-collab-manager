@@ -5,6 +5,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { map, take } from 'rxjs';
 import { UsersService } from '../../../openapi';
@@ -12,7 +13,7 @@ import { UserWrapperService } from '../../user-wrapper/user-wrapper.service';
 
 @Component({
   selector: 'app-beta-testing',
-  imports: [MatButton, AsyncPipe, MatIcon],
+  imports: [MatButton, AsyncPipe, MatIcon, MatDivider],
   templateUrl: './beta-testing.component.html',
 })
 export class BetaTestingComponent {
