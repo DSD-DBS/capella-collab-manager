@@ -6,7 +6,11 @@
 <div class="dialog">
   <h1 class="text-lg font-bold">Terminate Session</h1>
   <div>
-    <p>Do you want to terminate the following session(s)?</p>
+    <p>
+      Do you want to terminate the following session{{
+        sessions.length !== 1 ? "s" : ""
+      }}?
+    </p>
     <hr />
     @for (session of sessions; track session.id) {
       <div class="my-2">
@@ -25,6 +29,7 @@
       Cancel
     </button>
     <button
+      class="error-button"
       mat-stroked-button
       [disabled]="deleteButton.disabled"
       (click)="deleteAllSessions()"
