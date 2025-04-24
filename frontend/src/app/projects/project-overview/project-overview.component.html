@@ -88,16 +88,19 @@
                 No description provided.
               }
             </div>
-            <div class="fixed bottom-2 right-2 text-right text-stone-500">
+            <div class="fixed bottom-4 right-4 text-right text-stone-500">
               <div>
                 {{ project.visibility === "internal" ? "Internal" : "Private" }}
                 {{ project.type === "training" ? "training" : "project" }}
               </div>
               <div>
-                {{ project.users.leads }} project admin(s),
-                {{ project.users.contributors }} contributor(s),
+                {{ project.users.leads }} project admin{{
+                  project.users.leads !== 1 ? "s" : ""
+                }}, {{ project.users.contributors }} contributor{{
+                  project.users.contributors !== 1 ? "s" : ""
+                }},
                 {{ project.users.subscribers }}
-                subscriber(s)
+                subscriber{{ project.users.subscribers !== 1 ? "s" : "" }}
               </div>
               @if (project.is_archived) {
                 Archived
