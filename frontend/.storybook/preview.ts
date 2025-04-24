@@ -16,6 +16,16 @@ import { withScreenshot } from 'storycap';
 import 'zone.js';
 import { IconModule } from '../src/app/icon.module';
 
+export const MOBILE_VIEWPORT = {
+  width: 420,
+  height: 920,
+};
+
+export const DESKTOP_VIEWPORT = {
+  width: 1920,
+  height: 1080,
+};
+
 const preview: Preview = {
   parameters: {
     controls: {
@@ -26,14 +36,8 @@ const preview: Preview = {
     },
     screenshot: {
       viewports: {
-        desktop: {
-          width: 1920,
-          height: 1080,
-        },
-        mobile: {
-          width: 420,
-          height: 920,
-        },
+        desktop: DESKTOP_VIEWPORT,
+        mobile: MOBILE_VIEWPORT,
       },
       fullPage: false,
       captureBeyondViewport: false,

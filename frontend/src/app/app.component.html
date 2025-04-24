@@ -4,8 +4,8 @@
  -->
 
 <mat-drawer-container [hasBackdrop]="true">
-  <mat-drawer #sidenav mode="push">
-    <app-nav-bar-menu></app-nav-bar-menu>
+  <mat-drawer class="!fixed" #sidenav mode="push">
+    <app-nav-bar-menu />
   </mat-drawer>
 
   <mat-drawer-content class="flex min-h-full flex-col">
@@ -13,7 +13,7 @@
       (fullscreenService.isFullscreen$ | async) === false &&
       pageLayoutService.showNavbar
     ) {
-      <app-header class="h-[50px] xl:h-[100px]"></app-header>
+      <app-header class="h-[50px] xl:h-[100px]" />
     }
 
     <div
@@ -27,7 +27,7 @@
         (fullscreenService.isFullscreen$ | async) === false &&
         pageLayoutService.showAnnouncement
       ) {
-        <app-announcement-list></app-announcement-list>
+        <app-announcement-list />
       }
 
       <router-outlet class="h-full"></router-outlet>
@@ -36,9 +36,7 @@
       (fullscreenService.isFullscreen$ | async) === false &&
       pageLayoutService.showFooter
     ) {
-      <app-footer
-        class="mb-2 flex min-h-[115px] flex-col justify-around"
-      ></app-footer>
+      <app-footer class="mb-2 flex min-h-[115px] flex-col justify-around" />
     }
   </mat-drawer-content>
 </mat-drawer-container>

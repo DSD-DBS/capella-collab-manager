@@ -8,6 +8,7 @@ import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatList, MatListItem } from '@angular/material/list';
 import { RouterLink } from '@angular/router';
+import { LogoComponent } from 'src/app/general/logo/logo.component';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
@@ -15,8 +16,15 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 @Component({
   selector: 'app-nav-bar-menu',
   templateUrl: './nav-bar-menu.component.html',
-  styleUrls: ['./nav-bar-menu.component.css'],
-  imports: [MatList, MatListItem, MatIcon, RouterLink, MatDivider, AsyncPipe],
+  imports: [
+    MatList,
+    MatListItem,
+    MatIcon,
+    RouterLink,
+    MatDivider,
+    AsyncPipe,
+    LogoComponent,
+  ],
 })
 export class NavBarMenuComponent {
   constructor(

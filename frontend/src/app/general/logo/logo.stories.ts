@@ -24,6 +24,7 @@ export const BaseWithStaging: Story = {
     moduleMetadata({
       providers: [
         mockNavbarServiceProvider(
+          [],
           undefined,
           {
             show: true,
@@ -43,6 +44,7 @@ export const NarrowLogo: Story = {
     moduleMetadata({
       providers: [
         mockNavbarServiceProvider(
+          [],
           '/test-assets/narrow_logo.svg',
           {
             show: true,
@@ -61,6 +63,7 @@ export const WideLogo: Story = {
     moduleMetadata({
       providers: [
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: true,

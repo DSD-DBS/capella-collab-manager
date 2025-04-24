@@ -34,6 +34,7 @@ export const IdentityProviderError: Story = {
           error_uri: 'https://example.com/error',
         }),
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: true,
@@ -55,6 +56,7 @@ export const Logout: Story = {
           reason: 'logout',
         }),
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: true,
@@ -73,6 +75,7 @@ export const Login: Story = {
     moduleMetadata({
       providers: [
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: true,
@@ -91,6 +94,7 @@ export const NarrowLogo: Story = {
     moduleMetadata({
       providers: [
         mockNavbarServiceProvider(
+          [],
           '/test-assets/narrow_logo.svg',
           {
             show: true,
@@ -109,6 +113,7 @@ export const NoBadge: Story = {
     moduleMetadata({
       providers: [
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: false,
@@ -127,6 +132,7 @@ export const LogoLoading: Story = {
     moduleMetadata({
       providers: [
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: true,
@@ -148,6 +154,7 @@ export const SessionExpired: Story = {
           reason: 'session-expired',
         }),
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: true,
@@ -169,6 +176,7 @@ export const UserBlocked: Story = {
           reason: 'blocked',
         }),
         mockNavbarServiceProvider(
+          [],
           '/test-assets/wide_logo.svg',
           {
             show: true,
