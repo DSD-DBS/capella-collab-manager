@@ -5,11 +5,13 @@
 
 <div class="flex items-center gap-2 xl:hidden">
   <button
+    class="ml-1 mt-1"
     mat-icon-button
     (click)="navBarService.toggle()"
     aria-label="Toggle navigation menu"
+    data-testId="toggle-navbar"
   >
-    <mat-icon>menu</mat-icon>
+    <mat-icon class="text-primary">menu</mat-icon>
   </button>
   <app-breadcrumbs class="mt-1"></app-breadcrumbs>
 </div>
