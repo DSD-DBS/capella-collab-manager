@@ -12,7 +12,7 @@ import { mockProjectUserServiceProvider } from 'src/storybook/project-users';
 import { ProjectVolumesComponent } from './project-volumes.component';
 
 const meta: Meta<ProjectVolumesComponent> = {
-  title: 'Projects Components / Project Volumes',
+  title: 'Project Components / Project Volumes',
   component: ProjectVolumesComponent,
   decorators: [
     moduleMetadata({
