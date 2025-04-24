@@ -73,14 +73,12 @@
                       mat-icon-button
                       (click)="downgradeToUser(user)"
                       matTooltip="Downgrade user to normal user"
-                      class="!mx-0 !px-0 text-sm"
                     >
                       <mat-icon>arrow_downward</mat-icon>
                     </button>
                   }
                 } @else {
                   <button
-                    class="mx-0 px-0"
                     mat-icon-button
                     (click)="upgradeToAdministrator(user)"
                     matTooltip="Upgrade user to administrator"
@@ -91,7 +89,6 @@
                 @if (user.id !== ownUserService.user?.id) {
                   @if (user.blocked) {
                     <button
-                      class="mx-0 px-0"
                       mat-icon-button
                       (click)="unblockUser(user)"
                       matTooltip="Unlock user"
@@ -100,7 +97,6 @@
                     </button>
                   } @else {
                     <button
-                      class="mx-0 px-0"
                       mat-icon-button
                       (click)="blockUser(user)"
                       matTooltip="Block user"
@@ -110,7 +106,6 @@
                   }
 
                   <button
-                    class="mx-0 px-0"
                     mat-icon-button
                     (click)="deleteUser(user)"
                     matTooltip="Permanently delete user"

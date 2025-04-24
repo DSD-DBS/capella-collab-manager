@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* You can add global styles to this file, and also import other style files */
-
 @use '@angular/material' as mat;
 @import "@fontsource/roboto/300.css";
 @import "@fontsource/roboto/400.css";
@@ -57,7 +55,7 @@ body {
   font-size: 100%;
 }
 
-/* Copied from https://fontsource.org/docs/getting-started/material-symbols */
+// Copied from https://fontsource.org/docs/getting-started/material-symbols
 .material-symbols-outlined {
   font-family: "Material Symbols Outlined";
   font-weight: normal;
@@ -97,7 +95,7 @@ table {
   width: 100%;
 }
 
-/* All global variables are defined here */
+// All global variables are defined here
 :root {
   --primary-color: #005cbb;
   --error-color: #ba1a1a;
@@ -120,7 +118,7 @@ table {
   flex: 1;
 }
 
-/* When using two line errors, we need to add some margin to the mat-error */
+// When using two line errors, we need to add some margin to the mat-error
 @keyframes add-margin-for-mat-error {
   from {
     margin-bottom: 0;
@@ -206,18 +204,14 @@ fieldset > :not(.field-separator) {
   margin: auto;
 }
 
-/*
-Own collab manager card styles
-*/
+// Own collab manager card styles
 
 .collab-card {
   @apply bg-white p-3 shadow-md;
   border-radius: 28px;
 }
 
-/*
-Angular Material Card Styles
-*/
+// Angular Material Card Styles
 
 .mat-card-overview .content {
   padding: 10px 20px;
@@ -269,7 +263,8 @@ Angular Material Card Styles
   max-width: 85vw;
 }
 
-/* Added due to vertical line in mat-form-field - for more information read: https://github.com/tailwindlabs/tailwindcss/discussions/9993 */
+// Added due to vertical line in mat-form-field
+// https://github.com/tailwindlabs/tailwindcss/discussions/9993
 .mdc-notched-outline__notch {
   border-right: none !important;
 }
@@ -279,6 +274,13 @@ Angular Material Card Styles
   font-weight: 500;
   letter-spacing: normal !important;
   text-wrap: nowrap;
+}
+
+// Icons is not centered in mat-icon-button by default
+// https://github.com/angular/components/issues/8842
+.mdc-icon-button{
+  display: flex !important;
+  align-items: center;
 }
 
 .mdc-radio__inner-circle,
@@ -305,7 +307,7 @@ Angular Material Card Styles
   padding: 0 12px !important;
 }
 
-/* https://github.com/angular/components/issues/26176 */
+// https://github.com/angular/components/issues/26176
 .mat-mdc-button-touch-target {
   display: none !important;
 }
@@ -319,9 +321,7 @@ Angular Material Card Styles
   padding-right: 0px !important;
 }
 
-/*
-Option cards
-*/
+// Option cards
 
 .option-card {
   width: 200px;

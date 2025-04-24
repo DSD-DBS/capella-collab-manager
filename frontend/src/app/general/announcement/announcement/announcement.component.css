@@ -2,32 +2,50 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-.primary {
+.primary-bg {
   background-color: var(--primary-color);
+}
+
+.primary-color {
   color: white;
 }
 
-.secondary {
+.secondary-bg {
   background-color: #383d41;
+}
+
+.secondary-color {
   color: white;
 }
 
-.success {
+.success-bg {
   background-color: #155724;
+}
+
+.success-color {
   color: white;
 }
 
-.danger {
-  background-color: #721c24;
+.danger-bg {
+  background-color: var(--error-color);
+}
+
+.danger-color {
   color: white;
 }
 
-.warning {
-  background-color: #fff3cd;
-  color: black;
+.warning-bg {
+  background-color: var(--warning-color);
 }
 
-.info {
+.warning-color {
+  color: white;
+}
+
+.info-bg {
   background-color: #d1ecf1;
+}
+
+.info-color {
   color: black;
 }

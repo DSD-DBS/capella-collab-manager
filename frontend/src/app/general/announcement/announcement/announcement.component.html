@@ -4,7 +4,7 @@
  -->
 
 <div
-  [class]="announcement().level"
+  [class]="[announcement().level + '-bg', announcement().level + '-color']"
   class="flex items-center justify-between rounded-md bg-white pl-3 pr-1 shadow-md"
 >
   <div class="py-3">
@@ -22,7 +22,7 @@
       mat-icon-button
       (click)="dismissAnnouncement()"
     >
-      <mat-icon> close </mat-icon>
+      <mat-icon [class]="announcement().level + '-color'">close</mat-icon>
     </button>
   }
 </div>
