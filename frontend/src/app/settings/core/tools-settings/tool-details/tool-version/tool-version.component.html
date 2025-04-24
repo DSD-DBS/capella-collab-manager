@@ -28,7 +28,7 @@
         <button (click)="resetValue('new')" mat-stroked-button>
           <span>Reset</span> <mat-icon class="ml-2">refresh</mat-icon>
         </button>
-        <button (click)="submitValue('new')" mat-stroked-button color="primary">
+        <button (click)="submitValue('new')" mat-stroked-button>
           <span>Create</span>
           <mat-icon class="ml-2">add_box</mat-icon>
         </button>
@@ -53,7 +53,7 @@
           <button
             mat-stroked-button
             (click)="removeToolVersion(version)"
-            color="warn"
+            class="error-button"
           >
             <span>Delete version</span> <mat-icon class="ml-2">delete</mat-icon>
           </button>
@@ -67,7 +67,6 @@
           <button
             mat-stroked-button
             (click)="submitValue(version.id.toString())"
-            color="primary"
           >
             <span>Save</span>
             <mat-icon class="ml-2">save</mat-icon>

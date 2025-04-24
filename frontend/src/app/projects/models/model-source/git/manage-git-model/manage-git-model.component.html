@@ -60,9 +60,11 @@
             <div data-testid="resulting-url" class="collab-card mb-5">
               <h2>Resulting URL*</h2>
 
-              <div class="text-ellipsis whitespace-normal break-all">
-                <mat-icon class="mat-icon-position top">chevron_right</mat-icon>
-                {{ resultUrl }}
+              <div
+                class="flex items-center text-ellipsis whitespace-normal break-all"
+              >
+                <mat-icon>chevron_right</mat-icon>
+                <span>{{ resultUrl }}</span>
               </div>
             </div>
           </div>
@@ -150,15 +152,12 @@
             <div></div>
             <button
               mat-raised-button
-              color="primary"
               [disabled]="!form.valid"
               type="submit"
               (click)="onCreateSubmit()"
             >
               Add source
-              <mat-icon iconPositionEnd class="mat-icon-position right"
-                >navigate_next</mat-icon
-              >
+              <mat-icon iconPositionEnd>navigate_next</mat-icon>
             </button>
           </div>
         } @else if (!isEditMode) {
@@ -166,16 +165,13 @@
             <div></div>
             <button
               mat-raised-button
-              color="primary"
               [disabled]="!form.valid"
               type="submit"
               (click)="onCreateSubmit()"
               data-testid="add-source-button"
             >
               Add source
-              <mat-icon iconPositionEnd class="mat-icon-position"
-                >arrow_forward</mat-icon
-              >
+              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
             </button>
           </div>
         } @else if (editing) {
@@ -184,7 +180,6 @@
 
             <button
               mat-raised-button
-              color="primary"
               [disabled]="!form.valid"
               type="submit"
               (click)="onEditSubmit()"
@@ -196,13 +191,16 @@
           <div class="flex justify-between">
             <div></div>
             <div>
-              <button mat-raised-button color="warn" (click)="unlinkGitModel()">
+              <button
+                mat-raised-button
+                class="error-button"
+                (click)="unlinkGitModel()"
+              >
                 Unlink
               </button>
               &nbsp;&nbsp;
               <button
                 mat-raised-button
-                color="primary"
                 (click)="enableEditing()"
                 data-testid="edit"
               >

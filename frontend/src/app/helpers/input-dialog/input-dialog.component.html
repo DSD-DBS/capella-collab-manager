@@ -17,12 +17,7 @@
     </mat-form-field>
     <div class="flex justify-between">
       <button mat-flat-button type="button" (click)="onCancel()">Cancel</button>
-      <button
-        mat-flat-button
-        color="primary"
-        type="submit"
-        [disabled]="!form.valid"
-      >
+      <button mat-flat-button type="submit" [disabled]="!form.valid">
         Confirm
       </button>
     </div>

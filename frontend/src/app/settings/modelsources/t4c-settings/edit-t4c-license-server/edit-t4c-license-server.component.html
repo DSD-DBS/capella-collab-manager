@@ -47,12 +47,7 @@
       </fieldset>
       <div class="flex justify-between gap-2">
         @if (!existing) {
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="!form.valid"
-          >
+          <button mat-flat-button type="submit" [disabled]="!form.valid">
             Create
           </button>
         } @else if (editing) {
@@ -74,18 +69,16 @@
               "
               mat-flat-button
               type="button"
-              color="warn"
+              class="error-button"
             >
               <mat-icon>delete_forever</mat-icon>
               <span>Delete</span>
             </button>
           </div>
 
-          <button mat-flat-button type="submit" color="primary">Submit</button>
+          <button mat-flat-button type="submit">Submit</button>
         } @else {
-          <button mat-flat-button color="primary" (click)="enableEditing()">
-            Edit
-          </button>
+          <button mat-flat-button (click)="enableEditing()">Edit</button>
         }
       </div>
     </form>

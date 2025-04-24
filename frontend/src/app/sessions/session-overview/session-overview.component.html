@@ -111,9 +111,8 @@
           (click)="openSingleDeletionDialog(element)"
           mat-icon-button
           matTooltip="Terminate Session"
-          color="warn"
         >
-          <mat-icon>close</mat-icon>
+          <mat-icon class="text-error">close</mat-icon>
         </button>
       </td>
     </ng-container>
@@ -142,9 +141,8 @@
 </div>
 
 <button
-  class="mt-4"
+  class="error-button mt-4"
   mat-flat-button
-  color="warn"
   (click)="openMultiDeletionDialog()"
   [disabled]="sessions ? sessions.length < 1 : true"
 >

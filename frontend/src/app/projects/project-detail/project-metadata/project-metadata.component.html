@@ -26,7 +26,7 @@
               <span>
                 TeamForCapella repositories of this project will no longer be
                 available in persistent sessions and will no longer be
-                synchronized to Git repositories. In addition, it's no possible
+                synchronized to Git repositories. In addition, it's not possible
                 to create new models in this project.
               </span>
             </div>
@@ -41,16 +41,16 @@
           >
             <button
               [disabled]="!canDelete"
+              class="error-button"
               (click)="deleteProject()"
-              mat-flat-button
-              color="warn"
+              mat-raised-button
             >
-              <mat-icon class="mat-icon-position left">delete_forever</mat-icon>
-              Delete project
+              <mat-icon>delete_forever</mat-icon>
+              <span>Delete project</span>
             </button>
           </span>
           <a mat-raised-button (click)="toggleArchive()">
-            <mat-icon class="mat-icon-position left">archive</mat-icon>
+            <mat-icon>archive</mat-icon>
             {{ project.is_archived ? "Unarchive" : "Archive" }}
           </a>
           <a
@@ -59,7 +59,7 @@
             routerLink="metadata"
             id="modify"
           >
-            <mat-icon class="mat-icon-position left">settings</mat-icon>
+            <mat-icon>settings</mat-icon>
             Modify project
           </a>
         </div>

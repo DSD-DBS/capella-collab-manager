@@ -21,12 +21,13 @@
     </div>
   </div>
   <div class="flex justify-between">
-    <button mat-stroked-button (click)="this.dialogRef.close(false)">No</button>
+    <button mat-stroked-button (click)="this.dialogRef.close(false)">
+      Cancel
+    </button>
     <button
       mat-stroked-button
       [disabled]="deleteButton.disabled"
       (click)="deleteAllSessions()"
-      color="primary"
     >
       {{ deleteButton.text }}
     </button>

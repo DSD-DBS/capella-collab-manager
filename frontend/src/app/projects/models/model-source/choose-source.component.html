@@ -2,65 +2,47 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<!-- New -->
 
 <div class="flex justify-center">
-  <div
-    class="collab-card w-[350px] sm:min-w-[420px]"
-    *ngIf="projectService.project$ | async"
-  >
-    <div
-      *ngIf="(projectService.project$ | async) && (modelService.model$ | async)"
-    >
-      <div>
-        <h3>Git sources</h3>
-        <mat-divider></mat-divider>
-        <div class="my-[10px]">
-          <a mat-button (click)="modelSourceSelection.emit('git-add')">
-            <span> Use existing repository </span>
-            <mat-icon iconPositionEnd class="mat-icon-position right"
-              >navigate_next</mat-icon
-            >
-          </a>
-        </div>
+  @if ((projectService.project$ | async) && (modelService.model$ | async)) {
+    <div class="collab-card w-[350px] sm:min-w-[420px]">
+      <h3>Git sources</h3>
+      <mat-divider></mat-divider>
+      <div class="my-[10px]">
+        <a mat-button (click)="modelSourceSelection.emit('git-add')">
+          <span> Use existing repository </span>
+          <mat-icon iconPositionEnd>navigate_next</mat-icon>
+        </a>
       </div>
 
-      <div
-        *ngIf="
-          (modelService.model$ | async)!.tool.integrations.t4c &&
-          userService.user?.role === 'administrator'
-        "
-      >
+      @if (
+        (modelService.model$ | async)!.tool.integrations.t4c &&
+        userService.user?.role === "administrator"
+      ) {
         <h3>Team for Capella sources</h3>
         <mat-divider></mat-divider>
         <div class="my-[10px]">
           <a mat-button (click)="modelSourceSelection.emit('t4c-existing')">
             <span> Use existing repository </span>
-            <mat-icon iconPositionEnd class="mat-icon-position right"
-              >navigate_next</mat-icon
-            >
+            <mat-icon iconPositionEnd>navigate_next</mat-icon>
           </a>
         </div>
         <div class="my-[10px]">
           <a mat-button (click)="modelSourceSelection.emit('t4c-new')">
             <span> Create new repository </span>
-            <mat-icon iconPositionEnd class="mat-icon-position right"
-              >navigate_next</mat-icon
-            >
+            <mat-icon iconPositionEnd>navigate_next</mat-icon>
           </a>
         </div>
-      </div>
+      }
 
       <h3>Other</h3>
       <mat-divider></mat-divider>
       <div class="my-[10px]">
         <a mat-button (click)="modelSourceSelection.emit('skip')">
           <span> Add model source later </span>
-          <mat-icon iconPositionEnd class="mat-icon-position right"
-            >navigate_next</mat-icon
-          >
+          <mat-icon iconPositionEnd>navigate_next</mat-icon>
         </a>
       </div>
     </div>
-  </div>
+  }
 </div>

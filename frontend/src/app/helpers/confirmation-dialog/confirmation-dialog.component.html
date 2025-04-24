@@ -26,15 +26,12 @@
     }
 
     <div class="mt-2 flex justify-between">
+      <button mat-flat-button type="button" (click)="onCancel()">Cancel</button>
       <button
         mat-flat-button
-        color="primary"
-        type="button"
-        (click)="onCancel()"
+        class="error-button"
+        [disabled]="!isSubmitAllowed()"
       >
-        Cancel
-      </button>
-      <button mat-flat-button color="warn" [disabled]="!isSubmitAllowed()">
         Confirm
       </button>
     </div>

@@ -5,9 +5,12 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import {
+  MatButton,
+  MatButtonModule,
+  MatIconButton,
+} from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDivider } from '@angular/material/divider';
 import {
   MatFormField,
   MatLabel,
@@ -46,7 +49,6 @@ import { ProjectWrapperService } from '../../service/project.service';
   imports: [
     MatButton,
     MatIcon,
-    MatDivider,
     MatFormField,
     MatLabel,
     MatInput,
@@ -58,6 +60,7 @@ import { ProjectWrapperService } from '../../service/project.service';
     NgxSkeletonLoaderModule,
     AsyncPipe,
     ChipComponent,
+    MatButtonModule,
   ],
 })
 export class ProjectUserSettingsComponent implements OnInit {
@@ -250,6 +253,7 @@ export class ProjectUserSettingsComponent implements OnInit {
         data: {
           projectSlug: project?.slug,
         },
+        maxWidth: '100%',
       });
     });
   }

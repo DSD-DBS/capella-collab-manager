@@ -27,7 +27,9 @@ export const BlockedUser: Story = {
   args: {},
   decorators: [
     moduleMetadata({
-      providers: [mockUserWrapperServiceProvider({ ...mockUser, id: 0 })],
+      providers: [
+        mockUserWrapperServiceProvider({ ...mockUser, id: 0, blocked: true }),
+      ],
     }),
   ],
 };

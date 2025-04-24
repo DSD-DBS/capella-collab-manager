@@ -51,14 +51,13 @@
         (click)="deleteGitInstance(gitInstance)"
         mat-flat-button
         type="button"
-        color="warn"
+        class="error-button"
       >
         <mat-icon>delete_forever</mat-icon>
         <span>Delete</span>
       </button>
       <button
         mat-flat-button
-        color="primary"
         (click)="editGitInstance(gitInstance.id)"
         [disabled]="!gitInstanceForm.valid"
       >

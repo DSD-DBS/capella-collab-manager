@@ -33,11 +33,7 @@
       </mat-select>
       <mat-error>Please select a level!</mat-error>
     </mat-form-field>
-    <mat-checkbox
-      color="primary"
-      class="rounded border p-2"
-      formControlName="dismissible"
-    >
+    <mat-checkbox class="rounded border p-2" formControlName="dismissible">
       Dismissible
     </mat-checkbox>
   </div>
@@ -51,16 +47,16 @@
 
   <div class="flex gap-2">
     @if (existingAnnouncement()) {
-      <button mat-flat-button color="warn" (click)="deleteAnnouncement()">
+      <button
+        mat-flat-button
+        class="error-button"
+        (click)="deleteAnnouncement()"
+      >
         Delete
       </button>
-      <button mat-flat-button color="primary" (click)="updateAnnouncement()">
-        Update
-      </button>
+      <button mat-flat-button (click)="updateAnnouncement()">Update</button>
     } @else {
-      <button mat-flat-button color="primary" (click)="createAnnouncement()">
-        Create
-      </button>
+      <button mat-flat-button (click)="createAnnouncement()">Create</button>
     }
   </div>
 </form>

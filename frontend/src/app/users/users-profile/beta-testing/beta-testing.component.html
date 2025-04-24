@@ -6,7 +6,9 @@
 @if (this.userWrapperService.user$ | async; as user) {
   <div class="collab-card">
     <h2 class="text-xl font-medium">Try experimental features</h2>
-    <hr />
+    <div class="my-1">
+      <mat-divider></mat-divider>
+    </div>
     <p>
       Be one of the first to try our new updates! This may include new versions
       of our docker images, experimental features, changes to the user
@@ -17,11 +19,15 @@
 
     <div class="mt-1">
       @if (isBetaTester$ | async) {
-        <button (click)="setBetaTester(false)" mat-flat-button color="warn">
+        <button
+          (click)="setBetaTester(false)"
+          mat-flat-button
+          class="error-button"
+        >
           <mat-icon>science_off</mat-icon>Opt-out of beta-testing
         </button>
       } @else {
-        <button (click)="setBetaTester(true)" mat-flat-button color="primary">
+        <button (click)="setBetaTester(true)" mat-flat-button>
           <mat-icon>experiment</mat-icon>Opt-in for beta-testing
         </button>
       }

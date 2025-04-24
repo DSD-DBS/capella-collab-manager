@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="mb-2 mt-1.5 flex h-9 items-center">
+<div class="mb-2 flex h-9 items-center">
   <h2 class="text-xl font-medium">Models</h2>
   @if (projectUserService.verifyRole("manager")) {
     <a
@@ -50,7 +50,7 @@
         appearance="circle"
         class="max-w-full"
         [theme]="{
-          'border-radius': '5px',
+          'border-radius': '28px',
           height: '280px',
           width: '500px',
           margin: '0px',
@@ -66,7 +66,7 @@
       class="collab-card flex min-h-[200px] w-full select-none flex-col !p-0 sm:w-[500px]"
     >
       <div
-        class="flex justify-between rounded-t bg-primary p-2.5 align-middle text-white"
+        class="flex justify-between rounded-t-material bg-primary p-2.5 align-middle text-white"
       >
         <div class="ml-2.5">
           <div class="select-text text-xl" style="word-break: break-word">
@@ -84,23 +84,23 @@
 
         <div class="flex items-center align-middle">
           <div
-            class="collab-card mx-[4px] flex h-[50px] items-center !bg-green-800 !p-0 text-white"
+            class="collab-card mx-1 flex h-[50px] items-center !bg-green-800 !p-0 text-white"
           >
-            <div class="mx-[8px] text-center">
+            <div class="px-4 text-center">
               <div class="text-xs">Nature</div>
               <span class="text-sm">
                 @if (model.nature) {
                   {{ model.nature.name }}
                 } @else {
-                  Not specified
+                  Unset
                 }
               </span>
             </div>
           </div>
           <div
-            class="collab-card mx-[4px] flex h-[50px] items-center !bg-red-800 !p-0 text-white"
+            class="collab-card mx-1 flex h-[50px] items-center !bg-red-800 !p-0 text-white"
           >
-            <div class="mx-[8px] text-center">
+            <div class="px-4 text-center">
               <div class="text-nowrap text-xs">Working mode</div>
               <div class="text-sm">
                 {{ getPrimaryWorkingMode(model) }}
@@ -131,7 +131,6 @@
           ) {
             <button
               mat-mini-fab
-              color="primary"
               matTooltip="Request persistent session"
               class="!m-1.5"
               (click)="openPersistentSessionDialog(model)"
@@ -144,7 +143,6 @@
             @if (model.tool.name === "Capella") {
               <button
                 mat-mini-fab
-                color="primary"
                 matTooltip="Show diagrams of model"
                 class="!m-1.5"
                 [disabled]="!getPrimaryGitModelURL(model)"
@@ -156,7 +154,6 @@
 
             <a
               mat-mini-fab
-              color="primary"
               matTooltip="Open Git repository"
               class="!m-1.5"
               target="_blank"
@@ -175,9 +172,8 @@
           ) {
             <a
               mat-mini-fab
-              color="primary"
               class="!m-1.5"
-              matTooltip="Start synchronization"
+              matTooltip="See pipelines"
               (click)="openPipelineDialog(model)"
             >
               <mat-icon>sync</mat-icon>
@@ -190,8 +186,7 @@
           ) {
             <button
               mat-mini-fab
-              color="primary"
-              matTooltip="More Options"
+              matTooltip="More options"
               class="!m-1.5"
               [matMenuTriggerFor]="menu"
               [attr.data-testid]="'more-options-' + model.id"

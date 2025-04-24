@@ -39,6 +39,9 @@ module.exports = {
         // 2*10px is the margin of the mat-card
         "max-card": "calc(100vw - 2*3.9px - 2*10px)",
       },
+      borderRadius: {
+        material: "28px",
+      },
       screens: {
         tall: { raw: "(min-height: 945px)" },
       },

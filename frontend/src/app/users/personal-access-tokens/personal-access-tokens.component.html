@@ -156,7 +156,6 @@
     </div>
     <button
       class="!my-2 text-white"
-      color="primary"
       mat-raised-button
       [disabled]="!tokenForm.valid"
     >
@@ -246,57 +245,59 @@
                 </mat-panel-title>
               </mat-expansion-panel-header>
 
-              @if (count === 0) {
-                <div class="px-4 pb-4">
-                  No scopes requested. The token can still be used for API
-                  endpoints without scope.
-                </div>
-              } @else {
-                <div class="px-4 pb-4">
-                  <ul class="ml-1 list-inside list-disc">
-                    @for (
-                      scope of requestedScopes | keyvalue;
-                      track scope.key
-                    ) {
+              <div class="text-sm">
+                @if (count === 0) {
+                  <div class="px-4 pb-4">
+                    No scopes requested. The token can still be used for API
+                    endpoints without scope.
+                  </div>
+                } @else {
+                  <div class="px-4 pb-4">
+                    <ul class="ml-1 list-inside list-disc">
                       @for (
-                        permission of scope.value | keyvalue;
-                        track permission.key
+                        scope of requestedScopes | keyvalue;
+                        track scope.key
                       ) {
-                        @if (permission.value.length) {
-                          <li>
-                            {{ scope.key }}.{{ permission.key }}:
-                            @for (verb of permission.value; track verb) {
-                              @if (
-                                containsVerb(
-                                  actualScopes,
-                                  scope.key,
-                                  permission.key,
-                                  verb
-                                )
-                              ) {
-                                <span class="text-green-600">{{ verb }}</span>
-                              } @else {
-                                <span
-                                  matTooltip="The verb is not currently granted. The underlying user does not have the required permission."
-                                  class="cursor-help text-red-600"
-                                  ><mat-icon inline class="align-bottom"
-                                    >warning</mat-icon
-                                  ><span
-                                    class="ml-0.5 underline decoration-dotted decoration-1 underline-offset-4"
-                                    >{{ verb }}</span
-                                  ></span
-                                >
+                        @for (
+                          permission of scope.value | keyvalue;
+                          track permission.key
+                        ) {
+                          @if (permission.value.length) {
+                            <li>
+                              {{ scope.key }}.{{ permission.key }}:
+                              @for (verb of permission.value; track verb) {
+                                @if (
+                                  containsVerb(
+                                    actualScopes,
+                                    scope.key,
+                                    permission.key,
+                                    verb
+                                  )
+                                ) {
+                                  <span class="text-green-600">{{ verb }}</span>
+                                } @else {
+                                  <span
+                                    matTooltip="The verb is not currently granted. The underlying user does not have the required permission."
+                                    class="cursor-help text-red-600"
+                                    ><mat-icon inline class="align-bottom"
+                                      >warning</mat-icon
+                                    ><span
+                                      class="ml-0.5 underline decoration-dotted decoration-1 underline-offset-4"
+                                      >{{ verb }}</span
+                                    ></span
+                                  >
+                                }
+                                <!-- prettier-ignore -->
+                                @if (!$last) {, }
                               }
-                              <!-- prettier-ignore -->
-                              @if (!$last) {, }
-                            }
-                          </li>
+                            </li>
+                          }
                         }
                       }
-                    }
-                  </ul>
-                </div>
-              }
+                    </ul>
+                  </div>
+                }
+              </div>
             </mat-expansion-panel>
 
             <div
@@ -310,7 +311,7 @@
                 mat-raised-button
                 [disabled]="token.managed"
               >
-                <mat-icon color="warn">delete</mat-icon>
+                <mat-icon class="error-button">delete</mat-icon>
                 <span>
                   @if (isTokenExpired(token.expiration_date)) {
                     Remove token from overview

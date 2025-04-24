@@ -6,7 +6,6 @@
 <div class="flex items-center gap-2 xl:hidden">
   <button
     mat-icon-button
-    color="primary"
     (click)="navBarService.toggle()"
     aria-label="Toggle navigation menu"
   >
@@ -27,7 +26,6 @@
             @if (item.href) {
               <a
                 mat-flat-button
-                color="primary"
                 [attr.href]="item.href"
                 [attr.target]="item.target"
                 class=""
@@ -38,12 +36,7 @@
                 }
               </a>
             } @else {
-              <a
-                mat-flat-button
-                color="primary"
-                [routerLink]="item.routerLink"
-                class=""
-              >
+              <a mat-flat-button [routerLink]="item.routerLink" class="">
                 {{ item.name }}
               </a>
             }
@@ -87,7 +80,7 @@
         }
       </mat-menu>
 
-      <button color="primary" mat-flat-button [matMenuTriggerFor]="profileMenu">
+      <button mat-flat-button [matMenuTriggerFor]="profileMenu">
         Menu <mat-icon iconPositionEnd>menu</mat-icon>
       </button>
     </div>

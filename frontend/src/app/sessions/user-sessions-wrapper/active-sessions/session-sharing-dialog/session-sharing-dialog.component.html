@@ -91,7 +91,7 @@
 
     <div class="flex flex-wrap justify-between gap-2 pb-2">
       <div>
-        <mat-checkbox formControlName="confirmation" color="primary">
+        <mat-checkbox formControlName="confirmation">
           <span
             [ngClass]="{
               'text-warn': !form.controls.confirmation.value,
@@ -104,7 +104,6 @@
       </div>
       <button
         type="submit"
-        color="primary"
         mat-stroked-button
         [disabled]="!this.form.valid || loading"
       >

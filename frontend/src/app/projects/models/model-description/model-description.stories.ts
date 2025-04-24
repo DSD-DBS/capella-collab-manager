@@ -18,10 +18,7 @@ const meta: Meta<ModelDescriptionComponent> = {
   component: ModelDescriptionComponent,
   decorators: [
     moduleMetadata({
-      providers: [
-        mockProjectWrapperServiceProvider(mockProject, [mockProject]),
-        mockModelWrapperServiceProvider(mockModel, [mockModel]),
-      ],
+      providers: [mockProjectWrapperServiceProvider(mockProject, undefined)],
     }),
   ],
 };
@@ -31,4 +28,23 @@ type Story = StoryObj<ModelDescriptionComponent>;
 
 export const General: Story = {
   args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [mockModelWrapperServiceProvider(mockModel, undefined)],
+    }),
+  ],
+};
+
+export const DeletionAllowed: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        mockModelWrapperServiceProvider(
+          { ...mockModel, git_models: [], t4c_models: [] },
+          undefined,
+        ),
+      ],
+    }),
+  ],
 };

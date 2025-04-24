@@ -20,9 +20,7 @@
       Instance <i>{{ data.backup.t4c_model.repository.instance.name }}</i
       >, <br />Repository <i>{{ data.backup.t4c_model.repository.name }}</i
       >, <br />Project: <i>{{ data.backup.t4c_model.name }}</i> </span
-    ><span style="flex-basis: 10%"
-      ><mat-icon class="mat-icon-position top">arrow_forward</mat-icon>
-    </span>
+    ><span style="flex-basis: 10%"><mat-icon>arrow_forward</mat-icon> </span>
     <span style="flex-basis: 45%">
       <b>Git</b> <br />
       URL: <i>{{ data.backup.git_model.path }}</i
@@ -51,12 +49,12 @@
     </button>
     <button
       mat-flat-button
-      color="primary"
       type="submit"
+      class="error-button"
       [disabled]="loading | async"
       (click)="removePipeline()"
     >
-      <mat-icon>navigate_next</mat-icon>
+      <mat-icon iconPositionEnd>navigate_next</mat-icon>
       Confirm
     </button>
   </div>

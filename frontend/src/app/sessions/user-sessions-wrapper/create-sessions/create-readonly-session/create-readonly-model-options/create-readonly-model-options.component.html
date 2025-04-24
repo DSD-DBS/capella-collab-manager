@@ -5,7 +5,7 @@
 
 <div [formGroup]="form">
   <h2>
-    <mat-checkbox color="primary" formControlName="include">
+    <mat-checkbox formControlName="include">
       {{ modelOptions.model.name }}
       @if (modelOptions.model.version!.id !== toolVersion.id) {
         <div class="!text-xs italic text-gray-600">

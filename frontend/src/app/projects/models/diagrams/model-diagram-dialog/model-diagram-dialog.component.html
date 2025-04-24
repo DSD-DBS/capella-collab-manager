@@ -33,7 +33,6 @@
         mat-stroked-button
         type="button"
         class="!h-[56px]"
-        color="primary"
         (click)="clearCache()"
       >
         <mat-icon class="!w-8">autorenew</mat-icon>
@@ -50,7 +49,7 @@
           <ngx-skeleton-loader
             class="h-[338px] min-w-[250px] grow basis-[calc(1/3*(100%-1rem))]"
             [theme]="{
-              'border-radius': '10px',
+              'border-radius': '28px',
               height: '100%',
               margin: '0px',
               padding: '0px',
@@ -76,7 +75,7 @@
                 <ngx-skeleton-loader
                   class="mb-2 h-[200px] w-full"
                   [theme]="{
-                    'border-radius': '5px',
+                    'border-radius': '28px',
                     margin: 0,
                     padding: 0,
                     height: '100%',
@@ -95,7 +94,7 @@
               }
             } @else {
               <div
-                class="mb-2 flex h-[200px] flex-col items-center justify-center rounded border
+                class="mb-2 flex h-[200px] flex-col items-center justify-center rounded-material border
                   border-gray-400 py-[15px] text-center"
               >
                 <mat-icon class="scale-[2] text-red-900">error</mat-icon> <br />
@@ -124,7 +123,7 @@
     }
   </div>
 
-  <div class="sticky bottom-0 z-10 w-full bg-white md:hidden">
+  <div class="sticky bottom-0 z-10 w-full bg-white px-2 pb-2 md:hidden">
     <button class="w-full" mat-stroked-button mat-dialog-close>Close</button>
   </div>
 </div>

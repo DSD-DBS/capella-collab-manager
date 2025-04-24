@@ -73,9 +73,8 @@
       @if (projectUserService.verifyRole("manager")) {
         <button
           (click)="deleteVolume(projectVolume()!)"
-          class="w-full sm:w-fit"
+          class="error-button w-full sm:w-fit"
           mat-flat-button
-          color="warn"
         >
           <mat-icon>delete_forever</mat-icon> Remove project volume
         </button>

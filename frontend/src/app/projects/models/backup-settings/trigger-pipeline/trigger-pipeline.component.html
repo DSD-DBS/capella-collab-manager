@@ -42,9 +42,7 @@
                 <i>{{ pipeline.t4c_model.repository.name }}</i
                 >, <br />Project: <i>{{ pipeline.t4c_model.name }}</i> </span
               ><span style="flex-basis: 10%"
-                ><mat-icon class="mat-icon-position top"
-                  >arrow_forward</mat-icon
-                >
+                ><mat-icon>arrow_forward</mat-icon>
               </span>
               <span style="flex-basis: 45%">
                 <b>Git</b> <br />
@@ -59,7 +57,7 @@
               <button
                 mat-raised-button
                 (click)="removePipeline(pipeline)"
-                color="warn"
+                class="error-button"
               >
                 <mat-icon>delete</mat-icon>
                 Remove pipeline
@@ -67,17 +65,12 @@
               <button
                 mat-raised-button
                 (click)="openPipelineRuns(pipeline)"
-                color="primary"
                 type="button"
               >
                 <mat-icon>list</mat-icon>
                 View runs
               </button>
-              <button
-                mat-raised-button
-                (click)="runPipeline(pipeline)"
-                color="primary"
-              >
+              <button mat-raised-button (click)="runPipeline(pipeline)">
                 <mat-icon>play_circle_filled</mat-icon>
                 Run pipeline
               </button>
