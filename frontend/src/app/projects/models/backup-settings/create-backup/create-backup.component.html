@@ -16,6 +16,8 @@
         height: '100px',
         width: '500px',
         border: '1px solid white',
+        'max-width': '100%',
+        margin: '0',
       }"
     ></ngx-skeleton-loader>
   } @else if (
@@ -24,7 +26,7 @@
   ) {
     <form [formGroup]="createBackupForm">
       <div class="flex flex-row flex-wrap items-center gap-2">
-        <div class="collab-card">
+        <div class="collab-card max-w-full">
           <h3 class="text-lg font-bold">TeamForCapella Repository</h3>
           <div
             class="flex items-center gap-1 rounded border bg-yellow-300 p-1 text-sm shadow"
@@ -47,7 +49,7 @@
                   TeamForCapella Link (No. {{ t4cModel.id }}) <br />
                   <b>Project:</b> {{ t4cModel.name }}
                 </div>
-                <div mat-line>
+                <div mat-line class="whitespace-pre-wrap break-all">
                   <b>Repository:</b> {{ t4cModel.repository.name }} <br />
                   <b>Instance:</b> {{ t4cModel.repository.instance.name }}
                 </div>
@@ -56,7 +58,7 @@
           </mat-selection-list>
         </div>
         <mat-icon>arrow_forward</mat-icon>
-        <div class="collab-card">
+        <div class="collab-card max-w-full">
           <h3 class="text-lg font-bold">Git Repository</h3>
           <mat-selection-list
             class="!flex flex-col gap-2"
@@ -69,7 +71,7 @@
             ) {
               <mat-list-option class="!h-auto !rounded" [value]="gitModel.id">
                 <div mat-line>Git Repository Link (No. {{ gitModel.id }})</div>
-                <div mat-line>
+                <div mat-line class="whitespace-pre-wrap break-all">
                   <b>URL:</b> {{ gitModel.path }}<br />
                   <b>Revision:</b> {{ gitModel.revision }}
                 </div>
