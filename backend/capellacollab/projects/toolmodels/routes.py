@@ -15,6 +15,9 @@ from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import injectables as projects_injectables
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.permissions import (
+    exceptions as projects_permissions_exceptions,
+)
+from capellacollab.projects.permissions import (
     injectables as projects_permissions_injectables,
 )
 from capellacollab.projects.permissions import (
@@ -156,24 +159,19 @@ def patch_tool_model(
         permissions_models.GlobalScopes,
         fastapi.Depends(permissions_injectables.get_scope),
     ],
+    project_scope: t.Annotated[
+        projects_permissions_models.ProjectUserScopes,
+        fastapi.Depends(projects_permissions_injectables.get_scope),
+    ],
 ) -> models.DatabaseToolModel:
     """Update or move a tool model.
 
     A model can be moved to another project by patching the project_slug attribute.
 
     If a model is moved to another project,
-    the `tool_models:create` permission is required in the target project.
+    the `tool_models:delete` permission in the source project
+    and the `tool_models:create` permission in the target project are required.
     """
-
-    if body.name:
-        new_slug = slugify.slugify(body.name)
-
-        if model.slug != new_slug and crud.get_model_by_slugs(
-            db, project.slug, new_slug
-        ):
-            raise exceptions.ToolModelAlreadyExistsError(
-                project.slug, new_slug
-            )
 
     version = (
         tools_injectables.get_existing_tool_version(
@@ -196,7 +194,17 @@ def patch_tool_model(
             model.name, version, t4c_model.repository
         )
 
-    if body.project_slug:
+    if body.project_slug and body.project_slug != project.slug:
+        if (
+            permissions_models.UserTokenVerb.DELETE
+            not in project_scope.tool_models
+        ):
+            raise projects_permissions_exceptions.InsufficientProjectPermissionError(
+                required_permission="tool_models",
+                required_verbs={permissions_models.UserTokenVerb.DELETE},
+                project_name=project.name,
+            )
+
         new_project = determine_new_project_to_move_model(
             body.project_slug,
             db,

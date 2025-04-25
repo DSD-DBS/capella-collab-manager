@@ -33,6 +33,16 @@ def get_internal_projects(
     )
 
 
+def get_project_by_name(
+    db: orm.Session, name: str
+) -> models.DatabaseProject | None:
+    return db.execute(
+        sa.select(models.DatabaseProject).where(
+            models.DatabaseProject.name == name
+        )
+    ).scalar_one_or_none()
+
+
 def get_project_by_slug(
     db: orm.Session, slug: str
 ) -> models.DatabaseProject | None:
@@ -80,9 +90,6 @@ def update_project(
     project: models.DatabaseProject,
     patch_project: models.PatchProject,
 ) -> models.DatabaseProject:
-    if patch_project.name:
-        project.slug = slugify.slugify(patch_project.name)
-
     database.patch_database_with_pydantic_object(project, patch_project)
 
     db.commit()

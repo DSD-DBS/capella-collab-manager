@@ -143,7 +143,6 @@ def update_model(
         model.description = description
     if name:
         model.name = name
-        model.slug = slugify.slugify(name)
     if display_order:
         model.display_order = display_order
     db.commit()
