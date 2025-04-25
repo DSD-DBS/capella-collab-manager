@@ -7,9 +7,9 @@
 <div class="flex flex-wrap gap-5">
   <a [routerLink]="['git-model', 'create']" class="w-full sm:w-fit">
     <div matRipple class="mat-card-overview new collab-card">
-      <div class="content">
-        Use existing repository <br />
-        <div class="icon">
+      <div class="flex flex-col items-center justify-center gap-2">
+        <span class="text-center">Use existing repository</span>
+        <div>
           <app-mat-icon size="70px">link</app-mat-icon>
         </div>
       </div>
@@ -26,9 +26,11 @@
       <a [routerLink]="['git-model', gitModel.id]" class="w-full sm:w-fit">
         <div matRipple class="mat-card-overview collab-card">
           <div class="header flex items-center justify-between">
-            Integration {{ gitModel.id }}
+            Git Repository Link No. {{ gitModel.id }}
             @if (gitModel.primary) {
-              <mat-icon>star</mat-icon>
+              <div class="flex items-center">
+                <mat-icon>star</mat-icon>
+              </div>
             }
           </div>
 
@@ -61,9 +63,9 @@
   <div class="flex flex-wrap gap-5">
     <a [routerLink]="['t4c-model', 'create-existing']" class="w-full sm:w-fit">
       <div matRipple class="mat-card-overview new collab-card">
-        <div class="content">
-          Use existing repository <br />
-          <div class="icon">
+        <div class="flex flex-col items-center justify-center gap-2">
+          <span class="text-center">Use existing repository</span>
+          <div>
             <app-mat-icon size="70px">link</app-mat-icon>
           </div>
         </div>
@@ -71,9 +73,9 @@
     </a>
     <a [routerLink]="['t4c-model', 'create-new']" class="w-full sm:w-fit">
       <div matRipple class="mat-card-overview new collab-card">
-        <div class="content">
-          Create new repository <br />
-          <div class="icon">
+        <div class="flex flex-col items-center justify-center gap-2">
+          <span class="text-center">Create new repository</span>
+          <div>
             <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
           </div>
         </div>
@@ -92,7 +94,7 @@
         class="w-full sm:w-fit"
       >
         <div matRipple class="mat-card-overview collab-card">
-          <div class="header">Integration {{ t4cModel.id }}</div>
+          <div class="header">T4C Repository Link No. {{ t4cModel.id }}</div>
           <div class="content">
             <span class="line-clamp-1 break-all"
               ><b>Instance:</b> {{ t4cModel.repository.instance.name }}</span
