@@ -18,11 +18,13 @@ import { MatInput } from '@angular/material/input';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { RouterLink } from '@angular/router';
+import { map } from 'rxjs';
 import { ProjectType, ProjectVisibility } from 'src/app/openapi';
 import {
   CreateModelComponent,
   CreateModelStep,
 } from 'src/app/projects/models/create-model/create-model.component';
+import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { ToastService } from '../../helpers/toast/toast.service';
 import { CreateModelComponent as CreateModelComponent_1 } from '../models/create-model/create-model.component';
 import { ProjectUserSettingsComponent } from '../project-detail/project-users/project-user-settings.component';
@@ -57,10 +59,21 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
   @ViewChild('model_creator') model_creator!: CreateModelComponent;
 
   public modelCreationStep: CreateModelStep = 'create-model';
+  public readonly nonAdminProjectUsers$ =
+    this.projectUserService.projectUsers$.pipe(
+      map((projectUsers) =>
+        projectUsers?.filter(
+          (projectUser) =>
+            projectUser.role !== 'administrator' &&
+            projectUser.user.id !== this.ownUserWrapperService.user?.id,
+        ),
+      ),
+    );
 
   constructor(
     public projectService: ProjectWrapperService,
     public projectUserService: ProjectUserService,
+    private ownUserWrapperService: OwnUserWrapperService,
     private toastService: ToastService,
   ) {}
 

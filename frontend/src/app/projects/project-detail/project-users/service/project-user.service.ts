@@ -8,7 +8,6 @@ import {
   Observable,
   combineLatest,
   filter,
-  map,
   switchMap,
   tap,
 } from 'rxjs';
@@ -49,16 +48,6 @@ export class ProjectUserService {
     undefined,
   );
   public readonly projectUsers$ = this._projectUsers.asObservable();
-
-  public readonly nonAdminProjectUsers$ = this._projectUsers
-    .asObservable()
-    .pipe(
-      map((projectUsers) =>
-        projectUsers?.filter(
-          (projectUser) => projectUser.role !== 'administrator',
-        ),
-      ),
-    );
 
   private resetProjectUserOnProjectReset() {
     this.projectWrapperService.project$
