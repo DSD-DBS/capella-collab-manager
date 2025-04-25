@@ -4,11 +4,11 @@
  -->
 
 <article class="flex flex-wrap gap-5">
-  <a [routerLink]="['create']">
-    <div matRipple class="mat-card-overview new collab-card !m-0">
-      <div class="content flex flex-col items-center justify-center">
-        Add a Tool <br />
-        <div class="icon">
+  <a [routerLink]="['create']" class="w-full sm:w-fit">
+    <div matRipple class="mat-card-overview new collab-card">
+      <div class="flex flex-col items-center justify-center gap-2">
+        <span class="text-center">Add a Tool</span>
+        <div>
           <app-mat-icon size="70px">add_circle_outline</app-mat-icon>
         </div>
       </div>
@@ -16,8 +16,8 @@
   </a>
 
   @for (tool of toolService.tools; track tool.id) {
-    <a [routerLink]="['..', 'tool', tool.id]">
-      <div matRipple class="mat-card-overview collab-card !m-0">
+    <a [routerLink]="['..', 'tool', tool.id]" class="w-full sm:w-fit">
+      <div matRipple class="mat-card-overview collab-card">
         <div class="header">{{ tool.name }}</div>
         @if (tools[tool.id]) {
           <div class="content flex flex-col gap-2">
