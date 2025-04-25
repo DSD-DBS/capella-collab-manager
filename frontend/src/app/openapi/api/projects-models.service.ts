@@ -430,7 +430,7 @@ export class ProjectsModelsService {
 
     /**
      * Patch Tool Model
-     * Update or move a tool model.  A model can be moved to another project by patching the project_slug attribute.  If a model is moved to another project, the &#x60;tool_models:create&#x60; permission is required in the target project.&lt;br /&gt;&lt;br /&gt;This route requires the following permissions in the corresponding project: &#x60;tool_models:update&#x60;
+     * Update or move a tool model.  A model can be moved to another project by patching the project_slug attribute.  If a model is moved to another project, the &#x60;tool_models:delete&#x60; permission in the source project and the &#x60;tool_models:create&#x60; permission in the target project are required.&lt;br /&gt;&lt;br /&gt;This route requires the following permissions in the corresponding project: &#x60;tool_models:update&#x60;
      * @param projectSlug 
      * @param modelSlug 
      * @param patchToolModel 

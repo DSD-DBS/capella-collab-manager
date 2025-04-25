@@ -190,6 +190,63 @@ def test_create_internal_project_as_admin(
 
 
 @pytest.mark.usefixtures("admin")
+def test_create_project_name_already_taken(
+    client: testclient.TestClient,
+    db: orm.Session,
+):
+    project = projects_crud.create_project(
+        db,
+        "test project",
+        visibility=projects_models.ProjectVisibility.INTERNAL,
+    )
+    projects_crud.update_project(
+        db,
+        project,
+        projects_models.PatchProject(
+            name="test project 2",
+        ),
+    )
+
+    response = client.post(
+        "/api/v1/projects/",
+        json={
+            "name": "test project 2",
+            "description": "",
+            "visibility": "internal",
+        },
+    )
+
+    assert response.status_code == 409
+    assert (
+        response.json()["detail"]["err_code"] == "PROJECT_NAME_ALREADY_EXISTS"
+    )
+
+
+@pytest.mark.usefixtures("admin")
+def test_create_project_slug_already_taken(
+    client: testclient.TestClient,
+    db: orm.Session,
+):
+    projects_crud.create_project(
+        db,
+        "test project",
+        visibility=projects_models.ProjectVisibility.INTERNAL,
+    )
+
+    response = client.post(
+        "/api/v1/projects/",
+        json={
+            "name": "test project",
+            "description": "",
+            "visibility": "internal",
+        },
+    )
+
+    assert response.status_code == 409
+    assert response.json()["detail"]["err_code"] == "PROJECT_ALREADY_EXISTS"
+
+
+@pytest.mark.usefixtures("admin")
 def test_update_project_as_admin(
     client: testclient.TestClient,
     db: orm.Session,
@@ -215,9 +272,32 @@ def test_update_project_as_admin(
     data = response.json()
 
     assert data["name"] == "test project"
-    assert data["slug"] == "test-project"
+    assert data["slug"] == "new-project"
     assert data["visibility"] == "internal"
     assert data["is_archived"]
+
+
+@pytest.mark.usefixtures("admin")
+def test_update_project_name_already_taken(
+    client: testclient.TestClient,
+    db: orm.Session,
+):
+    project = projects_crud.create_project(db, "new project")
+    project2 = projects_crud.create_project(db, "new project 2")
+
+    assert project.slug == "new-project"
+
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}",
+        json={
+            "name": project2.name,
+        },
+    )
+
+    assert response.status_code == 409
+    assert (
+        response.json()["detail"]["err_code"] == "PROJECT_NAME_ALREADY_EXISTS"
+    )
 
 
 @pytest.mark.parametrize(

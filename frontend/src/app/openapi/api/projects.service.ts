@@ -201,7 +201,7 @@ export class ProjectsService {
 
     /**
      * Create Project
-     * This route requires the following permissions: &#x60;user.projects:create&#x60;
+     * Create a new project.  The project slug is auto-generated from the project name and can\&#39;t be changed.&lt;br /&gt;&lt;br /&gt;This route requires the following permissions: &#x60;user.projects:create&#x60;
      * @param postProjectRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -853,7 +853,7 @@ export class ProjectsService {
 
     /**
      * Update Project
-     * Update a project\&#39;s metadata.  An update of the name will also change the slug. This will break existing API routes and the project provisioning. Be careful with project renames.  If the project is archived, all pipelines will be deleted.&lt;br /&gt;&lt;br /&gt;This route requires the following permissions in the corresponding project: &#x60;root:update&#x60;
+     * Update a project\&#39;s metadata.  If the project is archived, all pipelines will be deleted.&lt;br /&gt;&lt;br /&gt;This route requires the following permissions in the corresponding project: &#x60;root:update&#x60;
      * @param projectSlug 
      * @param patchProject 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

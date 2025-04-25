@@ -22,6 +22,20 @@ class ProjectNotFoundError(core_exceptions.BaseError):
         return cls("test")
 
 
+class ProjectNameAlreadyExistsError(core_exceptions.BaseError):
+    def __init__(self, project_name: str):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            title="Project already exists",
+            reason=f"The project with the name '{project_name}' already exists.",
+            err_code="PROJECT_NAME_ALREADY_EXISTS",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "ProjectNameAlreadyExistsError":
+        return cls("Coffee Machine")
+
+
 class ProjectAlreadyExistsError(core_exceptions.BaseError):
     def __init__(self, project_slug: str):
         super().__init__(

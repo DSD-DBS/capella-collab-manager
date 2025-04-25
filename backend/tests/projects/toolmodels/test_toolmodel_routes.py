@@ -10,11 +10,16 @@ from sqlalchemy import orm
 
 import capellacollab.projects.users.crud as projects_users_crud
 import capellacollab.projects.users.models as projects_users_models
+from capellacollab.permissions import models as permissions_models
 from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
+from capellacollab.projects.permissions import (
+    models as projects_permissions_models,
+)
 from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.tools import crud as tools_crud
 from capellacollab.tools import models as tools_models
+from capellacollab.users import models as users_models
 
 
 @pytest.mark.usefixtures("admin")
@@ -34,22 +39,6 @@ def test_rename_toolmodel_successful(
 
     assert response.status_code == 200
     assert "new-name" in response.text
-
-
-@pytest.mark.usefixtures("admin")
-def test_rename_toolmodel_where_name_already_exists(
-    client: testclient.TestClient,
-    project: projects_models.DatabaseProject,
-    capella_model: toolmodels_models.DatabaseToolModel,
-    jupyter_model: toolmodels_models.DatabaseToolModel,
-):
-    response = client.patch(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
-        json={"name": jupyter_model.name, "version_id": -1, "nature_id": -1},
-    )
-
-    assert response.status_code == 409
-    assert response.json()["detail"]["err_code"] == "TOOLMODEL_ALREADY_EXISTS"
 
 
 @pytest.mark.usefixtures("admin")
@@ -102,6 +91,7 @@ def test_move_toolmodel_non_project_member(
     client: testclient.TestClient,
     db: orm.Session,
 ):
+    """Test to move the model to another project without being a member of the target project."""
     second_project = projects_crud.create_project(db, str(uuid4()))
 
     response = client.patch(
@@ -109,6 +99,52 @@ def test_move_toolmodel_non_project_member(
         json={"project_slug": second_project.slug},
     )
     assert response.status_code == 403
+    assert (
+        response.json()["detail"]["err_code"]
+        == "INSUFFICIENT_PROJECT_PERMISSION"
+    )
+
+
+@pytest.mark.parametrize(
+    "pat_scope",
+    [
+        (
+            None,
+            projects_permissions_models.ProjectUserScopes(
+                tool_models={
+                    permissions_models.UserTokenVerb.UPDATE,
+                }
+            ),
+        )
+    ],
+)
+@pytest.mark.usefixtures("project_manager")
+def test_move_toolmodel_without_delete_permission(
+    project: projects_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    client_pat: testclient.TestClient,
+    user: users_models.DatabaseUser,
+    db: orm.Session,
+):
+    """Test to move the model to another project without having the delete permission in the source project."""
+    second_project = projects_crud.create_project(db, str(uuid4()))
+    projects_users_crud.add_user_to_project(
+        db,
+        second_project,
+        user,
+        projects_users_models.ProjectUserRole.USER,
+        projects_users_models.ProjectUserPermission.WRITE,
+    )
+
+    response = client_pat.patch(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}",
+        json={"project_slug": second_project.slug},
+    )
+    assert response.status_code == 403
+    assert (
+        response.json()["detail"]["err_code"]
+        == "INSUFFICIENT_PROJECT_PERMISSION"
+    )
 
 
 @pytest.mark.usefixtures("t4c_model", "project_manager")
