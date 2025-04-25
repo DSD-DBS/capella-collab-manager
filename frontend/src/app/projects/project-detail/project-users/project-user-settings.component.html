@@ -108,7 +108,10 @@
               >
                 <mat-icon>arrow_upward</mat-icon>
               </button>
-            } @else if (user.role === "manager") {
+            } @else if (
+              user.role === "manager" &&
+              user.user.id !== ownUserWrapperService.user?.id
+            ) {
               <button
                 mat-icon-button
                 (click)="downgradeUserToUserRole(user.user)"
@@ -117,7 +120,10 @@
                 <mat-icon>arrow_downward</mat-icon>
               </button>
             }
-            @if (user.role !== "administrator") {
+            @if (
+              user.role !== "administrator" &&
+              user.user.id !== ownUserWrapperService.user?.id
+            ) {
               <button
                 mat-icon-button
                 (click)="removeUserFromProject(user.user)"

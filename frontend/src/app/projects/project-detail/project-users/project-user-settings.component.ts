@@ -70,9 +70,9 @@ export class ProjectUserSettingsComponent implements OnInit {
 
   constructor(
     public projectUserService: ProjectUserService,
-    public userService: OwnUserWrapperService,
     private toastService: ToastService,
     private projectService: ProjectWrapperService,
+    public ownUserWrapperService: OwnUserWrapperService,
     private dialog: MatDialog,
     private router: Router,
   ) {}
@@ -108,7 +108,7 @@ export class ProjectUserSettingsComponent implements OnInit {
     const dialogRef = this.dialog.open(InputDialogComponent, {
       data: {
         title: 'Remove User from Project',
-        text: `Do you really want to remove '${user.name}' from the project '${projectName}')? Please provide a reason.`,
+        text: `Do you really want to remove '${user.name}' from the project '${projectName}'? Please provide a reason.`,
       },
     });
 
