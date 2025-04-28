@@ -12,19 +12,13 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import {
-  MatFormField,
-  MatLabel,
-  MatError,
-  MatHint,
-} from '@angular/material/form-field';
+import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
-import slugify from 'slugify';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { PatchProject, Project } from 'src/app/openapi';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
@@ -41,7 +35,6 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatLabel,
     MatInput,
     MatError,
-    MatHint,
     MatRadioGroup,
     NgFor,
     MatRadioButton,
@@ -99,11 +92,5 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
           );
         });
     }
-  }
-
-  get newSlug(): string | null {
-    return this.form.value.name
-      ? slugify(this.form.value.name, { lower: true })
-      : null;
   }
 }

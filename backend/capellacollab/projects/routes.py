@@ -129,16 +129,14 @@ def update_project(
 ) -> models.DatabaseProject:
     """Update a project's metadata.
 
-    An update of the name will also change the slug. This will break existing API routes
-    and the project provisioning. Be careful with project renames.
-
     If the project is archived, all pipelines will be deleted.
     """
-    if patch_project.name:
-        new_slug = slugify.slugify(patch_project.name)
-
-        if project.slug != new_slug and crud.get_project_by_slug(db, new_slug):
-            raise exceptions.ProjectAlreadyExistsError(project.slug)
+    if (
+        patch_project.name
+        and project.name != patch_project.name
+        and crud.get_project_by_name(db, patch_project.name)
+    ):
+        raise exceptions.ProjectNameAlreadyExistsError(patch_project.name)
     if patch_project.is_archived:
         _delete_all_pipelines_for_project(db, project, global_scope)
     return crud.update_project(db, project, patch_project)
@@ -192,9 +190,15 @@ def create_project(
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ) -> models.DatabaseProject:
+    """Create a new project.
+
+    The project slug is auto-generated from the project name and can't be changed.
+    """
     slug = slugify.slugify(post_project.name)
     if crud.get_project_by_slug(db, slug):
         raise exceptions.ProjectAlreadyExistsError(slug)
+    if crud.get_project_by_name(db, post_project.name):
+        raise exceptions.ProjectNameAlreadyExistsError(post_project.name)
 
     project = crud.create_project(
         db,

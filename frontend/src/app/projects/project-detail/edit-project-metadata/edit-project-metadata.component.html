@@ -3,68 +3,60 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <div class="wrapper">
-  <div id="metadata-card" class="collab-card w-fit">
-    <form [formGroup]="form">
-      <div>
-        <mat-form-field appearance="fill" class="w-full max-w-lg">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" data-testid="name-input" />
-          @if (form.controls.name.errors?.required) {
-            <mat-error>The project name is required.</mat-error>
-          } @else if (form.controls.name.errors?.uniqueSlug) {
-            <mat-error>A project with a similar name already exists.</mat-error>
-          } @else if (project?.slug !== newSlug && form.controls.name.valid) {
-            <mat-hint
-              >If you proceed, the project slug will be changed to
-              <i>{{ newSlug }}</i> - Please make sure to update all
-              references.</mat-hint
-            >
-          }
-        </mat-form-field>
+  <div id="metadata-card" class="collab-card flex w-fit flex-col gap-4">
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <mat-form-field
+        appearance="fill"
+        class="w-full max-w-lg"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" data-testid="name-input" />
+        @if (form.controls.name.errors?.required) {
+          <mat-error>The project name is required.</mat-error>
+        } @else if (form.controls.name.errors?.uniqueSlug) {
+          <mat-error>A project with a similar name already exists.</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field
+        appearance="fill"
+        class="w-full max-w-lg"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>Description</mat-label>
+        <textarea
+          formControlName="description"
+          matInput
+          rows="3"
+          style="resize: none"
+          [placeholder]="
+            'This is the description of the project ' + project?.name
+          "
+        ></textarea>
+      </mat-form-field>
+      <div class="flex flex-col">
+        <h3>Project visibility</h3>
+        <mat-radio-group formControlName="visibility" class="flex flex-col">
+          <mat-radio-button
+            *ngFor="let visibility of projectService.getAvailableVisibilities()"
+            [value]="visibility"
+          >
+            {{ projectService.getProjectVisibilityDescription(visibility) }}
+          </mat-radio-button>
+        </mat-radio-group>
       </div>
-      <div>
-        <mat-form-field appearance="fill" class="w-full max-w-lg">
-          <mat-label>Description</mat-label>
-          <textarea
-            formControlName="description"
-            matInput
-            rows="3"
-            style="resize: none"
-            [placeholder]="
-              'This is the description of the project ' + project?.name
+      <div class="flex flex-col">
+        <h3>Project type</h3>
+        <mat-radio-group formControlName="type" class="flex flex-col">
+          <mat-radio-button
+            *ngFor="
+              let projectType of projectService.getAvailableProjectTypes()
             "
-          ></textarea>
-        </mat-form-field>
-      </div>
-      <div>
-        <div class="flex flex-col">
-          <h3>Project visibility</h3>
-          <mat-radio-group formControlName="visibility" class="flex flex-col">
-            <mat-radio-button
-              *ngFor="
-                let visibility of projectService.getAvailableVisibilities()
-              "
-              [value]="visibility"
-            >
-              {{ projectService.getProjectVisibilityDescription(visibility) }}
-            </mat-radio-button>
-          </mat-radio-group>
-        </div>
-      </div>
-      <div>
-        <div class="flex flex-col">
-          <h3>Project type</h3>
-          <mat-radio-group formControlName="type" class="flex flex-col">
-            <mat-radio-button
-              *ngFor="
-                let projectType of projectService.getAvailableProjectTypes()
-              "
-              [value]="projectType"
-            >
-              {{ projectService.getProjectTypeDescription(projectType) }}
-            </mat-radio-button>
-          </mat-radio-group>
-        </div>
+            [value]="projectType"
+          >
+            {{ projectService.getProjectTypeDescription(projectType) }}
+          </mat-radio-button>
+        </mat-radio-group>
       </div>
     </form>
     <div class="flex justify-between">
