@@ -19,7 +19,7 @@ const meta: Meta<LicenseIndicatorComponent> = {
   decorators: [
     componentWrapperDecorator(
       (story) =>
-        `<div class="w-[336px] sm:w-[426px]">
+        `<div class="w-[336px] max-w-full sm:w-[426px]">
           ${story}
         </div>`,
     ),
