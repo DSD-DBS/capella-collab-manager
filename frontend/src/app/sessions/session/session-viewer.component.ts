@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgClass, AsyncPipe } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule, MatFabButton } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -33,12 +33,12 @@ import { TilingWindowManagerComponent } from './tiling-window-manager/tiling-win
 })
 @UntilDestroy()
 export class SessionViewerComponent implements OnInit, OnDestroy {
-  constructor(
-    public sessionService: SessionService,
-    public sessionViewerService: SessionViewerService,
-    public fullscreenService: FullscreenService,
-    private route: ActivatedRoute,
-  ) {
+  sessionService = inject(SessionService);
+  sessionViewerService = inject(SessionViewerService);
+  fullscreenService = inject(FullscreenService);
+  private route = inject(ActivatedRoute);
+
+  constructor() {
     this.fullscreenService.toggleFullscreen();
     this.fullscreenService.isFullscreen$
       .pipe(untilDestroyed(this))

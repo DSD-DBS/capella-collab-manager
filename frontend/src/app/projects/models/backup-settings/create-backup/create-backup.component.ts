@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -46,16 +46,16 @@ import { GitModelService } from 'src/app/projects/project-detail/model-overview/
   ],
 })
 export class CreateBackupComponent implements OnInit {
-  loading = false;
+  gitModelService = inject(GitModelService);
+  t4cModelService = inject(T4CModelService);
+  data = inject<{
+    projectSlug: string;
+    modelSlug: string;
+  }>(MAT_DIALOG_DATA);
+  private pipelinesService = inject(ProjectsModelsBackupsService);
+  private dialogRef = inject<MatDialogRef<CreateBackupComponent>>(MatDialogRef);
 
-  constructor(
-    public gitModelService: GitModelService,
-    public t4cModelService: T4CModelService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: { projectSlug: string; modelSlug: string },
-    private pipelinesService: ProjectsModelsBackupsService,
-    private dialogRef: MatDialogRef<CreateBackupComponent>,
-  ) {}
+  loading = false;
 
   ngOnInit(): void {
     this.t4cModelService.loadT4CModels(

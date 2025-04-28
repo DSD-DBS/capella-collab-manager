@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   BehaviorSubject,
   Observable,
@@ -23,10 +23,10 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   providedIn: 'root',
 })
 export class ProjectUserService {
-  constructor(
-    private projectWrapperService: ProjectWrapperService,
-    private projectsService: ProjectsService,
-  ) {
+  private projectWrapperService = inject(ProjectWrapperService);
+  private projectsService = inject(ProjectsService);
+
+  constructor() {
     this.resetProjectUserOnProjectReset();
     this.resetProjectUsersOnProjectReset();
     this.loadProjectUsersOnProjectChange();

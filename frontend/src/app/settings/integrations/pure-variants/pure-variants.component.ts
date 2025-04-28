@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -38,6 +38,9 @@ import { FormFieldSkeletonLoaderComponent } from '../../../helpers/skeleton-load
   ],
 })
 export class PureVariantsComponent implements OnInit {
+  private pureVariantsService = inject(IntegrationsPureVariantsService);
+  private toastService = inject(ToastService);
+
   configuration?: PureVariantsLicensesOutput = undefined;
   loading = false;
   loadingLicenseKey = false;
@@ -70,11 +73,6 @@ export class PureVariantsComponent implements OnInit {
       });
     }
   }
-
-  constructor(
-    private pureVariantsService: IntegrationsPureVariantsService,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit(): void {
     this.pureVariantsService

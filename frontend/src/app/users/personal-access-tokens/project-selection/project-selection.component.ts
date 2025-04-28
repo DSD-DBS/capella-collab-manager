@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,13 +33,15 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectSelectionComponent {
+  projectWrapperService = inject(ProjectWrapperService);
+  matDialogRef = inject<MatDialogRef<ProjectSelectionComponent>>(MatDialogRef);
+  data = inject<{
+    excludeProjects: string[];
+  }>(MAT_DIALOG_DATA);
+
   selectedProject: string | undefined;
 
-  constructor(
-    public projectWrapperService: ProjectWrapperService,
-    public matDialogRef: MatDialogRef<ProjectSelectionComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { excludeProjects: string[] },
-  ) {
+  constructor() {
     this.projectWrapperService.loadProjects();
   }
 }

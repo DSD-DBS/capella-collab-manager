@@ -6,8 +6,8 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Inject,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
@@ -21,13 +21,10 @@ import { DiagramMetadata } from 'src/app/openapi';
   imports: [MatDivider, MatButton, MatDialogClose],
 })
 export class ModelDiagramPreviewDialogComponent implements AfterViewInit {
+  data = inject<MatDialogPreviewData>(MAT_DIALOG_DATA);
+
   @ViewChild('diagram')
   diagramElement?: ElementRef;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: MatDialogPreviewData,
-  ) {}
 
   ngAfterViewInit(): void {
     const img = this.diagramElement!.nativeElement;

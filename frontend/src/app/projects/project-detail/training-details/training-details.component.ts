@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatAnchor, MatMiniFabAnchor } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -48,12 +48,10 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   providers: [provideMarkdown()],
 })
 export class TrainingDetailsComponent implements OnInit {
-  constructor(
-    public modelService: ModelWrapperService,
-    public projectUserService: ProjectUserService,
-    public projectService: ProjectWrapperService,
-    private readmeService: ProjectsModelsREADMEService,
-  ) {}
+  modelService = inject(ModelWrapperService);
+  projectUserService = inject(ProjectUserService);
+  projectService = inject(ProjectWrapperService);
+  private readmeService = inject(ProjectsModelsREADMEService);
 
   getPrimaryGitModelURL(model: ToolModel): string {
     const primaryModel = getPrimaryGitModel(model);

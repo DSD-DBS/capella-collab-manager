@@ -7,10 +7,10 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Inject,
   OnInit,
   QueryList,
   ViewChildren,
+  inject,
 } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -25,17 +25,16 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
 })
 @UntilDestroy()
 export class ProjectAuditLogComponent implements OnInit, AfterViewInit {
+  projectAuditLogService = inject(ProjectAuditLogService);
+  private data = inject<{
+    projectSlug: string;
+  }>(MAT_DIALOG_DATA);
+
   pageSize = 25;
   pageSizeArray = [...Array(this.pageSize).keys()];
 
   @ViewChildren('page', { read: ElementRef })
   pageElements?: QueryList<ElementRef>;
-
-  constructor(
-    public projectAuditLogService: ProjectAuditLogService,
-    @Inject(MAT_DIALOG_DATA)
-    private data: { projectSlug: string },
-  ) {}
 
   ngOnInit() {
     this.projectAuditLogService.loadProjectHistoryEvents(

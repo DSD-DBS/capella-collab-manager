@@ -10,6 +10,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import {
   FormControl,
@@ -63,6 +64,16 @@ import { FormFieldSkeletonLoaderComponent } from '../../../../../helpers/skeleto
   ],
 })
 export class ManageT4CModelComponent implements OnInit, OnDestroy {
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  t4cInstanceService = inject(T4CInstanceWrapperService);
+  t4cRepositoryService = inject(T4CRepositoryWrapperService);
+  t4cModelService = inject(T4CModelService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
@@ -76,18 +87,6 @@ export class ManageT4CModelComponent implements OnInit, OnDestroy {
   selectedRepository?: ExtendedT4CRepository;
 
   t4cModel?: SimpleT4CModelWithRepository;
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    public t4cInstanceService: T4CInstanceWrapperService,
-    public t4cRepositoryService: T4CRepositoryWrapperService,
-    public t4cModelService: T4CModelService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toastService: ToastService,
-    private dialog: MatDialog,
-  ) {}
 
   public form = new FormGroup({
     t4cInstanceId: new FormControl<number | null>(null, Validators.required),

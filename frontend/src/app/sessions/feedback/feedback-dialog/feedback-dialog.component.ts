@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe, NgClass } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -53,6 +53,13 @@ interface DialogData {
   templateUrl: './feedback-dialog.component.html',
 })
 export class FeedbackDialogComponent {
+  metadataService = inject(MetadataService);
+  feedbackWrapperService = inject(FeedbackWrapperService);
+  private feedbackService = inject(FeedbackService);
+  data = inject<DialogData>(MAT_DIALOG_DATA);
+  private dialogRef =
+    inject<MatDialogRef<FeedbackDialogComponent>>(MatDialogRef);
+
   feedbackForm = new FormGroup({
     rating: new FormControl<'good' | 'okay' | 'bad' | undefined>(
       undefined,
@@ -63,14 +70,6 @@ export class FeedbackDialogComponent {
     }),
     shareContact: new FormControl<boolean>(true),
   });
-
-  constructor(
-    public metadataService: MetadataService,
-    public feedbackWrapperService: FeedbackWrapperService,
-    private feedbackService: FeedbackService,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private dialogRef: MatDialogRef<FeedbackDialogComponent>,
-  ) {}
 
   setRating(rating: FeedbackRating) {
     this.feedbackForm.get('rating')?.setValue(rating);

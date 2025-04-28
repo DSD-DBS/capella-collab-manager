@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import {
   Session,
@@ -27,10 +27,8 @@ export const isPersistentSession = (session: Session): boolean => {
   providedIn: 'root',
 })
 export class SessionService {
-  constructor(
-    private sessionHistoryService: SessionHistoryService,
-    private sessionsService: SessionsService,
-  ) {}
+  private sessionHistoryService = inject(SessionHistoryService);
+  private sessionsService = inject(SessionsService);
 
   createSession(request: PostSessionRequest): Observable<Session> {
     return this.sessionsService.requestSession(request).pipe(

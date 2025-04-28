@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SKIP_ERROR_HANDLING_CONTEXT } from '../../general/error-handling/error-handling.interceptor';
 import {
@@ -14,15 +14,17 @@ import {
   providedIn: 'root',
 })
 export class LicenseUsageWrapperService {
+  private licenseServerService = inject(
+    SettingsModelsourcesT4CLicenseServersService,
+  );
+
   private _licenseServerUsage = new BehaviorSubject<
     T4CLicenseServer[] | undefined
   >(undefined);
 
   readonly licenseServerUsage$ = this._licenseServerUsage.asObservable();
 
-  constructor(
-    private licenseServerService: SettingsModelsourcesT4CLicenseServersService,
-  ) {
+  constructor() {
     this.loadLicenseServerUsage().subscribe();
   }
 

@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgFor, AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -47,6 +54,10 @@ import { ProjectWrapperService } from '../../service/project.service';
   ],
 })
 export class InitModelComponent implements OnInit {
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  private toolsService = inject(ToolsService);
+
   @Output() create = new EventEmitter<{ created: boolean }>();
   @Input() asStepper?: boolean;
 
@@ -57,12 +68,6 @@ export class InitModelComponent implements OnInit {
 
   private projectSlug?: string = undefined;
   private modelSlug?: string = undefined;
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    private toolsService: ToolsService,
-  ) {}
 
   public form = new FormGroup({
     version: new FormControl<number | undefined>(

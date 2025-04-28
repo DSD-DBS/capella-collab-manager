@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgClass, AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -47,6 +47,8 @@ import { ProjectWrapperService } from '../service/project.service';
   ],
 })
 export class ProjectOverviewComponent implements OnInit {
+  projectService = inject(ProjectWrapperService);
+
   form = new FormGroup({
     search: new FormControl<string>(''),
     projectType: new FormControl<string | null>(null),
@@ -93,8 +95,6 @@ export class ProjectOverviewComponent implements OnInit {
       map((projects) => projects?.sort((a, b) => a.name.localeCompare(b.name))),
     );
   }
-
-  constructor(public projectService: ProjectWrapperService) {}
 
   ngOnInit() {
     this.projectService.loadProjects();

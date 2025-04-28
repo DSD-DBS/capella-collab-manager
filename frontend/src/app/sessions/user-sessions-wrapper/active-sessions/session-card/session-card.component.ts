@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgClass, AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  inject,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -66,19 +71,17 @@ import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wr
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SessionCardComponent {
+  sessionService = inject(SessionService);
+  feedbackService = inject(FeedbackWrapperService);
+  private userSessionService = inject(UserSessionService);
+  private userWrapperService = inject(OwnUserWrapperService);
+  private dialog = inject(MatDialog);
+
   @Input({ required: true }) session!: SessionWithSelection;
   @Input() hideActions = false;
 
   isReadonlySession = isReadonlySession;
   isPersistentSession = isPersistentSession;
-
-  constructor(
-    public sessionService: SessionService,
-    public feedbackService: FeedbackWrapperService,
-    private userSessionService: UserSessionService,
-    private userWrapperService: OwnUserWrapperService,
-    private dialog: MatDialog,
-  ) {}
 
   uploadFileDialog(session: Session): void {
     this.dialog.open(FileBrowserDialogComponent, { data: session });

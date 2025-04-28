@@ -2,14 +2,14 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
-  constructor(private toastr: ToastrService) {}
+  private toastr = inject(ToastrService);
 
   showSuccess(title: string, message: string) {
     this.toastr.success(message, title);

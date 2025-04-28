@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -49,22 +56,20 @@ import { T4CModelService } from '../service/t4c-model.service';
   ],
 })
 export class CreateT4cModelNewRepositoryComponent implements OnInit {
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  t4cModelService = inject(T4CModelService);
+  t4cInstanceService = inject(T4CInstanceWrapperService);
+  private t4cRepoService = inject(T4CRepositoryWrapperService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
+
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
   private projectSlug?: string;
   private modelSlug?: string;
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    public t4cModelService: T4CModelService,
-    public t4cInstanceService: T4CInstanceWrapperService,
-    private t4cRepoService: T4CRepositoryWrapperService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toastService: ToastService,
-  ) {}
 
   public form = new FormGroup({
     t4cInstanceId: new FormControl<number | null>(null, Validators.required),

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgIf, NgFor, AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -22,13 +22,13 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
   imports: [NgIf, NgFor, TextLineSkeletonLoaderComponent, AsyncPipe],
 })
 export class ViewLogsDialogComponent {
-  constructor(
-    private modelService: ModelWrapperService,
-    private projectService: ProjectWrapperService,
-    private pipelineService: PipelineWrapperService,
-    public pipelineRunService: PipelineRunWrapperService,
-    private pipelinesService: ProjectsModelsBackupsService,
-  ) {
+  private modelService = inject(ModelWrapperService);
+  private projectService = inject(ProjectWrapperService);
+  private pipelineService = inject(PipelineWrapperService);
+  pipelineRunService = inject(PipelineRunWrapperService);
+  private pipelinesService = inject(ProjectsModelsBackupsService);
+
+  constructor() {
     this.refreshLogs();
     this.refreshEvents();
   }

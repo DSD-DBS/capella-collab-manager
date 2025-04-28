@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, filter, take } from 'rxjs';
@@ -31,6 +31,10 @@ import { RelativeTimeComponent } from '../../../../general/relative-time/relativ
   styles: ``,
 })
 export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
+  private toolService = inject(ToolWrapperService);
+  private sessionHistoryService = inject(SessionHistoryService);
+  private sessionService = inject(SessionService);
+
   resolvedHistory: ResolvedSessionRequestHistory[] = [];
   sessionsToBeLoaded = this.sessionHistoryService.MAX_SESSIONS_IN_HISTORY;
   sessionsLoaded = 0;
@@ -42,12 +46,6 @@ export class CreateSessionHistoryComponent implements OnInit, OnDestroy {
       (a, b) => b.lastTimeRequested.getTime() - a.lastTimeRequested.getTime(),
     );
   }
-
-  constructor(
-    private toolService: ToolWrapperService,
-    private sessionHistoryService: SessionHistoryService,
-    private sessionService: SessionService,
-  ) {}
 
   ngOnInit() {
     this.sessionHistoryService.loadSessionRequestHistory();

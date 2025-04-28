@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -36,13 +36,11 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   `,
 })
 export class ProjectToolsComponent {
-  constructor(
-    public projectUserService: ProjectUserService,
-    public projectWrapperService: ProjectWrapperService,
-    public projectToolsWrapperService: ProjectToolsWrapperService,
-    private projectToolService: ProjectsToolsService,
-    private toastService: ToastService,
-  ) {}
+  projectUserService = inject(ProjectUserService);
+  projectWrapperService = inject(ProjectWrapperService);
+  projectToolsWrapperService = inject(ProjectToolsWrapperService);
+  private projectToolService = inject(ProjectsToolsService);
+  private toastService = inject(ToastService);
 
   unlinkTool(tool: ProjectTool): void {
     const tool_id = tool.id;

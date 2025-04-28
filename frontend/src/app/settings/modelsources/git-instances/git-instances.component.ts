@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -25,7 +25,7 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-in
   ],
 })
 export class GitInstancesComponent implements OnInit {
-  constructor(public gitInstancesService: GitInstancesWrapperService) {}
+  gitInstancesService = inject(GitInstancesWrapperService);
 
   ngOnInit(): void {
     this.gitInstancesService.loadGitInstances();

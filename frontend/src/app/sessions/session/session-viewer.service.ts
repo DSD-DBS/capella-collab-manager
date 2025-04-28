@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import {
   BehaviorSubject,
@@ -24,12 +24,12 @@ import { SessionService } from 'src/app/sessions/service/session.service';
   providedIn: 'root',
 })
 export class SessionViewerService {
-  constructor(
-    private sessionService: SessionService,
-    private domSanitizer: DomSanitizer,
-    private toastService: ToastService,
-    private sessionsService: SessionsService,
-  ) {
+  private sessionService = inject(SessionService);
+  private domSanitizer = inject(DomSanitizer);
+  private toastService = inject(ToastService);
+  private sessionsService = inject(SessionsService);
+
+  constructor() {
     window.addEventListener('message', (event) => {
       if (event.origin !== window.location.origin) {
         return;

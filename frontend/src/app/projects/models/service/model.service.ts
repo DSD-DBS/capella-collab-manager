@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -23,7 +23,7 @@ import {
   providedIn: 'root',
 })
 export class ModelWrapperService {
-  constructor(private modelsService: ProjectsModelsService) {}
+  private modelsService = inject(ProjectsModelsService);
 
   private _model = new BehaviorSubject<ToolModel | undefined>(undefined);
   private _models = new BehaviorSubject<ToolModel[] | undefined>(undefined);

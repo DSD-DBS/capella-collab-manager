@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { UnifiedConfig, ConfigurationService } from '../../openapi';
 
@@ -10,7 +10,9 @@ import { UnifiedConfig, ConfigurationService } from '../../openapi';
   providedIn: 'root',
 })
 export class UnifiedConfigWrapperService {
-  constructor(private configurationService: ConfigurationService) {
+  private configurationService = inject(ConfigurationService);
+
+  constructor() {
     this.loadUnifiedConfig().subscribe();
   }
 

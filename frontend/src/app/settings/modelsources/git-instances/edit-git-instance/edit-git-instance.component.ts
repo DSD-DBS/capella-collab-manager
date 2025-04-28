@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -43,22 +43,20 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-in
   ],
 })
 export class EditGitInstanceComponent implements OnInit, OnDestroy {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  gitInstancesService = inject(GitInstancesWrapperService);
+  private breadcrumbsService = inject(BreadcrumbsService);
+  private fb = inject(FormBuilder);
+  private dialog = inject(MatDialog);
+  private toastService = inject(ToastService);
+
   gitInstanceForm = this.fb.group({
     type: ['', Validators.required],
     name: ['', Validators.required],
     url: ['', Validators.required],
     api_url: [''],
   });
-
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    public gitInstancesService: GitInstancesWrapperService,
-    private breadcrumbsService: BreadcrumbsService,
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit(): void {
     this.gitInstancesService.gitInstance$

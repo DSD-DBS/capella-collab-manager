@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -47,21 +47,23 @@ import { T4CLicenseServerWrapperService } from '../../../../services/settings/t4
   ],
 })
 export class EditT4cLicenseServerComponent implements OnInit, OnDestroy {
+  private fb = inject(FormBuilder);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  t4cLicenseServerWrapperService = inject(T4CLicenseServerWrapperService);
+  private t4cLicenseServerService = inject(
+    SettingsModelsourcesT4CLicenseServersService,
+  );
+  private toastService = inject(ToastService);
+  private breadcrumbsService = inject(BreadcrumbsService);
+  private dialog = inject(MatDialog);
+
   form: FormGroup;
   existing = false;
   editing = false;
   licenseServerId: number | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    public t4cLicenseServerWrapperService: T4CLicenseServerWrapperService,
-    private t4cLicenseServerService: SettingsModelsourcesT4CLicenseServersService,
-    private toastService: ToastService,
-    private breadcrumbsService: BreadcrumbsService,
-    private dialog: MatDialog,
-  ) {
+  constructor() {
     this.form = this.fb.group({
       name: ['', Validators.required],
       usage_api: ['', [Validators.required, Validators.pattern('https?://.+')]],

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatIconButton, MatAnchor, MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -32,9 +32,7 @@ import { LogoComponent } from '../logo/logo.component';
   ],
 })
 export class HeaderComponent {
-  constructor(
-    public authService: AuthenticationWrapperService,
-    public userService: OwnUserWrapperService,
-    public navBarService: NavBarService,
-  ) {}
+  authService = inject(AuthenticationWrapperService);
+  userService = inject(OwnUserWrapperService);
+  navBarService = inject(NavBarService);
 }

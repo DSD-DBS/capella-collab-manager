@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -21,16 +21,14 @@ import {
   providedIn: 'root',
 })
 export class GitService {
+  private gitSettingsService = inject(SettingsModelsourcesGitService);
+  private gitModelService = inject(ProjectsModelsGitService);
+
   private _revisions = new BehaviorSubject<
     GetRevisionsResponseModel | undefined
   >(undefined);
 
   public readonly revisions$ = this._revisions.asObservable();
-
-  constructor(
-    private gitSettingsService: SettingsModelsourcesGitService,
-    private gitModelService: ProjectsModelsGitService,
-  ) {}
 
   loadRevisions(gitUrl: string, credentials: GitCredentials): void {
     this.gitSettingsService

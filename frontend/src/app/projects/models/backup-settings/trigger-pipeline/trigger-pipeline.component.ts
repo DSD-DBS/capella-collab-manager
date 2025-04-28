@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -36,16 +36,17 @@ import { PipelineWrapperService } from '../service/pipeline.service';
   ],
 })
 export class TriggerPipelineComponent implements OnInit {
-  constructor(
-    private dialogRef: MatDialogRef<TriggerPipelineComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public data: { projectSlug: string; modelSlug: string },
-    public dialog: MatDialog,
-    public pipelineWrapperService: PipelineWrapperService,
-    private pipelinesService: ProjectsModelsBackupsService,
-    public sessionService: SessionService,
-    private router: Router,
-  ) {}
+  private dialogRef =
+    inject<MatDialogRef<TriggerPipelineComponent>>(MatDialogRef);
+  data = inject<{
+    projectSlug: string;
+    modelSlug: string;
+  }>(MAT_DIALOG_DATA);
+  dialog = inject(MatDialog);
+  pipelineWrapperService = inject(PipelineWrapperService);
+  private pipelinesService = inject(ProjectsModelsBackupsService);
+  sessionService = inject(SessionService);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.pipelineWrapperService

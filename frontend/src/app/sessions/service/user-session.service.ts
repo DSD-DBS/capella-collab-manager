@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   BehaviorSubject,
   map,
@@ -24,10 +24,8 @@ import {
   providedIn: 'root',
 })
 export class UserSessionService {
-  constructor(
-    private usersSessionsService: UsersSessionsService,
-    private userWrapperService: OwnUserWrapperService,
-  ) {}
+  private usersSessionsService = inject(UsersSessionsService);
+  private userWrapperService = inject(OwnUserWrapperService);
 
   private _sessions = new BehaviorSubject<Session[] | undefined>(undefined);
 

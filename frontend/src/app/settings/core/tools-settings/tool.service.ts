@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { HttpContext } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { SKIP_ERROR_HANDLING } from 'src/app/general/error-handling/error-handling.interceptor';
 import {
@@ -20,7 +20,7 @@ export type ConnectionMethod = ToolSessionConnectionOutputMethodsInner;
   providedIn: 'root',
 })
 export class ToolWrapperService {
-  constructor(private toolsService: ToolsService) {}
+  private toolsService = inject(ToolsService);
 
   _tools = new BehaviorSubject<Tool[] | undefined>(undefined);
   get tools(): Tool[] | undefined {

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { User, UsersService } from 'src/app/openapi';
 
@@ -10,13 +10,13 @@ import { User, UsersService } from 'src/app/openapi';
   providedIn: 'root',
 })
 export class UserWrapperService {
+  private userService = inject(UsersService);
+
   _user = new BehaviorSubject<User | undefined>(undefined);
   user$ = this._user.asObservable();
 
   private _users = new BehaviorSubject<User[] | undefined>(undefined);
   public readonly users$ = this._users.asObservable();
-
-  constructor(private userService: UsersService) {}
 
   loadUser(userID: number) {
     this.resetUser();

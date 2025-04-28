@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { UsersService, User } from 'src/app/openapi';
 import { AuthenticationWrapperService } from '../auth/auth.service';
@@ -11,6 +11,9 @@ import { AuthenticationWrapperService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class OwnUserWrapperService {
+  private authService = inject(AuthenticationWrapperService);
+  private usersService = inject(UsersService);
+
   _user = new BehaviorSubject<User | undefined>(undefined);
   user$ = this._user.asObservable();
 
@@ -18,10 +21,7 @@ export class OwnUserWrapperService {
     return this._user.value;
   }
 
-  constructor(
-    private authService: AuthenticationWrapperService,
-    private usersService: UsersService,
-  ) {
+  constructor() {
     this.updateOwnUser();
   }
 

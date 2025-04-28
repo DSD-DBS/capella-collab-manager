@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
@@ -19,11 +19,11 @@ import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/
 })
 @UntilDestroy()
 export class PipelineRunWrapperService {
-  constructor(
-    private pipelineWrapperService: PipelineWrapperService,
-    private pipelinesService: ProjectsModelsBackupsService,
-    private breadcrumbsService: BreadcrumbsService,
-  ) {
+  private pipelineWrapperService = inject(PipelineWrapperService);
+  private pipelinesService = inject(ProjectsModelsBackupsService);
+  private breadcrumbsService = inject(BreadcrumbsService);
+
+  constructor() {
     this.resetPipelineRunsOnPipelineChange();
   }
 

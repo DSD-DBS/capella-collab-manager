@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -49,6 +49,13 @@ import { CreateReadonlySessionDialogComponent } from 'src/app/sessions/user-sess
   ],
 })
 export class CreateReadonlySessionComponent implements OnInit {
+  private userSessionService = inject(UserSessionService);
+  private projectService = inject(ProjectWrapperService);
+  private modelService = inject(ModelWrapperService);
+  private dialog = inject(MatDialog);
+  private fb = inject(FormBuilder);
+  private toolsService = inject(ToolsService);
+
   projectSlug?: string;
   models?: ModelWithCompatibility[];
 
@@ -61,15 +68,6 @@ export class CreateReadonlySessionComponent implements OnInit {
       Validators.required,
     ),
   });
-
-  constructor(
-    private userSessionService: UserSessionService,
-    private projectService: ProjectWrapperService,
-    private modelService: ModelWrapperService,
-    private dialog: MatDialog,
-    private fb: FormBuilder,
-    private toolsService: ToolsService,
-  ) {}
 
   ngOnInit(): void {
     this.projectService.project$

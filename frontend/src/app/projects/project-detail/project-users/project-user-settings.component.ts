@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   MatButton,
@@ -64,18 +64,16 @@ import { ProjectWrapperService } from '../../service/project.service';
   ],
 })
 export class ProjectUserSettingsComponent implements OnInit {
+  projectUserService = inject(ProjectUserService);
+  private toastService = inject(ToastService);
+  private projectService = inject(ProjectWrapperService);
+  ownUserWrapperService = inject(OwnUserWrapperService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+
   public project?: Project;
 
   search = '';
-
-  constructor(
-    public projectUserService: ProjectUserService,
-    private toastService: ToastService,
-    private projectService: ProjectWrapperService,
-    public ownUserWrapperService: OwnUserWrapperService,
-    private dialog: MatDialog,
-    private router: Router,
-  ) {}
 
   ngOnInit(): void {
     this.projectService.project$

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgClass, AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
 import {
   MatSidenav,
   MatDrawerContainer,
@@ -38,12 +38,12 @@ import { FullscreenService } from './sessions/service/fullscreen.service';
   ],
 })
 export class AppComponent implements AfterViewInit {
-  constructor(
-    public pageLayoutService: PageLayoutService,
-    public fullscreenService: FullscreenService,
-    private navBarService: NavBarService,
-    private feedbackService: FeedbackWrapperService,
-  ) {
+  pageLayoutService = inject(PageLayoutService);
+  fullscreenService = inject(FullscreenService);
+  private navBarService = inject(NavBarService);
+  private feedbackService = inject(FeedbackWrapperService);
+
+  constructor() {
     slugify.extend({ '.': '-' });
   }
 

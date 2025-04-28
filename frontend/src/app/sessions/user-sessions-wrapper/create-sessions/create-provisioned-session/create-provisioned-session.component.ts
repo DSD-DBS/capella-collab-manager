@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,16 +49,14 @@ import { RelativeTimeComponent } from '../../../../general/relative-time/relativ
   `,
 })
 export class CreateProvisionedSessionComponent implements OnInit {
-  constructor(
-    public sessionService: SessionService,
-    public projectWrapperService: ProjectWrapperService,
-    private provisioningService: ProjectsModelsProvisioningService,
-    private projectToolsWrapperService: ProjectToolsWrapperService,
-    private sessionsService: SessionsService,
-    private toastService: ToastService,
-    private router: Router,
-    private dialog: MatDialog,
-  ) {}
+  sessionService = inject(SessionService);
+  projectWrapperService = inject(ProjectWrapperService);
+  private provisioningService = inject(ProjectsModelsProvisioningService);
+  private projectToolsWrapperService = inject(ProjectToolsWrapperService);
+  private sessionsService = inject(SessionsService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   provisioningRequestInProgress = false;
 

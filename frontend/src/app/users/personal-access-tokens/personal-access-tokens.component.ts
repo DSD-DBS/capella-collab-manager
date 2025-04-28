@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -77,6 +77,13 @@ import { DisplayValueComponent } from '../../helpers/display-value/display-value
   ],
 })
 export class PersonalAccessTokensComponent implements OnInit {
+  tokenService = inject(UsersTokenService);
+  private toastService = inject(ToastService);
+  private formBuilder = inject(FormBuilder);
+  private permissionsService = inject(PermissionsService);
+  private matDialog = inject(MatDialog);
+  private projectsPermissionService = inject(ProjectsPermissionsService);
+
   generatedToken?: string;
   minDate: Date;
   maxDate: Date;
@@ -124,14 +131,7 @@ export class PersonalAccessTokensComponent implements OnInit {
     description: ['', [Validators.required]],
     date: [this.getTomorrow(), [Validators.required]],
   });
-  constructor(
-    public tokenService: UsersTokenService,
-    private toastService: ToastService,
-    private formBuilder: FormBuilder,
-    private permissionsService: PermissionsService,
-    private matDialog: MatDialog,
-    private projectsPermissionService: ProjectsPermissionsService,
-  ) {
+  constructor() {
     this.minDate = this.getTomorrow();
     this.maxDate = new Date(
       this.minDate.getFullYear() + 1,

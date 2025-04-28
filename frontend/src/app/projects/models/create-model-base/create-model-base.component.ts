@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -46,6 +53,11 @@ import { ProjectWrapperService } from '../../service/project.service';
   ],
 })
 export class CreateModelBaseComponent implements OnInit {
+  private modelService = inject(ModelWrapperService);
+  projectService = inject(ProjectWrapperService);
+  toolWrapperService = inject(ToolWrapperService);
+  private toastService = inject(ToastService);
+
   @Output() create = new EventEmitter();
   @Input() asStepper?: boolean;
 
@@ -79,13 +91,6 @@ export class CreateModelBaseComponent implements OnInit {
         : [],
     ),
   );
-
-  constructor(
-    private modelService: ModelWrapperService,
-    public projectService: ProjectWrapperService,
-    public toolWrapperService: ToolWrapperService,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit(): void {
     this.toolWrapperService.getTools().subscribe();

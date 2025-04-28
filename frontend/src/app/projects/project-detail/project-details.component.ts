@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ProjectToolsWrapperService } from 'src/app/projects/project-detail/project-tools/project-tools-wrapper.service';
 import { ProjectToolsComponent } from 'src/app/projects/project-detail/project-tools/project-tools.component';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
@@ -33,12 +33,10 @@ import { ProjectVolumesComponent } from './project-volumes/project-volumes.compo
   ],
 })
 export class ProjectDetailsComponent implements OnInit {
-  constructor(
-    public projectService: ProjectWrapperService,
-    public projectUserService: ProjectUserService,
-    public betaTestingService: BetaTestingService,
-    private projectToolsWrapperService: ProjectToolsWrapperService,
-  ) {}
+  projectService = inject(ProjectWrapperService);
+  projectUserService = inject(ProjectUserService);
+  betaTestingService = inject(BetaTestingService);
+  private projectToolsWrapperService = inject(ProjectToolsWrapperService);
 
   ngOnInit(): void {
     this.projectToolsWrapperService.loadProjectTools();

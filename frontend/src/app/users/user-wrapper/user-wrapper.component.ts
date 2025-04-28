@@ -8,6 +8,7 @@ import {
   Component,
   OnDestroy,
   OnInit,
+  inject,
 } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,11 +25,9 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserWrapperComponent implements OnInit, OnDestroy {
-  constructor(
-    private route: ActivatedRoute,
-    public userWrapperService: UserWrapperService,
-    private breadcrumbsService: BreadcrumbsService,
-  ) {}
+  private route = inject(ActivatedRoute);
+  userWrapperService = inject(UserWrapperService);
+  private breadcrumbsService = inject(BreadcrumbsService);
 
   ngOnInit() {
     this.updateUserOnRouteUpdate();

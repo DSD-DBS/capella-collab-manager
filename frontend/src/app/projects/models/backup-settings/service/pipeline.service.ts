@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 import { Backup, ProjectsModelsBackupsService } from 'src/app/openapi';
@@ -11,10 +11,8 @@ import { Backup, ProjectsModelsBackupsService } from 'src/app/openapi';
   providedIn: 'root',
 })
 export class PipelineWrapperService {
-  constructor(
-    private breadcrumbsService: BreadcrumbsService,
-    private pipelinesService: ProjectsModelsBackupsService,
-  ) {}
+  private breadcrumbsService = inject(BreadcrumbsService);
+  private pipelinesService = inject(ProjectsModelsBackupsService);
 
   private _pipeline = new BehaviorSubject<Backup | undefined>(undefined);
   private _pipelines = new BehaviorSubject<Backup[] | undefined>(undefined);

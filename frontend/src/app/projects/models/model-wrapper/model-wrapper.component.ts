@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgIf, AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map } from 'rxjs';
@@ -20,13 +20,11 @@ import { ProjectWrapperService } from '../../service/project.service';
   imports: [NgIf, RouterOutlet, AsyncPipe],
 })
 export class ModelWrapperComponent implements OnInit, OnDestroy {
-  constructor(
-    private route: ActivatedRoute,
-    public modelService: ModelWrapperService,
-    private projectService: ProjectWrapperService,
-    private t4cModelService: T4CModelService,
-    private breadcrumbService: BreadcrumbsService,
-  ) {}
+  private route = inject(ActivatedRoute);
+  modelService = inject(ModelWrapperService);
+  private projectService = inject(ProjectWrapperService);
+  private t4cModelService = inject(T4CModelService);
+  private breadcrumbService = inject(BreadcrumbsService);
 
   ngOnInit(): void {
     combineLatest([

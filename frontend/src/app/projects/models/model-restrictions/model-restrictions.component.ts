@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -37,17 +37,15 @@ import { ProjectWrapperService } from '../../service/project.service';
   ],
 })
 export class ModelRestrictionsComponent implements OnInit {
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  toastService = inject(ToastService);
+  private modelRestrictionService = inject(ProjectsModelsRestrictionsService);
+
   loading = false;
 
   private model?: ToolModel;
   private projectSlug?: string;
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    public toastService: ToastService,
-    private modelRestrictionService: ProjectsModelsRestrictionsService,
-  ) {}
 
   restrictionsForm = new FormGroup({
     pureVariants: new FormControl(false),

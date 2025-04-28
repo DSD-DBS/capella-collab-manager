@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -72,6 +72,12 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
   ],
 })
 export class UserSettingsComponent implements OnInit {
+  ownUserService = inject(OwnUserWrapperService);
+  userWrapperService = inject(UserWrapperService);
+  private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+  private usersService = inject(UsersService);
+
   public readonly roleMapping = {
     user: 'Global User',
     administrator: 'Global Administrator',
@@ -92,14 +98,6 @@ export class UserSettingsComponent implements OnInit {
     search: new FormControl<string>(''),
     userType: new FormControl<string | null>(null),
   });
-
-  constructor(
-    public ownUserService: OwnUserWrapperService,
-    public userWrapperService: UserWrapperService,
-    private toastService: ToastService,
-    private dialog: MatDialog,
-    private usersService: UsersService,
-  ) {}
 
   ngOnInit(): void {
     this.userWrapperService.loadUsers();

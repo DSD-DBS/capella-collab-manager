@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map, switchMap, tap } from 'rxjs';
@@ -19,13 +19,11 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
 })
 @UntilDestroy()
 export class PipelineWrapperComponent implements OnInit, OnDestroy {
-  constructor(
-    private pipelineService: PipelineWrapperService,
-    private modelService: ModelWrapperService,
-    private projectService: ProjectWrapperService,
-    private route: ActivatedRoute,
-    private breadcrumbsService: BreadcrumbsService,
-  ) {}
+  private pipelineService = inject(PipelineWrapperService);
+  private modelService = inject(ModelWrapperService);
+  private projectService = inject(ProjectWrapperService);
+  private route = inject(ActivatedRoute);
+  private breadcrumbsService = inject(BreadcrumbsService);
 
   ngOnInit(): void {
     // Reset pipeline runs on pipeline change

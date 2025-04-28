@@ -8,6 +8,7 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
+  inject,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -38,6 +39,9 @@ import { EditorComponent as EditorComponent_1 } from '../../../../../helpers/edi
   ],
 })
 export class ToolNatureComponent {
+  private toastService = inject(ToastService);
+  private toolsService = inject(ToolsService);
+
   _tool?: Tool = undefined;
 
   @Input()
@@ -66,11 +70,6 @@ export class ToolNatureComponent {
   @ViewChild('tabGroup', { static: false }) tabGroup: MatTabGroup | undefined;
 
   toolNatures: ToolNature[] | undefined = undefined;
-
-  constructor(
-    private toastService: ToastService,
-    private toolsService: ToolsService,
-  ) {}
 
   getEditorForContext(context: string) {
     return this.editorRefs?.find((editor) => editor.context() === context);

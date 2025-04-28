@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -63,6 +63,17 @@ import { T4CInstanceSettingsComponent } from '../t4c-instance-settings/t4c-insta
   ],
 })
 export class EditT4CInstanceComponent implements OnInit, OnDestroy {
+  t4cInstanceWrapperService = inject(T4CInstanceWrapperService);
+  t4cLicenseServerWrapperService = inject(T4CLicenseServerWrapperService);
+  private t4cInstanceService = inject(SettingsModelsourcesT4CInstancesService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+  private toolWrapperService = inject(ToolWrapperService);
+  private toolsService = inject(ToolsService);
+  private breadcrumbsService = inject(BreadcrumbsService);
+  private dialog = inject(MatDialog);
+
   editing = false;
   existing = false;
 
@@ -106,19 +117,6 @@ export class EditT4CInstanceComponent implements OnInit, OnDestroy {
   get protocols(): Protocol[] {
     return Object.values(Protocol);
   }
-
-  constructor(
-    public t4cInstanceWrapperService: T4CInstanceWrapperService,
-    public t4cLicenseServerWrapperService: T4CLicenseServerWrapperService,
-    private t4cInstanceService: SettingsModelsourcesT4CInstancesService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private toastService: ToastService,
-    private toolWrapperService: ToolWrapperService,
-    private toolsService: ToolsService,
-    private breadcrumbsService: BreadcrumbsService,
-    private dialog: MatDialog,
-  ) {}
 
   ngOnInit(): void {
     this.route.params

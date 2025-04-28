@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe, NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { T4CLicenseServerUsage } from '../../openapi';
 import { LicenseUsageWrapperService } from './license-usage.service';
@@ -14,7 +14,7 @@ import { LicenseUsageWrapperService } from './license-usage.service';
   templateUrl: './license-indicator.component.html',
 })
 export class LicenseIndicatorComponent {
-  constructor(public licenseUsageWrapperService: LicenseUsageWrapperService) {}
+  licenseUsageWrapperService = inject(LicenseUsageWrapperService);
 
   getLevel(usage: T4CLicenseServerUsage) {
     const usagePercentage = (usage.total - usage.free) / usage.total;

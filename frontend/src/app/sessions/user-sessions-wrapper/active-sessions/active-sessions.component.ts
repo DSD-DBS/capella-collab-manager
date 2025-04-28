@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -40,12 +40,10 @@ import { UserSessionService } from '../../service/user-session.service';
   ],
 })
 export class ActiveSessionsComponent implements OnInit {
-  constructor(
-    public sessionService: SessionService,
-    public userSessionService: UserSessionService,
-    private dialog: MatDialog,
-    private feedbackService: FeedbackWrapperService,
-  ) {}
+  sessionService = inject(SessionService);
+  userSessionService = inject(UserSessionService);
+  private dialog = inject(MatDialog);
+  private feedbackService = inject(FeedbackWrapperService);
 
   sessions = new BehaviorSubject<SessionWithSelection[] | undefined>(undefined);
 

@@ -4,7 +4,7 @@
  */
 import { NgClass } from '@angular/common';
 import { HttpEventType } from '@angular/common/http';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -40,6 +40,12 @@ import { PathNode } from 'src/app/sessions/service/session.service';
   ],
 })
 export class FileBrowserDialogComponent implements OnInit {
+  private sessionsService = inject(SessionsService);
+  private dialog = inject(MatDialog);
+  dialogRef = inject<MatDialogRef<FileBrowserDialogComponent>>(MatDialogRef);
+  private toastService = inject(ToastService);
+  session = inject<SessionWithDownloadInformation>(MAT_DIALOG_DATA);
+
   filesToUpload: [File, string][] = [];
   uploadProgress: number | null = null;
   loadingFiles = false;
@@ -47,14 +53,6 @@ export class FileBrowserDialogComponent implements OnInit {
   dataSource = new MatTableDataSource<PathNode>([]);
 
   childrenAccessor = (node: PathNode) => node.children ?? [];
-
-  constructor(
-    private sessionsService: SessionsService,
-    private dialog: MatDialog,
-    public dialogRef: MatDialogRef<FileBrowserDialogComponent>,
-    private toastService: ToastService,
-    @Inject(MAT_DIALOG_DATA) public session: SessionWithDownloadInformation,
-  ) {}
 
   showHiddenFiles = new FormControl(false);
 

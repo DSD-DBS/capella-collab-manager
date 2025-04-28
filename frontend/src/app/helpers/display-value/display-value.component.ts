@@ -4,7 +4,7 @@
  */
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -15,7 +15,7 @@ import { ToastService } from 'src/app/helpers/toast/toast.service';
   imports: [NgClass, MatTooltip, MatIcon, CdkCopyToClipboard],
 })
 export class DisplayValueComponent {
-  constructor(private toastService: ToastService) {}
+  private toastService = inject(ToastService);
 
   @Input()
   value?: string = undefined;

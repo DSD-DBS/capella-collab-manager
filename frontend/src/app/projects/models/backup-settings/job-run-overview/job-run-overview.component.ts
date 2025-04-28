@@ -16,6 +16,7 @@ import {
   QueryList,
   ViewChildren,
   OnInit,
+  inject,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,20 +42,18 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
 })
 @UntilDestroy()
 export class JobRunOverviewComponent implements OnInit, AfterViewInit {
+  pipelineRunService = inject(PipelineRunWrapperService);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private projectService = inject(ProjectWrapperService);
+  private modelService = inject(ModelWrapperService);
+  private pipelineService = inject(PipelineWrapperService);
+
   pageSize = 25;
   pageSizeArray = [...Array(this.pageSize).keys()];
 
   @ViewChildren('page', { read: ElementRef })
   pageElements?: QueryList<ElementRef>;
-
-  constructor(
-    public pipelineRunService: PipelineRunWrapperService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private projectService: ProjectWrapperService,
-    private modelService: ModelWrapperService,
-    private pipelineService: PipelineWrapperService,
-  ) {}
 
   ngOnInit() {
     combineLatest([

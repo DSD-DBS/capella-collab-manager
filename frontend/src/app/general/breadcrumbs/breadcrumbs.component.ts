@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
 
@@ -13,5 +13,5 @@ import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.serv
   imports: [RouterLink, AsyncPipe],
 })
 export class BreadcrumbsComponent {
-  constructor(public readonly breadcrumbService: BreadcrumbsService) {}
+  readonly breadcrumbService = inject(BreadcrumbsService);
 }

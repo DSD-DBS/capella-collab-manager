@@ -16,9 +16,9 @@ import { ViewerSession } from '../session-viewer.service';
   imports: [NgClass, MatIconModule, AsyncPipe],
 })
 export class SessionIFrameComponent {
+  sessionService = inject(SessionService);
+
   @Input({ required: true }) session!: ViewerSession;
 
   public fullscreenService = inject(FullscreenService);
-
-  constructor(public sessionService: SessionService) {}
 }

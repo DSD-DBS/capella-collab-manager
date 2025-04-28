@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { EditorComponent } from 'src/app/helpers/editor/editor.component';
@@ -17,13 +17,11 @@ import { UnifiedConfigWrapperService } from '../../../services/unified-config-wr
   imports: [EditorComponent_1, MatButton, MatIcon],
 })
 export class ConfigurationSettingsComponent implements OnInit {
-  @ViewChild(EditorComponent) editor: EditorComponent | undefined;
+  private configurationSettingsService = inject(ConfigurationService);
+  private toastService = inject(ToastService);
+  private unifiedConfigService = inject(UnifiedConfigWrapperService);
 
-  constructor(
-    private configurationSettingsService: ConfigurationService,
-    private toastService: ToastService,
-    private unifiedConfigService: UnifiedConfigWrapperService,
-  ) {}
+  @ViewChild(EditorComponent) editor: EditorComponent | undefined;
 
   ngOnInit(): void {
     this.fetchConfiguration();

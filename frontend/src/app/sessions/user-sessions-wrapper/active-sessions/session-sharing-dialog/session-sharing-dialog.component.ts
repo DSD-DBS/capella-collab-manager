@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -48,6 +48,12 @@ import { Session, SessionsService } from 'src/app/openapi';
   `,
 })
 export class SessionSharingDialogComponent {
+  session = inject<Session>(MAT_DIALOG_DATA);
+  private toastService = inject(ToastService);
+  private dialogRef =
+    inject<MatDialogRef<SessionSharingDialogComponent>>(MatDialogRef);
+  private sessionsService = inject(SessionsService);
+
   form = new FormGroup({
     username: new FormControl('', [
       Validators.required,
@@ -59,12 +65,7 @@ export class SessionSharingDialogComponent {
   loading = false;
   users: AddedUser[] = [];
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public session: Session,
-    private toastService: ToastService,
-    private dialogRef: MatDialogRef<SessionSharingDialogComponent>,
-    private sessionsService: SessionsService,
-  ) {
+  constructor() {
     for (const session of this.session.shared_with) {
       this.users.push({
         username: session.user.name,

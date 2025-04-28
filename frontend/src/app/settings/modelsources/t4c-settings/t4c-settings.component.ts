@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgClass, AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -27,8 +27,6 @@ import { T4CLicenseServerWrapperService } from '../../../services/settings/t4c-l
   ],
 })
 export class T4CSettingsComponent {
-  constructor(
-    public t4cInstanceService: T4CInstanceWrapperService,
-    public t4cLicenseServerService: T4CLicenseServerWrapperService,
-  ) {}
+  t4cInstanceService = inject(T4CInstanceWrapperService);
+  t4cLicenseServerService = inject(T4CLicenseServerWrapperService);
 }

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,14 +17,14 @@ import { EditorComponent as EditorComponent_1 } from '../../../../helpers/editor
   imports: [EditorComponent_1, MatButton, MatIcon],
 })
 export class CreateToolComponent {
+  private toolsService = inject(ToolsService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   @ViewChild(EditorComponent) editor: EditorComponent | undefined;
 
-  constructor(
-    private toolsService: ToolsService,
-    private toastService: ToastService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     this.toolsService.getDefaultTool().subscribe((tool) => {
       this.editor!.setValue(tool);
     });

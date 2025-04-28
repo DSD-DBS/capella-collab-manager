@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -27,6 +32,12 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserWorkspacesComponent implements OnInit {
+  ownUserService = inject(OwnUserWrapperService);
+  userWrapperService = inject(UserWrapperService);
+  private usersWorkspaceService = inject(UsersWorkspacesService);
+  private dialog = inject(MatDialog);
+  private toastService = inject(ToastService);
+
   workspaces = new BehaviorSubject<Workspace[] | undefined>(undefined);
 
   loadWorkspaces() {
@@ -45,14 +56,6 @@ export class UserWorkspacesComponent implements OnInit {
         error: () => this.workspaces.next(undefined),
       });
   }
-
-  constructor(
-    public ownUserService: OwnUserWrapperService,
-    public userWrapperService: UserWrapperService,
-    private usersWorkspaceService: UsersWorkspacesService,
-    private dialog: MatDialog,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit(): void {
     this.loadWorkspaces();

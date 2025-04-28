@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -34,18 +34,20 @@ export interface CreatePersistentSessionDialogData {
   templateUrl: './create-persistent-session-dialog.component.html',
 })
 export class CreatePersistentSessionDialogComponent {
+  private sessionService = inject(SessionService);
+  private userSessionService = inject(UserSessionService);
+  dialogRef =
+    inject<MatDialogRef<CreatePersistentSessionDialogComponent, boolean>>(
+      MatDialogRef,
+    );
+  data = inject<CreatePersistentSessionDialogData>(MAT_DIALOG_DATA);
+
   selectedConnectionMethod: ConnectionMethod;
   requestInProgress = false;
 
-  constructor(
-    private sessionService: SessionService,
-    private userSessionService: UserSessionService,
-    public dialogRef: MatDialogRef<
-      CreatePersistentSessionDialogComponent,
-      boolean
-    >,
-    @Inject(MAT_DIALOG_DATA) public data: CreatePersistentSessionDialogData,
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.selectedConnectionMethod = data.tool.config.connection.methods[0];
   }
 

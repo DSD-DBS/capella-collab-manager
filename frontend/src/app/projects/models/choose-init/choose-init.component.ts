@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgIf, AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { MatIconComponent } from '../../../helpers/mat-icon/mat-icon.component';
@@ -17,10 +17,8 @@ import { ProjectWrapperService } from '../../service/project.service';
   imports: [NgIf, MatButton, MatIconComponent, AsyncPipe],
 })
 export class ChooseInitComponent {
-  @Output() modelInitSelection = new EventEmitter<string>();
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
 
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-  ) {}
+  @Output() modelInitSelection = new EventEmitter<string>();
 }

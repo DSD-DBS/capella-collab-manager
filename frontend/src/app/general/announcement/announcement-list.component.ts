@@ -10,7 +10,7 @@ import {
   trigger,
 } from '@angular/animations';
 import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AnnouncementWrapperService } from 'src/app/general/announcement/announcement.service';
 import { AnnouncementComponent } from './announcement/announcement.component';
 
@@ -27,5 +27,5 @@ import { AnnouncementComponent } from './announcement/announcement.component';
   ],
 })
 export class AnnouncementListComponent {
-  constructor(public announcementWrapperService: AnnouncementWrapperService) {}
+  announcementWrapperService = inject(AnnouncementWrapperService);
 }

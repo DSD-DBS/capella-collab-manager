@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
@@ -17,11 +17,9 @@ import { ProjectWrapperService } from '../../service/project.service';
   imports: [MatDivider, MatAnchor, MatIcon, AsyncPipe],
 })
 export class ChooseSourceComponent {
-  @Output() modelSourceSelection = new EventEmitter<string>();
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  userService = inject(OwnUserWrapperService);
 
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    public userService: OwnUserWrapperService,
-  ) {}
+  @Output() modelSourceSelection = new EventEmitter<string>();
 }

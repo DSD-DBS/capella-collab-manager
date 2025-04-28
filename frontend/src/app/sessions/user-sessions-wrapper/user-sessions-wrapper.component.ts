@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { delay, expand, of } from 'rxjs';
 import { UserSessionService } from '../service/user-session.service';
@@ -15,7 +15,7 @@ import { UserSessionService } from '../service/user-session.service';
   standalone: true,
 })
 export class UserSessionsWrapperComponent implements OnInit {
-  constructor(private userSessionService: UserSessionService) {}
+  private userSessionService = inject(UserSessionService);
 
   ngOnInit(): void {
     of(undefined)

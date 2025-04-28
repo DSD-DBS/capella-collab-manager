@@ -11,6 +11,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { Router } from '@angular/router';
@@ -42,6 +43,10 @@ import { ManageT4CModelComponent } from '../model-source/t4c/manage-t4c-model/ma
   ],
 })
 export class CreateModelComponent implements OnInit {
+  private router = inject(Router);
+  private projectService = inject(ProjectWrapperService);
+  private modelService = inject(ModelWrapperService);
+
   @ViewChild('stepper') stepper!: MatStepper;
   @Input() asStepper?: boolean;
   @Input() redirectAfterCompletion = true;
@@ -52,12 +57,6 @@ export class CreateModelComponent implements OnInit {
   source?: string;
   chosenModelInitOption?: string;
   detail?: boolean;
-
-  constructor(
-    private router: Router,
-    private projectService: ProjectWrapperService,
-    private modelService: ModelWrapperService,
-  ) {}
 
   ngOnInit(): void {
     this.projectService.project$

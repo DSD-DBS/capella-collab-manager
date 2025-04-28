@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -24,7 +24,7 @@ import {
   providedIn: 'root',
 })
 export class ProjectWrapperService {
-  constructor(private projectsService: ProjectsService) {}
+  private projectsService = inject(ProjectsService);
 
   private _project = new BehaviorSubject<Project | undefined>(undefined);
   private _projects = new BehaviorSubject<Project[] | undefined>(undefined);

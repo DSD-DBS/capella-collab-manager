@@ -9,7 +9,7 @@ import {
   CdkDrag,
 } from '@angular/cdk/drag-drop';
 import { NgIf } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -27,13 +27,18 @@ import { ModelWrapperService } from 'src/app/projects/models/service/model.servi
   imports: [CdkDropList, CdkDrag, MatIcon, NgIf, MatButton],
 })
 export class ReorderModelsDialogComponent {
-  constructor(
-    public modelService: ModelWrapperService,
-    private dialogRef: MatDialogRef<ReorderModelsDialogComponent>,
-    private toastService: ToastService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: { projectSlug: string; models: ToolModel[] },
-  ) {
+  modelService = inject(ModelWrapperService);
+  private dialogRef =
+    inject<MatDialogRef<ReorderModelsDialogComponent>>(MatDialogRef);
+  private toastService = inject(ToastService);
+  data = inject<{
+    projectSlug: string;
+    models: ToolModel[];
+  }>(MAT_DIALOG_DATA);
+
+  constructor() {
+    const data = this.data;
+
     this.models = [...data.models];
   }
 

@@ -4,7 +4,7 @@
  */
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe, NgClass } from '@angular/common';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +27,9 @@ import { SessionViewerService, ViewerSession } from '../session-viewer.service';
 })
 @UntilDestroy()
 export class TilingWindowManagerComponent implements OnInit {
+  sessionViewerService = inject(SessionViewerService);
+  toastService = inject(ToastService);
+
   private _tilingSessions: TilingSession[] = [];
 
   get sessions(): TilingSession[] {
@@ -36,11 +39,6 @@ export class TilingWindowManagerComponent implements OnInit {
   public resizeState: ResizeState = {};
 
   private minimumSessionWidth = 0;
-
-  constructor(
-    public sessionViewerService: SessionViewerService,
-    public toastService: ToastService,
-  ) {}
 
   ngOnInit(): void {
     this.sessionViewerService.sessions$

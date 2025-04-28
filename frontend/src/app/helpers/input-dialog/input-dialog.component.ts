@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -39,16 +39,15 @@ export interface InputDialogResult {
   ],
 })
 export class InputDialogComponent implements OnInit {
+  dialogRef =
+    inject<MatDialogRef<InputDialogComponent, InputDialogResult>>(MatDialogRef);
+  data = inject<InputDialogData>(MAT_DIALOG_DATA);
+
   form = new FormGroup({
     result: new FormControl<string | undefined>(undefined, [
       Validators.required,
     ]),
   });
-
-  constructor(
-    public dialogRef: MatDialogRef<InputDialogComponent, InputDialogResult>,
-    @Inject(MAT_DIALOG_DATA) public data: InputDialogData,
-  ) {}
 
   ngOnInit(): void {
     this.dialogRef.updateSize('500px');
