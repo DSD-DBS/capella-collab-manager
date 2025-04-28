@@ -3,56 +3,66 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="m-2.5 text-2xl">Core functionality</div>
-<div class="flex flex-wrap">
-  <a class="m-2.5" [routerLink]="['/users']">
-    <div class="option-card collab-card mx-0" matRipple>
-      <div>Manage Users</div>
-      <app-mat-icon size="50px">supervised_user_circle</app-mat-icon>
-    </div>
+<div class="mb-1 text-center text-2xl sm:text-left">Core functionality</div>
+<div class="flex flex-wrap gap-4">
+  <a class="option-card collab-card" [routerLink]="['/users']" matRipple>
+    <div>Manage Users</div>
+    <app-mat-icon size="50px">supervised_user_circle</app-mat-icon>
   </a>
-  <a class="m-2.5" [routerLink]="['/settings/core/announcements']">
-    <div class="option-card collab-card mx-0" matRipple>
-      <div>Announcements</div>
-      <app-mat-icon size="50px">add_alert</app-mat-icon>
-    </div>
+  <a
+    class="option-card collab-card"
+    [routerLink]="['/settings/core/announcements']"
+    matRipple
+  >
+    <div>Announcements</div>
+    <app-mat-icon size="50px">add_alert</app-mat-icon>
   </a>
-  <a class="m-2.5" [routerLink]="['/settings/core/tools']">
-    <div class="option-card collab-card mx-0" matRipple>
-      <div>Tools</div>
-      <app-mat-icon size="50px">build</app-mat-icon>
-    </div>
+  <a
+    class="option-card collab-card"
+    matRipple
+    [routerLink]="['/settings/core/tools']"
+  >
+    <div>Tools</div>
+    <app-mat-icon size="50px">build</app-mat-icon>
   </a>
-  <a class="m-2.5" [routerLink]="['/settings/core/configuration']">
-    <div class="option-card collab-card mx-0" matRipple>
-      <div>Configuration</div>
-      <app-mat-icon size="50px">settings</app-mat-icon>
-    </div>
-  </a>
-</div>
-
-<div class="m-2.5 text-2xl">Model sources</div>
-<div class="flex flex-wrap">
-  <a class="m-2.5" [routerLink]="['/settings/modelsources/git-instances']">
-    <div class="option-card collab-card mx-0" matRipple>
-      <div>Git Server Instances</div>
-      <app-mat-icon size="50px">code</app-mat-icon>
-    </div>
-  </a>
-  <a class="m-2.5" [routerLink]="['/settings/modelsources/t4c']">
-    <div class="option-card collab-card mx-0" matRipple>
-      <div>Team For Capella</div>
-      <app-mat-icon size="50px">people</app-mat-icon>
-    </div>
+  <a
+    class="option-card collab-card"
+    matRipple
+    [routerLink]="['/settings/core/configuration']"
+  >
+    <div>Configuration</div>
+    <app-mat-icon size="50px">settings</app-mat-icon>
   </a>
 </div>
 
-<div class="m-2.5 text-2xl">Integrations</div>
-<div class="flex flex-wrap">
-  <a class="m-2.5" [routerLink]="['/settings/integrations/pure-variants']">
-    <div class="option-card collab-card mx-0" matRipple>
-      <div>pure::variants</div>
-      <app-mat-icon size="50px">people</app-mat-icon>
-    </div>
+<div class="mb-1 mt-4 text-center text-2xl sm:text-left">Model sources</div>
+<div class="flex flex-wrap gap-4">
+  <a
+    class="option-card collab-card"
+    matRipple
+    [routerLink]="['/settings/modelsources/git-instances']"
+  >
+    <div>Git Server Instances</div>
+    <app-mat-icon size="50px">code</app-mat-icon>
+  </a>
+  <a
+    class="option-card collab-card"
+    matRipple
+    [routerLink]="['/settings/modelsources/t4c']"
+  >
+    <div>Team For Capella</div>
+    <app-mat-icon size="50px">people</app-mat-icon>
+  </a>
+</div>
+
+<div class="mb-1 mt-4 text-center text-2xl sm:text-left">Integrations</div>
+<div class="flex flex-wrap gap-4">
+  <a
+    class="option-card collab-card"
+    matRipple
+    [routerLink]="['/settings/integrations/pure-variants']"
+  >
+    <div>pure::variants</div>
+    <app-mat-icon size="50px">people</app-mat-icon>
   </a>
 </div>

@@ -28,20 +28,6 @@ export const NoDismissedAnnouncements: Story = {
   ],
 };
 
-export const DismissedAnnouncementThatIsNoLongerVisible: Story = {
-  args: {},
-  decorators: [
-    moduleMetadata({
-      providers: [
-        mockAnnouncementWrapperServiceProvider(
-          [mockAnnouncement],
-          [{ id: -1, date: new Date() }],
-        ),
-      ],
-    }),
-  ],
-};
-
 export const OneDismissedAnnouncement: Story = {
   args: {},
   decorators: [
