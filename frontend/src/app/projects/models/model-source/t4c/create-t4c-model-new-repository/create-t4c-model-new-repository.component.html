@@ -4,7 +4,7 @@
  -->
 
 @if ((projectService.project$ | async) && (modelService.model$ | async)) {
-  <div class="wrapper flex justify-center">
+  <div class="flex justify-center">
     <div class="collab-card w-[350px] sm:min-w-[420px]">
       <form
         [formGroup]="form"

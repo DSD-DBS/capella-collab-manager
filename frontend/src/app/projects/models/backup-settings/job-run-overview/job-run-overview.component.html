@@ -7,7 +7,7 @@
   Please note: Automatically scheduled runs are currently not listed. Please ask
   your administrator for the status of those runs. <br />
 
-  <table>
+  <table class="w-full table-auto border-separate border-spacing-2">
     <thead>
       <tr>
         <td>
@@ -28,51 +28,50 @@
       </tr>
     </thead>
 
-    <tbody
-      [id]="idx + 1"
-      #page
-      *ngFor="
-        let pipelineRunPage of (pipelineRunService.pipelineRunPages$ | async)!
-          .pages;
-        let idx = index
-      "
-    >
-      <ng-container
-        *ngIf="pipelineRunPage === undefined || pipelineRunPage === 'loading'"
-      >
-        <tr *ngFor="let jobRunPage of pageSizeArray">
-          <td *ngFor="let column of [1, 2, 3, 4, 5]">
-            <app-text-line-skeleton-loader
-              width="50%"
-            ></app-text-line-skeleton-loader>
-          </td>
-        </tr>
-      </ng-container>
-      <ng-container
-        *ngIf="pipelineRunPage !== undefined && pipelineRunPage !== 'loading'"
-      >
-        <ng-container *ngFor="let run of pipelineRunPage.items">
-          <tr class="job-row" (click)="openLogs(run.id)">
-            <td>
-              {{ run.id }}
-            </td>
-            <td>
-              {{ run.status }}
-            </td>
-            <td>
-              {{ run.triggerer.name }}
-            </td>
-            <td>
-              {{ run.trigger_time | date: "EE, dd MMM y HH:mm:ss" }}
-            </td>
-            <td>
-              <span *ngFor="let env of run.environment | keyvalue">
-                {{ env.key }}='{{ env.value }}'
-              </span>
-            </td>
-          </tr>
-        </ng-container>
-      </ng-container>
-    </tbody>
+    @for (
+      pipelineRunPage of (pipelineRunService.pipelineRunPages$ | async)!.pages;
+      track $index
+    ) {
+      <tbody [id]="$index + 1" #page>
+        @if (pipelineRunPage === undefined || pipelineRunPage === "loading") {
+          @for (jobRunPage of pageSizeArray; track jobRunPage) {
+            <tr>
+              @for (column of [1, 2, 3, 4, 5]; track column) {
+                <td>
+                  <app-text-line-skeleton-loader
+                    width="50%"
+                  ></app-text-line-skeleton-loader>
+                </td>
+              }
+            </tr>
+          }
+        } @else {
+          @for (run of pipelineRunPage.items; track run.id) {
+            <tr
+              class="cursor-pointer hover:bg-[--hover-color]"
+              (click)="openLogs(run.id)"
+            >
+              <td>
+                {{ run.id }}
+              </td>
+              <td>
+                {{ run.status }}
+              </td>
+              <td>
+                {{ run.triggerer.name }}
+              </td>
+              <td>
+                {{ run.trigger_time | date: "EE, dd MMM y HH:mm:ss" }}
+              </td>
+              <td>
+                @for (env of run.environment | keyvalue; track env) {
+                  <span> {{ env.key }}='{{ env.value }}' </span>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    }
   </table>
 </div>

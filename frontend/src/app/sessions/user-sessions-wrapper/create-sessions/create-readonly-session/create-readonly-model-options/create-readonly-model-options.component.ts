@@ -42,7 +42,6 @@ export interface ModelOptions {
 @Component({
   selector: 'create-readonly-model-options',
   templateUrl: './create-readonly-model-options.component.html',
-  styleUrls: ['./create-readonly-model-options.component.css'],
   imports: [
     FormsModule,
     ReactiveFormsModule,

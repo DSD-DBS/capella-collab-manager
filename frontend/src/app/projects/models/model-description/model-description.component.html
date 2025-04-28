@@ -3,81 +3,79 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  @if (modelService.model$ | async) {
-    <div class="collab-card w-full sm:w-fit sm:min-w-96">
-      <form (submit)="onSubmit()" [formGroup]="form">
-        <fieldset>
-          <mat-form-field appearance="fill">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="name" />
+@if (modelService.model$ | async) {
+  <div class="collab-card w-full sm:w-fit sm:min-w-96">
+    <form (submit)="onSubmit()" [formGroup]="form">
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
 
-            @if (form.controls.name.errors?.uniqueSlug) {
-              <mat-error>A model with a similar name already exists.</mat-error>
+          @if (form.controls.name.errors?.uniqueSlug) {
+            <mat-error>A model with a similar name already exists.</mat-error>
+          }
+        </mat-form-field>
+      </fieldset>
+
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Description</mat-label>
+          <textarea
+            formControlName="description"
+            matInput
+            rows="3"
+            style="resize: none"
+          ></textarea>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Version</mat-label>
+          <mat-select formControlName="version" id="version-selector">
+            @for (version of this.toolVersions; track version.id) {
+              <mat-option [value]="version.id">
+                {{ version.name }}
+                @if (version.config.is_recommended) {
+                  (recommended)
+                }
+                @if (version.config.is_deprecated) {
+                  (deprecated)
+                }
+              </mat-option>
             }
-          </mat-form-field>
-        </fieldset>
-
-        <fieldset>
-          <mat-form-field appearance="fill">
-            <mat-label>Description</mat-label>
-            <textarea
-              formControlName="description"
-              matInput
-              rows="3"
-              style="resize: none"
-            ></textarea>
-          </mat-form-field>
-        </fieldset>
-        <fieldset>
-          <mat-form-field appearance="fill">
-            <mat-label>Version</mat-label>
-            <mat-select formControlName="version" id="version-selector">
-              @for (version of this.toolVersions; track version.id) {
-                <mat-option [value]="version.id">
-                  {{ version.name }}
-                  @if (version.config.is_recommended) {
-                    (recommended)
-                  }
-                  @if (version.config.is_deprecated) {
-                    (deprecated)
-                  }
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </fieldset>
-        <fieldset>
-          <mat-form-field appearance="fill">
-            <mat-label>Model nature</mat-label>
-            <mat-select formControlName="nature">
-              @for (nature of this.toolNatures; track nature.id) {
-                <mat-option [value]="nature.id">{{ nature.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </fieldset>
-        <br />
-        <div class="flex justify-between">
-          <span
-            matTooltip="The model can't be deleted since it has linked Git and/or T4C models."
-            [matTooltipDisabled]="canDelete"
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+      <fieldset>
+        <mat-form-field appearance="fill">
+          <mat-label>Model nature</mat-label>
+          <mat-select formControlName="nature">
+            @for (nature of this.toolNatures; track nature.id) {
+              <mat-option [value]="nature.id">{{ nature.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </fieldset>
+      <br />
+      <div class="flex justify-between">
+        <span
+          matTooltip="The model can't be deleted since it has linked Git and/or T4C models."
+          [matTooltipDisabled]="canDelete"
+        >
+          <button
+            mat-flat-button
+            class="error-button"
+            (click)="deleteModel()"
+            [disabled]="!canDelete"
+            type="button"
           >
-            <button
-              mat-flat-button
-              class="error-button"
-              (click)="deleteModel()"
-              [disabled]="!canDelete"
-              type="button"
-            >
-              Delete
-            </button>
-          </span>
-          <button mat-flat-button type="submit" [disabled]="!form.valid">
-            Submit
+            Delete
           </button>
-        </div>
-      </form>
-    </div>
-  }
-</div>
+        </span>
+        <button mat-flat-button type="submit" [disabled]="!form.valid">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+}

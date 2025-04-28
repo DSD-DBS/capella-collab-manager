@@ -46,14 +46,10 @@ html {
   .error-button {
     @include mat.button-color($theme: $theme, $color-variant: 'error');
   }
+
+  @apply bg-[#faf9fd];
 }
 
-
-html,
-body {
-  height: 100%;
-  font-size: 100%;
-}
 
 // Copied from https://fontsource.org/docs/getting-started/material-symbols
 .material-symbols-outlined {
@@ -70,32 +66,11 @@ body {
   direction: ltr;
 }
 
-html {
-  overflow-y: scroll;
-  @apply bg-[#fafafa];
-}
-
-body {
-  @apply m-0;
-}
-
-a {
-  text-decoration-line: none !important;
-}
-
 .dialog {
   padding: 20px;
   max-height: 90vh;
 }
 
-table {
-  table-layout: auto;
-  border-collapse: separate;
-  border-spacing: 2px;
-  width: 100%;
-}
-
-// All global variables are defined here
 :root {
   --primary-color: #005cbb;
   --error-color: #ba1a1a;
@@ -109,69 +84,8 @@ table {
   --mat-tree-container-background-color: "transparent";
 }
 
-.expansion-panel > .mat-content {
-  justify-content: space-between;
-}
-
-.mat-content > mat-panel-title {
-  flex: 2;
-}
-.mat-content > mat-panel-description {
-  flex: 1;
-}
-
-// When using two line errors, we need to add some margin to the mat-error
-@keyframes add-margin-for-mat-error {
-  from {
-    margin-bottom: 0;
-  }
-  to {
-    margin-bottom: 13px;
-  }
-}
-
-button.primary {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-button.success {
-  background-color: green;
-  color: white;
-}
-
 h1 {
   font-size: large;
-}
-
-mat-spinner {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.vertical-form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.field-separator {
-  margin: 0 1em;
-  display: inline-block;
-}
-
-.half-field-separator {
-  margin: 0 1em 0 0;
-  display: inline-block;
-}
-
-.field-separator::before {
-  display: inline-block;
-  content: "\00a0\00a0";
-}
-
-.path-separator::before {
-  content: "/";
 }
 
 fieldset {
@@ -182,23 +96,7 @@ fieldset {
   border: none;
   width: auto;
   display: flex;
-}
-
-fieldset > :not(.field-separator) {
-  flex-grow: 1;
-}
-
-.margin.default {
-  margin: 10px;
-}
-
-.version-selector {
-  flex-shrink: 0.5;
-}
-
-.button-content-wrapper {
-  display: flex;
-  flex-direction: column;
+  @apply [&>*]:flex-grow
 }
 
 .content {
@@ -206,14 +104,10 @@ fieldset > :not(.field-separator) {
   margin: auto;
 }
 
-// Own collab manager card styles
-
 .collab-card {
   @apply bg-white p-4 shadow-md;
   border-radius: 28px;
 }
-
-// Angular Material Card Styles
 
 .mat-card-overview .content {
   padding: 10px 20px;
@@ -338,16 +232,6 @@ fieldset > :not(.field-separator) {
 .option-card:hover {
   cursor: pointer;
   background-color: var(--hover-color);
-}
-
-.option-title {
-  text-align: center;
-  display: inline-block;
-  white-space: break-spaces;
-  overflow: hidden;
-  line-height: 1.2rem;
-  height: 2.4rem;
-  width: 20ch;
 }
 
 @media (max-width: 640px) {

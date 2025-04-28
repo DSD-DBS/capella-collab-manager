@@ -4,224 +4,222 @@
  -->
 
 @if ((projectService.project$ | async) && (modelService.model$ | async)) {
-  <div class="wrapper">
-    <div class="collab-card w-full sm:w-fit sm:min-w-[420px]">
-      <form [formGroup]="form" class="flex flex-col gap-4">
-        <div formGroupName="urls" class="flex flex-col gap-4">
-          @if (availableGitInstances?.length) {
-            <div>
-              <mat-form-field
-                appearance="fill"
-                class="w-full"
-                subscriptSizing="dynamic"
+  <div class="collab-card w-full sm:w-fit sm:min-w-[420px]">
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <div formGroupName="urls" class="flex flex-col gap-4">
+        @if (availableGitInstances?.length) {
+          <div>
+            <mat-form-field
+              appearance="fill"
+              class="w-full"
+              subscriptSizing="dynamic"
+            >
+              <mat-label>Base integration URL</mat-label>
+              <mat-select
+                matInput
+                formControlName="baseUrl"
+                (selectionChange)="onBaseIntegrationUrlSelect($event.value)"
+                [value]="selectedGitInstance"
               >
-                <mat-label>Base integration URL</mat-label>
-                <mat-select
-                  matInput
-                  formControlName="baseUrl"
-                  (selectionChange)="onBaseIntegrationUrlSelect($event.value)"
-                  [value]="selectedGitInstance"
-                >
-                  @for (
-                    gitInstance of availableGitInstances;
-                    track gitInstance.id
-                  ) {
-                    <mat-option [value]="gitInstance">{{
-                      gitInstance.url
-                    }}</mat-option>
-                  }
-                </mat-select>
-                @if (urls.baseUrl.errors?.required) {
-                  <mat-error> A base integration URL is required </mat-error>
+                @for (
+                  gitInstance of availableGitInstances;
+                  track gitInstance.id
+                ) {
+                  <mat-option [value]="gitInstance">{{
+                    gitInstance.url
+                  }}</mat-option>
                 }
-              </mat-form-field>
-            </div>
-          }
-          <mat-form-field
-            class="w-full"
-            appearance="fill"
-            subscriptSizing="dynamic"
-          >
-            <mat-label
-              >Absolute URL
-              {{
-                availableGitInstances?.length ? "or Relative URL" : ""
-              }}</mat-label
-            >
-            <input
-              matInput
-              data-testid="absolute-url"
-              (ngModelChange)="onUrlInputChange($event)"
-              formControlName="inputUrl"
-            />
-            @if (urls.inputUrl.errors?.urlSchemeError && urls.inputUrl.value) {
-              <mat-error>
-                {{ urls.inputUrl.errors?.urlSchemeError }}
-              </mat-error>
-            }
-          </mat-form-field>
-          <div data-testid="resulting-url" class="collab-card border">
-            <h2>Resulting URL*</h2>
-
-            <div
-              class="flex items-center text-ellipsis whitespace-normal break-all"
-            >
-              <mat-icon>chevron_right</mat-icon>
-              <span>{{ resultUrl }}</span>
-            </div>
+              </mat-select>
+              @if (urls.baseUrl.errors?.required) {
+                <mat-error> A base integration URL is required </mat-error>
+              }
+            </mat-form-field>
           </div>
-        </div>
-        <div formGroupName="credentials" class="flex flex-col gap-4">
-          <mat-form-field
-            class="w-full"
-            appearance="fill"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Git username</mat-label>
-            <input matInput formControlName="username" />
-          </mat-form-field>
-          <mat-form-field
-            class="w-full"
-            appearance="fill"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Git password or token</mat-label>
-            <input matInput formControlName="password" type="password" />
-            @if (isEditMode) {
-              <mat-hint>If empty, the previous password will be kept.</mat-hint>
-            }
-          </mat-form-field>
-        </div>
+        }
         <mat-form-field
           class="w-full"
           appearance="fill"
           subscriptSizing="dynamic"
         >
-          <mat-label>Branch, tag or revision</mat-label>
+          <mat-label
+            >Absolute URL
+            {{
+              availableGitInstances?.length ? "or Relative URL" : ""
+            }}</mat-label
+          >
           <input
-            (ngModelChange)="filteredRevisionsByPrefix($event)"
             matInput
-            formControlName="revision"
-            [matAutocomplete]="auto"
-            (focus)="onRevisionFocus()"
+            data-testid="absolute-url"
+            (ngModelChange)="onUrlInputChange($event)"
+            formControlName="inputUrl"
           />
-          @if (form.controls.revision.errors?.required) {
-            <mat-error> A revision is required </mat-error>
-          }
-
-          @if (
-            form.controls.revision.errors?.revisionNotFoundError &&
-            form.controls.revision.value
-          ) {
+          @if (urls.inputUrl.errors?.urlSchemeError && urls.inputUrl.value) {
             <mat-error>
-              {{ form.controls.revision.errors?.revisionNotFoundError }}
+              {{ urls.inputUrl.errors?.urlSchemeError }}
             </mat-error>
           }
         </mat-form-field>
-        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-          <mat-optgroup label="branch">
-            @for (branch of filteredRevisions?.branches; track branch) {
-              <mat-option [value]="branch">
-                {{ branch }}
-              </mat-option>
-            }
-          </mat-optgroup>
-          <mat-optgroup label="tag">
-            @for (tag of filteredRevisions?.tags; track tag) {
-              <mat-option [value]="tag">
-                {{ tag }}
-              </mat-option>
-            }
-          </mat-optgroup>
-        </mat-autocomplete>
-        <div>
-          <mat-form-field
-            class="w-full"
-            appearance="fill"
-            subscriptSizing="dynamic"
-          >
-            <mat-label>Entry point</mat-label>
-            <input type="text" matInput formControlName="entrypoint" />
-            @if (form.controls.entrypoint.errors?.required) {
-              <mat-error> An endpoint is required </mat-error>
-            }
+        <div data-testid="resulting-url" class="collab-card border">
+          <h2>Resulting URL*</h2>
 
-            @if (form.controls.entrypoint.errors?.pattern) {
-              <mat-error>
-                Entrypoint must end with ".aird" in case of a capella model
-              </mat-error>
-            }
-          </mat-form-field>
+          <div
+            class="flex items-center text-ellipsis whitespace-normal break-all"
+          >
+            <mat-icon>chevron_right</mat-icon>
+            <span>{{ resultUrl }}</span>
+          </div>
         </div>
-        @if (!asStepper && isEditMode) {
-          <mat-slide-toggle formControlName="primary">
-            Primary Git repository</mat-slide-toggle
+      </div>
+      <div formGroupName="credentials" class="flex flex-col gap-4">
+        <mat-form-field
+          class="w-full"
+          appearance="fill"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Git username</mat-label>
+          <input matInput formControlName="username" />
+        </mat-form-field>
+        <mat-form-field
+          class="w-full"
+          appearance="fill"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Git password or token</mat-label>
+          <input matInput formControlName="password" type="password" />
+          @if (isEditMode) {
+            <mat-hint>If empty, the previous password will be kept.</mat-hint>
+          }
+        </mat-form-field>
+      </div>
+      <mat-form-field
+        class="w-full"
+        appearance="fill"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>Branch, tag or revision</mat-label>
+        <input
+          (ngModelChange)="filteredRevisionsByPrefix($event)"
+          matInput
+          formControlName="revision"
+          [matAutocomplete]="auto"
+          (focus)="onRevisionFocus()"
+        />
+        @if (form.controls.revision.errors?.required) {
+          <mat-error> A revision is required </mat-error>
+        }
+
+        @if (
+          form.controls.revision.errors?.revisionNotFoundError &&
+          form.controls.revision.value
+        ) {
+          <mat-error>
+            {{ form.controls.revision.errors?.revisionNotFoundError }}
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+        <mat-optgroup label="branch">
+          @for (branch of filteredRevisions?.branches; track branch) {
+            <mat-option [value]="branch">
+              {{ branch }}
+            </mat-option>
+          }
+        </mat-optgroup>
+        <mat-optgroup label="tag">
+          @for (tag of filteredRevisions?.tags; track tag) {
+            <mat-option [value]="tag">
+              {{ tag }}
+            </mat-option>
+          }
+        </mat-optgroup>
+      </mat-autocomplete>
+      <div>
+        <mat-form-field
+          class="w-full"
+          appearance="fill"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>Entry point</mat-label>
+          <input type="text" matInput formControlName="entrypoint" />
+          @if (form.controls.entrypoint.errors?.required) {
+            <mat-error> An endpoint is required </mat-error>
+          }
+
+          @if (form.controls.entrypoint.errors?.pattern) {
+            <mat-error>
+              Entrypoint must end with ".aird" in case of a capella model
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+      @if (!asStepper && isEditMode) {
+        <mat-slide-toggle formControlName="primary">
+          Primary Git repository</mat-slide-toggle
+        >
+      }
+
+      @if (asStepper) {
+        <div class="flex justify-between">
+          <div></div>
+          <button
+            mat-raised-button
+            [disabled]="!form.valid"
+            type="submit"
+            (click)="onCreateSubmit()"
           >
-        }
+            Add source
+            <mat-icon iconPositionEnd>navigate_next</mat-icon>
+          </button>
+        </div>
+      } @else if (!isEditMode) {
+        <div class="flex justify-between">
+          <div></div>
+          <button
+            mat-raised-button
+            [disabled]="!form.valid"
+            type="submit"
+            (click)="onCreateSubmit()"
+            data-testid="add-source-button"
+          >
+            Add source
+            <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+          </button>
+        </div>
+      } @else if (editing) {
+        <div class="flex justify-between">
+          <button mat-raised-button (click)="cancelEditing()">Cancel</button>
 
-        @if (asStepper) {
-          <div class="flex justify-between">
-            <div></div>
+          <button
+            mat-raised-button
+            [disabled]="!form.valid"
+            type="submit"
+            (click)="onEditSubmit()"
+          >
+            Apply changes
+          </button>
+        </div>
+      } @else {
+        <div class="flex justify-between">
+          <div></div>
+          <div>
             <button
               mat-raised-button
-              [disabled]="!form.valid"
-              type="submit"
-              (click)="onCreateSubmit()"
+              class="error-button"
+              (click)="unlinkGitModel()"
             >
-              Add source
-              <mat-icon iconPositionEnd>navigate_next</mat-icon>
+              Unlink
             </button>
-          </div>
-        } @else if (!isEditMode) {
-          <div class="flex justify-between">
-            <div></div>
+            &nbsp;&nbsp;
             <button
               mat-raised-button
-              [disabled]="!form.valid"
-              type="submit"
-              (click)="onCreateSubmit()"
-              data-testid="add-source-button"
+              (click)="enableEditing()"
+              data-testid="edit"
             >
-              Add source
-              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+              Edit
             </button>
           </div>
-        } @else if (editing) {
-          <div class="flex justify-between">
-            <button mat-raised-button (click)="cancelEditing()">Cancel</button>
-
-            <button
-              mat-raised-button
-              [disabled]="!form.valid"
-              type="submit"
-              (click)="onEditSubmit()"
-            >
-              Apply changes
-            </button>
-          </div>
-        } @else {
-          <div class="flex justify-between">
-            <div></div>
-            <div>
-              <button
-                mat-raised-button
-                class="error-button"
-                (click)="unlinkGitModel()"
-              >
-                Unlink
-              </button>
-              &nbsp;&nbsp;
-              <button
-                mat-raised-button
-                (click)="enableEditing()"
-                data-testid="edit"
-              >
-                Edit
-              </button>
-            </div>
-          </div>
-        }
-      </form>
-    </div>
+        </div>
+      }
+    </form>
   </div>
 }

@@ -2,13 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import {
-  NgFor,
-  NgIf,
-  AsyncPipe,
-  DatePipe,
-  KeyValuePipe,
-} from '@angular/common';
+import { AsyncPipe, DatePipe, KeyValuePipe } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -30,15 +24,7 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
 @Component({
   selector: 'app-job-run-overview',
   templateUrl: './job-run-overview.component.html',
-  styleUrls: ['./job-run-overview.component.css'],
-  imports: [
-    NgFor,
-    NgIf,
-    TextLineSkeletonLoaderComponent,
-    AsyncPipe,
-    DatePipe,
-    KeyValuePipe,
-  ],
+  imports: [TextLineSkeletonLoaderComponent, AsyncPipe, DatePipe, KeyValuePipe],
 })
 @UntilDestroy()
 export class JobRunOverviewComponent implements OnInit, AfterViewInit {
