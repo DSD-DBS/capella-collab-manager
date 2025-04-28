@@ -11,5 +11,6 @@ import { MatIconComponent } from '../helpers/mat-icon/mat-icon.component';
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   imports: [RouterLink, MatRipple, MatIconComponent],
+  styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent {}

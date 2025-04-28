@@ -217,23 +217,6 @@ fieldset {
   padding-right: 0px !important;
 }
 
-// Option cards
-
-.option-card {
-  width: 200px;
-  max-width: 85vw;
-  font-size: 1.5em;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
-.option-card:hover {
-  cursor: pointer;
-  background-color: var(--hover-color);
-}
-
 @media (max-width: 640px) {
   .mat-stepper-horizontal-line {
     width: 100%;
