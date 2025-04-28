@@ -3,100 +3,98 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="wrapper">
-  <div class="collab-card w-full sm:w-fit sm:min-w-[420px]">
-    <h2 class="text-xl font-medium">pure::variants configuration</h2>
-    <form
-      (submit)="onLicenseConfigurationSubmit()"
-      [formGroup]="licenseServerConfigurationForm"
-    >
-      <div>
-        @if (configuration?.license_server_url === undefined || loading) {
-          <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
-        } @else {
-          <fieldset>
-            <mat-form-field appearance="fill">
-              <mat-label>Floating license server URL</mat-label>
-              <input
-                placeholder="http://localhost:8080"
-                matInput
-                formControlName="licenseServerURL"
-              />
-            </mat-form-field>
-          </fieldset>
-        }
-      </div>
-      <div class="flex justify-between">
-        <button
-          mat-raised-button
-          type="submit"
-          [disabled]="licenseServerConfigurationForm.invalid"
-        >
-          Update
-        </button>
-      </div>
-    </form>
-    <hr class="my-3" />
-    <form
-      (submit)="onLicenseFileUploadSubmit()"
-      [formGroup]="licenseKeyUploadForm"
-    >
-      <div>
-        Upload "license.lic" file:
-        <br />
-        @if (
-          configuration?.license_key_filename === undefined || loadingLicenseKey
-        ) {
-          <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
-        } @else if (configuration?.license_key_filename && !loadingLicenseKey) {
+<div class="collab-card w-full sm:w-fit sm:min-w-[420px]">
+  <h2 class="text-xl font-medium">pure::variants configuration</h2>
+  <form
+    (submit)="onLicenseConfigurationSubmit()"
+    [formGroup]="licenseServerConfigurationForm"
+  >
+    <div>
+      @if (configuration?.license_server_url === undefined || loading) {
+        <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
+      } @else {
+        <fieldset>
+          <mat-form-field appearance="fill">
+            <mat-label>Floating license server URL</mat-label>
+            <input
+              placeholder="http://localhost:8080"
+              matInput
+              formControlName="licenseServerURL"
+            />
+          </mat-form-field>
+        </fieldset>
+      }
+    </div>
+    <div class="flex justify-between">
+      <button
+        mat-raised-button
+        type="submit"
+        [disabled]="licenseServerConfigurationForm.invalid"
+      >
+        Update
+      </button>
+    </div>
+  </form>
+  <hr class="my-3" />
+  <form
+    (submit)="onLicenseFileUploadSubmit()"
+    [formGroup]="licenseKeyUploadForm"
+  >
+    <div>
+      Upload "license.lic" file:
+      <br />
+      @if (
+        configuration?.license_key_filename === undefined || loadingLicenseKey
+      ) {
+        <app-form-field-skeleton-loader></app-form-field-skeleton-loader>
+      } @else if (configuration?.license_key_filename && !loadingLicenseKey) {
+        <div>
+          You've uploaded a file with the name '{{
+            configuration?.license_key_filename
+          }}' already. If you want to update the license, please remove the
+          current license file first. <br />
+          <button
+            type="button"
+            class="error-button"
+            mat-raised-button
+            (click)="onLicenseFileDeletionClick()"
+          >
+            Delete current license
+          </button>
+        </div>
+      } @else if (
+        configuration?.license_key_filename === null && !loadingLicenseKey
+      ) {
+        <div class="flex justify-between">
           <div>
-            You've uploaded a file with the name '{{
-              configuration?.license_key_filename
-            }}' already. If you want to update the license, please remove the
-            current license file first. <br />
             <button
+              id="choose-file-button"
               type="button"
-              class="error-button"
               mat-raised-button
-              (click)="onLicenseFileDeletionClick()"
+              (click)="fileInput.click()"
             >
-              Delete current license
+              Choose File
+            </button>
+            <input
+              hidden
+              #fileInput
+              type="file"
+              (change)="onLicenseFileChange($event)"
+              formControlName="licenseFileName"
+            /><br />
+            Selected file: {{ selectedFile || "No file selected" }}
+          </div>
+          <div class="flex justify-between">
+            <button
+              mat-raised-button
+              type="submit"
+              [disabled]="licenseKeyUploadForm.invalid"
+            >
+              Upload
             </button>
           </div>
-        } @else if (
-          configuration?.license_key_filename === null && !loadingLicenseKey
-        ) {
-          <div class="flex justify-between">
-            <div>
-              <button
-                id="choose-file-button"
-                type="button"
-                mat-raised-button
-                (click)="fileInput.click()"
-              >
-                Choose File
-              </button>
-              <input
-                hidden
-                #fileInput
-                type="file"
-                (change)="onLicenseFileChange($event)"
-                formControlName="licenseFileName"
-              /><br />
-              Selected file: {{ selectedFile || "No file selected" }}
-            </div>
-            <div class="flex justify-between">
-              <button
-                mat-raised-button
-                type="submit"
-                [disabled]="licenseKeyUploadForm.invalid"
-              >
-                Upload
-              </button>
-            </div>
-          </div>
-        }
-      </div>
-    </form>
-  </div>
+        </div>
+      }
+    </div>
+  </form>
 </div>

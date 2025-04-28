@@ -38,6 +38,17 @@ export const AllowPureVariants: Story = {
   ],
 };
 
+export const Loading: Story = {
+  args: {
+    loading: true,
+  },
+  decorators: [
+    moduleMetadata({
+      providers: [mockModelWrapperServiceProvider(mockModel, [mockModel])],
+    }),
+  ],
+};
+
 const mockModelNoPureVariants = {
   ...mockModel,
   tool: mockTrainingControllerTool,

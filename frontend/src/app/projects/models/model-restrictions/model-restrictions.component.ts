@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
@@ -11,7 +11,9 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import {
@@ -20,7 +22,6 @@ import {
   ToolModelRestrictions,
 } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
-import { MatCheckboxLoaderComponent } from '../../../helpers/skeleton-loaders/mat-checkbox-loader/mat-checkbox-loader.component';
 import { ProjectWrapperService } from '../../service/project.service';
 
 @UntilDestroy()
@@ -30,10 +31,10 @@ import { ProjectWrapperService } from '../../service/project.service';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    MatCheckboxLoaderComponent,
-    NgTemplateOutlet,
     MatCheckbox,
     AsyncPipe,
+    MatProgressSpinnerModule,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class ModelRestrictionsComponent implements OnInit {
