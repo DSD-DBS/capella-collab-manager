@@ -4,7 +4,7 @@
  */
 import { DialogRef } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -36,18 +36,19 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PipelineDeletionDialogComponent {
+  userService = inject(OwnUserWrapperService);
+  private dialogRef = inject(DialogRef);
+  private toastService = inject(ToastService);
+  private pipelinesService = inject(ProjectsModelsBackupsService);
+  private pipelineWrapperService = inject(PipelineWrapperService);
+  data = inject<{
+    projectSlug: string;
+    modelSlug: string;
+    backup: Backup;
+  }>(MAT_DIALOG_DATA);
+
   force = false;
   loading = new BehaviorSubject(false);
-
-  constructor(
-    public userService: OwnUserWrapperService,
-    private dialogRef: DialogRef,
-    private toastService: ToastService,
-    private pipelinesService: ProjectsModelsBackupsService,
-    private pipelineWrapperService: PipelineWrapperService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: { projectSlug: string; modelSlug: string; backup: Backup },
-  ) {}
 
   onCancel(): void {
     this.dialogRef.close(false);

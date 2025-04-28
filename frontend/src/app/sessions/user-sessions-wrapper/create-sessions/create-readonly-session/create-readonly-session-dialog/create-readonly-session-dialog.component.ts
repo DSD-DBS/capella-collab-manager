@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { DialogRef } from '@angular/cdk/dialog';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -43,22 +43,20 @@ import { ConnectionMethod } from 'src/app/settings/core/tools-settings/tool.serv
   ],
 })
 export class CreateReadonlySessionDialogComponent implements OnInit {
+  sessionService = inject(SessionService);
+  data = inject<{
+    projectSlug: string;
+    models: ToolModel[];
+    tool: Tool;
+    toolVersion: ToolVersion;
+  }>(MAT_DIALOG_DATA);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
+  private dialog =
+    inject<DialogRef<CreateReadonlySessionDialogComponent>>(DialogRef);
+
   maxNumberOfModels?: number;
   connectionMethods: ConnectionMethod[] = [];
-
-  constructor(
-    public sessionService: SessionService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: {
-      projectSlug: string;
-      models: ToolModel[];
-      tool: Tool;
-      toolVersion: ToolVersion;
-    },
-    private router: Router,
-    private toastService: ToastService,
-    private dialog: DialogRef<CreateReadonlySessionDialogComponent>,
-  ) {}
 
   form = new FormGroup({
     connectionMethodId: new FormControl<string | undefined>(

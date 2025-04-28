@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,18 +31,16 @@ import { ProjectWrapperService } from '../../service/project.service';
   templateUrl: './project-metadata.component.html',
 })
 export class ProjectMetadataComponent implements OnInit {
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  projectUserService = inject(ProjectUserService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
+
   project?: Project;
   canDelete = false;
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    public projectUserService: ProjectUserService,
-    private toastService: ToastService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private dialog: MatDialog,
-  ) {}
 
   ngOnInit(): void {
     this.projectService.project$

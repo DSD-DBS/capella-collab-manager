@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatExpansionPanel,
@@ -47,17 +47,15 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
   ],
 })
 export class ModelDiagramCodeBlockComponent implements OnInit, AfterViewInit {
+  private metadataService = inject(MetadataService);
+  private userService = inject(OwnUserWrapperService);
+  private tokenService = inject(UsersTokenService);
+  private toastService = inject(ToastService);
+  private domSanitizer = inject(DomSanitizer);
+
   passwordValue?: string;
   metadata?: Metadata;
   highlighter?: HighlighterGeneric<BundledLanguage, BundledTheme>;
-
-  constructor(
-    private metadataService: MetadataService,
-    private userService: OwnUserWrapperService,
-    private tokenService: UsersTokenService,
-    private toastService: ToastService,
-    private domSanitizer: DomSanitizer,
-  ) {}
 
   ngOnInit(): void {
     this.metadataService.backendMetadata.subscribe((metadata) => {

@@ -12,7 +12,7 @@ import {
   HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { getReasonPhrase } from 'http-status-codes';
 import { Observable, tap, from, catchError } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -32,7 +32,7 @@ export const SKIP_ERROR_HANDLING_CONTEXT = new HttpContext().set(
   providedIn: 'root',
 })
 export class ErrorHandlingInterceptor implements HttpInterceptor {
-  constructor(private toastService: ToastService) {}
+  private toastService = inject(ToastService);
 
   intercept(
     request: HttpRequest<unknown>,

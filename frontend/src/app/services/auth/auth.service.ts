@@ -2,20 +2,20 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AuthenticationService } from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationWrapperService {
+  private authenticationService = inject(AuthenticationService);
+
   SESSION_STORAGE_NONCE_KEY = 'CCM_NONCE';
   SESSION_STORAGE_CODE_VERIFIER_KEY = 'CCM_CODE_VERIFIER';
   LOGGED_IN_KEY = 'CCM_LOGGED_IN';
 
   redirectURL: string | undefined = undefined;
-
-  constructor(private authenticationService: AuthenticationService) {}
 
   isLoggedIn(): boolean {
     const loggedIn = localStorage.getItem(this.LOGGED_IN_KEY);

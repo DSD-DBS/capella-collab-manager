@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -36,16 +36,15 @@ import {
   ],
 })
 export class T4CRepoDeletionDialogComponent {
+  private repoService = inject(T4CRepositoryWrapperService);
+  dialogRef =
+    inject<MatDialogRef<T4CRepoDeletionDialogComponent>>(MatDialogRef);
+  repo = inject<ExtendedT4CRepository>(MAT_DIALOG_DATA);
+
   repositoryNameForm = new FormControl('', [
     Validators.required,
     this.repositoryNameMatchValidator(),
   ]);
-
-  constructor(
-    private repoService: T4CRepositoryWrapperService,
-    public dialogRef: MatDialogRef<T4CRepoDeletionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public repo: ExtendedT4CRepository,
-  ) {}
 
   removeRepository(): void {
     if (this.repositoryNameForm.valid) {

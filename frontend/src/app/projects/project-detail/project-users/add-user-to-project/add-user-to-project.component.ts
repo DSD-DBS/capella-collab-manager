@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { KeyValuePipe } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -47,6 +47,14 @@ import {
   ],
 })
 export class AddUserToProjectDialogComponent {
+  projectUserService = inject(ProjectUserService);
+  private toastService = inject(ToastService);
+  private matDialogRef =
+    inject<MatDialogRef<AddUserToProjectDialogComponent>>(MatDialogRef);
+  data = inject<{
+    project: Project;
+  }>(MAT_DIALOG_DATA);
+
   addUserToProjectForm = new FormGroup(
     {
       username: new FormControl('', {
@@ -59,13 +67,6 @@ export class AddUserToProjectDialogComponent {
     },
     this.permissionRequiredValidator(),
   );
-
-  constructor(
-    public projectUserService: ProjectUserService,
-    private toastService: ToastService,
-    private matDialogRef: MatDialogRef<AddUserToProjectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { project: Project },
-  ) {}
 
   get permissions() {
     return ProjectUserService.PERMISSIONS;

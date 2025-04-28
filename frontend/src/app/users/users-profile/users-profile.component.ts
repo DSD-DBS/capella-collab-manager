@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ChipComponent } from 'src/app/helpers/chip/chip.component';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
@@ -31,9 +31,7 @@ import { UserWorkspacesComponent } from './user-workspaces/user-workspaces.compo
   ],
 })
 export class UsersProfileComponent {
-  constructor(
-    public ownUserService: OwnUserWrapperService,
-    public userWrapperService: UserWrapperService,
-    public unifiedConfigWrapperService: UnifiedConfigWrapperService,
-  ) {}
+  ownUserService = inject(OwnUserWrapperService);
+  userWrapperService = inject(UserWrapperService);
+  unifiedConfigWrapperService = inject(UnifiedConfigWrapperService);
 }

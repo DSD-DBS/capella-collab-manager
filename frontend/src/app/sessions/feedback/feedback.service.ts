@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { map, take } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -15,11 +15,11 @@ import { FeedbackDialogComponent } from './feedback-dialog/feedback-dialog.compo
   providedIn: 'root',
 })
 export class FeedbackWrapperService {
-  constructor(
-    public dialog: MatDialog,
-    private authService: AuthenticationWrapperService,
-    public unifiedConfigWrapperService: UnifiedConfigWrapperService,
-  ) {
+  dialog = inject(MatDialog);
+  private authService = inject(AuthenticationWrapperService);
+  unifiedConfigWrapperService = inject(UnifiedConfigWrapperService);
+
+  constructor() {
     this.unifiedConfigWrapperService.unifiedConfig$.subscribe(() => {
       this.triggerFeedbackPrompt();
     });

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgFor, AsyncPipe } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
@@ -41,18 +41,23 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   ],
 })
 export class MoveModelComponent {
+  private modelService = inject(ModelWrapperService);
+  private dialogRef = inject<MatDialogRef<MoveModelComponent>>(MatDialogRef);
+  private toastService = inject(ToastService);
+  projectService = inject(ProjectWrapperService);
+  private dialog = inject(MatDialog);
+  data = inject<{
+    projectSlug: string;
+    model: ToolModel;
+  }>(MAT_DIALOG_DATA);
+
   selectedProject?: Project;
   search = '';
   filteredProjects$: Observable<Project[] | undefined>;
-  constructor(
-    private modelService: ModelWrapperService,
-    private dialogRef: MatDialogRef<MoveModelComponent>,
-    private toastService: ToastService,
-    public projectService: ProjectWrapperService,
-    private dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA)
-    public data: { projectSlug: string; model: ToolModel },
-  ) {
+  constructor() {
+    const projectService = this.projectService;
+    const data = this.data;
+
     this.projectService.loadProjects('manager');
     this.filteredProjects$ = projectService.projects$.pipe(
       map((projects) =>

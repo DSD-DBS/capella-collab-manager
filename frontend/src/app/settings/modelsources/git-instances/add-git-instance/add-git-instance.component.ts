@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -37,12 +37,10 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-in
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddGitInstanceComponent {
-  constructor(
-    public gitInstancesService: GitInstancesWrapperService,
-    private toastService: ToastService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
+  gitInstancesService = inject(GitInstancesWrapperService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   gitInstancesForm = new FormGroup({
     type: new FormControl('', Validators.required),

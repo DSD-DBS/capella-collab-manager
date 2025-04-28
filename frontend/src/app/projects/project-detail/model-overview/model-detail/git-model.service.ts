@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import {
   GitModel,
@@ -14,7 +14,7 @@ import {
   providedIn: 'root',
 })
 export class GitModelService {
-  constructor(private gitModelService: ProjectsModelsGitService) {}
+  private gitModelService = inject(ProjectsModelsGitService);
 
   private _gitModel = new Subject<GitModel | undefined>();
   private _gitModels = new BehaviorSubject<GitModel[] | undefined>(undefined);

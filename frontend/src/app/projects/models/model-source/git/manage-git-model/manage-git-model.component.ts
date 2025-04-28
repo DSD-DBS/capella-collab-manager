@@ -10,6 +10,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  inject,
 } from '@angular/core';
 import {
   Validators,
@@ -89,6 +90,22 @@ import { GitInstancesWrapperService } from 'src/app/settings/modelsources/git-in
   ],
 })
 export class ManageGitModelComponent implements OnInit, OnDestroy {
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  private gitInstancesService = inject(GitInstancesWrapperService);
+  private settingsModelsourcesGitService = inject(
+    SettingsModelsourcesGitService,
+  );
+  private gitService = inject(GitService);
+  private gitModelService = inject(GitModelService);
+  private toastService = inject(ToastService);
+  private breadCrumbsService = inject(BreadcrumbsService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private fb = inject(FormBuilder);
+  private dialog = inject(MatDialog);
+  private projectsModelsGitService = inject(ProjectsModelsGitService);
+
   @Input() asStepper?: boolean;
   @Output() create = new EventEmitter<boolean>();
 
@@ -108,22 +125,6 @@ export class ManageGitModelComponent implements OnInit, OnDestroy {
 
   public isEditMode = false;
   public editing = false;
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    private gitInstancesService: GitInstancesWrapperService,
-    private settingsModelsourcesGitService: SettingsModelsourcesGitService,
-    private gitService: GitService,
-    private gitModelService: GitModelService,
-    private toastService: ToastService,
-    private breadCrumbsService: BreadcrumbsService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private dialog: MatDialog,
-    private projectsModelsGitService: ProjectsModelsGitService,
-  ) {}
 
   public form = this.fb.group({
     urls: this.fb.group({

@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,6 +32,11 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
 })
 @UntilDestroy()
 export class ModelComplexityBadgeComponent implements OnChanges {
+  private modelComplexityBadgeService = inject(
+    ProjectsModelsModelComplexityBadgeService,
+  );
+  private projectService = inject(ProjectWrapperService);
+
   @Input() modelSlug?: string;
 
   complexityBadge?: string | ArrayBuffer | null;
@@ -33,11 +44,6 @@ export class ModelComplexityBadgeComponent implements OnChanges {
 
   errorMessage?: string;
   errorCode?: string;
-
-  constructor(
-    private modelComplexityBadgeService: ProjectsModelsModelComplexityBadgeService,
-    private projectService: ProjectWrapperService,
-  ) {}
 
   ngOnChanges(_: SimpleChanges) {
     if (this.modelSlug) {

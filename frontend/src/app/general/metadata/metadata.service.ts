@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { map } from 'rxjs';
 import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapper/unified-config-wrapper.service';
@@ -12,11 +12,11 @@ import { UnifiedConfigWrapperService } from '../../services/unified-config-wrapp
   providedIn: 'root',
 })
 export class MetadataService {
-  constructor(
-    private httpClient: HttpClient,
-    public dialog: MatDialog,
-    private unifiedConfigWrapperService: UnifiedConfigWrapperService,
-  ) {
+  private httpClient = inject(HttpClient);
+  dialog = inject(MatDialog);
+  private unifiedConfigWrapperService = inject(UnifiedConfigWrapperService);
+
+  constructor() {
     this.loadVersion();
   }
 

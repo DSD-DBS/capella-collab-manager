@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -20,6 +20,9 @@ import {
   providedIn: 'root',
 })
 export class GitInstancesWrapperService {
+  private http = inject(HttpClient);
+  private gitInstancesService = inject(SettingsModelsourcesGitService);
+
   private _gitInstances = new BehaviorSubject<GitInstance[] | undefined>(
     undefined,
   );
@@ -29,11 +32,6 @@ export class GitInstancesWrapperService {
 
   public readonly gitInstances$ = this._gitInstances.asObservable();
   public readonly gitInstance$ = this._gitInstance.asObservable();
-
-  constructor(
-    private http: HttpClient,
-    private gitInstancesService: SettingsModelsourcesGitService,
-  ) {}
 
   loadGitInstances(): void {
     this.gitInstancesService

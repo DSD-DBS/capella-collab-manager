@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, map } from 'rxjs';
@@ -19,13 +19,11 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   imports: [RouterOutlet],
 })
 export class T4CModelWrapperComponent implements OnInit, OnDestroy {
-  constructor(
-    private route: ActivatedRoute,
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    private t4cModelService: T4CModelService,
-    private breadCrumbsService: BreadcrumbsService,
-  ) {}
+  private route = inject(ActivatedRoute);
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  private t4cModelService = inject(T4CModelService);
+  private breadCrumbsService = inject(BreadcrumbsService);
 
   ngOnInit(): void {
     combineLatest([

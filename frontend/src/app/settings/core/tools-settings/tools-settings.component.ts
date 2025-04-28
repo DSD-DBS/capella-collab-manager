@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -17,12 +17,12 @@ import { ToolWrapperService } from './tool.service';
   imports: [RouterLink, MatRipple, MatIconComponent, MatIcon],
 })
 export class ToolsSettingsComponent {
+  toolService = inject(ToolWrapperService);
+  private toolsService = inject(ToolsService);
+
   tools: Record<string, ToolExtended> = {};
 
-  constructor(
-    public toolService: ToolWrapperService,
-    private toolsService: ToolsService,
-  ) {
+  constructor() {
     this.tools = {};
     this.toolService.getTools().subscribe(() => {
       for (const tool of this.toolService.tools!.map((tool) => tool.id)) {

@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -44,6 +49,12 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateProjectToolsComponent implements OnInit {
+  projectWrapperService = inject(ProjectWrapperService);
+  private projectsToolService = inject(ProjectsToolsService);
+  private toolsService = inject(ToolsService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   form = new FormGroup({
     tool_id: new FormControl<number>(-1, [Validators.min(0)]),
     tool_version_id: new FormControl<number>(-1, [Validators.min(0)]),
@@ -58,14 +69,6 @@ export class CreateProjectToolsComponent implements OnInit {
     ToolVersion[] | undefined
   >(undefined);
   availableToolVersions$ = this.availableToolVersions.asObservable();
-
-  constructor(
-    public projectWrapperService: ProjectWrapperService,
-    private projectsToolService: ProjectsToolsService,
-    private toolsService: ToolsService,
-    private router: Router,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     this.loadTools();

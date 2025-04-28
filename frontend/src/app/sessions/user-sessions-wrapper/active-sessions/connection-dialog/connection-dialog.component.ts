@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
@@ -24,18 +24,18 @@ import { DisplayValueComponent } from '../../../../helpers/display-value/display
   imports: [DisplayValueComponent, MatButton],
 })
 export class ConnectionDialogComponent {
+  userService = inject(OwnUserWrapperService);
+  private sessionService = inject(SessionService);
+  private sessionsService = inject(SessionsService);
+  session = inject<Session>(MAT_DIALOG_DATA);
+  dialogRef = inject<MatDialogRef<ConnectionDialogComponent>>(MatDialogRef);
+  private toastService = inject(ToastService);
+
   isPersistentSessionAlias = isPersistentSession;
 
   connectionInfo?: SessionConnectionInformation = undefined;
 
-  constructor(
-    public userService: OwnUserWrapperService,
-    private sessionService: SessionService,
-    private sessionsService: SessionsService,
-    @Inject(MAT_DIALOG_DATA) public session: Session,
-    public dialogRef: MatDialogRef<ConnectionDialogComponent>,
-    private toastService: ToastService,
-  ) {
+  constructor() {
     this.sessionsService
       .getSessionConnectionInformation(this.session.id)
       .subscribe((connectionInfo) => {

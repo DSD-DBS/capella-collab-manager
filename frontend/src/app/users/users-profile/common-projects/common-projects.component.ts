@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterLink } from '@angular/router';
 import { BehaviorSubject, of, switchMap } from 'rxjs';
@@ -18,14 +23,12 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommonProjectsComponent implements OnInit {
+  userService = inject(OwnUserWrapperService);
+  userWrapperService = inject(UserWrapperService);
+  private usersService = inject(UsersService);
+
   commonProjects = new BehaviorSubject<Project[] | undefined>(undefined);
   public readonly commonProjects$ = this.commonProjects.asObservable();
-
-  constructor(
-    public userService: OwnUserWrapperService,
-    public userWrapperService: UserWrapperService,
-    private usersService: UsersService,
-  ) {}
 
   ngOnInit(): void {
     this.userWrapperService.user$

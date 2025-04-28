@@ -13,6 +13,7 @@ import {
   model,
   Output,
   signal,
+  inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { type editor } from 'monaco-editor';
@@ -29,6 +30,9 @@ import { stringify, parse, YAMLParseError } from 'yaml';
   imports: [MonacoEditorModule, FormsModule],
 })
 export class EditorComponent {
+  private toastService = inject(ToastService);
+  private el = inject(ElementRef);
+
   height = input('400px');
   lineWidth = input(55);
   // Helps to identify the editor in the DOM
@@ -60,10 +64,7 @@ export class EditorComponent {
   @Output()
   submitted = new EventEmitter();
 
-  constructor(
-    private toastService: ToastService,
-    private el: ElementRef,
-  ) {
+  constructor() {
     effect(() => {
       this.setValue(this.value());
     });

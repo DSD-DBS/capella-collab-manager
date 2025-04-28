@@ -9,6 +9,7 @@ import {
   Component,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginator } from '@angular/material/paginator';
@@ -40,6 +41,10 @@ import { RelativeTimeComponent } from '../../../general/relative-time/relative-t
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserInformationComponent implements OnInit, AfterViewInit {
+  userService = inject(OwnUserWrapperService);
+  userWrapperService = inject(UserWrapperService);
+  private usersService = inject(UsersService);
+
   userEvents?: HistoryEvent[];
 
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
@@ -56,12 +61,6 @@ export class UserInformationComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.historyEventDataSource.paginator = this.paginator;
   }
-
-  constructor(
-    public userService: OwnUserWrapperService,
-    public userWrapperService: UserWrapperService,
-    private usersService: UsersService,
-  ) {}
 
   ngOnInit(): void {
     this.userWrapperService.user$

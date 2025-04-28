@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
@@ -17,12 +17,10 @@ import { ProjectWrapperService } from '../service/project.service';
   imports: [RouterOutlet],
 })
 export class ProjectWrapperComponent implements OnInit, OnDestroy {
-  constructor(
-    private route: ActivatedRoute,
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    private breadcrumbsService: BreadcrumbsService,
-  ) {}
+  private route = inject(ActivatedRoute);
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  private breadcrumbsService = inject(BreadcrumbsService);
 
   ngOnInit(): void {
     this.route.params

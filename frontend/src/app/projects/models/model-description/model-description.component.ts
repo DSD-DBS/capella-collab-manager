@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -46,6 +46,15 @@ import { ProjectWrapperService } from '../../service/project.service';
   ],
 })
 export class ModelDescriptionComponent implements OnInit {
+  modelService = inject(ModelWrapperService);
+  projectService = inject(ProjectWrapperService);
+  private toolWrapperService = inject(ToolWrapperService);
+  private toolService = inject(ToolsService);
+  toastService = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog);
+
   form = new FormGroup({
     name: new FormControl<string>(''),
     description: new FormControl<string>(''),
@@ -59,17 +68,6 @@ export class ModelDescriptionComponent implements OnInit {
 
   private projectSlug?: string = undefined;
   private modelSlug?: string = undefined;
-
-  constructor(
-    public modelService: ModelWrapperService,
-    public projectService: ProjectWrapperService,
-    private toolWrapperService: ToolWrapperService,
-    private toolService: ToolsService,
-    public toastService: ToastService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private dialog: MatDialog,
-  ) {}
 
   ngOnInit(): void {
     this.modelService.model$

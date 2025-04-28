@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   MatButton,
   MatIconAnchor,
@@ -55,10 +55,8 @@ import { ConnectionDialogComponent } from '../user-sessions-wrapper/active-sessi
   ],
 })
 export class SessionOverviewComponent implements OnInit {
-  constructor(
-    private sessionsService: SessionsService,
-    private dialog: MatDialog,
-  ) {}
+  private sessionsService = inject(SessionsService);
+  private dialog = inject(MatDialog);
 
   sessions: Session[] | undefined = undefined;
   displayedColumns = [

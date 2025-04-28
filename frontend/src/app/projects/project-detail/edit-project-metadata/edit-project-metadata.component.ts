@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgFor } from '@angular/common';
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  inject,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -43,15 +49,13 @@ import { ProjectWrapperService } from '../../service/project.service';
   ],
 })
 export class EditProjectMetadataComponent implements OnInit, OnChanges {
+  projectService = inject(ProjectWrapperService);
+  projectUserService = inject(ProjectUserService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+
   canDelete = false;
   project?: Project;
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public projectUserService: ProjectUserService,
-    private toastService: ToastService,
-    private router: Router,
-  ) {}
 
   form = new FormGroup({
     name: new FormControl<string>('', Validators.required),

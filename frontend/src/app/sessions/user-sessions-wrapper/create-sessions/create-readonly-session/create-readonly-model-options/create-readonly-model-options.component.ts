@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgFor, NgIf } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   Validators,
   FormBuilder,
@@ -61,15 +61,13 @@ export interface ModelOptions {
   ],
 })
 export class CreateReadonlyModelOptionsComponent implements OnInit {
+  private gitService = inject(ProjectsModelsGitService);
+  private fb = inject(FormBuilder);
+
   @Input() projectSlug!: string;
   @Input() modelOptions!: ModelOptions;
   @Input() tool!: Tool;
   @Input() toolVersion!: ToolVersion;
-
-  constructor(
-    private gitService: ProjectsModelsGitService,
-    private fb: FormBuilder,
-  ) {}
 
   private revisions?: GetRevisionsResponseModel;
   public filteredRevisions?: GetRevisionsResponseModel;

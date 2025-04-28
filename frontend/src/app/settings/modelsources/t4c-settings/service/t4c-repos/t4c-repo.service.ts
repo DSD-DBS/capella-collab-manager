@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -22,9 +22,7 @@ import {
   providedIn: 'root',
 })
 export class T4CRepositoryWrapperService {
-  constructor(
-    private t4cInstanceService: SettingsModelsourcesT4CInstancesService,
-  ) {}
+  private t4cInstanceService = inject(SettingsModelsourcesT4CInstancesService);
 
   private _repositories = new BehaviorSubject<
     ExtendedT4CRepository[] | undefined

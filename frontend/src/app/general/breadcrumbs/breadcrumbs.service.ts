@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   Data,
@@ -21,12 +21,14 @@ export interface Breadcrumb {
   providedIn: 'root',
 })
 export class BreadcrumbsService {
+  private router = inject(Router);
+
   private readonly _breadcrumbs = new BehaviorSubject<Breadcrumb[]>([]);
 
   readonly breadcrumbs = this._breadcrumbs.asObservable();
   private placeholders: Data = {};
 
-  constructor(private router: Router) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => this.updateBreadcrumbs());

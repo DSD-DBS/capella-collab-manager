@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -18,9 +18,9 @@ import {
   providedIn: 'root',
 })
 export class T4CLicenseServerWrapperService {
-  constructor(
-    private licenseServerService: SettingsModelsourcesT4CLicenseServersService,
-  ) {}
+  private licenseServerService = inject(
+    SettingsModelsourcesT4CLicenseServersService,
+  );
 
   private _licenseServers = new BehaviorSubject<T4CLicenseServer[] | undefined>(
     undefined,

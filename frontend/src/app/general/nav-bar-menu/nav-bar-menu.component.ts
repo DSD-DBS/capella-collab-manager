@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -27,9 +27,7 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
   ],
 })
 export class NavBarMenuComponent {
-  constructor(
-    public authService: AuthenticationWrapperService,
-    public navBarService: NavBarService,
-    public userService: OwnUserWrapperService,
-  ) {}
+  authService = inject(AuthenticationWrapperService);
+  navBarService = inject(NavBarService);
+  userService = inject(OwnUserWrapperService);
 }

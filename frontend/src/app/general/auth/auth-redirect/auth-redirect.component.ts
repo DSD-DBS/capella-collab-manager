@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { AuthenticationService } from 'src/app/openapi';
@@ -16,15 +16,13 @@ import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.servi
   styleUrls: ['./auth-redirect.component.css'],
 })
 export class AuthRedirectComponent implements OnInit {
-  constructor(
-    private route: ActivatedRoute,
-    private toastService: ToastService,
-    private authService: AuthenticationWrapperService,
-    private authenticationService: AuthenticationService,
-    private userService: OwnUserWrapperService,
-    private router: Router,
-    private feedbackService: FeedbackWrapperService,
-  ) {}
+  private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
+  private authService = inject(AuthenticationWrapperService);
+  private authenticationService = inject(AuthenticationService);
+  private userService = inject(OwnUserWrapperService);
+  private router = inject(Router);
+  private feedbackService = inject(FeedbackWrapperService);
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {

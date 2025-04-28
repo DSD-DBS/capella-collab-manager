@@ -3,7 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { DatePipe } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import {
@@ -42,6 +48,8 @@ import { EventsService, HistoryEvent } from 'src/app/openapi';
   ],
 })
 export class EventsComponent implements OnInit, AfterViewInit {
+  private eventService = inject(EventsService);
+
   @ViewChild(MatPaginator) paginator: MatPaginator | null = null;
   @ViewChild(MatSort) sort: MatSort | null = null;
 
@@ -58,8 +66,6 @@ export class EventsComponent implements OnInit, AfterViewInit {
   historyEventDataSource = new MatTableDataSource<HistoryEvent>(
     this.historyEventData,
   );
-
-  constructor(private eventService: EventsService) {}
 
   ngOnInit(): void {
     this.eventService.getEvents().subscribe((historyEvents) => {

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -57,6 +57,11 @@ import { CreateSessionHistoryComponent } from '../create-session-history/create-
   ],
 })
 export class CreatePersistentSessionComponent implements OnInit {
+  private toolWrapperService = inject(ToolWrapperService);
+  private sessionService = inject(SessionService);
+  private userSessionService = inject(UserSessionService);
+  private toolsService = inject(ToolsService);
+
   persistentSession?: Session;
 
   selectedTool?: Tool;
@@ -75,13 +80,6 @@ export class CreatePersistentSessionComponent implements OnInit {
       Validators.required,
     ),
   });
-
-  constructor(
-    private toolWrapperService: ToolWrapperService,
-    private sessionService: SessionService,
-    private userSessionService: UserSessionService,
-    private toolsService: ToolsService,
-  ) {}
 
   ngOnInit(): void {
     this.toolWrapperService.getTools().subscribe();

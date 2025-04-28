@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -56,6 +56,11 @@ import { ProjectWrapperService } from '../service/project.service';
   ],
 })
 export class CreateProjectComponent implements OnInit, OnDestroy {
+  projectService = inject(ProjectWrapperService);
+  projectUserService = inject(ProjectUserService);
+  private ownUserWrapperService = inject(OwnUserWrapperService);
+  private toastService = inject(ToastService);
+
   @ViewChild('model_creator') model_creator!: CreateModelComponent;
 
   public modelCreationStep: CreateModelStep = 'create-model';
@@ -69,13 +74,6 @@ export class CreateProjectComponent implements OnInit, OnDestroy {
         ),
       ),
     );
-
-  constructor(
-    public projectService: ProjectWrapperService,
-    public projectUserService: ProjectUserService,
-    private ownUserWrapperService: OwnUserWrapperService,
-    private toastService: ToastService,
-  ) {}
 
   form = new FormGroup({
     name: new FormControl('', {

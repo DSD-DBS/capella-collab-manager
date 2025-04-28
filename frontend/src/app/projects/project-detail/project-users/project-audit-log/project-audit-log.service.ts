@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { PageHistoryEvent, ProjectsEventsService } from 'src/app/openapi';
 import { ProjectWrapperService } from 'src/app/projects/service/project.service';
@@ -11,6 +11,9 @@ import { ProjectWrapperService } from 'src/app/projects/service/project.service'
   providedIn: 'root',
 })
 export class ProjectAuditLogService {
+  private projectService = inject(ProjectWrapperService);
+  private projectEventService = inject(ProjectsEventsService);
+
   private _projectHistoryEventPages =
     new BehaviorSubject<PageHistoryEventWrapper>({
       pages: [],
@@ -20,10 +23,7 @@ export class ProjectAuditLogService {
   public readonly projectHistoryEventsPages$ =
     this._projectHistoryEventPages.asObservable();
 
-  constructor(
-    private projectService: ProjectWrapperService,
-    private projectEventService: ProjectsEventsService,
-  ) {
+  constructor() {
     this.resetProjectAuditLogOnPipelineChange();
   }
 

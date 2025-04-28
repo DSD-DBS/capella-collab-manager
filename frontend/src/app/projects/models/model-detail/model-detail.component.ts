@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NgFor, AsyncPipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
@@ -32,13 +32,11 @@ import { ProjectWrapperService } from '../../service/project.service';
   ],
 })
 export class ModelDetailComponent implements OnInit, OnDestroy {
-  constructor(
-    public projectService: ProjectWrapperService,
-    public modelService: ModelWrapperService,
-    public gitModelService: GitModelService,
-    public t4cModelService: T4CModelService,
-    public userService: OwnUserWrapperService,
-  ) {}
+  projectService = inject(ProjectWrapperService);
+  modelService = inject(ModelWrapperService);
+  gitModelService = inject(GitModelService);
+  t4cModelService = inject(T4CModelService);
+  userService = inject(OwnUserWrapperService);
 
   ngOnInit(): void {
     combineLatest([

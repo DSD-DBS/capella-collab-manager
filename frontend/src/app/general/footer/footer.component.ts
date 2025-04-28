@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MetadataService } from 'src/app/general/metadata/metadata.service';
@@ -17,10 +17,8 @@ import { FeedbackWrapperService } from '../../sessions/feedback/feedback.service
   imports: [AsyncPipe, VersionComponent, MatIconModule],
 })
 export class FooterComponent {
-  constructor(
-    public dialog: MatDialog,
-    public metadataService: MetadataService,
-    public feedbackService: FeedbackWrapperService,
-    public authService: AuthenticationWrapperService,
-  ) {}
+  dialog = inject(MatDialog);
+  metadataService = inject(MetadataService);
+  feedbackService = inject(FeedbackWrapperService);
+  authService = inject(AuthenticationWrapperService);
 }

@@ -10,6 +10,7 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import {
   FormControl,
@@ -59,16 +60,14 @@ import { T4CRepoDeletionDialogComponent } from './t4c-repo-deletion-dialog/t4c-r
   ],
 })
 export class T4CInstanceSettingsComponent implements OnChanges, OnDestroy {
+  t4cRepoService = inject(T4CRepositoryWrapperService);
+  private dialog = inject(MatDialog);
+
   @Input() instance?: T4CInstance;
 
   search = '';
 
   repositoryCreationInProgress = false;
-
-  constructor(
-    public t4cRepoService: T4CRepositoryWrapperService,
-    private dialog: MatDialog,
-  ) {}
 
   ngOnChanges(_changes: SimpleChanges): void {
     if (this.instance) {

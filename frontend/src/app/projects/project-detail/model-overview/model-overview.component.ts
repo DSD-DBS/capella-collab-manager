@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   MatAnchor,
   MatButton,
@@ -53,18 +53,16 @@ import { ModelComplexityBadgeComponent } from './model-complexity-badge/model-co
   ],
 })
 export class ModelOverviewComponent implements OnInit {
+  modelService = inject(ModelWrapperService);
+  sessionService = inject(SessionService);
+  projectUserService = inject(ProjectUserService);
+  userService = inject(OwnUserWrapperService);
+  projectService = inject(ProjectWrapperService);
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
+
   project?: Project;
   models?: ToolModel[];
-
-  constructor(
-    public modelService: ModelWrapperService,
-    public sessionService: SessionService,
-    public projectUserService: ProjectUserService,
-    public userService: OwnUserWrapperService,
-    public projectService: ProjectWrapperService,
-    private router: Router,
-    private dialog: MatDialog,
-  ) {}
 
   ngOnInit(): void {
     this.projectService.project$

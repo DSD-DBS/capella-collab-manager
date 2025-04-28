@@ -4,11 +4,11 @@
  */
 import {
   Component,
-  Inject,
   ViewChildren,
   ElementRef,
   QueryList,
   OnInit,
+  inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -65,6 +65,16 @@ import { ModelDiagramCodeBlockComponent } from './model-diagram-code-block/model
   ],
 })
 export class ModelDiagramDialogComponent implements OnInit {
+  private dialog = inject(MatDialog);
+  private dialogRef =
+    inject<MatDialogRef<ModelDiagramDialogComponent>>(MatDialogRef);
+  private projectsModelsGitService = inject(ProjectsModelsGitService);
+  private projectsModelsDiagramsService = inject(ProjectsModelsDiagramsService);
+  data = inject<{
+    model: ToolModel;
+    project: Project;
+  }>(MAT_DIALOG_DATA);
+
   diagramMetadata?: DiagramCacheMetadata;
   diagrams: Diagrams = {};
 
@@ -86,15 +96,6 @@ export class ModelDiagramDialogComponent implements OnInit {
         diagram.uuid.toLowerCase().includes(this.search.toLowerCase()),
     );
   }
-
-  constructor(
-    private dialog: MatDialog,
-    private dialogRef: MatDialogRef<ModelDiagramDialogComponent>,
-    private projectsModelsGitService: ProjectsModelsGitService,
-    private projectsModelsDiagramsService: ProjectsModelsDiagramsService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: { model: ToolModel; project: Project },
-  ) {}
 
   ngOnInit(): void {
     this.loadDiagramCacheMetadata().subscribe();

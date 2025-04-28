@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { map } from 'rxjs';
 import {
@@ -18,9 +18,7 @@ import { UnifiedConfigWrapperService } from 'src/app/services/unified-config-wra
   providedIn: 'root',
 })
 export class NavBarService {
-  constructor(
-    private unifiedConfigWrapperService: UnifiedConfigWrapperService,
-  ) {}
+  private unifiedConfigWrapperService = inject(UnifiedConfigWrapperService);
 
   readonly navbarItems$ = this.unifiedConfigWrapperService.unifiedConfig$.pipe(
     map(

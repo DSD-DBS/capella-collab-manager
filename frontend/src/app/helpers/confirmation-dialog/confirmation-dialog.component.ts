@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -21,12 +21,11 @@ export interface ConfirmationDialogData {
   imports: [FormsModule, MatFormField, MatInput, MatButton],
 })
 export class ConfirmationDialogComponent implements OnInit {
-  inputText = '';
+  dialogRef =
+    inject<MatDialogRef<ConfirmationDialogComponent, boolean>>(MatDialogRef);
+  data = inject<ConfirmationDialogData>(MAT_DIALOG_DATA);
 
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmationDialogComponent, boolean>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogData,
-  ) {}
+  inputText = '';
 
   ngOnInit(): void {
     this.dialogRef.updateSize('500px');

@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl,
   AsyncValidatorFn,
@@ -28,11 +28,9 @@ import { T4CInstanceWrapperService } from 'src/app/services/settings/t4c-instanc
   providedIn: 'root',
 })
 export class T4CModelService {
-  constructor(
-    private modelWrapperService: ModelWrapperService,
-    private t4cInstanceWrapperService: T4CInstanceWrapperService,
-    private t4cModelService: ProjectsModelsT4CService,
-  ) {}
+  private modelWrapperService = inject(ModelWrapperService);
+  private t4cInstanceWrapperService = inject(T4CInstanceWrapperService);
+  private t4cModelService = inject(ProjectsModelsT4CService);
 
   private _t4cModel = new BehaviorSubject<
     SimpleT4CModelWithRepository | undefined
