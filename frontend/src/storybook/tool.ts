@@ -66,7 +66,7 @@ export const mockToolNature: Readonly<ToolNature> = {
   name: 'Project',
 };
 
-const defaultToolConfig: ToolSessionConfigurationOutput = {
+export const defaultToolConfig: ToolSessionConfigurationOutput = {
   connection: {
     methods: [mockHttpConnectionMethod],
   },
