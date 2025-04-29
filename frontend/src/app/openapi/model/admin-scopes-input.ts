@@ -70,85 +70,85 @@ export interface AdminScopesInput {
     personal_access_tokens?: Array<AdminScopesInput.PersonalAccessTokensEnum>;
 }
 export namespace AdminScopesInput {
-    export type UsersEnum = 'GET' | 'CREATE' | 'UPDATE' | 'DELETE';
     export const UsersEnum = {
-        Get: 'GET' as UsersEnum,
-        Create: 'CREATE' as UsersEnum,
-        Update: 'UPDATE' as UsersEnum,
-        Delete: 'DELETE' as UsersEnum
-    };
-    export type ProjectsEnum = 'GET' | 'CREATE' | 'UPDATE' | 'DELETE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type UsersEnum = typeof UsersEnum[keyof typeof UsersEnum];
     export const ProjectsEnum = {
-        Get: 'GET' as ProjectsEnum,
-        Create: 'CREATE' as ProjectsEnum,
-        Update: 'UPDATE' as ProjectsEnum,
-        Delete: 'DELETE' as ProjectsEnum
-    };
-    export type ToolsEnum = 'GET' | 'CREATE' | 'UPDATE' | 'DELETE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type ProjectsEnum = typeof ProjectsEnum[keyof typeof ProjectsEnum];
     export const ToolsEnum = {
-        Get: 'GET' as ToolsEnum,
-        Create: 'CREATE' as ToolsEnum,
-        Update: 'UPDATE' as ToolsEnum,
-        Delete: 'DELETE' as ToolsEnum
-    };
-    export type AnnouncementsEnum = 'CREATE' | 'UPDATE' | 'DELETE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type ToolsEnum = typeof ToolsEnum[keyof typeof ToolsEnum];
     export const AnnouncementsEnum = {
-        Create: 'CREATE' as AnnouncementsEnum,
-        Update: 'UPDATE' as AnnouncementsEnum,
-        Delete: 'DELETE' as AnnouncementsEnum
-    };
-    export type MonitoringEnum = 'GET';
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type AnnouncementsEnum = typeof AnnouncementsEnum[keyof typeof AnnouncementsEnum];
     export const MonitoringEnum = {
-        Get: 'GET' as MonitoringEnum
-    };
-    export type ConfigurationEnum = 'GET' | 'UPDATE';
+        Get: 'GET'
+    } as const;
+    export type MonitoringEnum = typeof MonitoringEnum[keyof typeof MonitoringEnum];
     export const ConfigurationEnum = {
-        Get: 'GET' as ConfigurationEnum,
-        Update: 'UPDATE' as ConfigurationEnum
-    };
-    export type GitServersEnum = 'CREATE' | 'UPDATE' | 'DELETE';
+        Get: 'GET',
+        Update: 'UPDATE'
+    } as const;
+    export type ConfigurationEnum = typeof ConfigurationEnum[keyof typeof ConfigurationEnum];
     export const GitServersEnum = {
-        Create: 'CREATE' as GitServersEnum,
-        Update: 'UPDATE' as GitServersEnum,
-        Delete: 'DELETE' as GitServersEnum
-    };
-    export type T4cServersEnum = 'GET' | 'CREATE' | 'UPDATE' | 'DELETE';
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type GitServersEnum = typeof GitServersEnum[keyof typeof GitServersEnum];
     export const T4cServersEnum = {
-        Get: 'GET' as T4cServersEnum,
-        Create: 'CREATE' as T4cServersEnum,
-        Update: 'UPDATE' as T4cServersEnum,
-        Delete: 'DELETE' as T4cServersEnum
-    };
-    export type T4cRepositoriesEnum = 'GET' | 'CREATE' | 'UPDATE' | 'DELETE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type T4cServersEnum = typeof T4cServersEnum[keyof typeof T4cServersEnum];
     export const T4cRepositoriesEnum = {
-        Get: 'GET' as T4cRepositoriesEnum,
-        Create: 'CREATE' as T4cRepositoriesEnum,
-        Update: 'UPDATE' as T4cRepositoriesEnum,
-        Delete: 'DELETE' as T4cRepositoriesEnum
-    };
-    export type PvConfigurationEnum = 'GET' | 'UPDATE' | 'DELETE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type T4cRepositoriesEnum = typeof T4cRepositoriesEnum[keyof typeof T4cRepositoriesEnum];
     export const PvConfigurationEnum = {
-        Get: 'GET' as PvConfigurationEnum,
-        Update: 'UPDATE' as PvConfigurationEnum,
-        Delete: 'DELETE' as PvConfigurationEnum
-    };
-    export type EventsEnum = 'GET';
+        Get: 'GET',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type PvConfigurationEnum = typeof PvConfigurationEnum[keyof typeof PvConfigurationEnum];
     export const EventsEnum = {
-        Get: 'GET' as EventsEnum
-    };
-    export type SessionsEnum = 'GET';
+        Get: 'GET'
+    } as const;
+    export type EventsEnum = typeof EventsEnum[keyof typeof EventsEnum];
     export const SessionsEnum = {
-        Get: 'GET' as SessionsEnum
-    };
-    export type WorkspacesEnum = 'GET' | 'DELETE';
+        Get: 'GET'
+    } as const;
+    export type SessionsEnum = typeof SessionsEnum[keyof typeof SessionsEnum];
     export const WorkspacesEnum = {
-        Get: 'GET' as WorkspacesEnum,
-        Delete: 'DELETE' as WorkspacesEnum
-    };
-    export type PersonalAccessTokensEnum = 'DELETE';
+        Get: 'GET',
+        Delete: 'DELETE'
+    } as const;
+    export type WorkspacesEnum = typeof WorkspacesEnum[keyof typeof WorkspacesEnum];
     export const PersonalAccessTokensEnum = {
-        Delete: 'DELETE' as PersonalAccessTokensEnum
-    };
+        Delete: 'DELETE'
+    } as const;
+    export type PersonalAccessTokensEnum = typeof PersonalAccessTokensEnum[keyof typeof PersonalAccessTokensEnum];
 }
 
 

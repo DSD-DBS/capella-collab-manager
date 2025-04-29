@@ -11,10 +11,9 @@
 
 
 
-export type ToolSessionEnvironmentStage = 'before' | 'after';
-
 export const ToolSessionEnvironmentStage = {
-    Before: 'before' as ToolSessionEnvironmentStage,
-    After: 'after' as ToolSessionEnvironmentStage
-};
+    Before: 'before',
+    After: 'after'
+} as const;
+export type ToolSessionEnvironmentStage = typeof ToolSessionEnvironmentStage[keyof typeof ToolSessionEnvironmentStage];
 

@@ -11,10 +11,9 @@
 
 
 
-export type ProjectUserPermission = 'read' | 'write';
-
 export const ProjectUserPermission = {
-    Read: 'read' as ProjectUserPermission,
-    Write: 'write' as ProjectUserPermission
-};
+    Read: 'read',
+    Write: 'write'
+} as const;
+export type ProjectUserPermission = typeof ProjectUserPermission[keyof typeof ProjectUserPermission];
 

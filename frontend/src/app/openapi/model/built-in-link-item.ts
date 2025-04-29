@@ -11,12 +11,11 @@
 
 
 
-export type BuiltInLinkItem = 'grafana' | 'prometheus' | 'documentation' | 'smtp_mock';
-
 export const BuiltInLinkItem = {
-    Grafana: 'grafana' as BuiltInLinkItem,
-    Prometheus: 'prometheus' as BuiltInLinkItem,
-    Documentation: 'documentation' as BuiltInLinkItem,
-    SmtpMock: 'smtp_mock' as BuiltInLinkItem
-};
+    Grafana: 'grafana',
+    Prometheus: 'prometheus',
+    Documentation: 'documentation',
+    SmtpMock: 'smtp_mock'
+} as const;
+export type BuiltInLinkItem = typeof BuiltInLinkItem[keyof typeof BuiltInLinkItem];
 

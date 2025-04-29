@@ -32,10 +32,10 @@ export interface HTTPConnectionMethodInput {
     cookies?: { [key: string]: string; };
 }
 export namespace HTTPConnectionMethodInput {
-    export type TypeEnum = 'http';
     export const TypeEnum = {
-        Http: 'http' as TypeEnum
-    };
+        Http: 'http'
+    } as const;
+    export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
 }
 
 

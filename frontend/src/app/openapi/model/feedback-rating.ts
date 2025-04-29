@@ -11,11 +11,10 @@
 
 
 
-export type FeedbackRating = 'bad' | 'okay' | 'good';
-
 export const FeedbackRating = {
-    Bad: 'bad' as FeedbackRating,
-    Okay: 'okay' as FeedbackRating,
-    Good: 'good' as FeedbackRating
-};
+    Bad: 'bad',
+    Okay: 'okay',
+    Good: 'good'
+} as const;
+export type FeedbackRating = typeof FeedbackRating[keyof typeof FeedbackRating];
 

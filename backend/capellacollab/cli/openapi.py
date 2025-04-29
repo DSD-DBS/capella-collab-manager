@@ -47,6 +47,13 @@ def generate(
             " This can be helpful in auto-generated clients to use arrays instead of sets."
         ),
     ),
+    remove_security_schemes: bool = typer.Option(
+        default=False,
+        help=(
+            "Remove the securitySchemes and security keys from the schema."
+            " This can be helpful in auto-generated clients to skip generation of authentication code."
+        ),
+    ),
 ):
     """Generate openapi.json and write it to output_file."""
 
@@ -65,6 +72,10 @@ def generate(
 
     if remove_unique_items_keys:
         keys_to_remove.append("uniqueItems")
+
+    if remove_security_schemes:
+        keys_to_remove.append("security")
+        keys_to_remove.append("securitySchemes")
 
     schema = __main__.app.openapi()
     _remove_keys_from_spec(schema, keys_to_remove)

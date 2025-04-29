@@ -70,86 +70,86 @@ export interface ProjectUserScopesOutput {
     shared_volumes: Array<ProjectUserScopesOutput.SharedVolumesEnum>;
 }
 export namespace ProjectUserScopesOutput {
-    export type RootEnum = 'GET' | 'UPDATE' | 'DELETE';
     export const RootEnum = {
-        Get: 'GET' as RootEnum,
-        Update: 'UPDATE' as RootEnum,
-        Delete: 'DELETE' as RootEnum
-    };
-    export type PipelinesEnum = 'GET' | 'CREATE' | 'DELETE';
+        Get: 'GET',
+        Update: 'UPDATE',
+        Delete: 'DELETE'
+    } as const;
+    export type RootEnum = typeof RootEnum[keyof typeof RootEnum];
     export const PipelinesEnum = {
-        Get: 'GET' as PipelinesEnum,
-        Create: 'CREATE' as PipelinesEnum,
-        Delete: 'DELETE' as PipelinesEnum
-    };
-    export type PipelineRunsEnum = 'GET' | 'CREATE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type PipelinesEnum = typeof PipelinesEnum[keyof typeof PipelinesEnum];
     export const PipelineRunsEnum = {
-        Get: 'GET' as PipelineRunsEnum,
-        Create: 'CREATE' as PipelineRunsEnum
-    };
-    export type DiagramCacheEnum = 'GET';
+        Get: 'GET',
+        Create: 'CREATE'
+    } as const;
+    export type PipelineRunsEnum = typeof PipelineRunsEnum[keyof typeof PipelineRunsEnum];
     export const DiagramCacheEnum = {
-        Get: 'GET' as DiagramCacheEnum
-    };
-    export type T4cModelLinksEnum = 'GET' | 'UPDATE' | 'CREATE' | 'DELETE';
+        Get: 'GET'
+    } as const;
+    export type DiagramCacheEnum = typeof DiagramCacheEnum[keyof typeof DiagramCacheEnum];
     export const T4cModelLinksEnum = {
-        Get: 'GET' as T4cModelLinksEnum,
-        Update: 'UPDATE' as T4cModelLinksEnum,
-        Create: 'CREATE' as T4cModelLinksEnum,
-        Delete: 'DELETE' as T4cModelLinksEnum
-    };
-    export type GitModelLinksEnum = 'GET' | 'UPDATE' | 'CREATE' | 'DELETE';
+        Get: 'GET',
+        Update: 'UPDATE',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type T4cModelLinksEnum = typeof T4cModelLinksEnum[keyof typeof T4cModelLinksEnum];
     export const GitModelLinksEnum = {
-        Get: 'GET' as GitModelLinksEnum,
-        Update: 'UPDATE' as GitModelLinksEnum,
-        Create: 'CREATE' as GitModelLinksEnum,
-        Delete: 'DELETE' as GitModelLinksEnum
-    };
-    export type ToolModelsEnum = 'GET' | 'UPDATE' | 'CREATE' | 'DELETE';
+        Get: 'GET',
+        Update: 'UPDATE',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type GitModelLinksEnum = typeof GitModelLinksEnum[keyof typeof GitModelLinksEnum];
     export const ToolModelsEnum = {
-        Get: 'GET' as ToolModelsEnum,
-        Update: 'UPDATE' as ToolModelsEnum,
-        Create: 'CREATE' as ToolModelsEnum,
-        Delete: 'DELETE' as ToolModelsEnum
-    };
-    export type UsedToolsEnum = 'GET' | 'CREATE' | 'DELETE';
+        Get: 'GET',
+        Update: 'UPDATE',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type ToolModelsEnum = typeof ToolModelsEnum[keyof typeof ToolModelsEnum];
     export const UsedToolsEnum = {
-        Get: 'GET' as UsedToolsEnum,
-        Create: 'CREATE' as UsedToolsEnum,
-        Delete: 'DELETE' as UsedToolsEnum
-    };
-    export type ProjectUsersEnum = 'GET' | 'UPDATE' | 'CREATE' | 'DELETE';
+        Get: 'GET',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type UsedToolsEnum = typeof UsedToolsEnum[keyof typeof UsedToolsEnum];
     export const ProjectUsersEnum = {
-        Get: 'GET' as ProjectUsersEnum,
-        Update: 'UPDATE' as ProjectUsersEnum,
-        Create: 'CREATE' as ProjectUsersEnum,
-        Delete: 'DELETE' as ProjectUsersEnum
-    };
-    export type AccessLogEnum = 'GET';
+        Get: 'GET',
+        Update: 'UPDATE',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type ProjectUsersEnum = typeof ProjectUsersEnum[keyof typeof ProjectUsersEnum];
     export const AccessLogEnum = {
-        Get: 'GET' as AccessLogEnum
-    };
-    export type ProvisioningEnum = 'GET' | 'DELETE';
+        Get: 'GET'
+    } as const;
+    export type AccessLogEnum = typeof AccessLogEnum[keyof typeof AccessLogEnum];
     export const ProvisioningEnum = {
-        Get: 'GET' as ProvisioningEnum,
-        Delete: 'DELETE' as ProvisioningEnum
-    };
-    export type T4cAccessEnum = 'UPDATE';
+        Get: 'GET',
+        Delete: 'DELETE'
+    } as const;
+    export type ProvisioningEnum = typeof ProvisioningEnum[keyof typeof ProvisioningEnum];
     export const T4cAccessEnum = {
-        Update: 'UPDATE' as T4cAccessEnum
-    };
-    export type RestrictionsEnum = 'GET' | 'UPDATE';
+        Update: 'UPDATE'
+    } as const;
+    export type T4cAccessEnum = typeof T4cAccessEnum[keyof typeof T4cAccessEnum];
     export const RestrictionsEnum = {
-        Get: 'GET' as RestrictionsEnum,
-        Update: 'UPDATE' as RestrictionsEnum
-    };
-    export type SharedVolumesEnum = 'GET' | 'UPDATE' | 'CREATE' | 'DELETE';
+        Get: 'GET',
+        Update: 'UPDATE'
+    } as const;
+    export type RestrictionsEnum = typeof RestrictionsEnum[keyof typeof RestrictionsEnum];
     export const SharedVolumesEnum = {
-        Get: 'GET' as SharedVolumesEnum,
-        Update: 'UPDATE' as SharedVolumesEnum,
-        Create: 'CREATE' as SharedVolumesEnum,
-        Delete: 'DELETE' as SharedVolumesEnum
-    };
+        Get: 'GET',
+        Update: 'UPDATE',
+        Create: 'CREATE',
+        Delete: 'DELETE'
+    } as const;
+    export type SharedVolumesEnum = typeof SharedVolumesEnum[keyof typeof SharedVolumesEnum];
 }
 
 

@@ -11,19 +11,18 @@
 
 
 
-export type EventType = 'CreatedUser' | 'AddedToProject' | 'RemovedFromProject' | 'AssignedProjectRoleUser' | 'AssignedProjectRoleManager' | 'AssignedProjectPermissionReadOnly' | 'AssignedProjectPermissionReadWrite' | 'AssignedRoleAdmin' | 'AssignedRoleUser' | 'UserBlocked' | 'UserUnblocked';
-
 export const EventType = {
-    CreatedUser: 'CreatedUser' as EventType,
-    AddedToProject: 'AddedToProject' as EventType,
-    RemovedFromProject: 'RemovedFromProject' as EventType,
-    AssignedProjectRoleUser: 'AssignedProjectRoleUser' as EventType,
-    AssignedProjectRoleManager: 'AssignedProjectRoleManager' as EventType,
-    AssignedProjectPermissionReadOnly: 'AssignedProjectPermissionReadOnly' as EventType,
-    AssignedProjectPermissionReadWrite: 'AssignedProjectPermissionReadWrite' as EventType,
-    AssignedRoleAdmin: 'AssignedRoleAdmin' as EventType,
-    AssignedRoleUser: 'AssignedRoleUser' as EventType,
-    UserBlocked: 'UserBlocked' as EventType,
-    UserUnblocked: 'UserUnblocked' as EventType
-};
+    CreatedUser: 'CreatedUser',
+    AddedToProject: 'AddedToProject',
+    RemovedFromProject: 'RemovedFromProject',
+    AssignedProjectRoleUser: 'AssignedProjectRoleUser',
+    AssignedProjectRoleManager: 'AssignedProjectRoleManager',
+    AssignedProjectPermissionReadOnly: 'AssignedProjectPermissionReadOnly',
+    AssignedProjectPermissionReadWrite: 'AssignedProjectPermissionReadWrite',
+    AssignedRoleAdmin: 'AssignedRoleAdmin',
+    AssignedRoleUser: 'AssignedRoleUser',
+    UserBlocked: 'UserBlocked',
+    UserUnblocked: 'UserUnblocked'
+} as const;
+export type EventType = typeof EventType[keyof typeof EventType];
 

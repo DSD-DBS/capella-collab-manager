@@ -11,11 +11,10 @@
 
 
 
-export type BadgeVariant = 'auto' | 'warning' | 'success';
-
 export const BadgeVariant = {
-    Auto: 'auto' as BadgeVariant,
-    Warning: 'warning' as BadgeVariant,
-    Success: 'success' as BadgeVariant
-};
+    Auto: 'auto',
+    Warning: 'warning',
+    Success: 'success'
+} as const;
+export type BadgeVariant = typeof BadgeVariant[keyof typeof BadgeVariant];
 

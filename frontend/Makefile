@@ -33,10 +33,10 @@ openapi:
 		-v $$(pwd)/openapi_templates:/tmp/openapi_templates \
 		-v $$OPENAPI_DIR:/tmp/output \
 		-u $$(id -u $${USER}):$$(id -g $${USER}) \
-		openapitools/openapi-generator-cli:v7.11.0 generate \
+		openapitools/openapi-generator-cli:v7.13.0 generate \
 			-i /tmp/openapi.json \
 			-t /tmp/openapi_templates \
-			--global-property models,apis,supportingFiles="index.ts:api.ts:models.ts:variables.ts:configuration.ts:api.module.ts:param.ts:encoder.ts" \
+			--global-property models,apis,supportingFiles="index.ts:api.ts:models.ts:variables.ts:configuration.ts:api.module.ts:param.ts:encoder.ts:api.base.service.ts" \
 			--additional-properties=fileNaming=kebab-case,legacyDiscriminatorBehavior=false \
 			-g typescript-angular \
 			-o /tmp/output

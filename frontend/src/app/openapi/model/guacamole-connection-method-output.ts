@@ -27,10 +27,10 @@ export interface GuacamoleConnectionMethodOutput {
     sharing: ToolSessionSharingConfigurationOutput;
 }
 export namespace GuacamoleConnectionMethodOutput {
-    export type TypeEnum = 'guacamole';
     export const TypeEnum = {
-        Guacamole: 'guacamole' as TypeEnum
-    };
+        Guacamole: 'guacamole'
+    } as const;
+    export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
 }
 
 

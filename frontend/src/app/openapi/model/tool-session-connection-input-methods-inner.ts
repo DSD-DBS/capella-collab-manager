@@ -34,11 +34,11 @@ export interface ToolSessionConnectionInputMethodsInner {
     cookies?: { [key: string]: string; };
 }
 export namespace ToolSessionConnectionInputMethodsInner {
-    export type TypeEnum = 'guacamole' | 'http';
     export const TypeEnum = {
-        Guacamole: 'guacamole' as TypeEnum,
-        Http: 'http' as TypeEnum
-    };
+        Guacamole: 'guacamole',
+        Http: 'http'
+    } as const;
+    export type TypeEnum = typeof TypeEnum[keyof typeof TypeEnum];
 }
 
 

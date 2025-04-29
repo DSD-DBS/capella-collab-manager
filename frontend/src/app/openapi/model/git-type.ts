@@ -11,12 +11,11 @@
 
 
 
-export type GitType = 'General' | 'GitLab' | 'GitHub' | 'AzureDevOps';
-
 export const GitType = {
-    General: 'General' as GitType,
-    GitLab: 'GitLab' as GitType,
-    GitHub: 'GitHub' as GitType,
-    AzureDevOps: 'AzureDevOps' as GitType
-};
+    General: 'General',
+    GitLab: 'GitLab',
+    GitHub: 'GitHub',
+    AzureDevOps: 'AzureDevOps'
+} as const;
+export type GitType = typeof GitType[keyof typeof GitType];
 
