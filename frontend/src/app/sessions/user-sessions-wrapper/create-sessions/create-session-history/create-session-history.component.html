@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <div
-  class="mt-3 max-h-0 overflow-hidden transition-all duration-700"
+  class="max-h-0 overflow-hidden transition-all duration-700"
   [ngClass]="{
     'max-h-[600px]':
       sessionsLoaded === sessionsToBeLoaded && sessionsToBeLoaded > 0,
@@ -11,7 +11,7 @@
 >
   <div class="flex flex-col gap-2">
     @if (sortedResolvedHistory.length !== 0) {
-      <div class="text-sm">
+      <div class="mt-3 text-sm">
         Or quick-request one of the last requested sessions:
       </div>
     }

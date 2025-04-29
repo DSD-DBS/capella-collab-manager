@@ -17,25 +17,38 @@
     <form
       [formGroup]="toolSelectionForm"
       (ngSubmit)="requestPersistentSession()"
+      class="flex flex-col gap-2"
     >
-      <div class="flex flex-wrap sm:flex-nowrap sm:justify-between sm:gap-2">
-        <mat-form-field appearance="fill" class="w-full">
+      <div class="flex flex-wrap gap-2 sm:flex-nowrap sm:justify-between">
+        <mat-form-field
+          appearance="fill"
+          class="!inline w-full"
+          subscriptSizing="dynamic"
+        >
           <mat-label>Model tool</mat-label>
           <mat-select
             matInput
             formControlName="toolId"
             (selectionChange)="toolSelectionChange($event.value)"
+            data-testId="tool-select"
           >
             @for (tool of toolsWithWorkspaceEnabled | async; track tool.id) {
-              <mat-option [value]="tool.id">
+              <mat-option
+                [value]="tool.id"
+                [attr.data-testId]="'tool-select-option-' + tool.id"
+              >
                 {{ tool.name }}
               </mat-option>
             }
           </mat-select>
-          <mat-error> Please select a valid tool. </mat-error>
+          <mat-error>Please select a valid tool.</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="fill" class="w-full">
+        <mat-form-field
+          appearance="fill"
+          class="!inline w-full"
+          subscriptSizing="dynamic"
+        >
           <mat-label>Version</mat-label>
           <mat-select formControlName="versionId">
             @for (version of this.versions; track version.id) {
@@ -56,8 +69,16 @@
       @if (
         this.selectedTool && selectedTool.config.connection.methods.length > 1
       ) {
-        <div class="mb-2">
-          <span class="text-sm">Connection method:</span> <br />
+        <div
+          class="flex flex-col items-start rounded-t-md border border-b-black
+            bg-[--button-background] px-2 text-[--button-title-color]"
+        >
+          <div
+            class="ml-[-13px] mt-1 scale-75 text-base tracking-[--form-field-letter-spacing]"
+          >
+            Connection method*
+          </div>
+
           <mat-radio-group
             class="flex gap-2"
             formControlName="connectionMethodId"
@@ -74,17 +95,21 @@
         </div>
 
         @if (this.getSelectedConnectionMethod()?.description) {
-          <div class="mb-2 border p-2 text-sm shadow">
-            {{ getSelectedConnectionMethod()?.description }}
+          <div
+            class="flex items-center gap-2 rounded-material border p-2 text-sm shadow"
+          >
+            <mat-icon>info</mat-icon>
+            <span>{{ getSelectedConnectionMethod()?.description }}</span>
           </div>
         }
       }
 
       <button
-        class="mx-0 w-full items-center"
+        class="w-full items-center"
         mat-flat-button
         type="submit"
         [disabled]="requestInProgress"
+        data-testId="create-session-button"
       >
         <span class="hidden items-center gap-1 sm:flex">
           Request a session with a persistent workspace
@@ -100,7 +125,5 @@
 
   <app-license-indicator />
 
-  <div class="mt-2">
-    <app-create-session-history></app-create-session-history>
-  </div>
+  <app-create-session-history></app-create-session-history>
 </div>

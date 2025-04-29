@@ -77,6 +77,9 @@ html {
   --warning-color: rgb(194 65 12);
   --success-color: darkgreen;
   --hover-color: rgb(222, 236, 249);
+  --button-background: var(--mdc-filled-text-field-container-color);
+  --button-title-color: var(--mdc-filled-text-field-label-text-color);
+  --form-field-letter-spacing: var(--mat-form-field-container-text-tracking);
   --banner-color: #010035;
   --field-padding: 0.75em;
   --section-card-width: 32em;
