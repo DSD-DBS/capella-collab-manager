@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
       - name: Install dependencies
         working-directory: ./backend
         run: make install -o generate-archival
@@ -61,7 +61,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
       - name: Install dependencies
         working-directory: ./backend
         run: make install -o generate-archival
