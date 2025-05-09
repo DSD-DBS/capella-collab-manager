@@ -7,12 +7,14 @@ import enum
 import typing as t
 
 import pydantic
+import sqlalchemy as sa
 from sqlalchemy import orm
 
 # Import required for sqlalchemy
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
 from capellacollab.projects.users import models as project_users_models
+from capellacollab.tags import models as tags_models
 
 if t.TYPE_CHECKING:
     from capellacollab.projects.permissions.models import (
@@ -52,6 +54,7 @@ class Project(core_pydantic.BaseModel):
     type: ProjectType
     users: UserMetadata
     is_archived: bool
+    tags: list[tags_models.Tag] | None = None
 
     @pydantic.field_validator("users", mode="before")
     @classmethod
@@ -109,6 +112,9 @@ class PatchProject(core_pydantic.BaseModel):
     visibility: ProjectVisibility | None = None
     type: ProjectType | None = None
     is_archived: bool | None = None
+    tags: list[int | str] | None = pydantic.Field(
+        default=None, description="List of tag IDs or names."
+    )
 
 
 class PostProjectRequest(core_pydantic.BaseModel):
@@ -116,6 +122,14 @@ class PostProjectRequest(core_pydantic.BaseModel):
     description: str | None = None
     visibility: ProjectVisibility = ProjectVisibility.PRIVATE
     type: ProjectType = ProjectType.GENERAL
+
+
+projects_tags_association = sa.Table(
+    "projects_tags_association",
+    database.Base.metadata,
+    sa.Column("projects_id", sa.ForeignKey("projects.id"), primary_key=True),
+    sa.Column("tags_id", sa.ForeignKey("tags.id"), primary_key=True),
+)
 
 
 class DatabaseProject(database.Base):
@@ -150,5 +164,9 @@ class DatabaseProject(database.Base):
     tools: orm.Mapped[list[DatabaseProjectToolAssociation]] = orm.relationship(
         default_factory=list, back_populates="project"
     )
-
     is_archived: orm.Mapped[bool] = orm.mapped_column(default=False)
+    tags: orm.Mapped[list[tags_models.DatabaseTag]] = orm.relationship(
+        secondary=projects_tags_association,
+        default_factory=list,
+        back_populates="projects",
+    )

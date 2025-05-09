@@ -36,26 +36,81 @@
     <div class="flex flex-col">
       <h3>Project visibility</h3>
       <mat-radio-group formControlName="visibility" class="flex flex-col">
-        <mat-radio-button
-          *ngFor="let visibility of projectService.getAvailableVisibilities()"
-          [value]="visibility"
-        >
-          {{ projectService.getProjectVisibilityDescription(visibility) }}
-        </mat-radio-button>
+        @for (
+          visibility of projectService.getAvailableVisibilities();
+          track visibility
+        ) {
+          <mat-radio-button [value]="visibility">
+            {{ projectService.getProjectVisibilityDescription(visibility) }}
+          </mat-radio-button>
+        }
       </mat-radio-group>
     </div>
     <div class="flex flex-col">
       <h3>Project type</h3>
       <mat-radio-group formControlName="type" class="flex flex-col">
-        <mat-radio-button
-          *ngFor="let projectType of projectService.getAvailableProjectTypes()"
-          [value]="projectType"
-        >
-          {{ projectService.getProjectTypeDescription(projectType) }}
-        </mat-radio-button>
+        @for (
+          projectType of projectService.getAvailableProjectTypes();
+          track projectType
+        ) {
+          <mat-radio-button [value]="projectType">
+            {{ projectService.getProjectTypeDescription(projectType) }}
+          </mat-radio-button>
+        }
       </mat-radio-group>
     </div>
   </form>
+  <div>
+    <mat-form-field
+      subscriptSizing="dynamic"
+      appearance="outline"
+      class="w-full"
+    >
+      <mat-label>Tags</mat-label>
+      <mat-chip-grid #chipGrid>
+        @for (tag of selectedTags(); track $index) {
+          <mat-chip-row
+            [style.color]="tagHelperService.identifyColor(tag.hex_color)"
+            [style.backgroundColor]="tag.hex_color"
+            [removable]="true"
+            (removed)="removeTag(tag)"
+            [disableRipple]="true"
+            [matTooltip]="tag.description"
+          >
+            @if (tag.icon; as icon) {
+              <mat-icon
+                matChipAvatar
+                [style.color]="tagHelperService.identifyColor(tag.hex_color)"
+              >
+                {{ icon }}
+              </mat-icon>
+            }
+            {{ tag.name }}
+            <button matChipRemove aria-label="Remove user">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+      </mat-chip-grid>
+      <input
+        placeholder="New tag..."
+        #tagInput
+        [matChipInputFor]="chipGrid"
+        [matAutocomplete]="auto"
+        [matChipInputAddOnBlur]="true"
+      />
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        (optionSelected)="addTag($event)"
+      >
+        @for (tag of availableTags; track tag) {
+          <mat-option [value]="tag">
+            <app-tag-display [tag]="tag" />
+          </mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
   <div class="flex justify-between">
     <span
       matTooltip="The project can't be deleted since it has linked models"

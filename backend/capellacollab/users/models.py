@@ -112,6 +112,11 @@ ROLE_MAPPING = {
             personal_access_tokens={
                 models.UserTokenVerb.DELETE,
             },
+            tags={
+                models.UserTokenVerb.CREATE,
+                models.UserTokenVerb.UPDATE,
+                models.UserTokenVerb.DELETE,
+            },
         ),
     ),
 }

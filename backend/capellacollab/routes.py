@@ -15,6 +15,7 @@ from capellacollab.permissions import routes as permissions_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
 from capellacollab.settings import routes as settings_routes
+from capellacollab.tags import routes as tags_routes
 from capellacollab.tools import routes as tools_routes
 from capellacollab.users import routes as users_routes
 
@@ -65,6 +66,10 @@ router.include_router(
 router.include_router(
     configuration_routes.router,
     prefix="/configurations",
+)
+router.include_router(
+    tags_routes.router,
+    prefix="/tags",
 )
 
 

@@ -15,6 +15,7 @@ import {
   ProjectVisibilityDescriptions,
   ProjectWrapperService,
 } from 'src/app/projects/service/project.service';
+import { mockProjectTag, mockProjectTag2 } from 'src/storybook/tags';
 
 export const mockProject: Readonly<Project> = {
   id: 1,
@@ -30,6 +31,7 @@ export const mockProject: Readonly<Project> = {
     contributors: 1,
     subscribers: 1,
   },
+  tags: [mockProjectTag, mockProjectTag2],
 };
 
 class MockProjectWrapperService implements Partial<ProjectWrapperService> {

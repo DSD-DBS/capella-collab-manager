@@ -33,19 +33,22 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, Observable, take } from 'rxjs';
-import { ChipComponent } from 'src/app/helpers/chip/chip.component';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import {
   InputDialogComponent,
   InputDialogResult,
 } from 'src/app/helpers/input-dialog/input-dialog.component';
+import { TagDisplayComponent } from 'src/app/helpers/tag-display/tag-display.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { Role, User, UsersService } from 'src/app/openapi';
 import {
   UserRole,
   OwnUserWrapperService,
 } from 'src/app/services/user/user.service';
-import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
+import {
+  getUserTags,
+  UserWrapperService,
+} from 'src/app/users/user-wrapper/user-wrapper.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -68,7 +71,7 @@ import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.serv
     MatChipListbox,
     MatChipOption,
     MatChipsModule,
-    ChipComponent,
+    TagDisplayComponent,
   ],
 })
 export class UserSettingsComponent implements OnInit {
@@ -77,6 +80,8 @@ export class UserSettingsComponent implements OnInit {
   private toastService = inject(ToastService);
   private dialog = inject(MatDialog);
   private usersService = inject(UsersService);
+
+  getUserTags = getUserTags;
 
   public readonly roleMapping = {
     user: 'Global User',

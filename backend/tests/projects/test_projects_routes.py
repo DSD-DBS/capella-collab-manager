@@ -21,6 +21,8 @@ from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.backups import (
     models as pipelines_models,
 )
+from capellacollab.tags import crud as tags_crud
+from capellacollab.tags import models as tags_models
 
 
 @pytest.mark.usefixtures("user")
@@ -275,6 +277,83 @@ def test_update_project_as_admin(
     assert data["slug"] == "new-project"
     assert data["visibility"] == "internal"
     assert data["is_archived"]
+
+
+@pytest.mark.usefixtures("admin")
+def test_add_tags_to_project(
+    client: testclient.TestClient,
+    tag: tags_models.DatabaseTag,
+    db: orm.Session,
+    project: projects_models.DatabaseProject,
+):
+    tag2 = tags_crud.create_tag(
+        db, tags_models.CreateTag(name="tag2", hex_color="#FF5733")
+    )
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}",
+        json={"tags": [tag.name, tag2.id]},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data["tags"]) == 2
+    assert data["tags"][0]["id"] == tag.id
+    assert data["tags"][1]["id"] == tag2.id
+
+
+@pytest.mark.usefixtures("admin")
+def test_add_same_tag_to_project_twice(
+    client: testclient.TestClient,
+    tag: tags_models.DatabaseTag,
+    project: projects_models.DatabaseProject,
+):
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}",
+        json={"tags": [tag.name, tag.id]},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data["tags"]) == 1
+    assert data["tags"][0]["id"] == tag.id
+
+
+@pytest.mark.usefixtures("admin")
+def test_add_non_existing_tag_to_project(
+    client: testclient.TestClient,
+    tag: tags_models.DatabaseTag,
+    project: projects_models.DatabaseProject,
+):
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}",
+        json={"tags": ["unknown tag"]},
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"]["err_code"] == "TAG_NOT_FOUND"
+
+
+@pytest.mark.usefixtures("admin")
+def test_remove_tag_from_project(
+    client: testclient.TestClient,
+    tag: tags_models.DatabaseTag,
+    project: projects_models.DatabaseProject,
+):
+    project.tags = [tag]
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}",
+        json={"tags": []},
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert len(data["tags"]) == 0
 
 
 @pytest.mark.usefixtures("admin")

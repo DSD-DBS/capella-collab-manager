@@ -1,0 +1,105 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="collab-card pb-2">
+  <h2 class="text-lg font-bold">Available tags</h2>
+  <div class="flex gap-1">
+    @for (tag of tags(); track tag.id) {
+      <app-tag
+        [name]="tag.name"
+        [description]="tag.description"
+        actionIcon="delete"
+        (actionClick)="deleteTag(tag)"
+        [hexBgColor]="tag.hex_color"
+        [textIcon]="tag.icon"
+      ></app-tag>
+    } @empty {
+      <span class="ml-2">No tags available.</span>
+    }
+  </div>
+</div>
+
+<div class="collab-card mt-2">
+  <h2 class="text-lg font-bold">Create a new tag</h2>
+  <form [formGroup]="newTagForm" class="mt-1 flex flex-col gap-2">
+    <div class="flex flex-wrap items-start gap-2">
+      <mat-form-field
+        subscriptSizing="dynamic"
+        class="!min-w-[100px] grow basis-[30%]"
+      >
+        <mat-label>Tag name</mat-label>
+        <input
+          matInput
+          data-testid="name-input"
+          formControlName="name"
+          placeholder="Example tag"
+        />
+      </mat-form-field>
+      <mat-form-field
+        subscriptSizing="dynamic"
+        class="!min-w-[100px] grow basis-[30%]"
+      >
+        <mat-label>Background color (in hex-format)</mat-label>
+        <input
+          matInput
+          data-testid="hex-color-input"
+          formControlName="hex_color"
+          placeholder="#ffffff"
+        />
+        @if (newTagForm.get("hex_color")?.errors?.["pattern"]) {
+          <mat-error>
+            The color must be in hex-format (e.g. #ffffff)
+          </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field
+        subscriptSizing="dynamic"
+        class="!min-w-[100px] grow basis-[30%]"
+      >
+        <mat-label>Icon</mat-label>
+        <input
+          matInput
+          data-testid="icon-input"
+          formControlName="icon"
+          placeholder="Icon name of Google Material Icons"
+        />
+      </mat-form-field>
+    </div>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Description</mat-label>
+      <input
+        matInput
+        data-testid="description-input"
+        formControlName="description"
+        placeholder="This is an example for description that is displayed on hover of the tag"
+      />
+    </mat-form-field>
+  </form>
+
+  <div class="flex flex-wrap justify-between">
+    @if (newTagForm.value.name) {
+      <div class="mt-2 flex items-center gap-2">
+        <span>Preview:</span>
+        <app-tag
+          [name]="newTagForm.value.name"
+          [description]="newTagForm.value.description || null"
+          [textIcon]="newTagForm.value.icon || null"
+          [hexBgColor]="newTagForm.value.hex_color || '#ffffff'"
+        ></app-tag>
+      </div>
+    } @else {
+      <div></div>
+    }
+    <button
+      mat-raised-button
+      color="primary"
+      class="mt-2"
+      [disabled]="newTagForm.invalid"
+      (click)="createNewTag()"
+    >
+      Create the tag <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>

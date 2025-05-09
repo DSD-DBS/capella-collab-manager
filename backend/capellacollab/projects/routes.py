@@ -33,6 +33,7 @@ from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.projects.users import models as projects_users_models
 from capellacollab.projects.users import routes as projects_users_routes
 from capellacollab.projects.volumes import routes as volumes_routes
+from capellacollab.tags import injectables as tags_injectables
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users import models as users_models
 from capellacollab.users.tokens import models as tokens_models
@@ -137,9 +138,21 @@ def update_project(
         and crud.get_project_by_name(db, patch_project.name)
     ):
         raise exceptions.ProjectNameAlreadyExistsError(patch_project.name)
+
+    tags = []
+    for tag in patch_project.tags or []:
+        if isinstance(tag, int):
+            db_tag = tags_injectables.get_existing_tag_by_id(tag, db)
+        else:
+            db_tag = tags_injectables.get_existing_tag_by_name(tag, db)
+
+        if db_tag not in tags:
+            tags.append(db_tag)
+
     if patch_project.is_archived:
         _delete_all_pipelines_for_project(db, project, global_scope)
-    return crud.update_project(db, project, patch_project)
+    patch_project.tags = None
+    return crud.update_project(db, project, patch_project, tags)
 
 
 @router.get(

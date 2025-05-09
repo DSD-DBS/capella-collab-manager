@@ -64,6 +64,7 @@ html {
   word-wrap: normal;
   white-space: nowrap;
   direction: ltr;
+  min-width: 1em;
 }
 
 .dialog {
@@ -85,6 +86,8 @@ html {
   --section-card-width: 32em;
   --mat-sidenav-container-width: "fit-content";
   --mat-tree-container-background-color: "transparent";
+  --mdc-chip-label-text-color: "inherit";
+  --mdc-chip-with-trailing-icon-trailing-icon-color: "inherit";
 }
 
 h1 {
@@ -227,4 +230,13 @@ fieldset {
   .mat-horizontal-stepper-header-container {
     height: 50px;
   }
+}
+
+// Apply class scrollbar-none to hide scrollbars
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

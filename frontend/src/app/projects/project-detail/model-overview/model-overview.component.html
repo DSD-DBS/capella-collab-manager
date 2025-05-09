@@ -6,29 +6,33 @@
 <div class="mb-2 flex h-9 items-center">
   <h2 class="text-xl font-medium">Models</h2>
   @if (projectUserService.verifyRole("manager")) {
-    <a
-      mat-stroked-button
-      class="!ml-4"
-      [routerLink]="
-        project?.is_archived
-          ? null
-          : [
-              '/project',
-              (projectService.project$ | async)?.slug,
-              'models',
-              'create',
-            ]
-      "
+    <div
       [matTooltip]="
         project?.is_archived
           ? 'You cannot add a model to an archived project'
           : 'Add a new model'
       "
-      [disabled]="project?.is_archived"
-      ><div class="flex items-center">
-        <mat-icon id="add-icon">add</mat-icon>
-      </div>
-    </a>
+    >
+      <a
+        mat-stroked-button
+        class="!ml-4"
+        [routerLink]="
+          project?.is_archived
+            ? null
+            : [
+                '/project',
+                (projectService.project$ | async)?.slug,
+                'models',
+                'create',
+              ]
+        "
+        [disabled]="project?.is_archived"
+        ><div class="flex items-center">
+          <mat-icon id="add-icon">add</mat-icon>
+        </div>
+      </a>
+    </div>
+
     @if (models !== undefined && models.length > 1) {
       <button
         mat-stroked-button

@@ -80,31 +80,54 @@
 
             <span class="line-clamp-1">{{ project.name }}</span>
           </div>
-          <div class="p-3">
-            <div class="line-clamp-4">
+          <div class="flex h-[194px] flex-col justify-between gap-1 py-3">
+            <div class="line-clamp-4 px-3">
               @if (project.description) {
                 {{ project.description }}
               } @else {
                 No description provided.
               }
             </div>
-            <div class="fixed bottom-4 right-4 text-right text-stone-500">
-              <div>
-                {{ project.visibility === "internal" ? "Internal" : "Private" }}
-                {{ project.type === "training" ? "training" : "project" }}
+            <div class="flex shrink-0 flex-col gap-1">
+              <div class="flex w-full justify-between">
+                <div (click)="scroll(project, $event, -150)">
+                  <button
+                    mat-icon-button
+                    [disabled]="!isScrollable(project, 'left')"
+                  >
+                    <mat-icon>chevron_left</mat-icon>
+                  </button>
+                </div>
+
+                <div
+                  #tagsWidgets
+                  [id]="'tags-' + project.id"
+                  class="scrollbar-none flex items-center gap-1 overflow-y-auto"
+                >
+                  @for (tag of getProjectTags(project); track tag.id) {
+                    <app-tag-display class="inline-block" [tag]="tag" />
+                  }
+                </div>
+                <div (click)="scroll(project, $event, 150)">
+                  <button
+                    mat-icon-button
+                    [disabled]="!isScrollable(project, 'right')"
+                  >
+                    <mat-icon>chevron_right</mat-icon>
+                  </button>
+                </div>
               </div>
-              <div>
-                {{ project.users.leads }} project admin{{
-                  project.users.leads !== 1 ? "s" : ""
-                }}, {{ project.users.contributors }} contributor{{
-                  project.users.contributors !== 1 ? "s" : ""
-                }},
-                {{ project.users.subscribers }}
-                subscriber{{ project.users.subscribers !== 1 ? "s" : "" }}
+              <div class="px-3 text-center text-stone-500">
+                <div class="text-sm">
+                  {{ project.users.leads }} project admin{{
+                    project.users.leads !== 1 ? "s" : ""
+                  }}, {{ project.users.contributors }} contributor{{
+                    project.users.contributors !== 1 ? "s" : ""
+                  }},
+                  {{ project.users.subscribers }}
+                  subscriber{{ project.users.subscribers !== 1 ? "s" : "" }}
+                </div>
               </div>
-              @if (project.is_archived) {
-                Archived
-              }
             </div>
           </div>
         </div>

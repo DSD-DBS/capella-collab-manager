@@ -16,6 +16,11 @@
         <div class="grow text-sm">
           {{ project.description || "No description available." }}
         </div>
+        <div class="flex flex-wrap gap-1">
+          @for (tag of getProjectTags(project); track tag.id) {
+            <app-tag-display [tag]="tag" />
+          }
+        </div>
         @if (project.is_archived) {
           <div class="flex items-center gap-2 text-sm text-warning">
             <div>

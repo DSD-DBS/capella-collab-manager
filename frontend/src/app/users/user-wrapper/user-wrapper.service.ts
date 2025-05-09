@@ -4,7 +4,7 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { User, UsersService } from 'src/app/openapi';
+import { Tag, User, UsersService } from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
@@ -37,4 +37,30 @@ export class UserWrapperService {
   resetUsers() {
     this._users.next(undefined);
   }
+}
+
+export function getUserTags(user: User): Tag[] {
+  const tags: Tag[] = [];
+  if (user.blocked) {
+    tags.push({
+      id: -1,
+      name: 'Blocked',
+      description:
+        'The user is blocked and all authenticated requests are rejected.',
+      hex_color: '#c10007',
+      icon: 'no_accounts',
+    });
+  }
+  if (user.beta_tester) {
+    tags.push({
+      id: -2,
+      name: 'Beta Tester',
+      description:
+        'The user is signed up as beta user and helps to test experimental features.',
+      hex_color: '#A020F0',
+      icon: 'experiment',
+    });
+  }
+
+  return tags;
 }

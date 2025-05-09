@@ -116,6 +116,7 @@ export class PersonalAccessTokensComponent implements OnInit {
       sessions: [],
       workspaces: [],
       personal_access_tokens: [],
+      tags: [],
     },
     projects: {},
   };

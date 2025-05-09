@@ -4,7 +4,7 @@
  -->
 
 <div class="flex flex-wrap gap-5">
-  <div class="collab-card mb-[10px] w-full !pb-0 sm:w-card sm:max-w-[85vw]">
+  <div class="collab-card mb-[10px] w-full !pb-0 sm:w-[500px] sm:max-w-[85vw]">
     <div class="flex items-center justify-between">
       <h2 class="text-xl font-medium">Manage Users</h2>
       @if (userWrapperService.users$ | async; as users) {
@@ -55,14 +55,13 @@
                   <div class="break-all align-bottom text-[17.5px]">
                     <span>{{ user.name }}</span> <br />
                   </div>
-                  <div class="flex flex-wrap gap-1">
-                    @if (user.blocked) {
-                      <app-chip>Blocked</app-chip>
+                  <div class="mb-1 flex flex-wrap gap-1">
+                    @for (tag of getUserTags(user); track tag.id) {
+                      <app-tag-display [tag]="tag" />
                     }
                   </div>
                   <div class="text-[14px] text-gray-500">
-                    {{ roleMapping[user.role]
-                    }}{{ user.beta_tester ? ", Beta Tester" : "" }}
+                    {{ roleMapping[user.role] }}
                   </div>
                 </div>
               </a>

@@ -12,11 +12,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
+import { TagDisplayComponent } from 'src/app/helpers/tag-display/tag-display.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { PatchProject, Project } from 'src/app/openapi';
 import { ModelWrapperService } from 'src/app/projects/models/service/model.service';
 import { ProjectUserService } from 'src/app/projects/project-detail/project-users/service/project-user.service';
-import { ProjectWrapperService } from '../../service/project.service';
+import {
+  getProjectTags,
+  ProjectWrapperService,
+} from '../../service/project.service';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +31,7 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatButtonModule,
     MatTooltipModule,
     RouterLink,
+    TagDisplayComponent,
   ],
   templateUrl: './project-metadata.component.html',
 })
@@ -38,6 +43,8 @@ export class ProjectMetadataComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
+
+  getProjectTags = getProjectTags;
 
   project?: Project;
   canDelete = false;

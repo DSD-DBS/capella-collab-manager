@@ -312,6 +312,7 @@ const scope: FineGrainedResourceOutput = {
     sessions: [],
     workspaces: [],
     personal_access_tokens: [],
+    tags: [],
   },
   projects: {},
 };

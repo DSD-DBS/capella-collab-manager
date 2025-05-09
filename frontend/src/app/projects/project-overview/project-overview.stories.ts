@@ -29,21 +29,25 @@ export const Overview: Story = {
         mockProjectWrapperServiceProvider(undefined, [
           {
             ...mockProject,
+            id: 2,
             name: 'Internal project',
             visibility: 'internal',
           },
           {
             ...mockProject,
+            id: 3,
             name: 'Private project',
             visibility: 'private',
           },
           {
             ...mockProject,
+            id: 4,
             name: 'Training project',
             type: 'training',
           },
           {
             ...mockProject,
+            id: 5,
             name: 'Project with more users',
             users: {
               leads: 16,
@@ -53,16 +57,19 @@ export const Overview: Story = {
           },
           {
             ...mockProject,
+            id: 6,
             name: 'Archived project',
             is_archived: true,
           },
           {
             ...mockProject,
+            id: 7,
             name: 'Project without description',
             description: '',
           },
           {
             ...mockProject,
+            id: 8,
             name: 'This is a very long project name. Why would someone name a project like this?',
             is_archived: true,
           },

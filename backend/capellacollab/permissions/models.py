@@ -187,6 +187,15 @@ class AdminScopes(core_pydantic.BaseModelStrict):
             description="Revoke personal access tokens of ALL users.",
         )
     )
+    tags: set[
+        t.Literal[
+            UserTokenVerb.CREATE, UserTokenVerb.UPDATE, UserTokenVerb.DELETE
+        ]
+    ] = pydantic.Field(
+        default_factory=set,
+        title="Tags",
+        description="Manage the available tags globally",
+    )
 
 
 class GlobalScopes(core_pydantic.BaseModelStrict):
