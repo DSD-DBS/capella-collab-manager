@@ -5,20 +5,25 @@
 
 <div class="collab-card pb-2">
   <h2 class="text-lg font-bold">Available tags</h2>
-  <div class="flex gap-1">
-    @for (tag of tags(); track tag.id) {
-      <app-tag
-        [name]="tag.name"
-        [description]="tag.description"
-        actionIcon="delete"
-        (actionClick)="deleteTag(tag)"
-        [hexBgColor]="tag.hex_color"
-        [textIcon]="tag.icon"
-      ></app-tag>
-    } @empty {
-      <span class="ml-2">No tags available.</span>
-    }
-  </div>
+  @for (scope of groupedTags() | keyvalue; track scope.key) {
+    <div class="mt-1">
+      <span class="italic">Available for {{ scope.key }}s:</span>
+      <div class="flex gap-1">
+        @for (tag of groupedTags()[scope.key]; track tag) {
+          <app-tag
+            [name]="tag.name"
+            [description]="tag.description"
+            actionIcon="delete"
+            (actionClick)="deleteTag(tag)"
+            [hexBgColor]="tag.hex_color"
+            [textIcon]="tag.icon"
+          ></app-tag>
+        }
+      </div>
+    </div>
+  } @empty {
+    <span class="italic">No tags available.</span>
+  }
 </div>
 
 <div class="collab-card mt-2">
@@ -27,7 +32,7 @@
     <div class="flex flex-wrap items-start gap-2">
       <mat-form-field
         subscriptSizing="dynamic"
-        class="!min-w-[100px] grow basis-[30%]"
+        class="!min-w-[120px] grow basis-1/5"
       >
         <mat-label>Tag name</mat-label>
         <input
@@ -39,7 +44,7 @@
       </mat-form-field>
       <mat-form-field
         subscriptSizing="dynamic"
-        class="!min-w-[100px] grow basis-[30%]"
+        class="!min-w-[120px] grow basis-1/5"
       >
         <mat-label>Background color (in hex-format)</mat-label>
         <input
@@ -57,7 +62,7 @@
       </mat-form-field>
       <mat-form-field
         subscriptSizing="dynamic"
-        class="!min-w-[100px] grow basis-[30%]"
+        class="!min-w-[120px] grow basis-1/5"
       >
         <mat-label>Icon</mat-label>
         <input
@@ -67,6 +72,17 @@
           placeholder="Icon name of Google Material Icons"
           spellcheck="false"
         />
+      </mat-form-field>
+      <mat-form-field
+        subscriptSizing="dynamic"
+        class="!min-w-[120px] grow basis-1/5"
+      >
+        <mat-label>Scope</mat-label>
+        <mat-select formControlName="scope">
+          @for (scope of tagScopes; track scope) {
+            <mat-option [value]="scope">{{ scope }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
     </div>
     <mat-form-field subscriptSizing="dynamic">

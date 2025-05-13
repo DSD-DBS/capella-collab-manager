@@ -2,7 +2,6 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-
 <div class="flex flex-wrap gap-5">
   <div class="collab-card mb-[10px] w-full !pb-0 sm:w-[500px] sm:max-w-[85vw]">
     <div class="flex items-center justify-between">
@@ -12,7 +11,11 @@
       }
     </div>
     <form [formGroup]="form">
-      <mat-form-field class="mb-[-10px] mt-[10px] w-full" appearance="outline">
+      <mat-form-field
+        class="my-1 w-full"
+        appearance="outline"
+        subscriptSizing="dynamic"
+      >
         <mat-label>Search</mat-label>
         <input
           formControlName="search"
@@ -65,7 +68,17 @@
                   </div>
                 </div>
               </a>
-              <div class="flex items-center">
+              <div
+                class="flex w-[80px] min-w-[80px] flex-wrap items-center justify-end"
+              >
+                <button
+                  mat-icon-button
+                  matTooltip="Manage tags of user"
+                  (click)="manageTags(user)"
+                >
+                  <mat-icon>bookmarks</mat-icon>
+                </button>
+
                 @if (user.role === "administrator") {
                   @if (user.id !== ownUserService.user?.id) {
                     <button
@@ -114,6 +127,9 @@
                 }
               </div>
             </div>
+            @if (!$last) {
+              <hr />
+            }
           }
         }
 
@@ -136,26 +152,25 @@
     <h2 class="text-xl font-medium">Create User</h2>
     In general, users are created automatically when logging in the first time.
     If you want to create the user before the first login, use this form. <br />
-    <form [formGroup]="createUserFormGroup">
-      <mat-form-field class="mt-3 w-full">
+    <form [formGroup]="createUserFormGroup" class="flex flex-col gap-2">
+      <mat-form-field class="mt-3 w-full" subscriptSizing="dynamic">
         <mat-label>Username</mat-label>
         <input matInput formControlName="username" />
         @if (username.errors?.required) {
-          <mat-error> Please enter an username! </mat-error>
+          <mat-error>Please enter an username!</mat-error>
         } @else if (username.errors?.userAlreadyExists) {
-          <mat-error> The username already exists! </mat-error>
+          <mat-error>The username already exists!</mat-error>
         }
       </mat-form-field>
-      <mat-form-field class="w-full">
+      <mat-form-field class="w-full" subscriptSizing="dynamic">
         <mat-label>Identity Provider Identifier</mat-label>
         <input matInput formControlName="idpIdentifier" />
         @if (idpIdentifier.errors?.required) {
-          <mat-error> Please enter an IdP identifier! </mat-error>
+          <mat-error>Please enter an IdP identifier!</mat-error>
         } @else if (idpIdentifier.errors?.userAlreadyExists) {
-          <mat-error> The IdP identifier already exists! </mat-error>
+          <mat-error>The IdP identifier already exists!</mat-error>
         }
       </mat-form-field>
-      <br />
       <button class="w-full" mat-flat-button (click)="createUser()">
         Create User
         <mat-icon iconPositionEnd>keyboard_arrow_right</mat-icon>

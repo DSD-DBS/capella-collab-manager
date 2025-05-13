@@ -19,6 +19,8 @@ from capellacollab.projects import crud as projects_crud
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
 from capellacollab.sessions import routes as session_routes
+from capellacollab.tags import core as tags_core
+from capellacollab.tags import models as tags_models
 from capellacollab.users import injectables as users_injectables
 from capellacollab.users.tokens import routes as tokens_routes
 from capellacollab.users.workspaces import routes as workspaces_routes
@@ -216,11 +218,16 @@ def update_user(
         else:
             raise exceptions.ReasonRequiredError()
 
+    tags = tags_core.resolve_tags(
+        db, patch_user.tags, tags_models.TagScope.USER
+    )
+
     if patch_user.blocked is not None and patch_user.blocked != user.blocked:
         update_user_blocked_status(
             db, user, own_user, patch_user.blocked, patch_user.reason
         )
-    return crud.update_user(db, user, patch_user)
+    patch_user.tags = None
+    return crud.update_user(db, user, patch_user, tags)
 
 
 def update_user_blocked_status(

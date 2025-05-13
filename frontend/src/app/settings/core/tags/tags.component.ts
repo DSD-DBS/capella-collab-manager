@@ -2,9 +2,11 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -21,10 +23,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { ConfirmationDialogComponent } from 'src/app/helpers/confirmation-dialog/confirmation-dialog.component';
 import { TagComponent } from 'src/app/helpers/tag/tag.component';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { CreateTag, Tag, TagsService } from 'src/app/openapi';
+import { CreateTag, Tag, TagScope, TagsService } from 'src/app/openapi';
 
 @Component({
   selector: 'app-tags',
@@ -38,7 +41,8 @@ import { CreateTag, Tag, TagsService } from 'src/app/openapi';
     ReactiveFormsModule,
     MatInputModule,
     TagComponent,
-    ConfirmationDialogComponent,
+    MatSelectModule,
+    KeyValuePipe,
   ],
   templateUrl: './tags.component.html',
   styles: `
@@ -50,6 +54,19 @@ import { CreateTag, Tag, TagsService } from 'src/app/openapi';
 })
 export class TagsComponent {
   tags = signal<Tag[] | undefined>(undefined);
+  tagScopes = Object.values(TagScope);
+
+  groupedTags = computed(() => {
+    const tags: Record<string, Tag[]> = {};
+
+    for (const tag of this.tags() || []) {
+      if (!tags[tag.scope]) {
+        tags[tag.scope] = [];
+      }
+      tags[tag.scope].push(tag);
+    }
+    return tags;
+  });
 
   private tagsService = inject(TagsService);
   private toastService = inject(ToastService);
@@ -63,6 +80,7 @@ export class TagsComponent {
     ]),
     icon: new FormControl<string | undefined>('info'),
     description: new FormControl<string | undefined>(''),
+    scope: new FormControl<TagScope>(TagScope.Project),
   });
 
   updateTags() {

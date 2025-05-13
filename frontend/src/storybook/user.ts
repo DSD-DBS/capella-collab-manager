@@ -9,6 +9,7 @@ import {
   OwnUserWrapperService,
 } from 'src/app/services/user/user.service';
 import { UserWrapperService } from 'src/app/users/user-wrapper/user-wrapper.service';
+import { mockUserTag } from 'src/storybook/tags';
 
 export const mockUser: Readonly<User> = {
   id: 1,
@@ -20,6 +21,7 @@ export const mockUser: Readonly<User> = {
   last_login: '2024-04-29T14:59:00Z',
   beta_tester: false,
   blocked: false,
+  tags: [mockUserTag],
 };
 
 class MockOwnUserWrapperService implements Partial<OwnUserWrapperService> {

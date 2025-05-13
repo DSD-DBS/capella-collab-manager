@@ -51,6 +51,7 @@ dependencies = [
   "Jinja2",
   "pydantic-extra-types>=2.10.2",
   "asyncer==0.0.8",
+  "alembic_postgresql_enum"
 ]
 
 [project.urls]
@@ -72,7 +73,7 @@ dev = [
   "aioresponses>=0.7.7",
   "types-lxml",
   "types-croniter",
-  "pytest-asyncio",
+  "pytest-asyncio"
 ]
 
 [tool.coverage.run]

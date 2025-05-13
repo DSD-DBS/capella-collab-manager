@@ -18,10 +18,12 @@
         </ng-template>
         <h3 class="flex justify-center sm:hidden">Create model</h3>
 
-        <app-create-model-base
-          [asStepper]="asStepper"
-          (create)="afterModelCreated()"
-        ></app-create-model-base>
+        <div class="mb-4">
+          <app-create-model-base
+            [asStepper]="asStepper"
+            (create)="afterModelCreated()"
+          ></app-create-model-base>
+        </div>
       </mat-step>
 
       <mat-step completed="false">
@@ -30,9 +32,11 @@
         </ng-template>
         <h3 class="flex justify-center sm:hidden">Choose source</h3>
 
-        <app-choose-source
-          (modelSourceSelection)="onSourceClick($event)"
-        ></app-choose-source>
+        <div class="mb-4">
+          <app-choose-source
+            (modelSourceSelection)="onSourceClick($event)"
+          ></app-choose-source>
+        </div>
       </mat-step>
 
       <mat-step>
@@ -41,26 +45,28 @@
         </ng-template>
         <h3 class="flex justify-center sm:hidden">Link source</h3>
 
-        @switch (source) {
-          @case ("git-add") {
-            <app-manage-git-model
-              [asStepper]="true"
-              (create)="afterSourceCreated($event)"
-            ></app-manage-git-model>
+        <div class="mb-4">
+          @switch (source) {
+            @case ("git-add") {
+              <app-manage-git-model
+                [asStepper]="true"
+                (create)="afterSourceCreated($event)"
+              ></app-manage-git-model>
+            }
+            @case ("t4c-existing") {
+              <app-manage-t4c-model
+                [asStepper]="true"
+                (create)="afterSourceCreated($event)"
+              ></app-manage-t4c-model>
+            }
+            @case ("t4c-new") {
+              <app-create-t4c-model-new-repository
+                [asStepper]="true"
+                (create)="afterSourceCreated($event)"
+              ></app-create-t4c-model-new-repository>
+            }
           }
-          @case ("t4c-existing") {
-            <app-manage-t4c-model
-              [asStepper]="true"
-              (create)="afterSourceCreated($event)"
-            ></app-manage-t4c-model>
-          }
-          @case ("t4c-new") {
-            <app-create-t4c-model-new-repository
-              [asStepper]="true"
-              (create)="afterSourceCreated($event)"
-            ></app-create-t4c-model-new-repository>
-          }
-        }
+        </div>
       </mat-step>
 
       <mat-step>
@@ -68,11 +74,12 @@
           <div class="hidden sm:inline">Configure model</div>
         </ng-template>
         <h3 class="flex justify-center sm:hidden">Configure model</h3>
-
-        <app-init-model
-          [asStepper]="asStepper"
-          (create)="afterModelInitialized($event)"
-        ></app-init-model>
+        <div class="mb-4">
+          <app-init-model
+            [asStepper]="asStepper"
+            (create)="afterModelInitialized($event)"
+          ></app-init-model>
+        </div>
       </mat-step>
     </div>
   </mat-horizontal-stepper>

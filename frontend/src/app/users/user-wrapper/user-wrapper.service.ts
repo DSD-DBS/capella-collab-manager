@@ -4,7 +4,7 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Tag, User, UsersService } from 'src/app/openapi';
+import { Tag, TagScope, User, UsersService } from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +40,7 @@ export class UserWrapperService {
 }
 
 export function getUserTags(user: User): Tag[] {
-  const tags: Tag[] = [];
+  const tags = structuredClone(user.tags) || [];
   if (user.blocked) {
     tags.push({
       id: -1,
@@ -49,6 +49,7 @@ export function getUserTags(user: User): Tag[] {
         'The user is blocked and all authenticated requests are rejected.',
       hex_color: '#c10007',
       icon: 'no_accounts',
+      scope: TagScope.User,
     });
   }
   if (user.beta_tester) {
@@ -59,6 +60,7 @@ export function getUserTags(user: User): Tag[] {
         'The user is signed up as beta user and helps to test experimental features.',
       hex_color: '#A020F0',
       icon: 'experiment',
+      scope: TagScope.User,
     });
   }
 

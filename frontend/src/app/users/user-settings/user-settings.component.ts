@@ -45,6 +45,7 @@ import {
   UserRole,
   OwnUserWrapperService,
 } from 'src/app/services/user/user.service';
+import { AddTagsDialogComponent } from 'src/app/users/add-tags-dialog/add-tags-dialog.component';
 import {
   getUserTags,
   UserWrapperService,
@@ -328,6 +329,17 @@ export class UserSettingsComponent implements OnInit {
         this.form.value.userType == null ||
         user.beta_tester == (this.form.value.userType == 'beta');
       return roleMatches && searchMatches && userTypeMatches;
+    });
+  }
+
+  manageTags(user: User) {
+    const dialogRef = this.dialog.open(AddTagsDialogComponent, {
+      data: user,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.userWrapperService.loadUsers();
     });
   }
 }

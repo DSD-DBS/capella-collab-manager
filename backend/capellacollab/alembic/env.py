@@ -7,6 +7,8 @@ os.environ["ALEMBIC_CONTEXT"] = "1"
 
 import logging
 
+# ruff: noqa: F401
+import alembic_postgresql_enum
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 

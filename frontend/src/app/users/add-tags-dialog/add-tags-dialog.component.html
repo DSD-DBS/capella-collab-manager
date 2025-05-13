@@ -1,0 +1,56 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<div class="dialog">
+  <h1 class="mb-2 text-xl font-bold">Tags of user {{ user.name }}!</h1>
+  <mat-form-field subscriptSizing="dynamic" appearance="outline" class="w-full">
+    <mat-label>Tags</mat-label>
+    <mat-chip-grid #chipGrid>
+      @for (tag of selectedTags(); track $index) {
+        <mat-chip-row
+          [style.color]="tagHelperService.identifyColor(tag.hex_color)"
+          [style.backgroundColor]="tag.hex_color"
+          [removable]="true"
+          (removed)="removeTag(tag)"
+          [disableRipple]="true"
+          [matTooltip]="tag.description"
+        >
+          @if (tag.icon; as icon) {
+            <mat-icon
+              matChipAvatar
+              [style.color]="tagHelperService.identifyColor(tag.hex_color)"
+            >
+              {{ icon }}
+            </mat-icon>
+          }
+          {{ tag.name }}
+          <button matChipRemove aria-label="Remove tag">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+      }
+    </mat-chip-grid>
+    <input
+      placeholder="New tag..."
+      #tagInput
+      [matChipInputFor]="chipGrid"
+      [matAutocomplete]="auto"
+      [matChipInputAddOnBlur]="true"
+    />
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addTag($event)">
+      @for (tag of availableTags; track tag) {
+        <mat-option [value]="tag">
+          <app-tag-display [tag]="tag" />
+        </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+  <div class="mt-2 flex justify-between">
+    <button mat-stroked-button (click)="closeDialog(false)">Cancel</button>
+    <button mat-flat-button [disabled]="loading()" (click)="updateUser()">
+      Submit
+    </button>
+  </div>
+</div>

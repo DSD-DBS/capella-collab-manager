@@ -97,7 +97,7 @@ export class EditProjectMetadataComponent implements OnInit, OnChanges {
         this.form.patchValue(project);
       });
     this.tagsService.getTags().subscribe((tags) => {
-      this.availableTags = tags;
+      this.availableTags = tags.filter((tag) => tag.scope === 'project');
     });
   }
 

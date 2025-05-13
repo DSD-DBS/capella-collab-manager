@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { TagScope } from './tag-scope';
 
 
 export interface CreateTag { 
@@ -16,5 +17,9 @@ export interface CreateTag {
     description?: string | null;
     icon?: string | null;
     hex_color: string;
+    scope?: TagScope;
 }
+export namespace CreateTag {
+}
+
 

@@ -19,6 +19,7 @@ import {
   ProjectVisibility,
   ProjectsService,
   Tag,
+  TagScope,
 } from 'src/app/openapi';
 
 @Injectable({
@@ -146,6 +147,7 @@ export function getProjectTags(project: Project): Tag[] {
       description: 'This is a special project containing training material',
       hex_color: '#FF9800',
       icon: 'school',
+      scope: TagScope.Project,
     });
   }
   if (project.visibility === 'private') {
@@ -155,6 +157,7 @@ export function getProjectTags(project: Project): Tag[] {
       description: 'This project is only viewable by project members',
       hex_color: '#70798C',
       icon: 'lock',
+      scope: TagScope.Project,
     });
   }
   if (project.visibility === 'internal') {
@@ -164,6 +167,7 @@ export function getProjectTags(project: Project): Tag[] {
       description: 'This project is viewable by all logged in users',
       hex_color: '#70798C',
       icon: 'public',
+      scope: TagScope.Project,
     });
   }
   if (project.is_archived) {
@@ -177,6 +181,7 @@ export function getProjectTags(project: Project): Tag[] {
         ' to create new models in this project.',
       hex_color: '#a52606',
       icon: 'warning',
+      scope: TagScope.Project,
     });
   }
 
