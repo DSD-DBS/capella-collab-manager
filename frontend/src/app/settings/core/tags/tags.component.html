@@ -47,6 +47,7 @@
           data-testid="hex-color-input"
           formControlName="hex_color"
           placeholder="#ffffff"
+          spellcheck="false"
         />
         @if (newTagForm.get("hex_color")?.errors?.["pattern"]) {
           <mat-error>
@@ -64,6 +65,7 @@
           data-testid="icon-input"
           formControlName="icon"
           placeholder="Icon name of Google Material Icons"
+          spellcheck="false"
         />
       </mat-form-field>
     </div>
