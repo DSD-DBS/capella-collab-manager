@@ -43,6 +43,7 @@ dependencies = [
   "aiohttp",
   "argon2-cffi",
   "typer",
+  "click<8.2.0", # https://github.com/fastapi/typer/discussions/1215
   "lxml",
   "valkey[libvalkey]",
   "cryptography",
