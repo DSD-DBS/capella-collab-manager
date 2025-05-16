@@ -84,6 +84,11 @@ openapi:
 		--remove-security-schemes \
 		/tmp/openapi.json
 
+openapi-ui:
+	$(VENV)/bin/python \
+		-m capellacollab.cli openapi generate \
+		/tmp/openapi-ui.json
+
 import-rsa-key:
 	$(VENV)/bin/python \
 		-m capellacollab.cli keys import \
