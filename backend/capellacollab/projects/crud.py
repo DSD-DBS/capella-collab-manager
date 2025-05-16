@@ -92,8 +92,13 @@ def update_project(
     patch_project: models.PatchProject,
     tags: list[tags_models.DatabaseTag] | None = None,
 ) -> models.DatabaseProject:
+    # Tags are passed separately
+    patch_project.tags = None
+
     database.patch_database_with_pydantic_object(project, patch_project)
-    project.tags = tags or []
+
+    if tags is not None:
+        project.tags = tags
 
     db.commit()
     return project

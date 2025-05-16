@@ -8,10 +8,12 @@ import enum
 import typing as t
 
 import pydantic
+import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.tags import models as tags_models
 
 from ..permissions import models
 
@@ -130,6 +132,7 @@ class BaseUser(core_pydantic.BaseModel):
     role: Role
     beta_tester: bool = False
     blocked: bool = False
+    tags: list[tags_models.Tag] | None = None
 
 
 class User(BaseUser):
@@ -152,6 +155,9 @@ class PatchUser(core_pydantic.BaseModel):
     reason: str | None = None
     beta_tester: bool | None = None
     blocked: bool | None = None
+    tags: list[int | str] | None = pydantic.Field(
+        default=None, description="List of tag IDs or names."
+    )
 
 
 class PostUser(core_pydantic.BaseModel):
@@ -161,6 +167,14 @@ class PostUser(core_pydantic.BaseModel):
     role: Role
     reason: str
     beta_tester: bool = False
+
+
+users_tags_association = sa.Table(
+    "users_tags_association",
+    database.Base.metadata,
+    sa.Column("users_id", sa.ForeignKey("users.id"), primary_key=True),
+    sa.Column("tags_id", sa.ForeignKey("tags.id"), primary_key=True),
+)
 
 
 class DatabaseUser(database.Base):
@@ -209,3 +223,9 @@ class DatabaseUser(database.Base):
 
     beta_tester: orm.Mapped[bool] = orm.mapped_column(default=False)
     blocked: orm.Mapped[bool] = orm.mapped_column(default=False)
+
+    tags: orm.Mapped[list[tags_models.DatabaseTag]] = orm.relationship(
+        secondary=users_tags_association,
+        default_factory=list,
+        back_populates="users",
+    )

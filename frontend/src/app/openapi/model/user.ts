@@ -10,6 +10,7 @@
  */
 
 import { Role } from './role';
+import { Tag } from './tag';
 
 
 export interface User { 
@@ -20,6 +21,7 @@ export interface User {
     role: Role;
     beta_tester: boolean;
     blocked: boolean;
+    tags: Array<Tag> | null;
     created: string | null;
     last_login: string | null;
 }

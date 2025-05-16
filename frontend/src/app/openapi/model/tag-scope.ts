@@ -9,18 +9,14 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
-import { TagScope } from './tag-scope';
 
 
-export interface Tag { 
-    name: string;
-    description: string | null;
-    icon: string | null;
-    hex_color: string;
-    scope: TagScope;
-    id: number;
-}
-export namespace Tag {
-}
-
+/**
+ * The scope a tag is valid for.  Tags can only added to projects or users if the scope of the tag matches.
+ */
+export const TagScope = {
+    Project: 'project',
+    User: 'user'
+} as const;
+export type TagScope = typeof TagScope[keyof typeof TagScope];
 

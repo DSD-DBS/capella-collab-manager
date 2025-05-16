@@ -172,6 +172,7 @@ export * from './t4-c-repositories-response-model';
 export * from './t4-c-repository';
 export * from './t4-c-repository-status';
 export * from './tag';
+export * from './tag-scope';
 export * from './text';
 export * from './token-request';
 export * from './tool';

@@ -338,6 +338,22 @@ def test_add_non_existing_tag_to_project(
 
 
 @pytest.mark.usefixtures("admin")
+def test_add_tag_wrong_scope_to_project(
+    client: testclient.TestClient,
+    tag: tags_models.DatabaseTag,
+    project: projects_models.DatabaseProject,
+):
+    tag.scope = tags_models.TagScope.USER
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}",
+        json={"tags": [tag.id]},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"]["err_code"] == "TAG_SCOPE_MISMATCH"
+
+
+@pytest.mark.usefixtures("admin")
 def test_remove_tag_from_project(
     client: testclient.TestClient,
     tag: tags_models.DatabaseTag,

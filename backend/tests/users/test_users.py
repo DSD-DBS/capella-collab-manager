@@ -12,6 +12,7 @@ from capellacollab.events import crud as events_crud
 from capellacollab.events import models as events_models
 from capellacollab.projects import models as projects_models
 from capellacollab.projects.users import crud as projects_users_crud
+from capellacollab.tags import models as tags_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import metrics as users_metrics
 from capellacollab.users import models as users_models
@@ -141,6 +142,47 @@ def test_fail_update_own_user(
     assert (
         response.json()["detail"]["err_code"] == "CHANGES_NOT_ALLOWED_FOR_ROLE"
     )
+
+
+@pytest.mark.usefixtures("admin")
+def test_add_tags_to_user(
+    client: testclient.TestClient,
+    user: users_models.DatabaseUser,
+    tag: tags_models.DatabaseTag,
+):
+    tag.scope = tags_models.TagScope.USER
+    response = client.patch(
+        f"/api/v1/users/{user.id}", json={"tags": [tag.id]}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["tags"][0]["id"] == tag.id
+
+
+@pytest.mark.usefixtures("admin")
+def test_tags_not_updated_on_patch(
+    client: testclient.TestClient,
+    user: users_models.DatabaseUser,
+    tag: tags_models.DatabaseTag,
+):
+    user.tags = [tag]
+    response = client.patch(f"/api/v1/users/{user.id}", json={"tags": None})
+
+    assert response.status_code == 200
+    assert len(response.json()["tags"]) == 1
+
+
+@pytest.mark.usefixtures("admin")
+def test_remove_tags_from_user(
+    client: testclient.TestClient,
+    user: users_models.DatabaseUser,
+    tag: tags_models.DatabaseTag,
+):
+    user.tags = [tag]
+    response = client.patch(f"/api/v1/users/{user.id}", json={"tags": []})
+
+    assert response.status_code == 200
+    assert len(response.json()["tags"]) == 0
 
 
 def test_user_metrics(db: orm.Session):

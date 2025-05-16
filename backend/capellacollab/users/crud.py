@@ -8,6 +8,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.tags import models as tags_models
 from capellacollab.users import models
 
 
@@ -78,9 +79,19 @@ def create_user(
 
 
 def update_user(
-    db: orm.Session, user: models.DatabaseUser, patch_user: models.PatchUser
+    db: orm.Session,
+    user: models.DatabaseUser,
+    patch_user: models.PatchUser,
+    tags: list[tags_models.DatabaseTag] | None = None,
 ) -> models.DatabaseUser:
+    # Tags are passed separately
+    patch_user.tags = None
+
     database.patch_database_with_pydantic_object(user, patch_user)
+
+    if tags is not None:
+        user.tags = tags
+
     db.commit()
     return user
 

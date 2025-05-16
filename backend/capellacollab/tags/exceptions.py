@@ -5,6 +5,8 @@ from fastapi import status
 
 from capellacollab.core import exceptions as core_exceptions
 
+from . import models
+
 
 class TagFoundError(core_exceptions.BaseError):
     def __init__(self, tag_id: int):
@@ -46,3 +48,22 @@ class TagAlreadyExistsError(core_exceptions.BaseError):
     @classmethod
     def openapi_example(cls) -> "TagAlreadyExistsError":
         return cls("test")
+
+
+class TagScopeMismatchError(core_exceptions.BaseError):
+    def __init__(
+        self,
+        tag_name: str,
+        actual_tag_scope: models.TagScope,
+        required_tag_scope: models.TagScope,
+    ):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            title="Tag scope doesn't match",
+            reason=f"The tag with the name '{tag_name}' can only be used for {required_tag_scope.value}s, not for {actual_tag_scope.value}s.",
+            err_code="TAG_SCOPE_MISMATCH",
+        )
+
+    @classmethod
+    def openapi_example(cls) -> "TagScopeMismatchError":
+        return cls("test", models.TagScope.PROJECT, models.TagScope.USER)

@@ -240,3 +240,8 @@ fieldset {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+// Remove padding from mat-horizontal-content-container
+.mat-horizontal-content-container {
+  padding: 0 !important;
+}

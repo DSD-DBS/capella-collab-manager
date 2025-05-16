@@ -10,6 +10,7 @@
  */
 
 import { Role } from './role';
+import { Tag } from './tag';
 
 
 export interface BaseUser { 
@@ -20,6 +21,7 @@ export interface BaseUser {
     role: Role;
     beta_tester: boolean;
     blocked: boolean;
+    tags: Array<Tag> | null;
 }
 export namespace BaseUser {
 }

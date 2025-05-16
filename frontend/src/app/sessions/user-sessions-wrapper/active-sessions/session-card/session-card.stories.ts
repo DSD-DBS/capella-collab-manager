@@ -18,6 +18,7 @@ import {
   mockPersistentSession,
   mockReadonlySession,
 } from 'src/storybook/session';
+import { mockUserTag } from 'src/storybook/tags';
 import { mockHttpConnectionMethod } from 'src/storybook/tool';
 import {
   mockOwnUserWrapperServiceProvider,
@@ -221,6 +222,7 @@ export const SessionSharedWithUser: Story = {
             idp_identifier: 'user_1',
             beta_tester: false,
             blocked: false,
+            tags: [mockUserTag],
           },
           created_at: '2024-04-29T15:00:00Z',
         },
@@ -233,6 +235,7 @@ export const SessionSharedWithUser: Story = {
             idp_identifier: 'user_2',
             beta_tester: false,
             blocked: false,
+            tags: [mockUserTag],
           },
           created_at: '2024-04-29T15:00:00Z',
         },
@@ -265,6 +268,7 @@ export const SessionSharedWithUserTerminatingSoon: Story = {
             idp_identifier: 'user_1',
             beta_tester: false,
             blocked: false,
+            tags: [mockUserTag],
           },
           created_at: '2024-04-29T15:00:00Z',
         },
@@ -277,6 +281,7 @@ export const SessionSharedWithUserTerminatingSoon: Story = {
             idp_identifier: 'user_2',
             beta_tester: false,
             blocked: false,
+            tags: [mockUserTag],
           },
           created_at: '2024-04-29T15:00:00Z',
         },

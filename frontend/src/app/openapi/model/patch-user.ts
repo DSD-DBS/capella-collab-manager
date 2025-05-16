@@ -10,6 +10,7 @@
  */
 
 import { Role } from './role';
+import { PatchProjectTagsInner } from './patch-project-tags-inner';
 
 
 export interface PatchUser { 
@@ -20,6 +21,7 @@ export interface PatchUser {
     reason?: string | null;
     beta_tester?: boolean | null;
     blocked?: boolean | null;
+    tags?: Array<PatchProjectTagsInner> | null;
 }
 export namespace PatchUser {
 }
