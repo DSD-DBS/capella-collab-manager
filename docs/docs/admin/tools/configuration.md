@@ -372,6 +372,20 @@ internal_endpoint = response.json()[0]["internal_endpoint"]
 requests.get(f"http://{internal_endpoint}").content
 ```
 
+### Logging
+
+The Capella Collaboration Manager collects logs of sessions automatically and
+makes them available in Grafana for monitoring.
+
+- The logs must be written to disk, stdout and stderr of the container are not
+  persisted.
+- The log collector scans all files with a file ending of `.log` below
+  `/var/log/session` (Subdirectories are scanned too, but avoid large file
+  structures).
+- _Optional:_ For better filtering and searching, log the messages in the
+  [logfmt](https://brandur.org/logfmt) format. Grafana Loki has an inbuilt
+  parser for logfmt.
+
 ## Configuration examples
 
 To help you configure your tools, we provide some examples as part of our
