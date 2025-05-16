@@ -21,13 +21,12 @@ to automate tasks such as creating and managing projects, sessions, and users.
 !!! note
 
     **The API documentation is only available via the documentation of Collaboration
-    Manager instances**. Only in this case you'll be able to open the links below.
+    Manager instances** and GitHub Pages. Only in this case you'll be able to open the links below.
     You'll see the API documentation matching the version of the Collaboration Manager
     instance you are using.
 
     It is not available on:
 
-    - GitHub Pages
     - Local non-cluster development environments
     - ReadTheDocs
 

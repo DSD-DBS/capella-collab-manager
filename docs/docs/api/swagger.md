@@ -1,6 +1,6 @@
 ---
 template: redirect.html
-location: /api/docs/swagger
+location: ../../api/docs/swagger
 title: SwaggerUI
 icon: octicons/link-external-16
 ---
