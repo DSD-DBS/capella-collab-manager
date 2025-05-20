@@ -108,6 +108,7 @@ nav:
           - Dashboards: admin/monitoring/dashboards.md
           - Grafana Log Explorer: admin/monitoring/logging/explorer.md
           - Pipelines & Model Modifiers: admin/monitoring/frontend.md
+          - Security Scanning: admin/monitoring/security-scanning.md
       - Integrations:
           - Git: admin/settings/model-sources/git.md
           - TeamForCapella:
