@@ -9,12 +9,13 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { BaseUser } from './base-user';
 import { FineGrainedResourceOutput } from './fine-grained-resource-output';
 
 
 export interface UserTokenWithPassword { 
     id: number;
-    user_id: number;
+    user: BaseUser;
     expiration_date: string;
     /**
      * The scope the token was requested for.

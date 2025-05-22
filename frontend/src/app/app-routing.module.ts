@@ -53,6 +53,7 @@ import { EditT4cLicenseServerComponent } from './settings/modelsources/t4c-setti
 import { T4CSettingsWrapperComponent } from './settings/modelsources/t4c-settings/t4c-settings-wrapper/t4c-settings-wrapper.component';
 import { T4CSettingsComponent } from './settings/modelsources/t4c-settings/t4c-settings.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AllPersonalAccessTokensComponent } from './users/personal-access-tokens/all-personal-access-tokens/all-personal-access-tokens.component';
 import { UserSettingsComponent } from './users/user-settings/user-settings.component';
 import YamlWorker from './yaml.worker.js?worker';
 
@@ -359,6 +360,11 @@ export const routes: Routes = [
                 path: 'users',
                 data: { breadcrumb: 'Users' },
                 component: UserSettingsComponent,
+              },
+              {
+                path: 'tokens',
+                data: { breadcrumb: 'Tokens' },
+                component: AllPersonalAccessTokensComponent,
               },
               {
                 path: 'announcements',

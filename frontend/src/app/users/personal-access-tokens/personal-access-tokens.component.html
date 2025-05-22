@@ -186,146 +186,32 @@
   <hr class="my-2" />
 
   <h2 class="mb-2 text-xl font-medium">Token Overview</h2>
-  @if ((tokens$ | async)?.length) {
+  @if (tokens$ | async) {
     <div class="flex flex-wrap gap-2">
       @for (token of tokens$ | async; track token) {
-        <div class="collab-card flex flex-col justify-between sm:max-w-[350px]">
-          <div>
-            <div class="min-h-[131px]">
-              <b>{{ token.title }}</b>
-              <hr class="my-1" />
-              The token was created
-              @if (token.created_at) {
-                <app-relative-time
-                  [date]="token.created_at"
-                ></app-relative-time>
-              }
-              <span> in the {{ token.source }}</span>
-              @if (!isTokenExpired(token.expiration_date)) {
-                and expires
-                <app-relative-time
-                  [date]="token.expiration_date"
-                  dateFormat="PP"
-                ></app-relative-time
-                >.
-              } @else {
-                <span>.</span>
-                <div
-                  class="mt-2 flex items-center justify-center gap-2 rounded border p-2 text-sm
-                    text-red-600 shadow"
-                >
-                  <mat-icon class="shrink-0">warning</mat-icon>
-                  <span
-                    >The token has expired
-                    <app-relative-time
-                      [date]="token.expiration_date"
-                      dateFormat="PP"
-                    ></app-relative-time
-                    >!</span
-                  >
-                </div>
-              }
-              <div class="mt-1 text-sm">{{ token.description }}</div>
-            </div>
-          </div>
-          <div>
-            <mat-expansion-panel class="!mt-2">
-              @let actualScopes = flattenScope(token.actual_scopes);
-              @let requestedScopes = flattenScope(token.requested_scopes);
-              @let count = countScopes(requestedScopes);
-
-              <mat-expansion-panel-header
-                [attr.data-testId]="'scopes-expansion-' + token.id"
-              >
-                <mat-panel-title>
-                  <b
-                    >{{ count }}
-                    {{ count === 1 ? "Permission" : "Permissions" }}</b
-                  ><br />
-                </mat-panel-title>
-              </mat-expansion-panel-header>
-
-              <div class="text-sm">
-                @if (count === 0) {
-                  <div class="px-4 pb-4">
-                    No scopes requested. The token can still be used for API
-                    endpoints without scope.
-                  </div>
-                } @else {
-                  <div class="px-4 pb-4">
-                    <ul class="ml-1 list-inside list-disc">
-                      @for (
-                        scope of requestedScopes | keyvalue;
-                        track scope.key
-                      ) {
-                        @for (
-                          permission of scope.value | keyvalue;
-                          track permission.key
-                        ) {
-                          @if (permission.value.length) {
-                            <li>
-                              {{ scope.key }}.{{ permission.key }}:
-                              @for (verb of permission.value; track verb) {
-                                @if (
-                                  containsVerb(
-                                    actualScopes,
-                                    scope.key,
-                                    permission.key,
-                                    verb
-                                  )
-                                ) {
-                                  <span class="text-green-600">{{ verb }}</span>
-                                } @else {
-                                  <span
-                                    matTooltip="The verb is not currently granted. The underlying user does not have the required permission."
-                                    class="cursor-help text-red-600"
-                                    ><mat-icon inline class="align-bottom"
-                                      >warning</mat-icon
-                                    ><span
-                                      class="ml-0.5 underline decoration-dotted decoration-1 underline-offset-4"
-                                      >{{ verb }}</span
-                                    ></span
-                                  >
-                                }
-                                <!-- prettier-ignore -->
-                                @if (!$last) {, }
-                              }
-                            </li>
-                          }
-                        }
-                      }
-                    </ul>
-                  </div>
-                }
-              </div>
-            </mat-expansion-panel>
-
-            <div
-              class="mt-2"
-              matTooltip="Managed tokens can't be deleted manually."
-              [matTooltipDisabled]="!token.managed"
-            >
-              <button
-                class="w-full"
-                (click)="deleteToken(token)"
-                mat-raised-button
-                [disabled]="token.managed"
-              >
-                <mat-icon class="error-button">delete</mat-icon>
-                <span>
-                  @if (isTokenExpired(token.expiration_date)) {
-                    Remove token from overview
-                  } @else {
-                    Revoke token
-                  }
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <app-token-card
+          class="contents"
+          (tokenDeleted)="loadTokens()"
+          [token]="token"
+        ></app-token-card>
+      } @empty {
+        No token created for your user yet.
       }
     </div>
   } @else {
-    No token created for your user yet.
+    <div class="flex flex-wrap gap-2">
+      @for (_ of Array(20).fill(0); track $index) {
+        <ngx-skeleton-loader
+          class="h-64 w-[350px]"
+          [theme]="{
+            'border-radius': '10px',
+            height: '100%',
+            margin: '0px',
+            padding: '0px',
+            border: '1px solid white',
+          }"
+        />
+      }
+    </div>
   }
 </div>

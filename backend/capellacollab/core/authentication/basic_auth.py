@@ -64,8 +64,8 @@ class HTTPBasicAuth(security.HTTPBasic):
         elif len(password) == 3:
             token_id = int(password[2])
             db_token = await asyncer.asyncify(
-                token_crud.get_token_by_id_and_user
-            )(db, token_id, user)
+                token_crud.get_token_by_user_and_id
+            )(db, user.id, token_id)
 
             if not db_token:
                 logger.info(
