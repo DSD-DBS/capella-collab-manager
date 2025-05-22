@@ -149,7 +149,7 @@ export class ProjectOverviewComponent implements OnInit {
     if (!this.isScrollable(project, distance > 0 ? 'right' : 'left')) return;
     this.scrollPosition[project.id] += distance;
     tagsWidget.nativeElement.scrollTo({
-      left: tagsWidget.nativeElement.scrollLeft + distance,
+      left: this.scrollPosition[project.id] + distance,
       behavior: 'smooth',
     });
   }
