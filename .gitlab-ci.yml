@@ -5,7 +5,7 @@ variables:
   DEPLOYMENT_GITLAB_BRANCH:
     value: 'main'
     description:
-      'Branch of the deployment Gitlab project. Ignored if deployed to
+      'Branch of the deployment GitLab project. Ignored if deployed to
       production.'
 
 staging:

@@ -13,7 +13,7 @@
     Capella can crash for many different reasons. Many issues are issues with
     Eclipse Capella itself, so we try to escalate issues there. Bugs can be
     reported to the Eclipse Capella team directly in the
-    [Github repository](https://github.com/eclipse/capella/issues).
+    [GitHub repository](https://github.com/eclipse/capella/issues).
 
     Global administrators can see the logs of all sessions to identify the issues
     remotely. In addition, the session owner can also see the events in the UI.

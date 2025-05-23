@@ -123,7 +123,7 @@ class GitPipelineJobUnsuccessfulError(core_exceptions.BaseError):
         return cls("update_capella_diagram_cache", "failed")
 
 
-class GithubArtifactExpiredError(core_exceptions.BaseError):
+class GitHubArtifactExpiredError(core_exceptions.BaseError):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -136,5 +136,5 @@ class GithubArtifactExpiredError(core_exceptions.BaseError):
         )
 
     @classmethod
-    def openapi_example(cls) -> "GithubArtifactExpiredError":
+    def openapi_example(cls) -> "GitHubArtifactExpiredError":
         return cls()

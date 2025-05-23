@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Image Builder (Gitlab CI/CD)
+# Image Builder (GitLab CI/CD)
 
 The image builder template builds the images and pushes them to any Docker
 registry.
@@ -33,7 +33,7 @@ sure to enable the "Expand variable reference" flag.
 This is the (minimal) configuration. For more advanced configuration options,
 please refer to the
 [image-builder](https://github.com/DSD-DBS/capella-collab-manager/blob/main/ci-templates/gitlab/image-builder.yml)
-Gitlab template.
+GitLab template.
 
 ### Docker SOPS File
 
@@ -52,7 +52,7 @@ creation_rules:
                 - <GPG fingerprint>
 ```
 
-Ensure that the GPG fingerprint of the Gitlab runner is present in the
+Ensure that the GPG fingerprint of the GitLab runner is present in the
 `.sops.yaml` such that it can decrypt the file.
 
 You need to have a directory `$TARGET` for each target with a

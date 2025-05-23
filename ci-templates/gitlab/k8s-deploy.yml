@@ -10,7 +10,7 @@ variables:
     description: 'Specify the target (staging/production)'
   REVISION:
     value: 'main'
-    description: 'Revision of the Github repository (capella-collab-manager)'
+    description: 'Revision of the GitHub repository (capella-collab-manager)'
 
 .sops: &sops
   - apt-get install -y jq

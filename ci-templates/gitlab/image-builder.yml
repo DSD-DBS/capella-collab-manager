@@ -20,7 +20,7 @@ variables:
     description: 'Build the session-preparation image?'
   REVISION:
     value: 'main'
-    description: 'Revision of Github repository'
+    description: 'Revision of GitHub repository'
   TARGET:
     value: staging
   FRONTEND_IMAGE_NAME: 'capella/collab/frontend'

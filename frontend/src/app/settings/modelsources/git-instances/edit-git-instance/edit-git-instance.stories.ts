@@ -27,7 +27,7 @@ export const General: Story = {
   ],
 };
 
-export const Github: Story = {
+export const GitHub: Story = {
   args: {},
   decorators: [
     moduleMetadata({
