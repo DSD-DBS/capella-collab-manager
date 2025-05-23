@@ -6,7 +6,7 @@
 # Working with Git
 
 In this guide we explain how to use Git via Eclipse. When using Git we make
-changes _locally_ and push them to a _remote_ (Gitlab or GitHub mainly)
+changes _locally_ and push them to a _remote_ (GitLab or GitHub mainly)
 repository. Here we explain how to get made changes to the remote repository so
 that colleagues can see and review them.
 
@@ -260,7 +260,7 @@ option.
 ![Step 10: Git Create Intermediate Branch](screenshots/create-merge-branch.png)
 
 After pushing your changes to the remote Git repository, open the remote
-project on Gitlab or GitHub. Then open a Merge request (Gitlab) or Pull request
+project on GitLab or GitHub. Then open a Merge request (GitLab) or Pull request
 (GitHub) respectively and try merging your "merge-branch-name" branch into main
 (or the branch you wanted to push on before).
 

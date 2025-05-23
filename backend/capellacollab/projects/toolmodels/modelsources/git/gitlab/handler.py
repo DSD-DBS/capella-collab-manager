@@ -14,7 +14,7 @@ from ..handler import handler
 from . import exceptions
 
 
-class GitlabHandler(handler.GitHandler):
+class GitLabHandler(handler.GitHandler):
     @classmethod
     async def get_repository_id_by_git_url(
         cls, path: str, password: str, api_url: str
@@ -30,9 +30,9 @@ class GitlabHandler(handler.GitHandler):
                 timeout=config.requests.timeout,
             ) as response:
                 if response.status == 403:
-                    raise exceptions.GitlabAccessDeniedError
+                    raise exceptions.GitLabAccessDeniedError
                 if response.status == 404:
-                    raise exceptions.GitlabProjectNotFoundError(
+                    raise exceptions.GitLabProjectNotFoundError(
                         project_name=project_name_encoded
                     )
 

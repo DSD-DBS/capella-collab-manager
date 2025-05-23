@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-# Kubernetes Deployment (Gitlab CI/CD)
+# Kubernetes Deployment (GitLab CI/CD)
 
 The Kubernetes deploy template is used to deploy the Capella Collaboration
 Manager to a Kubernetes cluster using Helm.
@@ -41,7 +41,7 @@ creation_rules:
                 - <GPG fingerprint>
 ```
 
-Ensure that the GPG fingerprint of the Gitlab runner is present in the
+Ensure that the GPG fingerprint of the GitLab runner is present in the
 `.sops.yaml` such that it can decrypt the file.
 
 ---
@@ -76,9 +76,9 @@ Create the file with:
 sops edit ./$TARGET/values.yaml
 ```
 
-## Gitlab Repository Tree
+## GitLab Repository Tree
 
-The tree inside of your Gitlab repository should look like:
+The tree inside of your GitLab repository should look like:
 
 ```zsh
 ├── .gitlab-ci.yml
@@ -97,4 +97,4 @@ The tree inside of your Gitlab repository should look like:
 This is the (minimal) configuration. For more advanced configuration options,
 please refer to the
 [k8s-deploy](https://github.com/DSD-DBS/capella-collab-manager/blob/main/ci-templates/gitlab/k8s-deploy.yml)
-Gitlab template.
+GitLab template.

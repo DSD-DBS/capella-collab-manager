@@ -12,7 +12,7 @@ repositories.
 
 When you don't want to define Git instances, users can use any location for
 their repositories. Some features, which require a specific instance, e.g.,
-Gitlab, are not available.
+GitLab, are not available.
 
 ## Define a Git Instance
 
@@ -27,8 +27,8 @@ Gitlab, are not available.
           [Git server](https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server)
           that supports the Git protocol. Features like the diagram cache are
           not available.
-        - **Gitlab**: Only works with [Gitlab](https://about.gitlab.com/)
-          instances (self-hosted / SaaS). With Gitlab, the diagram cache
+        - **GitLab**: Only works with [GitLab](https://about.gitlab.com/)
+          instances (self-hosted / SaaS). With GitLab, the diagram cache
           integration can be used.
         - **GitHub**: Works with the public [GitHub](https://github.com/)
           instance. With GitHub, the diagram cache integration can be used.
@@ -37,8 +37,8 @@ Gitlab, are not available.
        `https://gitlab.com`. For more information, see
        [Matching between models and instances](#matching-between-models-and-instances)
     1. **API URL**:
-        - **Gitlab**: The API URL to the
-          [Gitlab REST API](https://docs.gitlab.com/ee/api/rest/). In most of
+        - **GitLab**: The API URL to the
+          [GitLab REST API](https://docs.gitlab.com/ee/api/rest/). In most of
           the cases: `{base_url}/api/v4`, e.g., `https://gitlab.com/api/v4`.
         - **GitHub**: The API URL to the
           [GitHub REST API](https://docs.github.com/en/rest?apiVersion=2022-11-28).

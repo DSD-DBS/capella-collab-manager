@@ -98,11 +98,11 @@ class GitHandlerFactory:
     ) -> str:
         match git_instance_type:
             case settings_git_models.GitType.GITLAB:
-                return await gitlab_handler.GitlabHandler.get_repository_id_by_git_url(
+                return await gitlab_handler.GitLabHandler.get_repository_id_by_git_url(
                     git_model.path, git_model.password, git_instance_api_url
                 )
             case settings_git_models.GitType.GITHUB:
-                return await github_handler.GithubHandler.get_repository_id_by_git_url(
+                return await github_handler.GitHubHandler.get_repository_id_by_git_url(
                     git_model.path, git_model.password
                 )
             case _:
@@ -120,7 +120,7 @@ class GitHandlerFactory:
     ) -> handler.GitHandler:
         match git_instance_type:
             case settings_git_models.GitType.GITLAB:
-                return gitlab_handler.GitlabHandler(
+                return gitlab_handler.GitLabHandler(
                     git_model.id,
                     git_model.path,
                     revision,
@@ -129,7 +129,7 @@ class GitHandlerFactory:
                     git_model_repository_id,
                 )
             case settings_git_models.GitType.GITHUB:
-                return github_handler.GithubHandler(
+                return github_handler.GitHubHandler(
                     git_model.id,
                     git_model.path,
                     revision,

@@ -17,7 +17,7 @@ from .. import exceptions as git_exceptions
 from ..handler import handler
 
 
-class GithubHandler(handler.GitHandler):
+class GitHubHandler(handler.GitHandler):
     @classmethod
     async def get_repository_id_by_git_url(cls, path: str, *_) -> str:
         # Project ID has the format '{owner}/{repo_name}'
@@ -197,7 +197,7 @@ class GithubHandler(handler.GitHandler):
                 response.raise_for_status()
                 artifact = (await response.json())["artifacts"][0]
                 if artifact["expired"] == "true":
-                    raise git_exceptions.GithubArtifactExpiredError()
+                    raise git_exceptions.GitHubArtifactExpiredError()
                 return artifact
 
     def __get_headers(self, include_credentials: bool = True) -> dict:
