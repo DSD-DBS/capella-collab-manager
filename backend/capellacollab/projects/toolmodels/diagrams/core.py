@@ -4,7 +4,6 @@
 import datetime
 import logging
 
-import requests
 from sqlalchemy import orm
 
 from capellacollab.projects.toolmodels.modelsources.git import (
@@ -34,7 +33,7 @@ async def fetch_diagram_cache_metadata(
             file_revision=f"diagram-cache/{handler.revision}",
             job_id=job_id,
         )
-    except requests.HTTPError as e:
+    except Exception as e:
         logger.info(
             "Failed fetching diagram metadata file or artifact for %s",
             handler.path,
