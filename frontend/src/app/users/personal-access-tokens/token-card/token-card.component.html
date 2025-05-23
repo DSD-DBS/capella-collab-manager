@@ -10,10 +10,13 @@
         <b>{{ token().title }}</b>
         <br />
         @if (global()) {
-          <div class="flex items-center gap-1">
+          <a
+            class="flex w-fit items-center gap-1 text-primary"
+            [routerLink]="['/user', token().user.id]"
+          >
             <mat-icon inline class="align-bottom">account_circle</mat-icon>
             <span>{{ token().user.name }}</span>
-          </div>
+          </a>
         }
       </div>
       <hr class="my-1" />

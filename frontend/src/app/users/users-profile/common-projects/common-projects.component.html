@@ -16,24 +16,22 @@
       } @else {}
       <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
         @for (project of commonProjects$ | async; track project.slug) {
-          <div
+          <a
             class="collab-card !ml-0 cursor-pointer"
             [routerLink]="['/project', project.slug]"
           >
-            <div>
-              <b class="line-clamp-1 break-all">{{ project.name }}</b
-              ><br />
-              @if (project.description) {
-                <span class="line-clamp-3 md:line-clamp-5">{{
-                  project.description
-                }}</span>
-              } @else {
-                <i class="line-clamp-3 md:line-clamp-5"
-                  >No description provided</i
-                >
-              }
-            </div>
-          </div>
+            <b class="line-clamp-1 break-all">{{ project.name }}</b
+            ><br />
+            @if (project.description) {
+              <span class="line-clamp-3 md:line-clamp-5">{{
+                project.description
+              }}</span>
+            } @else {
+              <i class="line-clamp-3 md:line-clamp-5"
+                >No description provided</i
+              >
+            }
+          </a>
         }
       </div>
     </div>

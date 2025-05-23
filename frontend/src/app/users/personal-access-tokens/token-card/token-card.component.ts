@@ -12,6 +12,7 @@ import {
 } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { tap } from 'rxjs';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 import { RelativeTimeComponent } from '../../../general/relative-time/relative-time.component';
@@ -38,6 +39,7 @@ import { UserTokenVerb } from '../token-permission-selection/token-permission-se
     MatIcon,
     MatTooltip,
     RelativeTimeComponent,
+    RouterLink,
   ],
   templateUrl: './token-card.component.html',
 })
