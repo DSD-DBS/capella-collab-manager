@@ -8,7 +8,11 @@ from fastapi import status
 from capellacollab.core import exceptions as core_exceptions
 
 
-class GitRepositoryNotFoundError(core_exceptions.BaseError):
+class GitBaseError(core_exceptions.BaseError, metaclass=abc.ABCMeta):
+    pass
+
+
+class GitRepositoryNotFoundError(GitBaseError):
     def __init__(self, git_model_id: int, tool_model_slug: str):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -24,7 +28,7 @@ class GitRepositoryNotFoundError(core_exceptions.BaseError):
         return cls(-1, "coffee-machine")
 
 
-class NoGitRepositoryAssignedToModelError(core_exceptions.BaseError):
+class NoGitRepositoryAssignedToModelError(GitBaseError):
     def __init__(self, tool_model_slug: str):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -40,7 +44,7 @@ class NoGitRepositoryAssignedToModelError(core_exceptions.BaseError):
         return cls("coffee-machine")
 
 
-class GitRepositoryUsedInPipelines(core_exceptions.BaseError):
+class GitRepositoryUsedInPipelinesError(GitBaseError):
     def __init__(self, git_model_id: int):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -53,21 +57,19 @@ class GitRepositoryUsedInPipelines(core_exceptions.BaseError):
         )
 
     @classmethod
-    def openapi_example(cls) -> "GitRepositoryUsedInPipelines":
+    def openapi_example(cls) -> "GitRepositoryUsedInPipelinesError":
         return cls(-1)
 
 
-class AccessDeniedError(core_exceptions.BaseError, metaclass=abc.ABCMeta):
+class AccessDeniedError(GitBaseError, metaclass=abc.ABCMeta):
     pass
 
 
-class RepositoryNotFoundError(
-    core_exceptions.BaseError, metaclass=abc.ABCMeta
-):
+class RepositoryNotFoundError(GitBaseError, metaclass=abc.ABCMeta):
     pass
 
 
-class GitRepositoryFileNotFoundError(core_exceptions.BaseError):
+class GitRepositoryFileNotFoundError(GitBaseError):
     filename: str
 
     def __init__(self, filename: str):
@@ -87,7 +89,7 @@ class GitRepositoryFileNotFoundError(core_exceptions.BaseError):
         return cls("README.md")
 
 
-class GitPipelineJobNotFoundError(core_exceptions.BaseError):
+class GitPipelineJobNotFoundError(GitBaseError):
     def __init__(self, job_name: str, revision: str):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -104,7 +106,7 @@ class GitPipelineJobNotFoundError(core_exceptions.BaseError):
         return cls("update_capella_diagram_cache", "main")
 
 
-class GitPipelineJobUnsuccessfulError(core_exceptions.BaseError):
+class GitPipelineJobUnsuccessfulError(GitBaseError):
     def __init__(self, job_name: str, state: str):
         self.job_name = job_name
         self.state = state
@@ -123,7 +125,7 @@ class GitPipelineJobUnsuccessfulError(core_exceptions.BaseError):
         return cls("update_capella_diagram_cache", "failed")
 
 
-class GitHubArtifactExpiredError(core_exceptions.BaseError):
+class GitHubArtifactExpiredError(GitBaseError):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
