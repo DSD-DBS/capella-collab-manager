@@ -7,6 +7,7 @@ import logging
 import requests
 from sqlalchemy import orm
 
+from capellacollab.core import models as core_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
@@ -47,12 +48,23 @@ async def build_diagram_cache_api_url(
     logger: logging.LoggerAdapter,
     git_repository: git_models.DatabaseGitModel,
     db: orm.Session,
+    warnings: list[core_models.Message],
     revision: str | None = None,
 ) -> str:
     handler = await git_handler_factory.GitHandlerFactory.create_git_handler(
         db, git_repository, revision
     )
-    (job_id, _, _) = await fetch_diagram_cache_metadata(logger, handler)
+    try:
+        (job_id, _, _) = await fetch_diagram_cache_metadata(logger, handler)
+    except exceptions.DiagramCacheNotConfiguredProperlyError as e:
+        warnings.append(
+            core_models.Message(
+                err_code=e.err_code,
+                title=e.title,
+                reason=e.reason,
+            )
+        )
+        job_id = None
 
     job_id_query = f"?job_id={job_id}" if job_id else ""
     return (

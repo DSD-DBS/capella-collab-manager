@@ -22,7 +22,7 @@ DEPLOY_GUACAMOLE ?= 0
 
 TIMEOUT ?= 10m
 
-CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_PREFIX=$(CAPELLACOLLAB_SESSIONS_REGISTRY) DOCKER_TAG="$(CAPELLA_VERSION)-latest"
+CAPELLA_DOCKERIMAGES = $(MAKE) -C capella-dockerimages PUSH_IMAGES=1 DOCKER_PREFIX=$(CAPELLACOLLAB_SESSIONS_REGISTRY)
 
 # Adds support for msys
 export MSYS_NO_PATHCONV := 1
@@ -74,14 +74,30 @@ trivy:
 	trivy image $$COMMON_ARGS --ignorefile images/session-preparation/.trivyignore $(DOCKER_REGISTRY)/session-preparation:$(DOCKER_TAG)
 	trivy image $$COMMON_ARGS --ignorefile docs/.trivyignore $(DOCKER_REGISTRY)/docs:$(DOCKER_TAG)
 
-capella:
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION="$(CAPELLA_VERSION)" capella/remote
+base:
+	$(CAPELLA_DOCKERIMAGES) \
+		DOCKER_TAG="latest" \
+		base
+
+capella: base
+	$(CAPELLA_DOCKERIMAGES) \
+		DOCKER_TAG="$(CAPELLA_VERSION)-latest" \
+		CAPELLA_VERSION="$(CAPELLA_VERSION)" \
+		BASE_IMAGE_TAG="latest" \
+		capella/remote -o base
 
 t4c-client:
-	$(CAPELLA_DOCKERIMAGES) CAPELLA_VERSION="$(CAPELLA_VERSION)" t4c/client/remote
+	$(CAPELLA_DOCKERIMAGES) \
+		DOCKER_TAG="$(CAPELLA_VERSION)-latest" \
+		CAPELLA_VERSION="$(CAPELLA_VERSION)" \
+		BASE_IMAGE_TAG="latest" \
+		t4c/client/remote -o base
 
-jupyter:
-	$(CAPELLA_DOCKERIMAGES) jupyter-notebook
+jupyter: base
+	$(CAPELLA_DOCKERIMAGES) \
+		DOCKER_TAG="python-3.11-latest" \
+		BASE_IMAGE_TAG="latest" \
+		jupyter-notebook -o base
 
 deploy: build jupyter capella helm-deploy rollout open
 

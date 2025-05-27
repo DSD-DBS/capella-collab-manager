@@ -12,8 +12,8 @@ class DiagramCacheNotConfiguredProperlyError(core_exceptions.BaseError):
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             title="Diagram cache not configured properly",
             reason=(
-                "The diagram cache is not configured properly. "
-                "Please contact your diagram cache administrator."
+                "The diagram cache is not configured properly."
+                " Please contact your diagram cache administrator."
             ),
             err_code="DIAGRAM_CACHE_NOT_CONFIGURED_PROPERLY",
         )
