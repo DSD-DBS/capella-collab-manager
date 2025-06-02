@@ -245,11 +245,28 @@ def create_capella_model_explorer_tool(
         name="Capella model explorer",
         config=tools_models.ToolSessionConfiguration(
             environment={
+                # MODEL_ENTRYPOINT AND ROUTE_PREFIX are added for compatibility with CME v0.2.X
                 "MODEL_ENTRYPOINT": tools_models.ToolSessionEnvironment(
                     stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
                     value="{CAPELLACOLLAB_SESSION_PROVISIONING[0][path]}",
                 ),
                 "ROUTE_PREFIX": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
+                "CME_MODEL": tools_models.ToolSessionEnvironment(
+                    stage=tools_models.ToolSessionEnvironmentStage.BEFORE,
+                    value={
+                        "path": "{CAPELLACOLLAB_SESSION_PROVISIONING[0][path]}",
+                        "diagram_cache": {
+                            "path": "{CAPELLACOLLAB_SESSION_PROVISIONING[0][diagram_\
+                            cache]}",
+                            "password": "{CAPELLACOLLAB_SESSION_API_TOKEN}",
+                            "username": "{CAPELLACOLLAB_SESSION_REQUESTER_USERNAME}",
+                        },
+                        "fallback_render_aird": "true",
+                    },
+                ),
+                "CME_LOG_FILE": "/var/log/session/model-explorer.log",
+                "CME_LIVE_MODE": "0",
+                "CME_ROUTE_PREFIX": "{CAPELLACOLLAB_SESSIONS_BASE_PATH}",
             },
             connection=tools_models.ToolSessionConnection(
                 methods=[
@@ -272,7 +289,10 @@ def create_capella_model_explorer_tool(
                 )
             ),
             provisioning=tools_models.ToolModelProvisioning(
-                directory="/models", max_number_of_models=1, required=False
+                directory="/models",
+                max_number_of_models=1,
+                required=False,
+                provide_diagram_cache=True,
             ),
             persistent_workspaces=tools_models.PersistentWorkspaceSessionConfiguration(
                 mounting_enabled=False,

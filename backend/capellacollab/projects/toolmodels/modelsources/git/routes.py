@@ -226,6 +226,6 @@ async def delete_git_model_by_id(
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
 ):
     if backups_crud.get_pipelines_for_git_model(db, db_git_model):
-        raise exceptions.GitRepositoryUsedInPipelines(db_git_model.id)
+        raise exceptions.GitRepositoryUsedInPipelinesError(db_git_model.id)
     await cache.GitValkeyCache(git_model_id=db_git_model.id).clear()
     crud.delete_git_model(db, db_git_model)

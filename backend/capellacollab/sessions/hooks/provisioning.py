@@ -98,7 +98,11 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             )
         else:
             await cls._read_only_provisioning(
-                request, resolved_entries, init_environment, environment
+                request,
+                resolved_entries,
+                init_environment,
+                environment,
+                warnings,
             )
 
         return interface.ConfigurationHookResult(
@@ -169,6 +173,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
                         revision=entry.revision or git_model.revision,
                         deep_clone=entry.deep_clone,
                         include_credentials=True,
+                        warnings=warnings,
                     )
                 )
 
@@ -179,6 +184,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
                     revision=entry.revision or git_model.revision,
                     deep_clone=entry.deep_clone,
                     include_credentials=False,
+                    warnings=warnings,
                 )
             )
 
@@ -194,6 +200,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         resolved_entries: list[ResolvedSessionProvisioning],
         init_environment: dict[str, t.Any],
         environment: dict[str, t.Any],
+        warnings: list[core_models.Message],
     ):
         """Provisioning of read-only sessions"""
 
@@ -202,6 +209,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         ] = await cls._get_git_repos_json(
             request,
             resolved_entries,
+            warnings,
             include_credentials=True,
         )
 
@@ -210,6 +218,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         ] = await cls._get_git_repos_json(
             request,
             resolved_entries,
+            warnings,
             include_credentials=False,
             diagram_cache=request.tool.config.provisioning.provide_diagram_cache,
         )
@@ -316,6 +325,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         cls,
         request: interface.ConfigurationHookRequest,
         resolved_entries: list[ResolvedSessionProvisioning],
+        warnings: list[core_models.Message],
         include_credentials: bool = False,
         diagram_cache: bool = False,
     ) -> list[dict[str, str | int]]:
@@ -327,6 +337,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
                 entry["entry"].revision or entry["git_model"].revision,
                 entry["entry"].deep_clone,
                 include_credentials,
+                warnings,
                 diagram_cache,
             )
             for entry in resolved_entries
@@ -340,6 +351,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
         revision: str,
         deep_clone: bool,
         include_credentials: bool,
+        warnings: list[core_models.Message],
         diagram_cache: bool = False,
     ) -> dict[str, str | int]:
         """Convert a DatabaseGitModel to a JSON-serializable dictionary."""
@@ -373,7 +385,7 @@ class ProvisionWorkspaceHook(interface.HookRegistration):
             git_dict[
                 "diagram_cache"
             ] = await diagrams_core.build_diagram_cache_api_url(
-                request.logger, git_model, request.db, revision
+                request.logger, git_model, request.db, warnings, revision
             )
 
         return git_dict

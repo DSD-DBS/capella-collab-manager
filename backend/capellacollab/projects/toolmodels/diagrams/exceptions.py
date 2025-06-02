@@ -1,19 +1,25 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import abc
+
 from fastapi import status
 
 from capellacollab.core import exceptions as core_exceptions
 
 
-class DiagramCacheNotConfiguredProperlyError(core_exceptions.BaseError):
+class DiagramBaseError(core_exceptions.BaseError, metaclass=abc.ABCMeta):
+    pass
+
+
+class DiagramCacheNotConfiguredProperlyError(DiagramBaseError):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             title="Diagram cache not configured properly",
             reason=(
-                "The diagram cache is not configured properly. "
-                "Please contact your diagram cache administrator."
+                "The diagram cache is not configured properly."
+                " Please contact your diagram cache administrator."
             ),
             err_code="DIAGRAM_CACHE_NOT_CONFIGURED_PROPERLY",
         )
@@ -23,7 +29,7 @@ class DiagramCacheNotConfiguredProperlyError(core_exceptions.BaseError):
         return cls()
 
 
-class FileExtensionNotSupportedError(core_exceptions.BaseError):
+class FileExtensionNotSupportedError(DiagramBaseError):
     def __init__(self, fileextension: str):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -37,7 +43,7 @@ class FileExtensionNotSupportedError(core_exceptions.BaseError):
         return cls("png")
 
 
-class DiagramNotFoundError(core_exceptions.BaseError):
+class DiagramNotFoundError(DiagramBaseError):
     def __init__(self, diagram_uuid: str):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -53,7 +59,7 @@ class DiagramNotFoundError(core_exceptions.BaseError):
         return cls("_yYhrh3jqEea__MYrXGSERA")
 
 
-class DiagramNotSuccessfulError(core_exceptions.BaseError):
+class DiagramNotSuccessfulError(DiagramBaseError):
     def __init__(self, diagram_uuid: str):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
