@@ -4,17 +4,22 @@
  */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { z } from 'zod';
+import * as v from 'valibot';
 
-const sessionRequestHistorySchema = z.object({
-  toolId: z.number(),
-  versionId: z.number(),
-  connectionMethodId: z.string(),
-  lastRequested: z.coerce.date(),
+const sessionRequestHistorySchema = v.object({
+  toolId: v.number(),
+  versionId: v.number(),
+  connectionMethodId: v.string(),
+  lastRequested: v.pipe(
+    v.string(),
+    v.transform((dateString) => new Date(dateString)),
+  ),
 });
 
-const sessionHistoryArraySchema = z.array(sessionRequestHistorySchema);
-export type SessionRequestHistory = z.infer<typeof sessionRequestHistorySchema>;
+const sessionHistoryArraySchema = v.array(sessionRequestHistorySchema);
+export type SessionRequestHistory = v.InferOutput<
+  typeof sessionRequestHistorySchema
+>;
 
 @Injectable({
   providedIn: 'root',
@@ -36,12 +41,13 @@ export class SessionHistoryService {
     }
 
     try {
-      const result = sessionHistoryArraySchema.safeParse(
+      return v.parse(
+        sessionHistoryArraySchema,
         JSON.parse(currentSessionHistory),
       );
-      return result.success ? result.data : [];
     } catch (e) {
       console.error(e);
+      localStorage.removeItem(this.LOCAL_STORAGE_SESSION_HISTORY_KEY);
       return [];
     }
   }
