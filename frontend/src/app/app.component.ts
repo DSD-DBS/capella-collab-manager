@@ -59,7 +59,7 @@ export class AppComponent implements AfterViewInit {
       stmt += ' - 100px';
     }
     if (this.pageLayoutService.showFooter) {
-      stmt += ' - 115px - 8px';
+      stmt += ' - 115px - 8px - 1px';
     }
     stmt += ')';
     return stmt;
