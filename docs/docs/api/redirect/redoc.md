@@ -1,6 +1,6 @@
 ---
 template: redirect.html
-location: ../../api/docs/redoc
+location: ../../redoc
 title: ReDoc
 icon: octicons/link-external-16
 ---

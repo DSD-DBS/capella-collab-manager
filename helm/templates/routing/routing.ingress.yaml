@@ -30,20 +30,22 @@ spec:
                 name: {{ .Release.Name }}-frontend
                 port:
                   number: 80
-          - path: /api
+          - &backend_rule
+            path: /api
             pathType: Prefix
             backend:
               service:
                 name: {{ .Release.Name }}-backend
                 port:
                   name: http
-          - path: /metrics
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-backend
-                port:
-                  name: http
+          - <<: *backend_rule
+            path: /metrics
+          - <<: *backend_rule
+            path: /docs/api/swagger
+          - <<: *backend_rule
+            path: /docs/api/openapi.json
+          - <<: *backend_rule
+            path: /docs/api/redoc
           - path: /docs
             pathType: Prefix
             backend:

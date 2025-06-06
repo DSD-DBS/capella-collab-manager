@@ -39,16 +39,16 @@ jobs:
         working-directory: ./docs
       - name: Generate OpenAPI spec
         run: |
-          mkdir -p docs/dist/api/docs
-          python -m capellacollab.cli openapi generate --remove-security-schemes docs/dist/api/docs/openapi.json
+          mkdir -p docs/dist/api
+          python -m capellacollab.cli openapi generate --remove-security-schemes docs/dist/api/openapi.json
       - name: Copy SwaggerUI
         run: |
-          mkdir -p docs/dist/api/docs/swagger
-          cp -r swagger/dist/* docs/dist/api/docs/swagger
-          ls -la docs/dist/api/docs/swagger
-          sed -i 's#https://petstore.swagger.io/v2/swagger.json#/${{ github.event.repository.name }}/api/docs/openapi.json#' docs/dist/api/docs/swagger/swagger-initializer.js
-          sed -i '/SwaggerUIBundle({/a\    supportedSubmitMethods: [],' docs/dist/api/docs/swagger/swagger-initializer.js
-          sed -i '/layout: "StandaloneLayout"/d;/SwaggerUIStandalonePreset/d' docs/dist/api/docs/swagger/swagger-initializer.js
+          mkdir -p docs/dist/api/swagger
+          cp -r swagger/dist/* docs/dist/api/swagger
+          ls -la docs/dist/api/swagger
+          sed -i 's#https://petstore.swagger.io/v2/swagger.json#/${{ github.event.repository.name }}/api/docs/openapi.json#' docs/dist/api/swagger/swagger-initializer.js
+          sed -i '/SwaggerUIBundle({/a\    supportedSubmitMethods: [],' docs/dist/api/swagger/swagger-initializer.js
+          sed -i '/layout: "StandaloneLayout"/d;/SwaggerUIStandalonePreset/d' docs/dist/api/swagger/swagger-initializer.js
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
