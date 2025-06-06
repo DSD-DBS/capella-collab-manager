@@ -91,9 +91,9 @@ app = fastapi.FastAPI(
         middleware.Middleware(starlette_prometheus.PrometheusMiddleware),
     ],
     lifespan=lifespan,
-    openapi_url="/api/docs/openapi.json",
-    docs_url="/api/docs/swagger",
-    redoc_url="/api/docs/redoc",
+    openapi_url="/docs/api/openapi.json",
+    docs_url="/docs/api/swagger",
+    redoc_url="/docs/api/redoc",
 )
 
 

@@ -1,6 +1,6 @@
 ---
 template: redirect.html
-location: ../../api/docs/openapi.json
+location: ../../openapi.json
 title: OpenAPI Specification (JSON)
 icon: octicons/link-external-16
 ---

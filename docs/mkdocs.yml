@@ -90,9 +90,9 @@ nav:
           - Troubleshooting: user/tools/capella/troubleshooting/index.md
   - API documentation:
       - Introduction: api/index.md
-      - api/swagger.md
-      - api/redoc.md
-      - api/openapi.md
+      - api/redirect/swagger.md
+      - api/redirect/redoc.md
+      - api/redirect/openapi.md
   - System Administrator Documentation:
       - Introduction: admin/index.md
       - Installation: admin/installation.md
