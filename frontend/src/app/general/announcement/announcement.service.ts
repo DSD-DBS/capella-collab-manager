@@ -4,16 +4,19 @@
  */
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { AnnouncementResponse, AnnouncementsService } from 'src/app/openapi';
-import { z } from 'zod';
+import * as v from 'valibot';
 
-const dismissedAnnouncementsSchema = z.array(
-  z.object({
-    id: z.number(),
-    date: z.coerce.date(),
+const dismissedAnnouncementsSchema = v.array(
+  v.object({
+    id: v.number(),
+    date: v.pipe(
+      v.string(),
+      v.transform((dateString) => new Date(dateString)),
+    ),
   }),
 );
 
-export type DismissedAnnouncements = z.infer<
+export type DismissedAnnouncements = v.InferOutput<
   typeof dismissedAnnouncementsSchema
 >;
 
@@ -67,12 +70,11 @@ export class AnnouncementWrapperService {
       this.LOCAL_STORAGE_DISMISSED_ANNOUNCEMENT_KEY,
     );
     try {
-      const result = dismissedAnnouncementsSchema.safeParse(
+      const data = v.parse(
+        dismissedAnnouncementsSchema,
         JSON.parse(localDismissedAnnouncements ?? '[]'),
       );
-      if (result.success) {
-        this.dismissedAnnouncements.set(result.data);
-      }
+      this.dismissedAnnouncements.set(data);
     } catch (e) {
       console.error(e);
       localStorage.removeItem(this.LOCAL_STORAGE_DISMISSED_ANNOUNCEMENT_KEY);
