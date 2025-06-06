@@ -9,7 +9,7 @@ import { mockUser } from 'src/storybook/user';
 import { AddTagsDialogComponent } from './add-tags-dialog.component';
 
 const meta: Meta<AddTagsDialogComponent> = {
-  title: 'Setting Components/Add Tags Dialog',
+  title: 'Settings Components/Add Tags Dialog',
   component: AddTagsDialogComponent,
   decorators: [dialogWrapper],
 };
