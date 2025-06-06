@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Component, OnInit, inject } from '@angular/core';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
 import { AuthenticationService } from 'src/app/openapi';
@@ -13,7 +14,7 @@ import { FeedbackWrapperService } from 'src/app/sessions/feedback/feedback.servi
 @Component({
   selector: 'app-auth-redirect',
   templateUrl: './auth-redirect.component.html',
-  styleUrls: ['./auth-redirect.component.css'],
+  imports: [MatProgressSpinnerModule],
 })
 export class AuthRedirectComponent implements OnInit {
   private route = inject(ActivatedRoute);
