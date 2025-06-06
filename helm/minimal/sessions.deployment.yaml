@@ -1,0 +1,70 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minimal-dev-session-nginx
+  labels:
+    id: minimal-dev-deployment-session-nginx
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/sessions/sessions.configmap.yaml") . | sha256sum }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      id: minimal-dev-deployment-session-nginx
+  template:
+    metadata:
+      labels:
+        id: minimal-dev-deployment-session-nginx
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/sessions/sessions.configmap.yaml") . | sha256sum }}
+    spec:
+      automountServiceAccountToken: false
+      volumes:
+        - name: minimal-dev-session-nginx
+          configMap:
+            name: minimal-dev-session-nginx
+      containers:
+        - name: minimal-dev-session-nginx
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
+          {{ if .Values.docker.images.nginxUnprivileged }}
+          image: {{ .Values.docker.images.nginxUnprivileged }}
+          {{ else }}
+          image: {{ .Values.docker.registry.external }}/nginxinc/nginx-unprivileged
+          {{ end }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{ if .Values.development }}
+            limits:
+              cpu: "0.1"
+              memory: 50Mi
+              ephemeral-storage: "2Gi"
+            requests:
+              cpu: "0.05"
+              memory: 5Mi
+              ephemeral-storage: '1Gi'
+            {{ else }}
+            limits:
+              cpu: "1"
+              memory: 100Mi
+              ephemeral-storage: "5Gi"
+            requests:
+              cpu: "0.25"
+              memory: 50Mi
+              ephemeral-storage: '1Gi'
+            {{ end }}
+          volumeMounts:
+            - name: {{ .Release.Name }}-session-nginx
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+            - name: {{ .Release.Name }}-session-nginx
+              mountPath: /usr/share/nginx/html/502.html
+              subPath: 502.html
+            - name: {{ .Release.Name }}-session-nginx
+              mountPath: /usr/share/nginx/html/401.html
+              subPath: 401.html
