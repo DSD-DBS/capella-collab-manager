@@ -8334,7 +8334,7 @@ snapshots:
       ansi-colors: 4.1.3
       autoprefixer: 10.4.20(postcss@8.4.49)
       babel-loader: 9.2.1(@babel/core@7.26.0)(webpack@5.96.1(esbuild@0.24.0))
-      browserslist: 4.24.4
+      browserslist: 4.25.0
       copy-webpack-plugin: 12.0.2(webpack@5.96.1(esbuild@0.24.0))
       css-loader: 7.1.2(@rspack/core@1.1.6(@swc/helpers@0.5.15))(webpack@5.96.1(esbuild@0.24.0))
       esbuild-wasm: 0.24.0
@@ -8526,7 +8526,7 @@ snapshots:
       '@inquirer/confirm': 5.0.2(@types/node@22.15.31)
       '@vitejs/plugin-basic-ssl': 1.1.0(vite@5.4.11(@types/node@22.15.31)(less@4.2.0)(sass@1.80.7)(stylus@0.64.0)(terser@5.36.0))
       beasties: 0.1.0
-      browserslist: 4.24.4
+      browserslist: 4.25.0
       esbuild: 0.24.0
       fast-glob: 3.3.2
       https-proxy-agent: 7.0.5
@@ -8864,7 +8864,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.27.5
       '@babel/helper-validator-option': 7.27.1
-      browserslist: 4.24.4
+      browserslist: 4.25.0
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -11978,7 +11978,7 @@ snapshots:
 
   autoprefixer@10.4.20(postcss@8.4.49):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.0
       caniuse-lite: 1.0.30001721
       fraction.js: 4.3.7
       normalize-range: 0.1.2
@@ -16791,7 +16791,7 @@ snapshots:
       '@webassemblyjs/wasm-edit': 1.14.1
       '@webassemblyjs/wasm-parser': 1.14.1
       acorn: 8.15.0
-      browserslist: 4.24.4
+      browserslist: 4.25.0
       chrome-trace-event: 1.0.4
       enhanced-resolve: 5.18.1
       es-module-lexer: 1.7.0
