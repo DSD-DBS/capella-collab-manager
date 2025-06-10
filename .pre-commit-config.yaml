@@ -79,7 +79,7 @@ repos:
         language: node
         types_or: [ts]
         additional_dependencies:
-          - 'typescript@~5.6.3'
+          - 'typescript@~5.8.3'
   - repo: local
     hooks:
       - id: prettier
@@ -90,7 +90,7 @@ repos:
         exclude: '^frontend/src/app/openapi'
         additional_dependencies:
           - 'prettier@^3.5.3'
-          - 'prettier-plugin-tailwindcss@^0.6.11'
+          - 'prettier-plugin-tailwindcss@^0.6.12'
           - '@trivago/prettier-plugin-sort-imports@^5.2.2'
           - 'tailwindcss@^3.4.17'
           - 'prettier-plugin-classnames@^0.7.8'
@@ -166,11 +166,11 @@ repos:
     hooks:
       - id: eslint
         additional_dependencies:
-          - 'eslint@^9.27.0'
-          - '@eslint/js@^9.27.0'
-          - 'angular-eslint@~19.4.0'
+          - 'eslint@^9.28.0'
+          - '@eslint/js@^9.28.0'
+          - 'angular-eslint@~19.8.0'
           - 'eslint-config-prettier@^10.1.5'
-          - 'typescript-eslint@^8.32.1'
+          - 'typescript-eslint@^8.34.0'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.18.0'
           - 'eslint-plugin-storybook@^0.12.0'
