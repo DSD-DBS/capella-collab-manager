@@ -128,14 +128,20 @@ async def get_diagram(
     file_path = f"diagram_cache/{parse.quote(diagram_uuid, safe='')}.svg"
 
     try:
-        file_or_artifact = await handler.get_file_or_artifact(
+        _, _, data = await handler.get_file_or_artifact(
             trusted_file_path=file_path,
             logger=logger,
             job_name="update_capella_diagram_cache",
             job_id=job_id,
             file_revision=f"diagram-cache/{handler.revision}",
         )
-        return responses.SVGResponse(content=file_or_artifact[2])
+
+        return responses.SVGResponse(
+            content=data,
+            headers={"Cache-Control": "max-age=604800, immutable"}
+            if job_id
+            else None,
+        )
     except requests.HTTPError as e:
         logger.info(
             "Failed fetching diagram file or artifact %s for %s.",
