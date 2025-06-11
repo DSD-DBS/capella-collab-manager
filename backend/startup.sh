@@ -7,4 +7,9 @@ set -e
 # When running inside the cluster, the k8s service host should not use the proxy
 export no_proxy=$no_proxy,$KUBERNETES_SERVICE_HOST,$no_proxy_additional,svc.cluster.local
 export NO_PROXY=$NO_PROXY,$KUBERNETES_SERVICE_HOST,$no_proxy_additional,svc.cluster.local
-/opt/backend/.venv/bin/uvicorn capellacollab.__main__:app --host 0.0.0.0 --forwarded-allow-ips '*'
+
+if [ "$1" = "scheduler" ]; then
+    /opt/backend/.venv/bin/python -m capellacollab.cli scheduler run
+else
+    /opt/backend/.venv/bin/python -m capellacollab.__main__
+fi

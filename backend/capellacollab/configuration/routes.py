@@ -1,15 +1,21 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 import typing as t
 
 import fastapi
+import pydantic
 from sqlalchemy import orm
 
 from capellacollab.core import database
+from capellacollab.core.logging import injectables as logging_injectables
 from capellacollab.feedback import util as feedback_util
 from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.toolmodels.backups import (
+    interface as pipelines_interface,
+)
 from capellacollab.users import crud as users_crud
 
 from . import core, crud, models, util
@@ -74,6 +80,10 @@ def get_configuration(
 def update_configuration(
     body: models.GlobalConfiguration,
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
+    logger: t.Annotated[
+        logging.LoggerAdapter,
+        fastapi.Depends(logging_injectables.get_request_logger),
+    ],
 ):
     configuration = crud.get_configuration_by_name(
         db, models.GlobalConfiguration._name
@@ -88,9 +98,25 @@ def update_configuration(
         feedback_util.disable_feedback(body.feedback)
 
     if configuration:
+        try:
+            validated_config = models.GlobalConfiguration.model_validate(
+                configuration
+            )
+        except pydantic.ValidationError:
+            logger.exception(
+                "Failed to validate existing configuration. Assuming default values."
+            )
+            validated_config = models.GlobalConfiguration()
+
+        if body.pipelines != validated_config.pipelines:
+            pipelines_interface.update_trigger_configuration(body.pipelines)
+
         return crud.update_configuration(
             db, configuration, body.model_dump()
         ).configuration
+    if body.pipelines != models.GlobalConfiguration().pipelines:
+        pipelines_interface.update_trigger_configuration(body.pipelines)
+
     return crud.create_configuration(
         db,
         name=models.GlobalConfiguration._name,

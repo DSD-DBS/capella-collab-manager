@@ -14,8 +14,9 @@ import {
 import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { RelativeTimeComponent } from 'src/app/general/relative-time/relative-time.component';
 import {
-  Backup,
+  Pipeline,
   PipelineRun,
   ProjectsModelsBackupsService,
 } from 'src/app/openapi';
@@ -33,6 +34,7 @@ import { PipelineWrapperService } from '../service/pipeline.service';
     MatButton,
     AsyncPipe,
     NgxSkeletonLoaderModule,
+    RelativeTimeComponent,
   ],
 })
 export class TriggerPipelineComponent implements OnInit {
@@ -54,15 +56,12 @@ export class TriggerPipelineComponent implements OnInit {
       .subscribe();
   }
 
-  runPipeline(pipeline: Backup) {
+  runPipeline(pipeline: Pipeline) {
     this.pipelinesService
       .createPipelineRun(
         this.data.projectSlug,
         pipeline.id,
         this.data.modelSlug,
-        {
-          include_commit_history: false,
-        },
       )
       .subscribe((pipelineRun: PipelineRun) => {
         this.closeDialog();
@@ -75,7 +74,6 @@ export class TriggerPipelineComponent implements OnInit {
           pipeline.id,
           'run',
           pipelineRun.id,
-          'logs',
         ]);
       });
   }
@@ -84,7 +82,7 @@ export class TriggerPipelineComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  removePipeline(backup: Backup): void {
+  removePipeline(backup: Pipeline): void {
     this.dialog.open(PipelineDeletionDialogComponent, {
       data: {
         projectSlug: this.data.projectSlug,
@@ -94,7 +92,7 @@ export class TriggerPipelineComponent implements OnInit {
     });
   }
 
-  openPipelineRuns(backup: Backup): void {
+  openPipelineRuns(backup: Pipeline): void {
     this.closeDialog();
     this.router.navigate([
       'project',
@@ -122,5 +120,11 @@ export class TriggerPipelineComponent implements OnInit {
           .subscribe();
       }
     });
+  }
+
+  isBeforeCurrentTime(date: string): boolean {
+    const nextRunDate = new Date(date);
+    const currentDate = new Date();
+    return nextRunDate < currentDate;
   }
 }

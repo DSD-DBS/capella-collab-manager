@@ -154,7 +154,7 @@ async def test_environment_behavior(
         logger,
         token=None,
         global_scope=permissions_models.GlobalScopes(
-            user=users_models.USER_TOKEN_SCOPE,
+            user=permissions_models.USER_TOKEN_SCOPE,
         ),
     )
 

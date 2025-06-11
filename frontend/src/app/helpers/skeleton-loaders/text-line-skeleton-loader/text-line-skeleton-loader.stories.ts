@@ -23,8 +23,9 @@ export const DefaultLine: Story = {
   args: {},
 };
 
-export const ShortLine: Story = {
+export const ShortLineDark: Story = {
   args: {
     width: '30%',
+    color: 'darkgrey',
   },
 };

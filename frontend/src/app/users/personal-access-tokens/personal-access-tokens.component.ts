@@ -114,6 +114,7 @@ export class PersonalAccessTokensComponent implements OnInit {
       workspaces: [],
       personal_access_tokens: [],
       tags: [],
+      pipelines: [],
     },
     projects: {},
   };

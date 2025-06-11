@@ -53,6 +53,10 @@ target_metadata = Base.metadata
 os.environ["ALEMBIC_CONTEXT"] = "0"
 
 
+def include_name(name, _type, _parent_names):
+    return name != "apscheduler_jobs"
+
+
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
 
@@ -71,6 +75,7 @@ def run_migrations_offline():
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_name=include_name,
     )
 
     with context.begin_transaction():
@@ -92,7 +97,9 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            include_name=include_name,
         )
 
         with context.begin_transaction():

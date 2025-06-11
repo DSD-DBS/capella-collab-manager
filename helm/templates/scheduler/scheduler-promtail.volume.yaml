@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+{{ if .Values.loki.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-scheduler-promtail
+  labels:
+    id: {{ .Release.Name }}-pvc-scheduler-promtail
+  annotations:
+    "helm.sh/resource-policy": keep
+spec:
+  accessModes:
+    - {{ .Values.promtail.storageAccessMode }}
+  resources:
+    requests:
+      storage: 10Mi
+  storageClassName: {{ .Values.promtail.storageClassName }}
+{{ end }}

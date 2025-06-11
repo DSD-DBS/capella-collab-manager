@@ -72,6 +72,10 @@ export interface AdminScopesOutput {
      * Manage the available tags globally
      */
     tags: Array<AdminScopesOutput.TagsEnum>;
+    /**
+     * See the pipelines of all projects
+     */
+    pipelines: Array<AdminScopesOutput.PipelinesEnum>;
 }
 export namespace AdminScopesOutput {
     export const UsersEnum = {
@@ -160,6 +164,10 @@ export namespace AdminScopesOutput {
         Delete: 'DELETE'
     } as const;
     export type TagsEnum = typeof TagsEnum[keyof typeof TagsEnum];
+    export const PipelinesEnum = {
+        Get: 'GET'
+    } as const;
+    export type PipelinesEnum = typeof PipelinesEnum[keyof typeof PipelinesEnum];
 }
 
 

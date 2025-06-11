@@ -15,7 +15,7 @@ import capellacollab.projects.users.models as projects_users_models
 @pytest.fixture(name="pipeline_run")
 def fixture_pipeline_run(
     db: orm.Session,
-    pipeline: pipeline_models.DatabaseBackup,
+    pipeline: pipeline_models.DatabasePipeline,
     project_manager: projects_users_models.DatabaseProjectUserAssociation,
 ) -> pipeline_runs_models.DatabasePipelineRun:
     pipeline_run = pipeline_runs_models.DatabasePipelineRun(

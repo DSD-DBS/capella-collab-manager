@@ -217,12 +217,25 @@ class PipelineConfiguration(core_pydantic.BaseModelStrict):
     cron: str = pydantic.Field(
         default="0 3 * * *",
         description=(
-            "Cron for nightly backup. Only applies to newly created pipelines."
+            "Cron expression for nightly runs of pipelines."
+            " You can use https://crontab.guru/ to generate a cron expression."
+            " Existing pipelines are rescheduled automatically when the cron expression is changed."
         ),
     )
     timezone: str = pydantic.Field(
         default="UTC",
-        description="Timezone for the cron expression.",
+        description=(
+            "Timezone for the cron expression."
+            " Existing pipelines are rescheduled automatically when the timezone is changed."
+        ),
+    )
+    misfire_grace_time: int = pydantic.Field(
+        default=60 * 60,  # 1 hour in seconds
+        description=(
+            "Time in seconds to wait until the scheduler considers a job as misfired if not picked up."
+            " After the grace time, the scheduler will no longer try to schedule the job."
+            " With this option, temporarily scheduler downtimes can be covered."
+        ),
     )
 
     @pydantic.field_validator("cron")

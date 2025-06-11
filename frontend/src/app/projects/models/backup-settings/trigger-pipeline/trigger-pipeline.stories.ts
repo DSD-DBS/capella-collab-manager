@@ -4,8 +4,9 @@
  */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
+import MockDate from 'mockdate';
 import { Observable, of } from 'rxjs';
-import { Backup } from 'src/app/openapi';
+import { Pipeline } from 'src/app/openapi';
 import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { TriggerPipelineComponent } from 'src/app/projects/models/backup-settings/trigger-pipeline/trigger-pipeline.component';
 import { mockBackup } from 'src/storybook/backups';
@@ -25,15 +26,19 @@ const meta: Meta<TriggerPipelineComponent> = {
     }),
     dialogWrapper,
   ],
+  beforeEach: () => {
+    MockDate.set(new Date('2024-05-01'));
+  },
 };
 
 export default meta;
 type Story = StoryObj<TriggerPipelineComponent>;
 
 class MockPipelineService implements Partial<PipelineWrapperService> {
-  public readonly pipelines$: Observable<Backup[] | undefined> = of(undefined);
+  public readonly pipelines$: Observable<Pipeline[] | undefined> =
+    of(undefined);
 
-  constructor(pipelines?: Backup[] | undefined) {
+  constructor(pipelines?: Pipeline[] | undefined) {
     this.pipelines$ = of(pipelines);
   }
 }
@@ -80,6 +85,29 @@ export const PipelineOverview: Story = {
                 ...mockBackup,
                 id: 2,
                 run_nightly: true,
+                next_run: '2024-05-01T03:23:00Z',
+              },
+            ]),
+        },
+      ],
+    }),
+  ],
+};
+
+export const PipelineShortly: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [
+        {
+          provide: PipelineWrapperService,
+          useFactory: () =>
+            new MockPipelineService([
+              {
+                ...mockBackup,
+                id: 2,
+                run_nightly: true,
+                next_run: '2024-04-30T23:59:00Z',
               },
             ]),
         },

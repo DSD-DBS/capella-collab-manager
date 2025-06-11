@@ -10,7 +10,7 @@ VALKEY_PASSWORD ?= password
 
 VENV = .venv
 
-HOST ?= 127.0.0.1
+export HOST ?= 127.0.0.1
 
 VALKEY_PORT = 6379
 
@@ -25,6 +25,7 @@ export MSYS_NO_PATHCONV=1
 export DISABLE_SESSION_TIMEOUT ?= 1
 export DISABLE_SESSION_COLLECTOR ?= 1
 export LOCAL_DEVELOPMENT_MODE ?= 1
+export FASTAPI_AUTO_RELOAD ?= 1
 
 database:
 	docker start capella-collab-postgres || \
@@ -56,7 +57,11 @@ app:
 		source $(VENV)/Scripts/activate;
 	fi
 	export OAUTHLIB_INSECURE_TRANSPORT=1;
-	uvicorn --host $(HOST) --reload --reload-dir $$(pwd) --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" --reload-include "*.jinja" capellacollab.__main__:app
+	$(VENV)/bin/python -m capellacollab.__main__
+
+scheduler:
+	$(VENV)/bin/python \
+		-m capellacollab.cli scheduler run
 
 coverage:
 	pytest \

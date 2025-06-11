@@ -3,6 +3,7 @@
 
 
 import base64
+import datetime
 import logging
 import os
 import pathlib
@@ -12,12 +13,14 @@ import aioresponses
 import jwt
 import pytest
 import sqlalchemy
-import sqlalchemy.exc
+from apscheduler.jobstores import memory as ap_memory
+from apscheduler.schedulers import background as ap_background_scheduler
 from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi import testclient
 from sqlalchemy import engine, orm
 from testcontainers import postgres
 
+from capellacollab import scheduling
 from capellacollab.__main__ import app
 from capellacollab.core import database
 from capellacollab.core.database import migration
@@ -155,3 +158,48 @@ def fixture_logger() -> logging.LoggerAdapter:
 def fixture_aiomock() -> t.Generator[aioresponses.aioresponses, None, None]:
     with aioresponses.aioresponses() as _aioresponses:
         yield _aioresponses
+
+
+@pytest.fixture(name="freeze_time")
+def fixture_freeze_time(monkeypatch: pytest.MonkeyPatch) -> datetime.datetime:
+    """
+    Fixture to freeze the time for tests.
+    Use this fixture to set a specific time for your tests.
+    """
+
+    time = datetime.datetime(2025, 2, 1, 9, 1, 27, 0, tzinfo=datetime.UTC)
+
+    class MockDatetime(datetime.datetime):
+        @classmethod
+        def now(cls, tz=None):
+            if tz is None:
+                return time
+            return time.astimezone(tz)
+
+    monkeypatch.setattr(datetime, "datetime", MockDatetime)
+
+    return time
+
+
+@pytest.fixture(name="scheduler", autouse=True)
+def fixture_scheduler(
+    monkeypatch: pytest.MonkeyPatch,
+) -> t.Generator[None, None, None]:
+    """
+    Fixture to mock the scheduler.
+    Use this fixture to mock the scheduler for your tests.
+    """
+
+    scheduler = ap_background_scheduler.BackgroundScheduler(
+        jobstores={"default": ap_memory.MemoryJobStore()},
+        executors=scheduling.executors,
+        timezone=datetime.UTC,
+    )
+
+    monkeypatch.setattr(scheduling, "scheduler", scheduler)
+    scheduler.start(paused=True)
+
+    yield
+
+    scheduler.remove_all_jobs()
+    scheduler.shutdown()

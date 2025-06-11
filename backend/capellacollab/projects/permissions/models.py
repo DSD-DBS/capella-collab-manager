@@ -33,6 +33,7 @@ class ProjectUserScopes(core_pydantic.BaseModel):
         t.Literal[
             permissions_models.UserTokenVerb.GET,
             permissions_models.UserTokenVerb.CREATE,
+            permissions_models.UserTokenVerb.UPDATE,
             permissions_models.UserTokenVerb.DELETE,
         ]
     ] = pydantic.Field(

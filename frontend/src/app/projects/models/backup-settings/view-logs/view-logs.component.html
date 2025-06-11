@@ -1,0 +1,149 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+-->
+
+@if (pipelineRunService.pipelineRun$ | async; as pipelineRun) {
+  <div class="sm:h-inner-height flex flex-wrap gap-2 sm:grid sm:grid-cols-3">
+    <div class="sm:max-h-inner-height flex max-w-full flex-col flex-wrap gap-2">
+      <div class="flex max-w-full flex-row flex-wrap justify-between gap-2">
+        <div
+          class="flex grow basis-1/5 flex-col rounded-lg border p-1 text-center"
+        >
+          <span class="font-bold">Pipeline Run</span>
+          <div class="m-auto text-xl">{{ pipelineRun.id }}</div>
+        </div>
+        @let pipelineRunState =
+          getColorForPipelineRunStatus(pipelineRun.status);
+        <div
+          class="flex grow basis-1/5 flex-col rounded-lg border p-1 text-center text-white"
+          [ngClass]="pipelineRunState.css"
+          [matTooltip]="pipelineRunState.info"
+        >
+          <span class="font-bold">Status</span>
+          <div class="m-auto flex w-full cursor-help justify-center gap-1 p-2">
+            <mat-icon>{{ pipelineRunState.icon }}</mat-icon>
+            {{ pipelineRun.status | titlecase }}
+          </div>
+        </div>
+        <div
+          class="flex grow basis-1/5 flex-col rounded-lg border p-1 text-center"
+        >
+          <span class="font-bold">Triggered by</span>
+          <div class="m-auto">
+            @if (pipelineRun.triggerer) {
+              <a
+                class="text-primary flex w-fit items-center gap-1"
+                [routerLink]="['/user', pipelineRun.triggerer.id]"
+              >
+                <mat-icon inline class="align-bottom">account_circle</mat-icon>
+                <span>{{ pipelineRun.triggerer.name }}</span>
+              </a>
+            } @else {
+              Scheduler
+            }
+          </div>
+        </div>
+        <div
+          class="flex grow basis-1/5 flex-col rounded-lg border p-1 text-center"
+        >
+          <span class="font-bold">Started</span>
+          <div class="m-auto">
+            <app-relative-time
+              [date]="pipelineRun.trigger_time"
+            ></app-relative-time>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="flex max-w-full flex-1 grow flex-col overflow-y-hidden rounded-lg border py-2 pl-2"
+      >
+        <span class="mb-2 font-bold">Events</span>
+        <div class="flex flex-1 grow flex-col gap-1 overflow-y-auto">
+          @if (
+            events === undefined ||
+            !pipelineRunService.pipelineRunIsFinished(pipelineRun.status)
+          ) {
+            <div class="mr-2 h-[50px] shrink-0">
+              <ngx-skeleton-loader
+                appearance="circle"
+                [theme]="{
+                  'border-radius': '5px',
+                  height: '100%',
+                  width: '100%',
+                  margin: '0',
+                }"
+              ></ngx-skeleton-loader>
+            </div>
+          }
+          @if (sortedEvents !== undefined) {
+            @for (event of sortedEvents; track event) {
+              <div
+                class="mr-2 flex flex-col gap-1 rounded border px-2 py-1 break-words"
+              >
+                <div class="flex flex-wrap items-center gap-1">
+                  <span>{{ event.reason }}</span>
+                  <span class="text-xs">
+                    <app-relative-time
+                      [date]="event.timestamp"
+                    ></app-relative-time>
+                  </span>
+                </div>
+                <span class="text-sm">{{ event.message }}</span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </div>
+    <div class="sm:h-inner-height flex w-full flex-col sm:col-span-2">
+      <div class="rounded-t bg-gray-800 px-2 py-1 text-lg font-bold text-white">
+        Logs
+      </div>
+      <div
+        class="relative flex h-[500px] flex-col overflow-y-auto bg-black p-2 text-sm text-white sm:h-full"
+      >
+        <div class="absolute inset-y-0 left-[4.5rem] w-px bg-gray-700"></div>
+        @if (logs !== undefined) {
+          @for (logs of logs; track logs) {
+            <div
+              class="group flex items-center gap-4 transition-colors hover:bg-gray-700"
+            >
+              <span
+                class="w-14 shrink-0 text-center font-mono! text-xs select-none"
+                >{{ logs.timestamp | date: "HH:mm:ss" }}</span
+              >
+              <pre
+                class="max-w-full text-sm! wrap-anywhere whitespace-pre-wrap"
+                >{{ logs.text }}</pre
+              >
+            </div>
+          } @empty {
+            <span class="ml-[4.5rem] font-mono!">No logs available.</span>
+          }
+        }
+        @if (pipelineRunService.pipelineRunIsNotReady(pipelineRun.status)) {
+          <span class="ml-[4.5rem] font-mono!"
+            >Waiting for status running.</span
+          >
+        }
+        @if (
+          logs === undefined ||
+          (!pipelineRunService.pipelineRunIsFinished(pipelineRun.status) &&
+            !pipelineRunService.pipelineRunIsNotReady(pipelineRun.status))
+        ) {
+          <div class="mt-2">
+            @for (width of ["50%", "70%", "30%"]; track width) {
+              <app-text-line-skeleton-loader
+                [width]="width"
+                class="ml-[4.5rem]"
+                color="darkgrey"
+              ></app-text-line-skeleton-loader>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

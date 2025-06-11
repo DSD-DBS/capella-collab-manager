@@ -27,6 +27,23 @@ data:
             labels:
               deployment: {{ .Release.Name }}-deployment-backend
               __path__: /var/log/backend/*.log
+  scheduler-promtail.yaml: |
+    {{- include "capellacollab.promtail.default.config" . | indent 4 }}
+
+    positions:
+      filename: /var/log/promtail/positions.yaml
+
+    scrape_configs:
+      - job_name: system
+        pipeline_stages:
+          - multiline:
+              firstline: '^time='
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              deployment: {{ .Release.Name }}-deployment-scheduler
+              __path__: /var/log/scheduler/*.log
   guacamole-promtail.yaml: |
     {{- include "capellacollab.promtail.default.config" . | indent 4 }}
 

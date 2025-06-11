@@ -9,16 +9,17 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { GitModel } from './git-model';
+import { SimpleT4CModelWithRepository } from './simple-t4-c-model-with-repository';
+import { SimpleToolModel } from './simple-tool-model';
 
 
-export interface CreateBackup { 
-    git_model_id: number;
-    t4c_model_id: number;
-    /**
-     * With included commit history, a run can take a long time. Use with caution. The TeamForCapella commit messages are exported by default.
-     * @deprecated
-     */
-    include_commit_history?: boolean;
+export interface ExtendedPipeline { 
+    id: number;
+    t4c_model: SimpleT4CModelWithRepository;
+    git_model: GitModel;
     run_nightly: boolean;
+    next_run: string | null;
+    model: SimpleToolModel;
 }
 

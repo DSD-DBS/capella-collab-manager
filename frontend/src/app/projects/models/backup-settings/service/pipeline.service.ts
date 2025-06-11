@@ -5,7 +5,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { BreadcrumbsService } from 'src/app/general/breadcrumbs/breadcrumbs.service';
-import { Backup, ProjectsModelsBackupsService } from 'src/app/openapi';
+import { Pipeline, ProjectsModelsBackupsService } from 'src/app/openapi';
 
 @Injectable({
   providedIn: 'root',
@@ -14,8 +14,8 @@ export class PipelineWrapperService {
   private breadcrumbsService = inject(BreadcrumbsService);
   private pipelinesService = inject(ProjectsModelsBackupsService);
 
-  private _pipeline = new BehaviorSubject<Backup | undefined>(undefined);
-  private _pipelines = new BehaviorSubject<Backup[] | undefined>(undefined);
+  private _pipeline = new BehaviorSubject<Pipeline | undefined>(undefined);
+  private _pipelines = new BehaviorSubject<Pipeline[] | undefined>(undefined);
 
   public readonly pipeline$ = this._pipeline.asObservable();
   public readonly pipelines$ = this._pipelines.asObservable();
@@ -32,7 +32,7 @@ export class PipelineWrapperService {
     projectSlug: string,
     modelSlug: string,
     pipelineID: number,
-  ): Observable<Backup> {
+  ): Observable<Pipeline> {
     this._pipeline.next(undefined);
     return this.pipelinesService
       .getPipeline(projectSlug, pipelineID, modelSlug)
@@ -44,10 +44,13 @@ export class PipelineWrapperService {
       );
   }
 
-  loadPipelines(projectSlug: string, modelSlug: string): Observable<Backup[]> {
+  loadPipelines(
+    projectSlug: string,
+    modelSlug: string,
+  ): Observable<Pipeline[]> {
     this._pipelines.next(undefined);
     return this.pipelinesService.getPipelines(projectSlug, modelSlug).pipe(
-      tap((pipelines: Backup[]) => {
+      tap((pipelines: Pipeline[]) => {
         this._pipelines.next(pipelines);
       }),
     );

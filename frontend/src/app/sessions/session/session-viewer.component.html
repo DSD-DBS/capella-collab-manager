@@ -14,8 +14,7 @@
     <div
       class="select-none"
       [ngClass]="{
-        'h-[calc(100vh-2vh-65px-110px)]':
-          (fullscreenService.isFullscreen$ | async) === false,
+        'h-inner-height': (fullscreenService.isFullscreen$ | async) === false,
         'h-screen': fullscreenService.isFullscreen$ | async,
       }"
     >

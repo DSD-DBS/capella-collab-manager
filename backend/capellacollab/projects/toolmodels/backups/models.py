@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
 import typing as t
 
 import pydantic
@@ -9,6 +10,7 @@ from sqlalchemy import orm
 
 from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.projects.toolmodels import models as toolmodels_models
 from capellacollab.projects.toolmodels.modelsources.git import (
     models as git_models,
 )
@@ -28,46 +30,47 @@ if t.TYPE_CHECKING:
     from .runs import models as runs_models
 
 
-class CreateBackup(core_pydantic.BaseModel):
+class CreatePipeline(core_pydantic.BaseModel):
     git_model_id: int
     t4c_model_id: int
-    include_commit_history: bool = pydantic.Field(
-        default=False,
-        description=(
-            "With included commit history, a run can take a long time. Use with caution. "
-            "The TeamForCapella commit messages are exported by default."
-        ),
-        deprecated=(
-            "Due to the sometimes hours-long runtimes with this option enabled, we will remove it with v5.0.0. "
-            "Commit messages are exported automatically."
-        ),
-    )
     run_nightly: bool
 
 
-class Backup(core_pydantic.BaseModel):
+class UpdatePipeline(core_pydantic.BaseModel):
+    run_nightly: bool
+
+
+class Pipeline(core_pydantic.BaseModel):
     id: int
-    k8s_cronjob_id: str | None = None
 
     t4c_model: t4c_models.SimpleT4CModelWithRepository
     git_model: git_models.GitModel
     run_nightly: bool
-    include_commit_history: bool
+    next_run: datetime.datetime | None = None
+
+    _validate_next_run = pydantic.field_serializer("next_run")(
+        core_pydantic.datetime_serializer_optional
+    )
 
 
-class DatabaseBackup(database.Base):
+class ExtendedPipeline(Pipeline):
+    model: toolmodels_models.SimpleToolModel
+
+
+ExtendedPipeline.model_rebuild()
+
+
+class DatabasePipeline(database.Base):
     __tablename__ = "backups"
     id: orm.Mapped[int] = orm.mapped_column(
         init=False, primary_key=True, index=True, autoincrement=True
     )
 
     created_by: orm.Mapped[str]
-    k8s_cronjob_id: orm.Mapped[str]
 
     t4c_username: orm.Mapped[str]
     t4c_password: orm.Mapped[str]
 
-    include_commit_history: orm.Mapped[bool]
     run_nightly: orm.Mapped[bool]
 
     git_model_id: orm.Mapped[int] = orm.mapped_column(

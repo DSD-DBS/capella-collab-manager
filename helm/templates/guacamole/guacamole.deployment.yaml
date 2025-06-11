@@ -114,10 +114,6 @@ spec:
           args:
             - "--config.file=/etc/promtail/promtail.yaml"
             - "-log-config-reverse-order"
-          ports:
-            - name: logs
-              containerPort: 3101
-              protocol: TCP
           resources:
             requests:
               cpu: "10m"
