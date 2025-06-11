@@ -47,7 +47,6 @@ class CreateBackup(core_pydantic.BaseModel):
 
 class Backup(core_pydantic.BaseModel):
     id: int
-    k8s_cronjob_id: str | None = None
 
     t4c_model: t4c_models.SimpleT4CModelWithRepository
     git_model: git_models.GitModel
@@ -62,7 +61,6 @@ class DatabaseBackup(database.Base):
     )
 
     created_by: orm.Mapped[str]
-    k8s_cronjob_id: orm.Mapped[str]
 
     t4c_username: orm.Mapped[str]
     t4c_password: orm.Mapped[str]

@@ -310,6 +310,14 @@ class PipelineConfig(BaseConfig):
         description="The timeout (in minutes) for pipeline runs.",
         examples=[60, 90],
     )
+    scheduler: bool = pydantic.Field(
+        default=True,
+        description=(
+            "Whether to enable the integrated pipeline scheduler."
+            " IMPORTANT: Only works with exactly one backend replica."
+            " When having more replicas, disable this option and run one replica of the scheduler via the CCM CLI."
+        ),
+    )
 
 
 class SessionsConfig(BaseConfig):

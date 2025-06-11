@@ -9,6 +9,7 @@ api/feedback.service.ts
 api/global-tokens.service.ts
 api/integrations-pure-variants.service.ts
 api/permissions.service.ts
+api/pipelines.service.ts
 api/projects-events.service.ts
 api/projects-models-backups.service.ts
 api/projects-models-diagrams.service.ts
@@ -43,7 +44,6 @@ model/announcement-level.ts
 model/announcement-response.ts
 model/anonymized-session.ts
 model/authorization-response.ts
-model/backup-pipeline-run.ts
 model/backup.ts
 model/badge-input.ts
 model/badge-output.ts
@@ -136,6 +136,8 @@ model/persistent-workspace-session-configuration-input.ts
 model/persistent-workspace-session-configuration-output.ts
 model/pipeline-configuration-input.ts
 model/pipeline-configuration-output.ts
+model/pipeline-event.ts
+model/pipeline-log-line.ts
 model/pipeline-run-status.ts
 model/pipeline-run.ts
 model/post-git-instance.ts

@@ -24,7 +24,9 @@ export default defineConfig(() => {
       target: ['es2020'],
     },
     plugins: [
-      angular(),
+      angular({
+        liveReload: true,
+      }),
       viteStaticCopy({
         targets: [
           {
