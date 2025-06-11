@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import json
 import logging
 
 import requests
@@ -16,12 +15,11 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.projects.toolmodels.modelsources.t4c import (
     models as t4c_models,
 )
-from capellacollab.sessions import operators
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as t4c_repository_interface,
 )
 
-from . import crud, exceptions, models
+from . import crud, exceptions, interface, models
 
 log = logging.getLogger(__name__)
 
@@ -42,7 +40,6 @@ def get_environment(
     t4c_model: t4c_models.DatabaseT4CModel,
     t4c_username: str,
     t4c_password: str,
-    include_commit_history: bool = False,
 ) -> dict[str, str]:
     return {
         "GIT_REPO_URL": git_model.path,
@@ -56,13 +53,12 @@ def get_environment(
         "T4C_USERNAME": t4c_username,
         "T4C_PASSWORD": t4c_password,
         "LOG_LEVEL": "INFO",
-        "INCLUDE_COMMIT_HISTORY": json.dumps(include_commit_history),
     }
 
 
 def delete_pipeline(
     db: orm.Session,
-    pipeline: models.DatabaseBackup,
+    pipeline: models.DatabasePipeline,
     force: bool,
     global_scope: permissions_models.GlobalScopes,
 ):
@@ -88,6 +84,6 @@ def delete_pipeline(
             ) from e
 
     if pipeline.run_nightly:
-        operators.get_operator().delete_cronjob(pipeline.k8s_cronjob_id)
+        interface.unschedule_pipeline(pipeline)
 
     crud.delete_pipeline(db, pipeline)

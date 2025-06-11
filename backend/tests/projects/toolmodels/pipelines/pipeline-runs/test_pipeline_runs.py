@@ -30,18 +30,21 @@ def fixture_unix_time_in_ns() -> int:
 @pytest.fixture(name="patch_loki")
 def fixture_patch_loki(monkeypatch: pytest.MonkeyPatch, unix_time_in_ns: int):
     def fetch_logs_from_loki(
-        query,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
+        *args,
+        **kwargs,
     ):
         return [
             {
                 "values": [
-                    [unix_time_in_ns, "test3"],
-                    [unix_time_in_ns, "test2"],
-                    [unix_time_in_ns, "test"],
+                    [unix_time_in_ns, "test1"],
+                    [unix_time_in_ns + 3, "test3"],
                 ],
-            }
+            },
+            {
+                "values": [
+                    [unix_time_in_ns + 2, "test2"],
+                ],
+            },
         ]
 
     monkeypatch.setattr(loki, "fetch_logs_from_loki", fetch_logs_from_loki)
@@ -53,7 +56,7 @@ def test_create_pipeline_run(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
 ):
     response = client.post(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
@@ -67,29 +70,11 @@ def test_create_pipeline_run(
     assert run.status == pipeline_runs_models.PipelineRunStatus.PENDING
 
 
-@pytest.mark.usefixtures("project_manager")
-def test_create_pipeline_run_with_custom_environment(
-    project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.ToolModel,
-    client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
-):
-    response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
-        json={
-            "include_commit_history": True,
-        },
-    )
-
-    assert response.status_code == 200
-    assert response.json()["environment"] == {"INCLUDE_COMMIT_HISTORY": "true"}
-
-
 def test_get_pipeline_runs(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
@@ -105,7 +90,7 @@ def test_get_pipeline_run(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
@@ -121,17 +106,61 @@ def test_get_events(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
     monkeypatch: pytest.MonkeyPatch,
 ):
     monkeypatch.setattr(config.k8s.promtail, "loki_enabled", True)
+    unix_time_in_ns = time.time_ns()
+
+    def fetch_logs_from_loki(
+        *args,
+        **kwargs,
+    ):
+        return [
+            {
+                "stream": {
+                    "job_name": "bakukcaphvhnftybjthgrztgr",
+                    "log_type": "events",
+                    "pipeline_run_id": "261",
+                    "service_name": "unknown_service",
+                    "message": "Created pod: jeybvolmgogsjmmcgwdjvfxuu-x5jxz",
+                    "reason": "SuccessfulCreate",
+                },
+                "values": [
+                    [
+                        unix_time_in_ns,
+                        'reason="SuccessfulCreate" message="Created pod: jeybvolmgogsjmmcgwdjvfxuu-x5jxz"',
+                    ],
+                ],
+            },
+            {
+                "stream": {
+                    "job_name": "bakukcaphvhnftybjthgrztgr",
+                    "log_type": "events",
+                    "pipeline_run_id": "261",
+                    "service_name": "unknown_service",
+                    "message": "Started container jeybvolmgogsjmmcgwdjvfxuu",
+                    "reason": "Started",
+                },
+                "values": [
+                    [
+                        unix_time_in_ns + 1,
+                        'reason="Started" message="Started container jeybvolmgogsjmmcgwdjvfxuu"',
+                    ],
+                ],
+            },
+        ]
+
+    monkeypatch.setattr(loki, "fetch_logs_from_loki", fetch_logs_from_loki)
 
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}/events",
     )
     assert response.status_code == 200
-    assert b"test3" in response.content
+    assert len(response.json()) == 2
+    assert response.json()[0]["reason"] == "SuccessfulCreate"
+    assert response.json()[1]["reason"] == "Started"
 
 
 @pytest.mark.usefixtures("patch_loki")
@@ -139,7 +168,7 @@ def test_get_logs(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
     monkeypatch: pytest.MonkeyPatch,
 ):
@@ -150,28 +179,6 @@ def test_get_logs(
 
     assert response.status_code == 200
     assert b"test3" in response.content
-
-
-@pytest.mark.parametrize(
-    ("include_commit_history", "run_nightly"),
-    [(False, False)],
-)
-def test_get_logs_with_loki_disabled(
-    project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.ToolModel,
-    client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
-    pipeline_run: pipeline_runs_models.DatabasePipelineRun,
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(config.k8s.promtail, "loki_enabled", False)
-
-    response = client.get(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}/logs",
-    )
-
-    assert response.status_code == 400
-    assert response.json()["detail"]["err_code"] == "LOKI_DISABLED"
 
 
 @pytest.fixture(name="mock_pipeline_run")
@@ -222,6 +229,7 @@ def fixture_override_get_existing_pipeline_run_dependency(
 def test_mask_logs(
     mock_fetch_logs: mock.Mock,
     client: testclient.TestClient,
+    monkeypatch: pytest.MonkeyPatch,
 ):
     mock_fetch_logs.return_value = [
         {

@@ -51,7 +51,8 @@ dependencies = [
   "Jinja2",
   "pydantic-extra-types>=2.10.2",
   "asyncer==0.0.8",
-  "alembic_postgresql_enum"
+  "alembic_postgresql_enum",
+  "APScheduler"
 ]
 
 [project.urls]
@@ -128,7 +129,8 @@ module = [
   "testcontainers.*",
   "valkey.*",
   "jinja2.*",
-  "pydantic_extra_types.*"
+  "pydantic_extra_types.*",
+  "apscheduler.*",
 ]
 ignore_missing_imports = true
 
@@ -197,7 +199,9 @@ extend-ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = ["ARG"]
-
+"capellacollab/cli/**/*.py" = [
+  "PLC0415" # Improve CLI startup time by avoiding unnecessary imports
+]
 
 [tool.ruff.lint.pycodestyle]
 max-line-length = 72

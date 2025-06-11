@@ -41,7 +41,7 @@ class Sidecar(pydantic.BaseModel):
 
 
 def init_kube():
-    from kubernetes import config  # noqa: PLC0415
+    from kubernetes import config
 
     LOGGER.info("Loading kubectl configuration...")
     config.load_kube_config()
@@ -49,7 +49,7 @@ def init_kube():
 
 
 def get_current_namespace():
-    from kubernetes import config  # noqa: PLC0415
+    from kubernetes import config
 
     try:
         _, active_context = config.list_kube_config_contexts()
@@ -91,7 +91,7 @@ def volumes(
     quiet: t.Annotated[bool, QuietOption] = False,
 ):
     """List all volumes in a kubernetes namespace."""
-    from kubernetes import client  # noqa: PLC0415
+    from kubernetes import client
 
     init_kube()
     core_api = client.CoreV1Api()
@@ -197,7 +197,7 @@ def backup(
     out: pathlib.Path = pathlib.Path.cwd(),
 ):
     """Create a backup of all content in a Kubernetes Persistent Volume."""
-    from kubernetes import client  # noqa: PLC0415
+    from kubernetes import client
 
     init_kube()
     core_api = client.CoreV1Api()
@@ -294,7 +294,7 @@ def pod_for_volume(
     namespace: str,
     read_only=True,
 ):
-    from kubernetes import client  # noqa: PLC0415
+    from kubernetes import client
 
     core_v1_api = client.CoreV1Api()
 
@@ -372,7 +372,7 @@ def create_persistent_volume(
     `capellacollab/sessions/hooks/persistent_workspace.py`.
     """
 
-    from kubernetes import client  # noqa: PLC0415
+    from kubernetes import client
 
     core_v1_api = client.CoreV1Api()
 
@@ -407,7 +407,7 @@ def adjust_directory_permissions(
     user_id: str,
     directory: str = MOUNT_PATH,
 ):
-    from kubernetes import client, stream  # noqa: PLC0415
+    from kubernetes import client, stream
 
     resp = stream.stream(
         client.CoreV1Api().connect_get_namespaced_pod_exec,
@@ -436,7 +436,7 @@ def adjust_directory_permissions(
 
 
 def is_pod_ready(pod_name, namespace):
-    from kubernetes import client  # noqa: PLC0415
+    from kubernetes import client
 
     try:
         pod_status = client.CoreV1Api().read_namespaced_pod_status(
@@ -451,7 +451,7 @@ def is_pod_ready(pod_name, namespace):
 
 
 def stream_tar_from_pod(pod_name, namespace, command):
-    from kubernetes import client, stream  # noqa: PLC0415
+    from kubernetes import client, stream
 
     exec_stream = stream.stream(
         client.CoreV1Api().connect_get_namespaced_pod_exec,
@@ -480,7 +480,7 @@ def stream_tar_from_pod(pod_name, namespace, command):
 
 
 def stream_tar_to_pod(pod_name, namespace, infile):
-    from kubernetes import client, stream  # noqa: PLC0415
+    from kubernetes import client, stream
 
     exec_stream = stream.stream(
         client.CoreV1Api().connect_get_namespaced_pod_exec,
@@ -513,7 +513,7 @@ class WSFileManager:
         self.ws_client = ws_client
 
     def read_bytes(self, timeout=0) -> tuple[bytes | None, bytes | None, bool]:
-        from kubernetes import stream  # noqa: PLC0415
+        from kubernetes import stream
 
         stdout_bytes = None
         stderr_bytes = None

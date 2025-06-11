@@ -14,10 +14,7 @@ from fastapi import middleware, responses, routing
 from fastapi.middleware import cors
 from fastapi.openapi import utils as fastapi_openapi_utils
 
-import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 from capellacollab import openapi as capellacollab_openapi
-
-# This import statement is required and should not be removed! (Alembic will not work otherwise)
 from capellacollab.configuration.app import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
@@ -25,22 +22,9 @@ from capellacollab.routes import router
 from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import idletimeout, operators
 
-from . import __version__, metrics, redirects
+from . import __version__, metrics, redirects, scheduling
 
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(core_logging.CustomFormatter())
-
-timed_rotating_file_handler = core_logging.CustomTimedRotatingFileHandler(
-    str(config.logging.log_path) + "backend.log"
-)
-timed_rotating_file_handler.setFormatter(
-    core_logging.CustomFormatter(colored_output=False)
-)
-
-logging.basicConfig(
-    level=config.logging.level,
-    handlers=[stream_handler, timed_rotating_file_handler],
-)
+core_logging.initialize_logging()
 
 logger = logging.getLogger(__name__)
 
@@ -53,25 +37,21 @@ ALLOW_ORIGINS = [
 async def lifespan(_app: fastapi.FastAPI):
     del _app
 
+    scheduling.start_scheduler()
     migration.migrate_db(engine, config.database.url)
 
     # Load the Kubernetes configuration at startup
     operators.get_operator()
 
     idletimeout.terminate_idle_sessions_in_background()
-    pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs()
     sessions_auth.initialize_session_pre_authentication()
 
     metrics.register_metrics()
 
-    logging.getLogger("uvicorn.access").disabled = True
-    logging.getLogger("kubernetes.client.rest").setLevel("INFO")
-
-    logger.info("Startup completed.")
-
     yield
 
-    logging.getLogger("uvicorn.access").disabled = False
+    scheduling.stop_scheduler()
+
     logger.info("Shutdown completed.")
 
 
@@ -97,7 +77,6 @@ app = fastapi.FastAPI(
     docs_url="/docs/api/swagger",
     redoc_url="/docs/api/redoc",
 )
-
 
 if config.logging.profiling:
     import pyinstrument
@@ -208,15 +187,18 @@ use_route_names_as_operation_ids()
 capellacollab_openapi.add_permissions_and_exceptions_to_api_docs(app)
 app.openapi = custom_openapi  # type: ignore[method-assign]
 
-
 if __name__ == "__main__":
     if os.getenv("FASTAPI_AUTO_RELOAD", "").lower() in ("1", "true", "t"):
-        logging.getLogger("watchfiles.main").setLevel(logging.WARNING)
         uvicorn.run(
             "capellacollab.__main__:app",
+            host=os.getenv("HOST", "127.0.0.1"),
             reload=True,
-            reload_dirs=["capellacollab"],
-            reload_includes=["*.py", "*.yaml", "*.yml"],
+            reload_dirs=[os.getcwd()],
+            reload_includes=["*.py", "*.yaml", "*.yml", "*.jinja"],
         )
     else:
-        uvicorn.run(app)
+        uvicorn.run(
+            "capellacollab.__main__:app",
+            host=os.getenv("HOST", "0.0.0.0"),
+            forwarded_allow_ips="*",
+        )

@@ -13,12 +13,11 @@ import { GitModel } from './git-model';
 import { SimpleT4CModelWithRepository } from './simple-t4-c-model-with-repository';
 
 
-export interface Backup { 
+export interface Pipeline { 
     id: number;
-    k8s_cronjob_id: string | null;
     t4c_model: SimpleT4CModelWithRepository;
     git_model: GitModel;
     run_nightly: boolean;
-    include_commit_history: boolean;
+    next_run: string | null;
 }
 

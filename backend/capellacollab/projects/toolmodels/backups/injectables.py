@@ -21,7 +21,7 @@ def get_existing_pipeline(
         fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-) -> models.DatabaseBackup:
+) -> models.DatabasePipeline:
     pipeline = crud.get_pipeline_by_id(db, pipeline_id)
 
     if pipeline and pipeline.model == model:

@@ -10,6 +10,9 @@ from capellacollab.core import database
 from capellacollab.feedback import util as feedback_util
 from capellacollab.permissions import injectables as permissions_injectables
 from capellacollab.permissions import models as permissions_models
+from capellacollab.projects.toolmodels.backups import (
+    interface as pipelines_interface,
+)
 from capellacollab.users import crud as users_crud
 
 from . import core, crud, models, util
@@ -88,9 +91,13 @@ def update_configuration(
         feedback_util.disable_feedback(body.feedback)
 
     if configuration:
+        if body.pipelines != configuration.configuration["pipelines"]:
+            pipelines_interface.update_trigger_configuration(body.pipelines)
+
         return crud.update_configuration(
             db, configuration, body.model_dump()
         ).configuration
+
     return crud.create_configuration(
         db,
         name=models.GlobalConfiguration._name,

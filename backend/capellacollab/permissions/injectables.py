@@ -24,7 +24,7 @@ def get_scope(
         fastapi.Depends(auth_injectables.get_auth_pat),
     ],
 ) -> models.GlobalScopes:
-    role_permissions = users_models.ROLE_MAPPING[user.role]
+    role_permissions = models.ROLE_MAPPING[user.role]
 
     if token:
         return token.scope & role_permissions

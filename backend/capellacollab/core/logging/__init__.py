@@ -8,31 +8,52 @@ import pathlib
 import random
 import string
 import time
-from logging import handlers
+from logging import handlers as logging_handlers
 
 import fastapi
+import rich.logging as rich_logging
 from starlette.middleware import base
 
+from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.core.authentication import injectables as auth_injectables
 
 from . import injectables
 
 
-class CustomFormatter(logging.Formatter):
-    _colors = {
-        logging.DEBUG: "\x1b[1;34m",  # Blue
-        logging.INFO: "\x1b[1;37m",  # White
-        logging.WARNING: "\x1b[1;93m",  # Yellow
-        logging.ERROR: "\x1b[1;31m",  # Red
-        logging.CRITICAL: "\x1b[1;35m",  # Magenta
-        "reset": "\x1b[0m",
-    }
+def initialize_logging(filename: str = "backend.log"):
+    stream_handler = rich_logging.RichHandler(
+        markup=True,
+        show_time=False,
+    )
 
-    def __init__(self, colored_output: bool = True) -> None:
-        super().__init__()
-        self.colored_output = colored_output
+    timed_rotating_file_handler = CustomTimedRotatingFileHandler(
+        str(config.logging.log_path) + filename
+    )
+    timed_rotating_file_handler.setFormatter(LogFmtFormatter())
 
+    handlers = [stream_handler, timed_rotating_file_handler]
+    logging.basicConfig(
+        level=config.logging.level,
+        format="%(message)s",
+        handlers=handlers,
+    )
+
+    # Disable the access logger to avoid duplicate logs
+    logging.getLogger("uvicorn.access").disabled = True
+
+    # Change loggers to use the custom handlers
+    logging.getLogger("uvicorn").propagate = False
+
+    uvicorn_error_logger = logging.getLogger("uvicorn.error")
+    uvicorn_error_logger.propagate = False
+    uvicorn_error_logger.handlers = handlers
+
+    logging.getLogger("watchfiles.main").setLevel(logging.WARNING)
+    logging.getLogger("kubernetes.client.rest").setLevel(logging.INFO)
+
+
+class LogFmtFormatter(logging.Formatter):
     def format(self, record):
         log_format = 'time="%(asctime)s" level=%(levelname)s '
         if record.name == "capellacollab.request":
@@ -42,13 +63,6 @@ class CustomFormatter(logging.Formatter):
                 'name=%(name)s function=%(funcName)s message="%(message)s"'
             )
 
-        if self.colored_output:
-            log_format = (
-                self._colors[record.levelno]
-                + log_format
-                + self._colors["reset"]
-            )
-
         formatter = logging.Formatter(
             log_format, datefmt="%Y-%m-%dT%H:%M:%S%z"
         )
@@ -56,7 +70,9 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-class CustomTimedRotatingFileHandler(handlers.TimedRotatingFileHandler):
+class CustomTimedRotatingFileHandler(
+    logging_handlers.TimedRotatingFileHandler
+):
     def __init__(self, filename: str | os.PathLike):
         pathlib.Path(filename).parent.mkdir(exist_ok=True)
         super().__init__(filename, when="D", backupCount=1, delay=True)

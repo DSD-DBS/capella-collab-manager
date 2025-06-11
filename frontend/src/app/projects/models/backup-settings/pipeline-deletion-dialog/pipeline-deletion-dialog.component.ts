@@ -13,7 +13,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject } from 'rxjs';
 import { ToastService } from 'src/app/helpers/toast/toast.service';
-import { Backup, ProjectsModelsBackupsService } from 'src/app/openapi';
+import { Pipeline, ProjectsModelsBackupsService } from 'src/app/openapi';
 import { PipelineWrapperService } from 'src/app/projects/models/backup-settings/service/pipeline.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
 
@@ -44,7 +44,7 @@ export class PipelineDeletionDialogComponent {
   data = inject<{
     projectSlug: string;
     modelSlug: string;
-    backup: Backup;
+    backup: Pipeline;
   }>(MAT_DIALOG_DATA);
 
   force = false;

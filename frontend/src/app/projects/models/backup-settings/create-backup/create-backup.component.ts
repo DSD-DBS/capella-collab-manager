@@ -24,7 +24,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatSelectionList, MatListOption } from '@angular/material/list';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CreateBackup, ProjectsModelsBackupsService } from 'src/app/openapi';
+import { CreatePipeline, ProjectsModelsBackupsService } from 'src/app/openapi';
 import { T4CModelService } from 'src/app/projects/models/model-source/t4c/service/t4c-model.service';
 import { GitModelService } from 'src/app/projects/project-detail/model-overview/model-detail/git-model.service';
 
@@ -90,10 +90,9 @@ export class CreateBackupComponent implements OnInit {
     this.loading = true;
     if (this.createBackupForm.valid) {
       const formValue = this.createBackupForm.value;
-      const createBackupformValue: CreateBackup = {
+      const createBackupformValue: CreatePipeline = {
         git_model_id: formValue.gitmodel![0],
         t4c_model_id: formValue.t4cmodel![0],
-        include_commit_history: false,
         run_nightly: formValue.configuration!.runNightly!,
       };
       this.pipelinesService
