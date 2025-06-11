@@ -266,7 +266,7 @@ def _delete_all_pipelines_for_project(
     project: models.DatabaseProject,
     global_scope: permissions_models.GlobalScopes,
 ):
-    pipelines: list[backups_models.DatabaseBackup] = []
+    pipelines: list[backups_models.DatabasePipeline] = []
     for model in project.models:
         pipelines.extend(backups_crud.get_pipelines_for_tool_model(db, model))
     for pipeline in pipelines:

@@ -16,10 +16,10 @@ from capellacollab.configuration.app import models as config_models
 
 from . import exceptions
 
+log = logging.getLogger(__name__)
+
 LOGGING_LEVEL = config.logging.level
 PROMTAIL_CONFIGURATION: config_models.K8sPromtailConfig = config.k8s.promtail
-
-logger = logging.getLogger(__name__)
 
 
 class LogEntry(t.TypedDict):
@@ -40,7 +40,6 @@ def push_logs_to_loki(entries: list[LogEntry], labels) -> None:
     if PROMTAIL_CONFIGURATION.loki_enabled is False:
         return
     assert PROMTAIL_CONFIGURATION.loki_url
-
     # Convert the streams and labels into the Loki log format
     log_data = json.dumps(
         {
@@ -73,10 +72,9 @@ def push_logs_to_loki(entries: list[LogEntry], labels) -> None:
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        logger.exception("Error pushing logs to Grafana Loki")
-        logger.info("Response from Loki API: %s", e.response.content.decode())
-
-    return
+        log.exception("Error pushing logs to Grafana Loki")
+        if e.response:
+            log.info("Response from Loki API: %s", e.response.content.decode())
 
 
 def fetch_logs_from_loki(
@@ -117,6 +115,7 @@ def fetch_logs_from_loki(
         logs = response.json()
         return logs["data"]["result"]
     except requests.exceptions.RequestException as e:
-        logger.exception("Error fetching logs from Grafana Loki")
-        logger.info("Response from Loki API: %s", e.response.content.decode())
+        log.exception("Error fetching logs from Grafana Loki")
+        if e.response:
+            log.info("Response from Loki API: %s", e.response.content.decode())
         return None

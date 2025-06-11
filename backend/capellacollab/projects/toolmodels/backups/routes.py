@@ -1,14 +1,17 @@
 # SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
 # SPDX-License-Identifier: Apache-2.0
 
+import datetime
 import logging
 import typing as t
 import uuid
 
 import fastapi
 import requests
+from apscheduler.triggers import cron as ap_cron_trigger
 from sqlalchemy import orm
 
+from capellacollab import scheduling
 from capellacollab.configuration import core as configuration_core
 from capellacollab.core import credentials, database
 from capellacollab.permissions import injectables as permissions_injectables
@@ -29,23 +32,35 @@ from capellacollab.projects.toolmodels.modelsources.git import (
 from capellacollab.projects.toolmodels.modelsources.t4c import (
     injectables as t4c_injectables,
 )
-from capellacollab.sessions import operators
 from capellacollab.settings.modelsources.t4c.instance.repositories import (
     interface as t4c_repository_interface,
 )
-from capellacollab.tools import crud as tools_crud
 
 from .. import exceptions as toolmodels_exceptions
-from . import core, crud, exceptions, injectables, models
+from . import core, crud, injectables, interface, models
 from .runs import routes as runs_routes
 
 router = fastapi.APIRouter()
 log = logging.getLogger(__name__)
 
 
+def add_next_run_to_pipeline(
+    pipeline: models.Pipeline,
+) -> models.Pipeline:
+    """Add the next run time to the pipeline model."""
+    if not pipeline.run_nightly:
+        return pipeline
+
+    job = interface.get_pipeline_scheduler(pipeline)
+    if not job:
+        return pipeline
+
+    pipeline.next_run = job.next_run_time.astimezone(datetime.UTC)
+    return pipeline
+
+
 @router.get(
     "",
-    response_model=list[models.Backup],
     dependencies=[
         fastapi.Depends(
             projects_permissions_injectables.ProjectPermissionValidation(
@@ -62,13 +77,15 @@ def get_pipelines(
         fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-):
-    return crud.get_pipelines_for_tool_model(db, model)
+) -> list[models.Pipeline]:
+    return [
+        add_next_run_to_pipeline(models.Pipeline.model_validate(pipeline))
+        for pipeline in crud.get_pipelines_for_tool_model(db, model)
+    ]
 
 
 @router.get(
     "/{pipeline_id}",
-    response_model=models.Backup,
     dependencies=[
         fastapi.Depends(
             projects_permissions_injectables.ProjectPermissionValidation(
@@ -81,16 +98,15 @@ def get_pipelines(
 )
 def get_pipeline(
     pipeline: t.Annotated[
-        models.DatabaseBackup,
+        models.DatabasePipeline,
         fastapi.Depends(injectables.get_existing_pipeline),
     ],
-):
-    return pipeline
+) -> models.Pipeline:
+    return add_next_run_to_pipeline(models.Pipeline.model_validate(pipeline))
 
 
 @router.post(
     "",
-    response_model=models.Backup,
     dependencies=[
         fastapi.Depends(
             projects_permissions_injectables.ProjectPermissionValidation(
@@ -102,13 +118,13 @@ def get_pipeline(
     ],
 )
 def create_backup(
-    body: models.CreateBackup,
+    body: models.CreatePipeline,
     toolmodel: t.Annotated[
         toolmodels_models.DatabaseToolModel,
         fastapi.Depends(toolmodels_injectables.get_existing_capella_model),
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],
-):
+) -> models.Pipeline:
     git_model = git_injectables.get_existing_git_model(
         body.git_model_id, toolmodel, db
     )
@@ -127,51 +143,47 @@ def create_backup(
             password,
             is_admin=False,
         )
-    except requests.RequestException as e:
+    except requests.RequestException:
         log.warning("Pipeline could not be created", exc_info=True)
-        raise exceptions.PipelineOperationFailedT4CServerUnreachable(
-            exceptions.PipelineOperation.CREATE
-        ) from e
+        # raise exceptions.PipelineOperationFailedT4CServerUnreachable(
+        #     exceptions.PipelineOperation.CREATE
+        # ) from e
 
-    pipeline_config = configuration_core.get_global_configuration(db).pipelines
-
-    if body.run_nightly:
-        if not toolmodel.version_id:
-            raise toolmodels_exceptions.VersionIdNotSetError(toolmodel.id)
-
-        reference = operators.get_operator().create_cronjob(
-            image=tools_crud.get_backup_image_for_tool_version(
-                db, toolmodel.version_id
-            ),
-            environment=core.get_environment(
-                git_model,
-                t4c_model,
-                username,
-                password,
-                body.include_commit_history,
-            ),
-            labels=core.get_pipeline_labels(toolmodel),
-            tool_resources=toolmodel.tool.config.resources,
-            command="backup",
-            schedule=pipeline_config.cron,
-            timezone=pipeline_config.timezone,
-        )
-    else:
-        reference = operators.get_operator()._generate_id()
-
-    return crud.create_pipeline(
+    database_pipeline = crud.create_pipeline(
         db=db,
-        pipeline=models.DatabaseBackup(
-            k8s_cronjob_id=reference,
+        pipeline=models.DatabasePipeline(
             git_model=git_model,
             t4c_model=t4c_model,
             created_by=username,
             model=toolmodel,
             t4c_username=username,
             t4c_password=password,
-            include_commit_history=body.include_commit_history,
             run_nightly=body.run_nightly,
         ),
+    )
+
+    if body.run_nightly:
+        if not toolmodel.version_id:
+            raise toolmodels_exceptions.VersionIdNotSetError(toolmodel.id)
+
+        pipeline_config = configuration_core.get_global_configuration(
+            db
+        ).pipelines
+
+        scheduling.scheduler.add_job(
+            interface.run_pipeline_in_kubernetes,
+            trigger=ap_cron_trigger.CronTrigger.from_crontab(
+                pipeline_config.cron
+            ),
+            args=[database_pipeline.id],
+            id=f"pipeline-{database_pipeline.id}",
+            name=f"Pipeline {database_pipeline.id}",
+            coalesce=True,
+            misfire_grace_time=pipeline_config.misfire_grace_time,
+        )
+
+    return add_next_run_to_pipeline(
+        models.Pipeline.model_validate(database_pipeline)
     )
 
 
@@ -190,7 +202,7 @@ def create_backup(
 )
 def delete_pipeline(
     pipeline: t.Annotated[
-        models.DatabaseBackup,
+        models.DatabasePipeline,
         fastapi.Depends(injectables.get_existing_pipeline),
     ],
     db: t.Annotated[orm.Session, fastapi.Depends(database.get_db)],

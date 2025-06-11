@@ -20,5 +20,9 @@ export interface PipelineConfigurationInput {
      * Timezone for the cron expression.
      */
     timezone?: string;
+    /**
+     * Time in seconds to wait until the scheduler considers a job as misfired if not picked up. After the grace time, the scheduler will no longer try to schedule the job. With this option, temporarily scheduler downtimes can be covered.
+     */
+    misfire_grace_time?: number;
 }
 
