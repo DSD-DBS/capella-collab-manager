@@ -9,8 +9,8 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 
 import capellacollab.users.models as users_models
+from capellacollab.core import database
 from capellacollab.core import pydantic as core_pydantic
-from capellacollab.core.database import Base
 
 from .. import models as pipeline_models
 
@@ -25,7 +25,29 @@ class PipelineRunStatus(enum.Enum):
     UNKNOWN = "unknown"
 
 
-class DatabasePipelineRun(Base):
+class LogType(str, enum.Enum):
+    EVENTS = "events"
+    LOGS = "logs"
+
+
+class DatabasePipelineRunLogLine(database.Base):
+    __tablename__ = "pipeline_run_logs"
+
+    id: orm.Mapped[int] = orm.mapped_column(
+        init=False, primary_key=True, autoincrement=True
+    )
+    run_id: orm.Mapped[int] = orm.mapped_column(
+        sa.ForeignKey("pipeline_run.id"), index=True, init=False
+    )
+    line: orm.Mapped[str] = orm.mapped_column()
+    timestamp: orm.Mapped[datetime.datetime] = orm.mapped_column()
+    run: orm.Mapped["DatabasePipelineRun"] = orm.relationship(
+        back_populates="logs"
+    )
+    log_type: orm.Mapped[LogType] = orm.mapped_column(default=LogType.LOGS)
+
+
+class DatabasePipelineRun(database.Base):
     __tablename__ = "pipeline_run"
     id: orm.Mapped[int] = orm.mapped_column(
         init=False, primary_key=True, index=True, autoincrement=True
@@ -49,7 +71,9 @@ class DatabasePipelineRun(Base):
 
     trigger_time: orm.Mapped[datetime.datetime]
 
-    environment: orm.Mapped[dict[str, str]]
+    environment: orm.Mapped[dict[str, str]] = orm.mapped_column(
+        default_factory=dict
+    )
 
     reference_id: orm.Mapped[str | None] = orm.mapped_column(default=None)
     end_time: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
@@ -57,6 +81,17 @@ class DatabasePipelineRun(Base):
     )
     logs_last_fetched_timestamp: orm.Mapped[datetime.datetime | None] = (
         orm.mapped_column(default=None)
+    )
+    logs_last_timestamp: orm.Mapped[datetime.datetime | None] = (
+        orm.mapped_column(default=None)
+    )
+    events_last_fetched_timestamp: orm.Mapped[datetime.datetime | None] = (
+        orm.mapped_column(default=None)
+    )
+    logs: orm.Mapped[list[DatabasePipelineRunLogLine]] = orm.relationship(
+        back_populates="run",
+        cascade="all, delete-orphan",
+        default_factory=list,
     )
 
 
@@ -71,7 +106,3 @@ class PipelineRun(core_pydantic.BaseModel):
     _validate_trigger_time = pydantic.field_serializer("trigger_time")(
         core_pydantic.datetime_serializer
     )
-
-
-class BackupPipelineRun(core_pydantic.BaseModel):
-    include_commit_history: bool | None = None

@@ -243,6 +243,8 @@ class KubernetesOperator:
 
     def get_job_logs(self, name: str) -> str | None:
         pod_name = self.get_pod_name_from_job_name(name)
+        if not pod_name:
+            return None
         try:
             if pod_log := self.v1_core.read_namespaced_pod_log(
                 name=pod_name,
@@ -368,7 +370,7 @@ class KubernetesOperator:
             return pods.items[0]
         return None
 
-    def _get_pod_id(self, label_selector: str) -> str:
+    def _get_pod_id(self, label_selector: str) -> str | None:
         try:
             pods = self.v1_core.list_namespaced_pod(
                 namespace=namespace, label_selector=label_selector
@@ -377,7 +379,7 @@ class KubernetesOperator:
             return pods["items"][0]["metadata"]["name"]
         except Exception:
             log.exception("Error fetching the Pod ID")
-            return ""
+            return None
 
     def _generate_id(self) -> str:
         return "".join(random.choices(string.ascii_lowercase, k=25))
