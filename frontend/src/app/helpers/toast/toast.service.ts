@@ -22,11 +22,4 @@ export class ToastService {
   showWarning(title: string, message: string) {
     this.toastr.warning(message, title);
   }
-
-  showPersistentError(title: string, message: string) {
-    this.toastr.error(message, title, {
-      disableTimeOut: true,
-      tapToDismiss: false,
-    });
-  }
 }

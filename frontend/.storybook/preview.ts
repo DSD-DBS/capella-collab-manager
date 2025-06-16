@@ -15,6 +15,7 @@ import { DecoratorFunction } from 'storybook/internal/types';
 import { withScreenshot } from 'storycap';
 import 'zone.js';
 import { IconModule } from '../src/app/icon.module';
+import { mockToastServiceProvider } from '../src/storybook/toast';
 
 export const MOBILE_VIEWPORT = {
   width: 420,
@@ -64,6 +65,7 @@ const preview: Preview = {
         importProvidersFrom(BrowserAnimationsModule),
         { provide: MatDialogRef, useValue: {} },
         { provide: DialogRef, useValue: {} },
+        mockToastServiceProvider,
       ],
     }),
     withScreenshot as DecoratorFunction<AngularRenderer>,
