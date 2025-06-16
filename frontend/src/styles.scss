@@ -47,7 +47,7 @@ html {
     @include mat.button-color($theme: $theme, $color-variant: 'error');
   }
 
-  @apply bg-[#faf9fd];
+  @apply bg-[#faf9fd] overflow-y-scroll;
 }
 
 
