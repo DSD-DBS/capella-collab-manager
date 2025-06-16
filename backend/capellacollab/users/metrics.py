@@ -28,6 +28,13 @@ class UserCountCollector(prometheus_registry.Collector):
 
         yield metric
 
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "user_count",
+            "Amount of registered users",
+            labels=["beta"],
+        )
+
 
 def register() -> None:
     prometheus_client.REGISTRY.register(UserCountCollector())

@@ -21,6 +21,12 @@ class DatabasePoolSizeCollector(prometheus_registry.Collector):
 
         yield metric
 
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "sqlalchemy_pool_size",
+            "SQLAlchemy database connection pool size",
+        )
+
 
 class DatabaseConnectionsInPoolCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
@@ -32,6 +38,12 @@ class DatabaseConnectionsInPoolCollector(prometheus_registry.Collector):
         metric.add_metric([], engine.pool.checkedin())  # type: ignore[attr-defined]
 
         yield metric
+
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "sqlalchemy_connections_in_pool",
+            "Available database connections in the SQLAlchemy pool",
+        )
 
 
 class DatabaseOverflowCollector(prometheus_registry.Collector):
@@ -45,6 +57,12 @@ class DatabaseOverflowCollector(prometheus_registry.Collector):
 
         yield metric
 
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "sqlalchemy_pool_overflow",
+            "Overflow of the SQLAlchemy database connection pool",
+        )
+
 
 class DatabaseCheckedOutConnectionsCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
@@ -56,6 +74,12 @@ class DatabaseCheckedOutConnectionsCollector(prometheus_registry.Collector):
         metric.add_metric([], engine.pool.checkedout())  # type: ignore[attr-defined]
 
         yield metric
+
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "sqlalchemy_checked_out_connections",
+            "Checked out SQLAlchemy database connections",
+        )
 
 
 def register() -> None:

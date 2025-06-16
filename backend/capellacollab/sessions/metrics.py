@@ -24,6 +24,12 @@ class DatabaseSessionsCollector(prometheus_registry.Collector):
             metric.add_metric([], crud.count_sessions(db))
         yield metric
 
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "backend_database_sessions",
+            "Sessions registered in the backend database",
+        )
+
 
 class DeployedSessionsCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
@@ -46,6 +52,13 @@ class DeployedSessionsCollector(prometheus_registry.Collector):
         for labels, g in itertools.groupby(statuses):
             metric.add_metric(labels, len(list(g)))
         yield metric
+
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "backend_deployed_sessions",
+            "Sessions running in the sessions namespace",
+            labels=("workload", "phase"),
+        )
 
 
 def register() -> None:
