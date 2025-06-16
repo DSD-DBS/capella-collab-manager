@@ -33,6 +33,13 @@ class FeedbackCollector(prometheus_registry.Collector):
 
         yield metric
 
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "feedback_count",
+            "Submitted feedback",
+            labels=["rating", "anonymous"],
+        )
+
 
 def register() -> None:
     prometheus_client.REGISTRY.register(FeedbackCollector())

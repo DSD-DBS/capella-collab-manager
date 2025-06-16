@@ -40,6 +40,13 @@ class UsedT4CLicensesCollector(prometheus_registry.Collector):
             )
         yield metric
 
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "used_t4c_licenses",
+            "Currently used T4C licenses per registered TeamForCapella license server.",
+            labels=["license_server_name", "license_server_id"],
+        )
+
 
 class TotalT4CLicensesCollector(prometheus_registry.Collector):
     def collect(self) -> t.Iterable[prometheus_client.core.Metric]:
@@ -68,6 +75,13 @@ class TotalT4CLicensesCollector(prometheus_registry.Collector):
                 [license_server.name, str(license_server.id)], total_licenses
             )
         yield metric
+
+    def describe(self) -> t.Iterable[prometheus_client.core.Metric]:
+        yield prometheus_client.core.GaugeMetricFamily(
+            "total_t4c_licenses",
+            "Available licenses per registered TeamForCapella license server.",
+            labels=["license_server_name", "license_server_id"],
+        )
 
 
 def register() -> None:
