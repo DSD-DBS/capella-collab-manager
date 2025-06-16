@@ -4,3 +4,7 @@
 # For some SSH servers only. False positive for Caddy.
 # https://github.com/caddyserver/caddy-docker/issues/361#issuecomment-2791451341
 CVE-2025-22869
+
+# https://avd.aquasec.com/nvd/2025/cve-2025-22874/
+# We don't use certificate validation in Caddy
+CVE-2025-22874
