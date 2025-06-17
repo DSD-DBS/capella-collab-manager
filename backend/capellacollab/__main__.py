@@ -14,7 +14,6 @@ from fastapi import middleware, responses, routing
 from fastapi.middleware import cors
 from fastapi.openapi import utils as fastapi_openapi_utils
 
-import capellacollab.projects.toolmodels.backups.runs.interface as pipeline_runs_interface
 from capellacollab import openapi as capellacollab_openapi
 
 # This import statement is required and should not be removed! (Alembic will not work otherwise)
@@ -25,7 +24,7 @@ from capellacollab.routes import router
 from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import idletimeout, operators
 
-from . import __version__, metrics, redirects
+from . import __version__, metrics, redirects, scheduling
 
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(core_logging.CustomFormatter())
@@ -51,13 +50,13 @@ ALLOW_ORIGINS = [
 async def lifespan(_app: fastapi.FastAPI):
     del _app
 
+    scheduling.start_scheduler()
     migration.migrate_db(engine, config.database.url)
 
     # Load the Kubernetes configuration at startup
     operators.get_operator()
 
     idletimeout.terminate_idle_sessions_in_background()
-    pipeline_runs_interface.schedule_refresh_and_trigger_pipeline_jobs()
     sessions_auth.initialize_session_pre_authentication()
 
     metrics.register_metrics()
@@ -68,6 +67,8 @@ async def lifespan(_app: fastapi.FastAPI):
     logging.info("Startup completed.")
 
     yield
+
+    scheduling.stop_scheduler()
 
     logging.getLogger("uvicorn.access").disabled = False
     logging.info("Shutdown completed.")

@@ -38,6 +38,7 @@ module.exports = {
         // 2*3.9px is the margin of the wrapper
         // 2*10px is the margin of the mat-card
         "max-card": "calc(100vw - 2*3.9px - 2*10px)",
+        "inner-height": "calc(100vh - 2vh - 65px - 110px)",
       },
       borderRadius: {
         material: "28px",

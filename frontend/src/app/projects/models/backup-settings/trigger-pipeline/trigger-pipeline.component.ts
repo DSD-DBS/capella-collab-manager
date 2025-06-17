@@ -60,9 +60,6 @@ export class TriggerPipelineComponent implements OnInit {
         this.data.projectSlug,
         pipeline.id,
         this.data.modelSlug,
-        {
-          include_commit_history: false,
-        },
       )
       .subscribe((pipelineRun: PipelineRun) => {
         this.closeDialog();

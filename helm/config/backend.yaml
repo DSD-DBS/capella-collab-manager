@@ -79,6 +79,7 @@ valkey:
 
 pipelines:
   timeout: {{ .Values.pipelines.timeout }}
+  scheduler: False
 
 sessions:
   timeout: {{ .Values.sessions.timeout }}

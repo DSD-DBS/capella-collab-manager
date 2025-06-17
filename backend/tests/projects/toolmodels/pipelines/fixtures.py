@@ -44,7 +44,6 @@ def fixture_pipeline(
     include_commit_history: bool,
 ) -> pipelines_models.DatabaseBackup:
     pipeline = pipelines_models.DatabaseBackup(
-        k8s_cronjob_id="unavailable",
         git_model=git_model,
         t4c_model=t4c_model,
         created_by=executor_name,

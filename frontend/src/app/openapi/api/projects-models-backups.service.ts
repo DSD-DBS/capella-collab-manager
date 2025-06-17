@@ -21,13 +21,15 @@ import { Observable }                                        from 'rxjs';
 // @ts-ignore
 import { Backup } from '../model/backup';
 // @ts-ignore
-import { BackupPipelineRun } from '../model/backup-pipeline-run';
-// @ts-ignore
 import { CreateBackup } from '../model/create-backup';
 // @ts-ignore
 import { HTTPValidationError } from '../model/http-validation-error';
 // @ts-ignore
 import { PagePipelineRun } from '../model/page-pipeline-run';
+// @ts-ignore
+import { PipelineEvent } from '../model/pipeline-event';
+// @ts-ignore
+import { PipelineLogLine } from '../model/pipeline-log-line';
 // @ts-ignore
 import { PipelineRun } from '../model/pipeline-run';
 
@@ -126,14 +128,13 @@ export class ProjectsModelsBackupsService extends BaseService {
      * @param projectSlug 
      * @param pipelineId 
      * @param modelSlug 
-     * @param backupPipelineRun 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, backupPipelineRun: BackupPipelineRun, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PipelineRun>;
-    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, backupPipelineRun: BackupPipelineRun, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PipelineRun>>;
-    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, backupPipelineRun: BackupPipelineRun, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PipelineRun>>;
-    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, backupPipelineRun: BackupPipelineRun, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<PipelineRun>;
+    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<PipelineRun>>;
+    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<PipelineRun>>;
+    public createPipelineRun(projectSlug: string, pipelineId: number, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling createPipelineRun.');
         }
@@ -142,9 +143,6 @@ export class ProjectsModelsBackupsService extends BaseService {
         }
         if (modelSlug === null || modelSlug === undefined) {
             throw new Error('Required parameter modelSlug was null or undefined when calling createPipelineRun.');
-        }
-        if (backupPipelineRun === null || backupPipelineRun === undefined) {
-            throw new Error('Required parameter backupPipelineRun was null or undefined when calling createPipelineRun.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -160,15 +158,6 @@ export class ProjectsModelsBackupsService extends BaseService {
 
         const localVarTransferCache: boolean = options?.transferCache ?? true;
 
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-            'application/json'
-        ];
-        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
-        if (httpContentTypeSelected !== undefined) {
-            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
-        }
 
         let responseType_: 'text' | 'json' | 'blob' = 'json';
         if (localVarHttpHeaderAcceptSelected) {
@@ -186,7 +175,6 @@ export class ProjectsModelsBackupsService extends BaseService {
         return this.httpClient.request<PipelineRun>('post', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: backupPipelineRun,
                 responseType: <any>responseType_,
                 ...(withCredentials ? { withCredentials } : {}),
                 headers: localVarHeaders,
@@ -276,9 +264,9 @@ export class ProjectsModelsBackupsService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getLogs(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<string>;
-    public getLogs(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<string>>;
-    public getLogs(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<string>>;
+    public getLogs(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<PipelineLogLine>>;
+    public getLogs(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<PipelineLogLine>>>;
+    public getLogs(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<PipelineLogLine>>>;
     public getLogs(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getLogs.');
@@ -320,7 +308,7 @@ export class ProjectsModelsBackupsService extends BaseService {
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/backups/pipelines/${this.configuration.encodeParam({name: "pipelineId", value: pipelineId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/runs/${this.configuration.encodeParam({name: "pipelineRunId", value: pipelineRunId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/logs`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<string>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<PipelineLogLine>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -473,9 +461,9 @@ export class ProjectsModelsBackupsService extends BaseService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getPipelineRunEvents(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<string>;
-    public getPipelineRunEvents(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<string>>;
-    public getPipelineRunEvents(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<string>>;
+    public getPipelineRunEvents(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<PipelineEvent>>;
+    public getPipelineRunEvents(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<PipelineEvent>>>;
+    public getPipelineRunEvents(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<PipelineEvent>>>;
     public getPipelineRunEvents(projectSlug: string, pipelineRunId: number, pipelineId: number, modelSlug: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (projectSlug === null || projectSlug === undefined) {
             throw new Error('Required parameter projectSlug was null or undefined when calling getPipelineRunEvents.');
@@ -517,7 +505,7 @@ export class ProjectsModelsBackupsService extends BaseService {
 
         let localVarPath = `/api/v1/projects/${this.configuration.encodeParam({name: "projectSlug", value: projectSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/models/${this.configuration.encodeParam({name: "modelSlug", value: modelSlug, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/backups/pipelines/${this.configuration.encodeParam({name: "pipelineId", value: pipelineId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/runs/${this.configuration.encodeParam({name: "pipelineRunId", value: pipelineRunId, in: "path", style: "simple", explode: false, dataType: "number", dataFormat: undefined})}/events`;
         const { basePath, withCredentials } = this.configuration;
-        return this.httpClient.request<string>('get', `${basePath}${localVarPath}`,
+        return this.httpClient.request<Array<PipelineEvent>>('get', `${basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

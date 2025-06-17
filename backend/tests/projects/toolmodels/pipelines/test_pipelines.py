@@ -24,21 +24,8 @@ from capellacollab.core import credentials
 
 
 class MockOperator:
-    cronjob_counter = 0
-
-    def create_cronjob(
-        self,
-        *args,
-        **kwargs,
-    ) -> str:
-        self.cronjob_counter += 1
-        return self._generate_id()
-
     def _generate_id(self) -> str:
         return "".join(random.choices(string.ascii_lowercase, k=25))
-
-    def delete_cronjob(self, _id: str):
-        self.cronjob_counter -= 1
 
 
 @pytest.fixture(name="mockoperator")
