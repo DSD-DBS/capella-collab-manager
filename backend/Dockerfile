@@ -15,7 +15,7 @@ ADD https://astral.sh/uv/install.sh /uv-installer.sh
 ENV UV_UNMANAGED_INSTALL=/usr/bin/
 ENV UV_PYTHON_INSTALL_DIR=/etc/python
 
-RUN apt-get update\
+RUN apt-get update \
     && apt-get upgrade --yes \
     && apt-get install --yes \
     ca-certificates \
@@ -29,8 +29,8 @@ ENV PATH="/usr/bin/:$PATH"
 WORKDIR /opt/backend
 
 RUN uv python install 3.12 --preview \
-    && ln -s /etc/python/*/bin/python /usr/bin/python \
-    && ln -s /etc/python/*/bin/python /usr/bin/python3 \
+    && ln -s /etc/python/cpython-3.12-*/bin/python /usr/bin/python \
+    && ln -s /etc/python/cpython-3.12-*/bin/python /usr/bin/python3 \
     && uv venv
 
 COPY . /opt/backend
