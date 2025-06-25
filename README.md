@@ -49,7 +49,6 @@ multiple organizations. Here are some of the key features:
 In addition, we have integrated commercial products:
 
 - [Team for Capella](https://www.obeosoft.com/en/team-for-capella):
-
   - Automatic repository monitoring
   - UI to create and delete models
   - Automatic license injection into sessions.

@@ -37,7 +37,6 @@
     [Link a TeamForCapella repository](./project-integration/index.md#link-a-teamforcapella-repository-to-a-project-model)
 1.  Create a new session with the new Capella version.
 1.  In your persistent workspace, execute the following steps:
-
     1. Right-click on the model in your workspace.
     1. Select `Migration` and `Migrate Project toward current version`
        ![Migrate Capella model](../../user/tools/capella/migration/migrate-capella-model.png)

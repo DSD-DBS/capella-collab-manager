@@ -933,9 +933,9 @@ class KubernetesOperator:
 
     def list_files(self, session_id: str, directory: str, show_hidden: bool):
         def print_file_tree_as_json():
-            import json
-            import pathlib
-            import sys
+            import json  # noqa: PLC0415
+            import pathlib  # noqa: PLC0415
+            import sys  # noqa: PLC0415
 
             print(  # noqa: T201
                 "Using CLI arguments: " + str(sys.argv[1:]), file=sys.stderr
@@ -1054,7 +1054,7 @@ class KubernetesOperator:
                         stderr,
                     )
         except exceptions.ApiException:
-            logging.exception(
+            log.exception(
                 "Command failed for session %s. See stacktrace below.\n%s\n%s",
                 session_id,
                 textwrap.indent(

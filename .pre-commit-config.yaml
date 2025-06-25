@@ -8,13 +8,13 @@ default_language_version:
   python: python3.12
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.10
+    rev: v0.12.0
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--fix, --extend-ignore=FIX]
       - id: ruff-format
   - repo: https://github.com/gitleaks/gitleaks.git
-    rev: v8.24.0
+    rev: v8.27.2
     hooks:
       - id: gitleaks
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -52,7 +52,7 @@ repos:
     hooks:
       - id: actionlint-docker
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+    rev: v1.16.1
     hooks:
       - id: mypy
         types_or: [python, spec]
@@ -89,11 +89,11 @@ repos:
         types_or: [ts, css, html, markdown]
         exclude: '^frontend/src/app/openapi'
         additional_dependencies:
-          - 'prettier@^3.5.3'
-          - 'prettier-plugin-tailwindcss@^0.6.12'
+          - 'prettier@^3.6.1'
+          - 'prettier-plugin-tailwindcss@^0.6.13'
           - '@trivago/prettier-plugin-sort-imports@^5.2.2'
           - 'tailwindcss@^3.4.17'
-          - 'prettier-plugin-classnames@^0.7.8'
+          - 'prettier-plugin-classnames@^0.7.9'
           - 'prettier-plugin-merge@^0.7.4'
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
@@ -162,15 +162,15 @@ repos:
     hooks:
       - id: reuse-lint-file
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.22.0
+    rev: v9.29.0
     hooks:
       - id: eslint
         additional_dependencies:
-          - 'eslint@^9.28.0'
-          - '@eslint/js@^9.28.0'
+          - 'eslint@^9.29.0'
+          - '@eslint/js@^9.29.0'
           - 'angular-eslint@~19.8.0'
           - 'eslint-config-prettier@^10.1.5'
-          - 'typescript-eslint@^8.34.0'
+          - 'typescript-eslint@^8.35.0'
           - 'eslint-plugin-unused-imports@^4.1.4'
           - 'eslint-plugin-tailwindcss@^3.18.0'
           - 'eslint-plugin-storybook@^0.12.0'

@@ -40,7 +40,6 @@
 1.  Upload the images via the `Upload` button:
 
     ![Upload images](./upload-from-workspace.png)
-
     1. In the open dialog, select `Select local images`:
        ![Select local images](./select-local-images.png)
 

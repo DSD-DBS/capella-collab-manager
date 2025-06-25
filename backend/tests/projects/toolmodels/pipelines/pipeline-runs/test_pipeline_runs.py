@@ -123,7 +123,10 @@ def test_get_events(
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
+    monkeypatch: pytest.MonkeyPatch,
 ):
+    monkeypatch.setattr(config.k8s.promtail, "loki_enabled", True)
+
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}/events",
     )
@@ -138,7 +141,9 @@ def test_get_logs(
     client: testclient.TestClient,
     pipeline: pipelines_models.DatabaseBackup,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
+    monkeypatch: pytest.MonkeyPatch,
 ):
+    monkeypatch.setattr(config.k8s.promtail, "loki_enabled", True)
     response = client.get(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs/{pipeline_run.id}/logs",
     )

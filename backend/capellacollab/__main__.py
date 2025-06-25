@@ -42,6 +42,8 @@ logging.basicConfig(
     handlers=[stream_handler, timed_rotating_file_handler],
 )
 
+logger = logging.getLogger(__name__)
+
 ALLOW_ORIGINS = [
     f"{config.general.scheme}://{config.general.host}:{config.general.port}"
 ]
@@ -65,12 +67,12 @@ async def lifespan(_app: fastapi.FastAPI):
     logging.getLogger("uvicorn.access").disabled = True
     logging.getLogger("kubernetes.client.rest").setLevel("INFO")
 
-    logging.info("Startup completed.")
+    logger.info("Startup completed.")
 
     yield
 
     logging.getLogger("uvicorn.access").disabled = False
-    logging.info("Shutdown completed.")
+    logger.info("Shutdown completed.")
 
 
 app = fastapi.FastAPI(

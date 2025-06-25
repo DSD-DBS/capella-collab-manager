@@ -45,7 +45,7 @@ from capellacollab.tools import models as tools_models
 from capellacollab.users import crud as users_crud
 from capellacollab.users import models as users_models
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 DEFAULT_REDIRECT_URL = (
     "{CAPELLACOLLAB_SESSIONS_SCHEME}://{CAPELLACOLLAB_SESSIONS_HOST}:{CAPELLACOLLAB_SESSIONS_PORT}"
@@ -76,12 +76,12 @@ def migrate_db(engine, database_url: str):
 
     with session_maker() as session:
         if current_rev:
-            LOGGER.info("Upgrade database to head")
+            logger.info("Upgrade database to head")
             command.upgrade(alembic_cfg, "head")
         else:
-            LOGGER.info("Empty database detected.")
+            logger.info("Empty database detected.")
             database.Base.metadata.create_all(bind=engine)
-            LOGGER.info("Database structure creation successful")
+            logger.info("Database structure creation successful")
             command.stamp(alembic_cfg, "head")
             initialize_admin_user(session)
             create_welcome_announcement(session)
@@ -94,7 +94,7 @@ def migrate_db(engine, database_url: str):
             create_t4c_instance_and_repositories(session)
             create_git_instances(session)
 
-    logging.info("Database migrations completed.")
+    logger.info("Database migrations completed.")
 
 
 def initialize_admin_user(db: orm.Session):
@@ -105,7 +105,7 @@ def initialize_admin_user(db: orm.Session):
         role=users_models.Role.ADMIN,
     )
     events_crud.create_user_creation_event(db, admin_user)
-    LOGGER.info("Initialized admin user %s", config.initial.admin)
+    logger.info("Initialized admin user %s", config.initial.admin)
 
 
 def create_welcome_announcement(db: orm.Session):
@@ -118,7 +118,7 @@ def create_welcome_announcement(db: orm.Session):
             dismissible=True,
         ),
     )
-    LOGGER.info("Initialized welcome announcement %s", welcome_announcement.id)
+    logger.info("Initialized welcome announcement %s", welcome_announcement.id)
 
 
 def initialize_capellambse_test_project(db: orm.Session):
@@ -129,7 +129,7 @@ def initialize_capellambse_test_project(db: orm.Session):
         visibility=project_models.ProjectVisibility.INTERNAL,
     )
     create_capellambse_test_models(db, project)
-    LOGGER.info("Initialized project '%s'", project.name)
+    logger.info("Initialized project '%s'", project.name)
 
 
 def get_eclipse_session_configuration() -> (
@@ -462,7 +462,7 @@ def create_tools(db: orm.Session):
         create_papyrus_tool(db)
         create_jupyter_tool(db)
 
-    LOGGER.info("Initialized tools")
+    logger.info("Initialized tools")
 
 
 def create_t4c_instance_and_repositories(db):
@@ -476,7 +476,7 @@ def create_t4c_instance_and_repositories(db):
 
     _create_local_t4c_environment(db, version)
     _create_cluster_t4c_environment(db, version)
-    LOGGER.info("Initialized T4C instance and repositories")
+    logger.info("Initialized T4C instance and repositories")
 
 
 def _create_local_t4c_environment(
@@ -599,7 +599,7 @@ def initialize_coffee_machine_project(db: orm.Session):
         visibility=project_models.ProjectVisibility.INTERNAL,
     )
     create_coffee_machine_model(db, project)
-    LOGGER.info("Initialized project '%s'", project.name)
+    logger.info("Initialized project '%s'", project.name)
 
 
 def create_coffee_machine_model(
@@ -644,7 +644,7 @@ def initialize_ife_project(db: orm.Session):
         visibility=project_models.ProjectVisibility.INTERNAL,
     )
     create_ife_model(db, project)
-    LOGGER.info("Initialized project '%s'", project.name)
+    logger.info("Initialized project '%s'", project.name)
 
 
 def create_ife_model(db: orm.Session, project: project_models.DatabaseProject):

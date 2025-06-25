@@ -18,7 +18,6 @@
 2.  On the right side you should now see user management options:
     ![Add user](./add-user-empty.png)
 3.  Fill in the following fields:
-
     1. `Username`: Ask your administrator if you are not sure which username to
        enter
     1. `Role` and `Permission`: Have a look here for the overview of Roles and
@@ -35,7 +34,6 @@
     ![User modification](./modify-user.png)
 
     You can select from the following options:
-
     - Remove a user from the project
     - Set role of the user to [project administrator](../../projects/roles.md)
       or [user](../../projects/roles.md)

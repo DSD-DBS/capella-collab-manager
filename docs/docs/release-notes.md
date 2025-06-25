@@ -7,7 +7,6 @@
   [here](https://github.com/DSD-DBS/capella-collab-manager/releases).
 - **Session related** release notes are available
   [here](https://github.com/DSD-DBS/capella-dockerimages/releases).
-
     - **JupyterLab** release notes are available
       [here](https://jupyterlab.readthedocs.io/en/stable/getting_started/changelog.html).
     - **capellambse** release notes are available
