@@ -36,7 +36,6 @@ required for the following steps.
     ![Create client - Step 1](./create-client-1.png)
 
 1.  In **Capability config** modify the default values as follows:
-
     1. Enable **Client Authentication**
     1. Disable **Direct access grants**
 
@@ -54,7 +53,6 @@ required for the following steps.
 
 1.  Click **Save**, which should create the client in Keycloak.
 1.  Make the email claim optional. It is not required for the CCM.
-
     1.  In the Clients tab, open the client details of the newly created client
     1.  Click on **Client scopes**
     1.  For the _email_ scope, change the **Assigned Type** from _Default_ to

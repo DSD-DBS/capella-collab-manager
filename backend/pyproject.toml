@@ -192,6 +192,7 @@ extend-ignore = [
   "SIM117",  # Use a single `with` statement
   "RUF012",  # Mutable default values, Ruff doesn't correctly detect pydantic models
   "ERA001",  # Commented-out code
+  "FAST003", # Parameter appears in route path, but not in signature. Ruff doesn't detect dependencies in other files
 ]
 
 [tool.ruff.lint.per-file-ignores]

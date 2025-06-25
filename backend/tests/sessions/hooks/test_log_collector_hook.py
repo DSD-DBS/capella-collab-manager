@@ -3,7 +3,6 @@
 
 import pytest
 
-from capellacollab.sessions import models as sessions_models
 from capellacollab.sessions.hooks import interface as hooks_interface
 from capellacollab.sessions.hooks import log_collector
 from capellacollab.sessions.operators import k8s
@@ -37,13 +36,18 @@ def test_log_volume_mounting_loki_disabled(
     )
 
 
-def test_log_volume_mounting(
+@pytest.mark.usefixtures("session")
+def test_log_volume_mounting_loki_enabled(
     configuration_hook_request: hooks_interface.ConfigurationHookRequest,
     post_session_creation_hook_request: hooks_interface.PostSessionCreationHookRequest,
     pre_session_termination_hook_request: hooks_interface.PreSessionTerminationHookRequest,
-    session: sessions_models.DatabaseSession,
     monkeypatch: pytest.MonkeyPatch,
 ):
+    monkeypatch.setattr(
+        log_collector.LogCollectorIntegration, "_loki_enabled", True
+    )
+    configuration_hook_request.tool.config.monitoring.logging.enabled = True
+
     result = log_collector.LogCollectorIntegration().configuration_hook(
         configuration_hook_request
     )
@@ -76,6 +80,7 @@ def test_log_volume_mounting(
         mock_create_sidecar_pod_called,
     )
 
+    post_session_creation_hook_request.db_session.tool.config.monitoring.logging.enabled = True
     log_collector.LogCollectorIntegration().post_session_creation_hook(
         post_session_creation_hook_request
     )

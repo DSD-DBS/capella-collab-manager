@@ -30,5 +30,5 @@ class ResponseModel(core_pydantic.BaseModel):
     errors: list[Message] | None = None
 
 
-class PayloadResponseModel(ResponseModel, t.Generic[T]):
+class PayloadResponseModel[T](ResponseModel):
     payload: T

@@ -117,7 +117,6 @@ overview reasons, they are separated:
 - Capella Collaboration Manager control namespace: In this namespace, we run
   the core application. It has full control over the sessions namespace and
   consists of the following services:
-
     - Frontend
     - Backend
     - Documentation
@@ -268,7 +267,6 @@ If a value is false, check the backend logs for more information.
 1.  Prepare the `capella/base` and `t4c/client/base` images according to the
     Capella Docker images documentation (Only the preparation section is
     needed):
-
     - [`capella/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/base/#preparation)
     - [`t4c/client/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation)
 

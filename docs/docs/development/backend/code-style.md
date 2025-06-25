@@ -42,7 +42,6 @@ Python code. The key differences are:
   typing related classes like `t.TypedDict`.
 
     Use the new syntax and classes for typing introduced with Python 3.10.
-
     - Instead of `t.Tuple`, `t.List` etc. use the builtin classes `tuple`,
       `list` etc.
     - For classes that are not builtin (e.g. `Iterable`),
@@ -75,7 +74,6 @@ Python code. The key differences are:
     submodules, adhering to the Google style guide can lead to naming conflicts
     during imports. To address this, we distinguish between the following two
     cases:
-
     1. _Importing a module from the current directory_: In this case, we do not
        need to rename the module and can use it as is. For instance, if we are
        in `capellacollab.projects.toolsmodels`, we can simply import the `crud`

@@ -34,7 +34,6 @@ guide.
 1. Enter the connection string for the TeamForCapella server. There are two
    ways to find the correct one. Make sure that the host is prefixed with
    `tcp://`.
-
     1. Global administrators can navigate in the Collab Manager to `Menu` >
        `Settings` > `Model sources` > `TeamForCapella` > Select the instance >
        `Host`.

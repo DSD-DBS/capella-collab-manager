@@ -21,7 +21,6 @@ GitLab, are not available.
 1. You can see all existing instances (if any). To add a new integration,
    please use the form below "Add new integration". You have to enter the
    following information:
-
     1. **Git Type**
         - **General**: Works with every
           [Git server](https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server)

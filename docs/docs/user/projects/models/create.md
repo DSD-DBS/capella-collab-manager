@@ -69,7 +69,6 @@ You have to enter the following information:
 1.  **Username** and **password/token**: Please enter your username and token
     here, which is needed to access the repository. Please note that we don't
     have support for SSH authentication yet.
-
     - For public repositories: You don't need to enter credentials. However,
       backups will need credentials to be able to push to the repository.
     - For private repositories: You need to enter credentials for read-only

@@ -19,6 +19,8 @@ from . import exceptions
 LOGGING_LEVEL = config.logging.level
 PROMTAIL_CONFIGURATION: config_models.K8sPromtailConfig = config.k8s.promtail
 
+logger = logging.getLogger(__name__)
+
 
 class LogEntry(t.TypedDict):
     line: str
@@ -71,8 +73,8 @@ def push_logs_to_loki(entries: list[LogEntry], labels) -> None:
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        logging.exception("Error pushing logs to Grafana Loki")
-        logging.info("Response from Loki API: %s", e.response.content.decode())
+        logger.exception("Error pushing logs to Grafana Loki")
+        logger.info("Response from Loki API: %s", e.response.content.decode())
 
     return
 
@@ -115,6 +117,6 @@ def fetch_logs_from_loki(
         logs = response.json()
         return logs["data"]["result"]
     except requests.exceptions.RequestException as e:
-        logging.exception("Error fetching logs from Grafana Loki")
-        logging.info("Response from Loki API: %s", e.response.content.decode())
+        logger.exception("Error fetching logs from Grafana Loki")
+        logger.info("Response from Loki API: %s", e.response.content.decode())
         return None
