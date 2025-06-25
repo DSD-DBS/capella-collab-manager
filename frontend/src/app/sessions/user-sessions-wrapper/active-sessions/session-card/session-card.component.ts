@@ -52,6 +52,8 @@ import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wr
   ],
   templateUrl: './session-card.component.html',
   styles: `
+    @reference '../../../../../styles.css';
+
     .error {
       @apply bg-error;
     }

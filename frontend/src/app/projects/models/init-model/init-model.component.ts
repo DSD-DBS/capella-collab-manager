@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -47,7 +47,6 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatLabel,
     MatInput,
     MatSelect,
-    NgFor,
     MatOption,
     MatButton,
     AsyncPipe,

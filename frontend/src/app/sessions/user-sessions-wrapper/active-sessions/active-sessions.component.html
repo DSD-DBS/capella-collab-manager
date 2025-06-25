@@ -48,10 +48,10 @@
 
       @if (project) {
         <div
-          class="flex flex-col justify-between gap-2 rounded-material border bg-gray-50 p-2
+          class="rounded-material flex flex-col justify-between gap-2 border bg-gray-50 p-2
             shadow"
         >
-          <div class="ml-1 mt-1 text-lg">
+          <div class="mt-1 ml-1 text-lg">
             <a
               target="_blank"
               [href]="'project/' + project.slug"
@@ -61,7 +61,7 @@
                 {{ project.type === "training" ? "Training" : "Project" }}
                 <b>{{ project.name }}</b>
               </div>
-              <mat-icon class="!w-6" inline>open_in_new</mat-icon>
+              <mat-icon class="w-6!" inline>open_in_new</mat-icon>
             </a>
           </div>
           <div class="hidden sm:block">

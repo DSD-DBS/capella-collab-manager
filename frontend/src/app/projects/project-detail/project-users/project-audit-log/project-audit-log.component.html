@@ -16,47 +16,49 @@
       </tr>
     </thead>
 
-    <tbody
-      [id]="idx + 1"
-      #page
-      *ngFor="
-        let event of (projectAuditLogService.projectHistoryEventsPages$
-          | async)!.pages;
-        let idx = index
-      "
-    >
-      @if (event === undefined || event === "loading") {
-        <tr *ngFor="let jobRunPage of pageSizeArray">
-          <td *ngFor="let column of [1, 2, 3, 4, 5, 6]">
-            <app-text-line-skeleton-loader
-              width="80%"
-            ></app-text-line-skeleton-loader>
-          </td>
-        </tr>
-      } @else {
-        <ng-container *ngFor="let run of event.items">
-          <tr>
-            <td>
-              {{ run.event_type }}
-            </td>
-            <td>
-              {{ run.user.name || "system" }}
-            </td>
-            <td>
-              {{ run.executor?.name || "system" }}
-            </td>
-            <td>
-              {{ run.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
-            </td>
-            <td>
-              {{ run.project?.slug }}
-            </td>
-            <td>
-              {{ run.reason }}
-            </td>
-          </tr>
-        </ng-container>
-      }
-    </tbody>
+    @for (
+      event of (projectAuditLogService.projectHistoryEventsPages$ | async)!
+        .pages;
+      track event.id
+    ) {
+      <tbody [id]="$index + 1" #page>
+        @if (event === undefined || event === "loading") {
+          @for (jobRunPage of pageSizeArray; track jobRunPage) {
+            <tr>
+              @for (column of [1, 2, 3, 4, 5, 6]; track column) {
+                <td>
+                  <app-text-line-skeleton-loader
+                    width="80%"
+                  ></app-text-line-skeleton-loader>
+                </td>
+              }
+            </tr>
+          }
+        } @else {
+          @for (run of event.items; track run.id) {
+            <tr>
+              <td>
+                {{ run.event_type }}
+              </td>
+              <td>
+                {{ run.user.name || "system" }}
+              </td>
+              <td>
+                {{ run.executor?.name || "system" }}
+              </td>
+              <td>
+                {{ run.execution_time | date: "EE, dd MMM y HH:mm:ss" }}
+              </td>
+              <td>
+                {{ run.project?.slug }}
+              </td>
+              <td>
+                {{ run.reason }}
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    }
   </table>
 </div>

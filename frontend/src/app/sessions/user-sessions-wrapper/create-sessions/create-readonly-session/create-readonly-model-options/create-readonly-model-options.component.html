@@ -8,7 +8,7 @@
     <mat-checkbox formControlName="include">
       {{ modelOptions.model.name }}
       @if (modelOptions.model.version!.id !== toolVersion.id) {
-        <div class="!text-xs italic text-gray-600">
+        <div class="text-xs! text-gray-600 italic">
           This model is listed because {{ tool.name }} ({{ toolVersion.name }})
           is compatible with
           {{ modelOptions.model.tool.name }}
@@ -19,7 +19,7 @@
   </h2>
 
   @if (form.controls.include.value) {
-    <fieldset class="my-2 !ml-10 block min-w-0 max-w-full">
+    <div class="my-2 ml-10! max-w-full min-w-0">
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Branch, tag or revision</mat-label>
         <input
@@ -28,31 +28,28 @@
           formControlName="revision"
           [matAutocomplete]="auto"
         />
-        <mat-error *ngIf="form.controls.revision.errors?.required">
-          A revision is required
-        </mat-error>
-        <mat-error
-          *ngIf="
-            form.controls.revision.errors?.revisionNotFoundError &&
-            form.controls.revision.value
-          "
-        >
-          {{ form.controls.revision.errors?.revisionNotFoundError }}
-        </mat-error>
+        @if (form.controls.revision.errors?.required) {
+          <mat-error> A revision is required </mat-error>
+        } @else if (form.controls.revision.errors?.revisionNotFoundError) {
+          <mat-error>
+            {{ form.controls.revision.errors?.revisionNotFoundError }}
+          </mat-error>
+        }
       </mat-form-field>
       <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
         <mat-optgroup label="branch">
-          <mat-option
-            *ngFor="let branch of filteredRevisions?.branches"
-            [value]="branch"
-          >
-            {{ branch }}
-          </mat-option>
+          @for (branch of filteredRevisions?.branches; track branch) {
+            <mat-option [value]="branch">
+              {{ branch }}
+            </mat-option>
+          }
         </mat-optgroup>
         <mat-optgroup label="tag">
-          <mat-option *ngFor="let tag of filteredRevisions?.tags" [value]="tag">
-            {{ tag }}
-          </mat-option>
+          @for (tag of filteredRevisions?.tags; track tag) {
+            <mat-option [value]="tag">
+              {{ tag }}
+            </mat-option>
+          }
         </mat-optgroup>
       </mat-autocomplete>
       <mat-slide-toggle formControlName="deepClone">
@@ -63,6 +60,6 @@
           </div>
         </div>
       </mat-slide-toggle>
-    </fieldset>
+    </div>
   }
 </div>

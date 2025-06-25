@@ -20,8 +20,12 @@
       (ngSubmit)="submit()"
       class="flex flex-col flex-wrap gap-2"
     >
-      <fieldset class="flex flex-wrap items-start gap-2">
-        <mat-form-field subscriptSizing="dynamic" appearance="fill">
+      <div class="flex flex-wrap items-start gap-2">
+        <mat-form-field
+          subscriptSizing="dynamic"
+          appearance="fill"
+          class="grow"
+        >
           <mat-label>Name</mat-label>
           <input matInput formControlName="name" />
           @if (form.controls.name.errors?.required) {
@@ -32,7 +36,11 @@
             </mat-error>
           }
         </mat-form-field>
-        <mat-form-field subscriptSizing="dynamic" appearance="fill">
+        <mat-form-field
+          subscriptSizing="dynamic"
+          appearance="fill"
+          class="grow"
+        >
           <mat-label>Capella version</mat-label>
           <mat-select formControlName="version_id">
             @for (version of capellaVersions; track version.id) {
@@ -55,9 +63,13 @@
             <mat-error>The version is required.</mat-error>
           }
         </mat-form-field>
-      </fieldset>
-      <fieldset>
-        <mat-form-field subscriptSizing="dynamic" appearance="fill">
+      </div>
+      <div>
+        <mat-form-field
+          subscriptSizing="dynamic"
+          appearance="fill"
+          class="w-full grow"
+        >
           <mat-label>License Server</mat-label>
           <mat-select formControlName="license_server_id">
             @for (
@@ -75,12 +87,13 @@
             <mat-error>The license configuration is required.</mat-error>
           }
         </mat-form-field>
-      </fieldset>
-      <fieldset class="flex flex-wrap items-start gap-2">
+      </div>
+      <div class="flex flex-wrap items-start gap-2">
         <mat-form-field
           subscriptSizing="dynamic"
           id="protocol"
           appearance="fill"
+          class="grow"
         >
           <mat-label>Protocol</mat-label>
           <mat-select formControlName="protocol">
@@ -89,17 +102,22 @@
             }
           </mat-select>
         </mat-form-field>
-        <mat-form-field subscriptSizing="dynamic" id="host" appearance="fill">
+        <mat-form-field
+          subscriptSizing="dynamic"
+          id="host"
+          appearance="fill"
+          class="grow"
+        >
           <mat-label>Host</mat-label>
           <input matInput formControlName="host" />
         </mat-form-field>
-      </fieldset>
+      </div>
 
-      <fieldset class="flex flex-wrap items-start gap-2">
+      <div class="flex flex-wrap items-start gap-2">
         <mat-form-field
           subscriptSizing="dynamic"
           appearance="fill"
-          class="w-[124px]"
+          class="w-[124px] grow"
         >
           <mat-label>Port</mat-label>
           <input matInput inputmode="numeric" formControlName="port" />
@@ -117,7 +135,7 @@
         <mat-form-field
           subscriptSizing="dynamic"
           appearance="fill"
-          class="w-[124px]"
+          class="w-[124px] grow"
         >
           <mat-label>CDO port</mat-label>
           <input matInput inputmode="numeric" formControlName="cdo_port" />
@@ -136,7 +154,7 @@
         <mat-form-field
           subscriptSizing="dynamic"
           appearance="fill"
-          class="w-[124px]"
+          class="w-[124px] grow"
         >
           <mat-label>HTTP port</mat-label>
           <input matInput inputmode="numeric" formControlName="http_port" />
@@ -149,8 +167,8 @@
             <mat-error>Valid ports are between 0 and 65535.</mat-error>
           }
         </mat-form-field>
-      </fieldset>
-      <mat-form-field subscriptSizing="dynamic" appearance="fill">
+      </div>
+      <mat-form-field subscriptSizing="dynamic" appearance="fill" class="grow">
         <mat-label>REST API</mat-label>
         <input matInput formControlName="rest_api" />
         @if (form.controls.rest_api.errors?.required) {
@@ -159,15 +177,23 @@
           <mat-error>The URL should start with "http(s)://"</mat-error>
         }
       </mat-form-field>
-      <fieldset class="flex flex-wrap items-start gap-2">
-        <mat-form-field subscriptSizing="dynamic" appearance="fill">
+      <div class="flex flex-wrap items-start gap-2">
+        <mat-form-field
+          subscriptSizing="dynamic"
+          appearance="fill"
+          class="grow"
+        >
           <mat-label>Username</mat-label>
           <input matInput autocomplete="off" formControlName="username" />
           @if (form.controls.username.errors?.required) {
             <mat-error> The username is required. </mat-error>
           }
         </mat-form-field>
-        <mat-form-field subscriptSizing="dynamic" appearance="fill">
+        <mat-form-field
+          subscriptSizing="dynamic"
+          appearance="fill"
+          class="grow"
+        >
           <mat-label>Password</mat-label>
           <input
             matInput
@@ -181,7 +207,7 @@
             <mat-hint>Is not changed if empty</mat-hint>
           }
         </mat-form-field>
-      </fieldset>
+      </div>
       <div class="flex justify-between gap-2 *:basis-1/4">
         @if (!existing) {
           <button
@@ -234,6 +260,7 @@
 
   @if ((t4cInstanceWrapperService.t4cInstance$ | async) !== undefined) {
     <app-t4c-instance-settings
+      class="w-full sm:w-[456px]"
       [instance]="(t4cInstanceWrapperService.t4cInstance$ | async)!"
     ></app-t4c-instance-settings>
   }

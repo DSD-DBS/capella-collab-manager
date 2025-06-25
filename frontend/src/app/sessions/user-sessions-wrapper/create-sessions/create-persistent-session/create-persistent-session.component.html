@@ -22,7 +22,7 @@
       <div class="flex flex-wrap gap-2 sm:flex-nowrap sm:justify-between">
         <mat-form-field
           appearance="fill"
-          class="!inline w-full"
+          class="inline! w-full"
           subscriptSizing="dynamic"
         >
           <mat-label>Model tool</mat-label>
@@ -46,7 +46,7 @@
 
         <mat-form-field
           appearance="fill"
-          class="!inline w-full"
+          class="inline! w-full"
           subscriptSizing="dynamic"
         >
           <mat-label>Version</mat-label>
@@ -71,10 +71,10 @@
       ) {
         <div
           class="flex flex-col items-start rounded-t-md border border-b-black
-            bg-[--button-background] px-2 text-[--button-title-color]"
+            bg-(--button-background) px-2 text-(--button-title-color)"
         >
           <div
-            class="ml-[-13px] mt-1 scale-75 text-base tracking-[--form-field-letter-spacing]"
+            class="mt-1 ml-[-13px] scale-75 text-base tracking-(--form-field-letter-spacing)"
           >
             Connection method*
           </div>
@@ -96,7 +96,7 @@
 
         @if (this.getSelectedConnectionMethod()?.description) {
           <div
-            class="flex items-center gap-2 rounded-material border p-2 text-sm shadow"
+            class="rounded-material flex items-center gap-2 border p-2 text-sm shadow-sm"
           >
             <mat-icon>info</mat-icon>
             <span>{{ getSelectedConnectionMethod()?.description }}</span>

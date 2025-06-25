@@ -9,8 +9,8 @@ import {
   moduleMetadata,
   StoryObj,
 } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { userEvent, within } from 'storybook/test';
 import {
   defaultToolConfig,
   mockCapellaTool,

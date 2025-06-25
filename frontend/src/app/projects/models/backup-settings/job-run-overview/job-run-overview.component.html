@@ -48,7 +48,7 @@
         } @else {
           @for (run of pipelineRunPage.items; track run.id) {
             <tr
-              class="cursor-pointer hover:bg-[--hover-color]"
+              class="cursor-pointer hover:bg-(--hover-color)"
               (click)="openLogs(run.id)"
             >
               <td>

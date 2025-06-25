@@ -80,11 +80,11 @@ export class FeedbackDialogComponent {
   getColorForRating(rating: FeedbackRating) {
     switch (rating) {
       case FeedbackRating.Good:
-        return '!text-green-600';
+        return 'text-green-600!';
       case FeedbackRating.Okay:
-        return '!text-yellow-600';
+        return 'text-yellow-600!';
       case FeedbackRating.Bad:
-        return '!text-red-600';
+        return 'text-red-600!';
       default:
         return;
     }

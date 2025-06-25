@@ -28,13 +28,13 @@ export class LicenseIndicatorComponent {
       percentage: 100,
       text: 'All TeamForCapella licenses are currently in use. You can start new sessions, but may encounter the error "Invalid license" when trying to use TeamForCapella. Please make sure to terminate your sessions after use.',
       icon: 'error',
-      classes: 'bg-[--error-color] text-white',
+      classes: 'bg-(--error-color) text-white',
     },
     {
       percentage: 75,
       text: 'Most TeamForCapella licenses are currently in use. Please make sure to terminate your sessions after use.',
       icon: 'warning',
-      classes: 'bg-[--warning-color] text-white',
+      classes: 'bg-(--warning-color) text-white',
     },
     {
       percentage: 0,

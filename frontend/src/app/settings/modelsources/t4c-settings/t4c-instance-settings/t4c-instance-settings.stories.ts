@@ -21,6 +21,15 @@ const meta: Meta<T4CInstanceSettingsComponent> = {
 export default meta;
 type Story = StoryObj<T4CInstanceSettingsComponent>;
 
+export const NoRepositories: Story = {
+  args: {},
+  decorators: [
+    moduleMetadata({
+      providers: [mockT4CRepositoryWrapperServiceProvider([])],
+    }),
+  ],
+};
+
 export const Repositories: Story = {
   args: {},
   decorators: [

@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 <div class="flex flex-wrap gap-5">
-  <div class="collab-card mb-[10px] w-full !pb-0 sm:w-[500px] sm:max-w-[85vw]">
+  <div class="collab-card mb-[10px] w-full pb-0! sm:w-[500px] sm:max-w-[85vw]">
     <div class="flex items-center justify-between">
       <h2 class="text-xl font-medium">Manage Users</h2>
       @if (userWrapperService.users$ | async; as users) {
@@ -55,7 +55,7 @@
                   >
                 </div>
                 <div>
-                  <div class="break-all align-bottom text-[17.5px]">
+                  <div class="align-bottom text-[17.5px] break-all">
                     <span>{{ user.name }}</span> <br />
                   </div>
                   <div class="mb-1 flex flex-wrap gap-1">
@@ -113,7 +113,7 @@
                       (click)="blockUser(user)"
                       matTooltip="Block user"
                     >
-                      <mat-icon class="text-warning">block</mat-icon>
+                      <mat-icon class="text-warning!">block</mat-icon>
                     </button>
                   }
 
@@ -122,7 +122,7 @@
                     (click)="deleteUser(user)"
                     matTooltip="Permanently delete user"
                   >
-                    <mat-icon class="text-error">delete</mat-icon>
+                    <mat-icon class="text-error!">delete</mat-icon>
                   </button>
                 }
               </div>
@@ -148,7 +148,7 @@
     </div>
   </div>
 
-  <div class="collab-card h-1/4 w-card">
+  <div class="collab-card w-card h-1/4">
     <h2 class="text-xl font-medium">Create User</h2>
     In general, users are created automatically when logging in the first time.
     If you want to create the user before the first login, use this form. <br />

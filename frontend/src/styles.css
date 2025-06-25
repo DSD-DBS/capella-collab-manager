@@ -3,81 +3,34 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@use '@angular/material' as mat;
-@import "@fontsource/roboto/300.css";
-@import "@fontsource/roboto/400.css";
-@import "@fontsource/roboto/500.css";
-@import "@fontsource/roboto/700.css";
-@import "@fontsource/material-symbols-outlined/400.css";
-@import "./../node_modules/ngx-toastr/toastr.css";
+@import "./../node_modules/ngx-toastr/toastr.css" layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-$theme: mat.define-theme(
-  (
-    color: (
-      theme-type: light,
-      primary: mat.$azure-palette,
-      tertiary: mat.$magenta-palette,
-    ),
-    density: (
-      scale: 0,
-    ),
-  )
-);
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
 
-html {
-  @include mat.all-component-themes($theme);
-
-  .primary-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'primary');
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
   }
-
-  .secondary-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'secondary');
-  }
-
-  .tertiary-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'tertiary');
-  }
-
-  .error-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'error');
-  }
-
-  @apply bg-[#faf9fd] overflow-y-scroll;
-}
-
-
-// Copied from https://fontsource.org/docs/getting-started/material-symbols
-.material-symbols-outlined {
-  font-family: "Material Symbols Outlined";
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px; /* Preferred icon size */
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-  min-width: 1em;
-}
-
-.dialog {
-  padding: 20px;
-  max-height: 90vh;
 }
 
 :root {
   --primary-color: #005cbb;
   --error-color: #ba1a1a;
-  --warning-color: rgb(194 65 12);
+  --warning-color: #c2410c;
   --success-color: darkgreen;
-  --hover-color: rgb(222, 236, 249);
+  --hover-color: #deecf9;
   --button-background: var(--mdc-filled-text-field-container-color);
   --button-title-color: var(--mdc-filled-text-field-label-text-color);
   --form-field-letter-spacing: var(--mat-form-field-container-text-tracking);
@@ -90,8 +43,47 @@ html {
   --mdc-chip-with-trailing-icon-trailing-icon-color: "inherit";
 }
 
-h1 {
-  font-size: large;
+@theme {
+  --color-primary: var(--primary-color);
+  --color-error: var(--error-color);
+  --color-warning: var(--warning-color);
+  --color-success: var(--success-color);
+  --color-hover: var(--hover-color);
+
+  --font-sans: Roboto, ui-sans-serif, system-ui, sans-serif;
+  --font-special: "Comic Sans MS", Chalkboard;
+
+  --background-image-hazard: repeating-linear-gradient(
+    -55deg,
+    #000,
+    #000 10px,
+    #966708 10px,
+    #966708 20px
+  );
+
+  --radius-material: 28px;
+
+  --spacing-card: 400px;
+  --spacing-wide-card: 600px;
+}
+
+html {
+  @apply overflow-y-scroll bg-[#faf9fd];
+}
+
+.dialog {
+  padding: 20px;
+  max-height: 90vh;
+}
+
+.max-w-mat-card {
+  /*
+   The mat-cards should not overflow the screen
+   2*3.9px is the margin of the wrapper
+   2*10px is the margin of the mat-card
+  */
+
+  max-width: calc(100vw - 2 * 3.9px - 2 * 10px);
 }
 
 fieldset {
@@ -102,7 +94,7 @@ fieldset {
   border: none;
   width: auto;
   display: flex;
-  @apply [&>*]:flex-grow
+  @apply *:flex-grow;
 }
 
 .content {
@@ -121,7 +113,7 @@ fieldset {
 }
 
 .mat-card-overview {
-  @apply h-[250px] w-full select-none !p-0 sm:w-[400px];
+  @apply h-[250px] w-full p-0! select-none sm:w-[400px];
 }
 
 .mat-card-overview.new {
@@ -165,8 +157,10 @@ fieldset {
   max-width: 85vw;
 }
 
-// Added due to vertical line in mat-form-field
-// https://github.com/tailwindlabs/tailwindcss/discussions/9993
+/*
+    Added due to vertical line in mat-form-field
+    https://github.com/tailwindlabs/tailwindcss/discussions/9993
+*/
 .mdc-notched-outline__notch {
   border-right: none !important;
 }
@@ -178,9 +172,11 @@ fieldset {
   text-wrap: nowrap;
 }
 
-// Icons is not centered in mat-icon-button by default
-// https://github.com/angular/components/issues/8842
-.mdc-icon-button{
+/*
+    Icons is not centered in mat-icon-button by default
+    https://github.com/angular/components/issues/8842
+*/
+.mdc-icon-button {
   display: flex !important;
   align-items: center;
 }
@@ -209,7 +205,7 @@ fieldset {
   padding: 0 12px !important;
 }
 
-// https://github.com/angular/components/issues/26176
+/* https://github.com/angular/components/issues/26176 */
 .mat-mdc-button-touch-target {
   display: none !important;
 }
@@ -232,7 +228,7 @@ fieldset {
   }
 }
 
-// Apply class scrollbar-none to hide scrollbars
+/* Apply class scrollbar-none to hide scrollbars */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
@@ -241,7 +237,7 @@ fieldset {
   scrollbar-width: none;
 }
 
-// Remove padding from mat-horizontal-content-container
+/* Remove padding from mat-horizontal-content-container */
 .mat-horizontal-content-container {
   padding: 0 !important;
 }

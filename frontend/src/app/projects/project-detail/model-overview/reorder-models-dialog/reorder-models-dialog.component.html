@@ -14,22 +14,24 @@
 
   <div
     cdkDropList
+    [cdkDropListData]="models"
     (cdkDropListDropped)="drop($event)"
-    class="my-[15px] rounded border border-solid"
+    class="my-[15px] rounded-sm border border-solid"
   >
     @for (model of models; track model.id) {
-      <div
-        cdkDrag
-        class="flex cursor-move items-center border-b border-solid bg-white"
-      >
-        <span class="ml-[10px]">
-          <mat-icon class="mt-[10px] text-sm">reorder</mat-icon>
-        </span>
-        <span class="mr-[10px] truncate">
-          <span>{{ model.name }} ({{ model.tool.name }}</span>
-          <span *ngIf="model.version"> - {{ model.version.name }}</span>
-          <span>)</span>
-        </span>
+      <div cdkDrag>
+        <div
+          class="flex w-full cursor-move items-center gap-2 border bg-white p-2 shadow"
+        >
+          <mat-icon class="text-sm">reorder</mat-icon>
+          <span class="truncate">
+            <span>{{ model.name }} ({{ model.tool.name }}</span>
+            @if (model.version) {
+              <span> - {{ model.version.name }}</span>
+            }
+            <span>)</span>
+          </span>
+        </div>
       </div>
     }
   </div>

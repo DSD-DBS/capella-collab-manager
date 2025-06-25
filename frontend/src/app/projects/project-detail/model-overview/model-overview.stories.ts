@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import {
   mockModel,
   mockModelWrapperServiceProvider,
@@ -13,6 +12,7 @@ import {
   mockUser,
   mockOwnUserWrapperServiceProvider,
 } from 'src/storybook/user';
+import { userEvent, within } from 'storybook/test';
 import { ModelOverviewComponent } from './model-overview.component';
 
 const meta: Meta<ModelOverviewComponent> = {

@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import { AnnouncementLevel } from 'src/app/openapi';
 import {
   mockAnnouncement,
   mockAnnouncementWrapperServiceProvider,
 } from 'src/storybook/announcements';
+import { userEvent, within } from 'storybook/test';
 import { AnnouncementListComponent } from './announcement-list.component';
 
 const meta: Meta<AnnouncementListComponent> = {

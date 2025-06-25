@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, StoryObj, moduleMetadata } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import { mockActivatedRouteProvider } from 'src/storybook/routes';
 import {
   mockT4CInstance,
@@ -12,6 +11,7 @@ import {
   mockT4CLicenseServerWrapperServiceProvider,
 } from 'src/storybook/t4c';
 import { mockCapellaToolVersion } from 'src/storybook/tool';
+import { userEvent, within } from 'storybook/test';
 import { EditT4CInstanceComponent } from './edit-t4c-instance.component';
 
 const meta: Meta<EditT4CInstanceComponent> = {

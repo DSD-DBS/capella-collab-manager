@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
@@ -19,7 +19,8 @@ import { TextLineSkeletonLoaderComponent } from '../../../../helpers/skeleton-lo
   selector: 'app-view-logs-dialog',
   templateUrl: './view-logs-dialog.component.html',
   styleUrls: ['./view-logs-dialog.component.css'],
-  imports: [NgIf, NgFor, TextLineSkeletonLoaderComponent, AsyncPipe],
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  imports: [TextLineSkeletonLoaderComponent, AsyncPipe, NgIf, NgFor],
 })
 export class ViewLogsDialogComponent {
   private modelService = inject(ModelWrapperService);

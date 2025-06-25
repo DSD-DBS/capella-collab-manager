@@ -6,7 +6,7 @@
   <app-logo></app-logo>
 </div>
 <hr />
-<mat-list class="!p-0">
+<mat-list class="p-0!">
   @for (item of navBarService.navbarItems$ | async; track $index) {
     <div>
       @if (userService.validateUserRole(item.requiredRole)) {

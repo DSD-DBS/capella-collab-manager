@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { HttpEvent, HttpResponse } from '@angular/common/module.d-CnjH8Dlt';
+import { HttpEvent, HttpResponse } from '@angular/common/http';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 import { Observable, of } from 'rxjs';
 import { EventsService, EventType, HistoryEvent } from 'src/app/openapi';

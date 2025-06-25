@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,7 +17,7 @@ import { ProjectWrapperService } from '../../service/project.service';
   selector: 'app-model-wrapper',
   templateUrl: './model-wrapper.component.html',
   styleUrls: ['./model-wrapper.component.css'],
-  imports: [NgIf, RouterOutlet, AsyncPipe],
+  imports: [RouterOutlet, AsyncPipe],
 })
 export class ModelWrapperComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);

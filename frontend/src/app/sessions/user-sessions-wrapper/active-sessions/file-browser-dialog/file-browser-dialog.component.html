@@ -24,7 +24,7 @@
             mat-button
             (click)="cancelUpload()"
           >
-            <mat-icon class="!mr-0">cancel</mat-icon>
+            <mat-icon class="mr-0!">cancel</mat-icon>
           </button>
         </div>
       </div>
@@ -54,9 +54,9 @@
     <mat-tree-node
       *matTreeNodeDef="let node"
       matTreeNodePadding
-      class="!h-8 !min-h-8"
+      class="h-8! min-h-8!"
     >
-      <div class="ml-1 mr-2 flex w-6 text-amber-500">
+      <div class="mr-2 ml-1 flex w-6 text-amber-500">
         <mat-icon>
           @if (node.isNew) {
             note_add
@@ -81,7 +81,7 @@
         <div class="ml-1 flex w-8">
           <button
             matRipple
-            class="flex !scale-90 rounded p-1 text-blue-900"
+            class="flex scale-90! rounded-sm p-1 text-blue-900"
             (click)="removeFile(node)"
             [disabled]="session.download_in_progress"
           >
@@ -92,7 +92,7 @@
         <div class="ml-1 flex w-8">
           <button
             matRipple
-            class="flex rounded p-1 text-blue-900"
+            class="flex rounded-sm p-1 text-blue-900"
             (click)="download(node.path)"
             [disabled]="session.download_in_progress"
           >
@@ -102,7 +102,7 @@
         <div class="flex w-8">
           <button
             matRipple
-            class="flex rounded p-1 text-red-500"
+            class="flex rounded-sm p-1 text-red-500"
             (click)="deleteFile(node)"
           >
             <mat-icon>delete</mat-icon>
@@ -116,12 +116,12 @@
       matTreeNodePadding
       [isExpanded]="node.isExpanded"
       [isExpandable]="true"
-      class="!h-8 !min-h-8"
+      class="h-8! min-h-8!"
     >
       <div class="mr-1 flex w-8">
         <button
           matRipple
-          class="flex rounded p-1 text-blue-900"
+          class="flex rounded-sm p-1 text-blue-900"
           (click)="node.isExpanded = !node.isExpanded"
           [attr.aria-label]="
             (node.isExpanded ? 'Collapse ' : 'Expand ') + node.name
@@ -144,7 +144,7 @@
       <div class="ml-1 flex w-8">
         <button
           matRipple
-          class="flex rounded p-1 text-blue-900"
+          class="flex rounded-sm p-1 text-blue-900"
           (click)="download(node.path)"
           [disabled]="session.download_in_progress"
         >
@@ -162,7 +162,7 @@
 
         <button
           matRipple
-          class="flex rounded p-1 text-blue-900"
+          class="flex rounded-sm p-1 text-blue-900"
           (click)="fileInput.click()"
           [disabled]="session.download_in_progress"
         >
@@ -173,7 +173,7 @@
         <div class="flex w-8">
           <button
             matRipple
-            class="flex rounded p-1 text-red-500"
+            class="flex rounded-sm p-1 text-red-500"
             (click)="deleteFile(node)"
           >
             <mat-icon>delete</mat-icon>
