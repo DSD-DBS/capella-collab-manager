@@ -6,8 +6,8 @@
     "dev": "vite dev --port 4200",
     "start": "pnpm run dev",
     "build": "vite build",
-    "storybook": "storybook dev --port 6006",
-    "build-storybook": "storybook build"
+    "storybook": "ng run capellacollab:storybook",
+    "build-storybook": "ng run capellacollab:build-storybook"
   },
   "private": true,
   "dependencies": {
@@ -57,9 +57,11 @@
     "@angular/cli": "~19.2.15",
     "@angular/compiler-cli": "~19.2.14",
     "@codecov/vite-plugin": "^1.9.1",
+    "@compodoc/compodoc": "^1.1.26",
     "@eslint/js": "^9.29.0",
     "@storybook/addon-links": "^9.0.13",
     "@storybook/angular": "^9.0.13",
+    "@storybook/builder-vite": "^9.0.13",
     "@storybook/builder-webpack5": "^9.0.13",
     "@tailwindcss/postcss": "^4.1.10",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",

@@ -21,11 +21,41 @@
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/capellacollab",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": []
+          }
+        },
         "storybook": {
-          "builder": "@analogjs/storybook-angular:start-storybook"
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "port": 6006,
+            "browserTarget": "capellacollab:build"
+          }
         },
         "build-storybook": {
-          "builder": "@analogjs/storybook-angular:build-storybook"
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "outputDir": "storybook-static",
+            "browserTarget": "capellacollab:build"
+          }
         }
       }
     }

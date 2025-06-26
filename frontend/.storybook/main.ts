@@ -6,13 +6,25 @@
 const config = {
   stories: ['../src/**/*.stories.ts'],
   framework: {
-    name: '@analogjs/storybook-angular',
-    options: {},
+    name: '@storybook/angular',
+    options: {
+      builder: {
+        name: '@storybook/builder-vite',
+        options: {},
+      },
+    },
   },
+  addons: ['@storybook/addon-links'],
   staticDirs: [{ from: './test-assets', to: '/test-assets' }],
   core: {
     disableTelemetry: true,
     enableCrashReports: false,
+  },
+  async viteFinal(config) {
+    const { mergeConfig } = await import('vite');
+    return mergeConfig(config, {
+      // Override vite config here if needed
+    });
   },
 };
 
