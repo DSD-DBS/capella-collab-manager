@@ -3,22 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-.iframe-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  z-index: 40;
-}
-
 .error {
   background-color: var(--color-error);
 }
 
 .warning {
   background-color: var(--color-warning);
+}
+
+.success {
+  background-color: var(--color-success);
 }
 
 .primary {

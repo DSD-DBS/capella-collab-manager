@@ -16,7 +16,7 @@
       class="iframe-overlay flex items-center justify-center bg-black text-white"
     >
       <div
-        class="m-2 rounded border p-5 text-center"
+        class="m-2 rounded-sm border p-5 text-center"
         [ngClass]="
           sessionService.beautifyState(session.preparation_state, session.state)
             .css
@@ -48,7 +48,7 @@
             .info;
           as info
         ) {
-          <div class="mt-2 max-w-card text-sm">
+          <div class="max-w-card mt-2 text-sm">
             {{ info }}
           </div>
         }

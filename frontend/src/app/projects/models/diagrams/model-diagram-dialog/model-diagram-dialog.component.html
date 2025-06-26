@@ -40,10 +40,10 @@
       <button
         mat-stroked-button
         type="button"
-        class="!h-[56px]"
+        class="h-[56px]!"
         (click)="clearCache()"
       >
-        <mat-icon class="!hidden !w-8 sm:!inline-block">autorenew</mat-icon>
+        <mat-icon class="hidden! w-8! sm:inline-block!">autorenew</mat-icon>
         Clear Cache
       </button>
     </div>
@@ -73,7 +73,7 @@
       <div class="flex flex-wrap gap-5">
         @for (diagram of filteredDiagrams; track diagram.uuid) {
           <div
-            class="collab-card !flex grow basis-[calc(30%-20px)] flex-col justify-between"
+            class="collab-card flex! grow basis-[calc(30%-20px)] flex-col justify-between"
             #diagram
             [id]="diagram.uuid"
             [attr.success]="diagram.success"
@@ -95,14 +95,14 @@
                 <button (click)="openModelDiagramPreviewDialog(diagram)">
                   <img
                     matTooltip="Open preview"
-                    class="mb-2 h-[200px] w-full !touch-auto hover:cursor-pointer"
+                    class="mb-2 h-[200px] w-full touch-auto! hover:cursor-pointer"
                     [src]="diagrams[diagram.uuid].content"
                   />
                 </button>
               }
             } @else {
               <div
-                class="mb-2 flex h-[200px] flex-col items-center justify-center rounded-material border
+                class="rounded-material mb-2 flex h-[200px] flex-col items-center justify-center border
                   border-gray-400 py-[15px] text-center"
               >
                 <mat-icon class="scale-[2] text-red-900">error</mat-icon> <br />

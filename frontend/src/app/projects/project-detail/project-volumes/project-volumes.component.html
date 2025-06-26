@@ -23,7 +23,7 @@
     >
       <a
         mat-stroked-button
-        class="!ml-2"
+        class="ml-2!"
         (click)="addVolume()"
         [disabled]="
           (projectWrapperService.project$ | async)?.is_archived ||
@@ -65,7 +65,7 @@
           [date]="projectVolume()!.created_at"
         ></app-relative-time
         >, has a size of {{ projectVolume()!.size }}, and will be mounted as
-        <span class="select-all font-mono"
+        <span class="font-mono select-all"
           >/shared/{{ (projectWrapperService.project$ | async)!.slug }}</span
         >
         to sessions.

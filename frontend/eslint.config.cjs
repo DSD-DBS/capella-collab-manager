@@ -5,7 +5,6 @@
 const eslint = require("@eslint/js");
 const angular = require("angular-eslint");
 const storybook = require("eslint-plugin-storybook");
-const tailwind = require("eslint-plugin-tailwindcss");
 const unusedImports = require("eslint-plugin-unused-imports");
 const tseslint = require("typescript-eslint");
 
@@ -54,35 +53,7 @@ module.exports = tseslint.config(
   },
   {
     files: ["**/*.html"],
-    extends: [
-      ...angular.configs.templateRecommended,
-      ...tailwind.configs["flat/recommended"],
-    ],
-    settings: {
-      tailwindcss: {
-        config: "frontend/tailwind.config.cjs",
-        cssFiles: [
-          "frontend/**/*.css",
-          "frontend/**/*.scss",
-          "!**/node_modules",
-          "!**/.*",
-          "!**/dist",
-          "!**/build",
-        ],
-      },
-    },
-    rules: {
-      "tailwindcss/classnames-order": "off",
-      "tailwindcss/no-custom-classname": [
-        "error",
-        {
-          whitelist: ["language-python"],
-        },
-      ],
-      "tailwindcss/enforces-negative-arbitrary-values": "error",
-      "tailwindcss/enforces-shorthand": "error",
-      "tailwindcss/no-contradicting-classname": "error",
-    },
+    extends: [...angular.configs.templateRecommended],
   },
   {
     files: ["**/*.stories.ts"],

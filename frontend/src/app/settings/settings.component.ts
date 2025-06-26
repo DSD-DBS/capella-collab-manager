@@ -3,14 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Component } from '@angular/core';
-import { MatRipple } from '@angular/material/core';
-import { RouterLink } from '@angular/router';
-import { MatIconComponent } from '../helpers/mat-icon/mat-icon.component';
+import { OptionCardComponent } from './option-card/option-card.component';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
-  imports: [RouterLink, MatRipple, MatIconComponent],
-  styleUrls: ['./settings.component.css'],
+  imports: [OptionCardComponent],
 })
 export class SettingsComponent {}

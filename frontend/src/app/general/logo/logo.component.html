@@ -4,7 +4,7 @@
  -->
 
 <div
-  class="flex select-none items-center gap-2"
+  class="flex items-center gap-2 select-none"
   [ngClass]="{ 'font-special': specialService.enabled() }"
 >
   @if (navBarService.logoUrl$ | async; as logoUrl) {
@@ -18,9 +18,9 @@
   }
 
   <div
-    class="text-2xl font-semibold text-primary"
+    class="text-primary text-2xl font-semibold"
     [ngClass]="{
-      'inline-block rotate-180 bg-gradient-to-r': specialService.enabled(),
+      'inline-block rotate-180 bg-linear-to-r': specialService.enabled(),
       'from-blue-600 via-green-500 to-indigo-400 bg-clip-text text-transparent':
         specialService.enabled(),
     }"
@@ -29,8 +29,8 @@
   </div>
   @if ((navBarService.badge$ | async)?.show) {
     <div
-      class="whitespace-nowrap rounded-md px-1 py-0.5 text-xs font-semibold uppercase
-        tracking-wide text-white"
+      class="rounded-md px-1 py-0.5 text-xs font-semibold tracking-wide whitespace-nowrap
+        text-white uppercase"
       [class.bg-hazard]="(navBarService.badge$ | async)?.variant === 'warning'"
       [class.bg-green-600]="
         (navBarService.badge$ | async)?.variant === 'success'

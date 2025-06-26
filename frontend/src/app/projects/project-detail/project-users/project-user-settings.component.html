@@ -4,10 +4,10 @@
  -->
 
 @if (!isInProjectCreation()) {
-  <h2 class="mb-2 mr-2.5 text-xl font-medium">Project Members</h2>
+  <h2 class="mr-2.5 mb-2 text-xl font-medium">Project Members</h2>
 }
 
-<div class="collab-card w-full !pb-0 sm:min-w-[420px] sm:max-w-[350px]">
+<div class="collab-card w-full pb-0! sm:max-w-[350px] sm:min-w-[420px]">
   <div class="mb-2 flex flex-wrap gap-2">
     <button
       class="flex items-center justify-between"
@@ -29,7 +29,7 @@
     }
   </div>
 
-  <mat-form-field class="mb-[-20px] mt-[10px] w-full" appearance="outline">
+  <mat-form-field class="mt-[10px] mb-[-20px] w-full" appearance="outline">
     <mat-label>Search</mat-label>
     <input [(ngModel)]="search" matInput placeholder="Username" class="mr-2" />
     <mat-icon matSuffix>search</mat-icon>
@@ -62,13 +62,13 @@
       ) {
         <div class="mx-1.5 my-2.5 flex items-center justify-between">
           <a class="flex" [routerLink]="['/user', user.user.id]">
-            <div class="ml-0 mr-4 flex items-center">
-              <mat-icon class="my-auto !h-8 !w-8 text-3xl" mat-list-icon
+            <div class="mr-4 ml-0 flex items-center">
+              <mat-icon class="my-auto h-8! w-8! text-3xl" mat-list-icon
                 >account_circle</mat-icon
               >
             </div>
             <div>
-              <div class="break-all text-[17.5px]">
+              <div class="text-[17.5px] break-all">
                 {{ user.user.name }}
                 <div class="mb-1 flex flex-wrap gap-1">
                   @for (tag of getUserTags(user.user); track tag.id) {
@@ -82,7 +82,7 @@
               </div>
             </div>
           </a>
-          <div class="ml-1 mr-0 flex items-center">
+          <div class="mr-0 ml-1 flex items-center">
             @if (user.role === "user") {
               @if (user.permission === "read") {
                 <button

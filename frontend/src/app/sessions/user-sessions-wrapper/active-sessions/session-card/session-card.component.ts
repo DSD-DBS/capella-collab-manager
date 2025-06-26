@@ -51,23 +51,7 @@ import { SessionSharingDialogComponent } from 'src/app/sessions/user-sessions-wr
     RelativeTimeComponent,
   ],
   templateUrl: './session-card.component.html',
-  styles: `
-    .error {
-      @apply bg-error;
-    }
-
-    .warning {
-      @apply bg-warning;
-    }
-
-    .success {
-      @apply bg-success;
-    }
-
-    .primary {
-      @apply bg-primary;
-    }
-  `,
+  styleUrls: ['./session-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SessionCardComponent {

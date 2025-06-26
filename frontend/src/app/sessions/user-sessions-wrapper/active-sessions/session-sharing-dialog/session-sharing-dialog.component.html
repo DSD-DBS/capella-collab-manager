@@ -3,7 +3,7 @@
  ~ SPDX-License-Identifier: Apache-2.0
  -->
 
-<div class="m-m-card max-h-[95vh]">
+<div class="m-1 max-h-[95vh]">
   <h1 class="text-lg font-bold">
     Share your {{ session.version.tool.name }} session with others
   </h1>
@@ -42,8 +42,8 @@
           @for (user of users; track user.username) {
             <mat-chip-row
               [ngClass]="{
-                '!bg-green-300': user.state === 'success',
-                '!bg-red-300': user.state === 'error',
+                'bg-green-300!': user.state === 'success',
+                'bg-red-300!': user.state === 'error',
               }"
               [removable]="user.state !== 'success'"
               (removed)="removeUser(user.username)"
@@ -73,14 +73,14 @@
           }
           <input
             placeholder="New username..."
-            class="!h-[40px]"
+            class="h-[40px]!"
             [matChipInputFor]="chipGrid"
             [matChipInputAddOnBlur]="true"
             (matChipInputTokenEnd)="addUser($event)"
           />
         </mat-chip-grid>
       </mat-form-field>
-      <div class="mx-1 my-2 text-sm italic text-gray-500">
+      <div class="mx-1 my-2 text-sm text-gray-500 italic">
         For privacy reasons, we're not able to offer auto-completion for
         usernames. Make sure to enter the correct username (case-sensitive).
         <br />
@@ -94,7 +94,7 @@
         <mat-checkbox formControlName="confirmation">
           <span
             [ngClass]="{
-              'text-warn': !form.controls.confirmation.value,
+              'text-warning': !form.controls.confirmation.value,
             }"
           >
             I've read the above warnings and take full responsibility for my

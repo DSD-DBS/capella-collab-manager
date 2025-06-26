@@ -2,17 +2,14 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
+import { applicationConfig, type Preview } from '@analogjs/storybook-angular';
 import { DialogRef } from '@angular/cdk/dialog';
 import { HttpClientModule } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import type { AngularRenderer, Preview } from '@storybook/angular';
-import { applicationConfig } from '@storybook/angular';
 import { ToastrModule } from 'ngx-toastr';
-import { DecoratorFunction } from 'storybook/internal/types';
-import { withScreenshot } from 'storycap';
 import 'zone.js';
 import { IconModule } from '../src/app/icon.module';
 import { mockToastServiceProvider } from '../src/storybook/toast';
@@ -68,7 +65,6 @@ const preview: Preview = {
         mockToastServiceProvider,
       ],
     }),
-    withScreenshot as DecoratorFunction<AngularRenderer>,
   ],
 };
 

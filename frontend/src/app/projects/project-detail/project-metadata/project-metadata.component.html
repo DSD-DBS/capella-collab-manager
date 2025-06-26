@@ -10,7 +10,7 @@
   >
     @if (project !== undefined) {
       <div class="flex flex-col gap-2">
-        <h2 class="break-all text-xl font-medium">
+        <h2 class="text-xl font-medium break-all">
           {{ project.name }}
         </h2>
         <div class="grow text-sm">
@@ -22,7 +22,7 @@
           }
         </div>
         @if (project.is_archived) {
-          <div class="flex items-center gap-2 text-sm text-warning">
+          <div class="text-warning flex items-center gap-2 text-sm">
             <div>
               <mat-icon>warning</mat-icon>
             </div>

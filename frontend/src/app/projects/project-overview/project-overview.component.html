@@ -63,11 +63,7 @@
   @if (filteredProjects$ | async) {
     @for (project of (filteredProjects$ | async)!; track project.slug) {
       <a [routerLink]="['/project', project.slug]" class="w-full sm:w-fit">
-        <div
-          [ngClass]="{ 'bg-archived': project.is_archived }"
-          matRipple
-          class="mat-card-overview collab-card !m-0"
-        >
+        <div matRipple class="mat-card-overview collab-card m-0!">
           <div class="header flex-row items-center gap-2">
             @if (project.type === "training") {
               <mat-icon class="shrink-0">school</mat-icon>

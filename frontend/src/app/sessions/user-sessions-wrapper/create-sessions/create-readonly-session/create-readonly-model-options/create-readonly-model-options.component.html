@@ -8,7 +8,7 @@
     <mat-checkbox formControlName="include">
       {{ modelOptions.model.name }}
       @if (modelOptions.model.version!.id !== toolVersion.id) {
-        <div class="!text-xs italic text-gray-600">
+        <div class="text-xs! text-gray-600 italic">
           This model is listed because {{ tool.name }} ({{ toolVersion.name }})
           is compatible with
           {{ modelOptions.model.tool.name }}
@@ -19,7 +19,7 @@
   </h2>
 
   @if (form.controls.include.value) {
-    <fieldset class="my-2 !ml-10 block min-w-0 max-w-full">
+    <fieldset class="my-2 ml-10! block max-w-full min-w-0">
       <mat-form-field appearance="fill" class="w-full">
         <mat-label>Branch, tag or revision</mat-label>
         <input

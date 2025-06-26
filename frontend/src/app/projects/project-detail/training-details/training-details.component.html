@@ -12,7 +12,7 @@
     ) {
       <a
         mat-stroked-button
-        class="!ml-4"
+        class="ml-4!"
         [routerLink]="
           (projectService.project$ | async)?.is_archived
             ? null
@@ -50,26 +50,26 @@
       ></ngx-skeleton-loader>
     } @else {
       @for (model of modelService.models$ | async; track model.id) {
-        <div class="collab-card flex w-full select-none flex-col !p-0">
+        <div class="collab-card flex w-full flex-col p-0! select-none">
           <div class="m-3 flex gap-2">
-            <div class="w-fit rounded border bg-blue-100 p-2 text-sm">
+            <div class="w-fit rounded-sm border bg-blue-100 p-2 text-sm">
               {{ model.tool.name }} ({{ model.version?.name }})
             </div>
             @if (getPrimaryGitModel(model); as gitModel) {
-              <div class="w-fit rounded border bg-blue-100 p-2 text-sm">
+              <div class="w-fit rounded-sm border bg-blue-100 p-2 text-sm">
                 Revision {{ gitModel.revision }}
               </div>
             }
           </div>
 
           <div class="flex grow flex-col justify-between">
-            <div class="mx-2.5 mt-2.5 h-card select-text overflow-y-auto">
+            <div class="h-card mx-2.5 mt-2.5 overflow-y-auto select-text">
               @if (readmes.get(model.slug); as readme) {
                 @if (readme.readme) {
                   <markdown
-                    class="[&_a]:text-blue-900 [&_a]:!underline [&_h1]:text-2xl [&_h2]:text-lg [&_ol]:ml-5
-                      [&_ol]:list-decimal [&_pre]:my-1 [&_pre]:rounded [&_pre]:border [&_pre]:bg-white
-                      [&_pre]:p-2 [&_ul]:ml-5 [&_ul]:list-disc"
+                    class="[&_a]:text-blue-900 [&_a]:underline! [&_h1]:text-2xl [&_h2]:text-lg [&_ol]:ml-5
+                      [&_ol]:list-decimal [&_pre]:my-1 [&_pre]:rounded-sm [&_pre]:border
+                      [&_pre]:bg-white [&_pre]:p-2 [&_ul]:ml-5 [&_ul]:list-disc"
                     [data]="readme.readme"
                   ></markdown>
                 } @else if (readme.errorCode) {
@@ -103,7 +103,7 @@
                 <a
                   mat-mini-fab
                   matTooltip="Configure training"
-                  class="!m-1.5"
+                  class="m-1.5!"
                   [routerLink]="['model', model.slug, 'metadata']"
                 >
                   <mat-icon>settings</mat-icon>
@@ -111,7 +111,7 @@
                 <a
                   mat-mini-fab
                   matTooltip="Configure Git repository"
-                  class="!m-1.5"
+                  class="m-1.5!"
                   [routerLink]="['model', model.slug, 'modelsources']"
                 >
                   <mat-icon>link</mat-icon>
@@ -121,7 +121,7 @@
                 <a
                   mat-mini-fab
                   matTooltip="Open Git repository"
-                  class="!m-1.5"
+                  class="m-1.5!"
                   target="_blank"
                   rel="noopener"
                   [disabled]="!getPrimaryGitModelURL(model)"
@@ -134,7 +134,7 @@
           </div>
         </div>
       } @empty {
-        <div class="collab-card flex w-full select-none flex-col">
+        <div class="collab-card flex w-full flex-col select-none">
           The training is not configured yet.
         </div>
       }

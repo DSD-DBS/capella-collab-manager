@@ -4,10 +4,10 @@
  */
 import { HttpEvent, HttpResponse } from '@angular/common/module.d-CnjH8Dlt';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import { Observable, of } from 'rxjs';
 import { Tag, TagsService } from 'src/app/openapi';
 import { mockProjectTag, mockProjectTag2 } from 'src/storybook/tags';
+import { userEvent, within } from 'storybook/test';
 import { TagsComponent } from './tags.component';
 
 const meta: Meta<TagsComponent> = {

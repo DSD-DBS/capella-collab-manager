@@ -17,7 +17,7 @@
       </div>
     </button>
   </div>
-  <mat-form-field class="!h-[4em] w-full" appearance="outline">
+  <mat-form-field class="h-[4em]! w-full" appearance="outline">
     <mat-label>Search</mat-label>
     <input
       [(ngModel)]="search"
@@ -36,9 +36,9 @@
         );
         track repository.id
       ) {
-        <div class="my-[10px] flex rounded border px-2 shadow">
-          <div class="my-auto ml-0 mr-[15px] flex flex-col items-center">
-            <span class="text-nowrap text-sm">No. {{ repository.id }}</span>
+        <div class="my-[10px] flex rounded-sm border px-2 shadow-sm">
+          <div class="my-auto mr-[15px] ml-0 flex flex-col items-center">
+            <span class="text-sm text-nowrap">No. {{ repository.id }}</span>
             <mat-icon mat-list-icon>{{
               mapStatusToText(repository.status).icon
             }}</mat-icon>
@@ -47,7 +47,7 @@
           <div class="w-full">
             <div class="flex items-center justify-between gap-2">
               <div>
-                <span class="break-all text-lg">{{ repository.name }}</span>
+                <span class="text-lg break-all">{{ repository.name }}</span>
                 <div class="text-sm">
                   {{ mapStatusToText(repository.status).text }}
                 </div>
@@ -95,7 +95,7 @@
                 track integration.id
               ) {
                 <a
-                  class="my-2 flex items-center justify-between gap-2 rounded border p-2 shadow"
+                  class="my-2 flex items-center justify-between gap-2 rounded-sm border p-2 shadow-sm"
                   [routerLink]="[
                     '/project',
                     integration.model.project.slug,
@@ -112,12 +112,12 @@
                     <b>Model: </b>{{ integration.model.name }} <br />
                     <b>Team for Capella Project: </b>{{ integration.name }}
                   </div>
-                  <div class="mr-0.5 text-primary">
+                  <div class="text-primary mr-0.5">
                     <mat-icon>open_in_new</mat-icon>
                   </div>
                 </a>
               } @empty {
-                <div class="my-2 rounded border p-2 shadow">
+                <div class="my-2 rounded-sm border p-2 shadow-sm">
                   This repository is not in use currently.
                 </div>
               }
@@ -143,7 +143,7 @@
         }
       </mat-form-field>
       <button
-        class="!h-[56px]"
+        class="h-[56px]!"
         mat-stroked-button
         [disabled]="!form.valid || repositoryCreationInProgress"
         (click)="createRepository()"

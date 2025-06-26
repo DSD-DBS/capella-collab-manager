@@ -12,14 +12,14 @@
       <mat-checkbox [(ngModel)]="session.selected"></mat-checkbox>
     }
     <div class="grow" [class.ml-3]="hideActions">
-      <h3 class="text-balance text-base font-bold leading-tight">
+      <h3 class="text-base leading-tight font-bold text-balance">
         {{ session.version.tool.name }} ({{ session.version.name }})
         <span class="text-sm font-medium">
           via
           {{ session.connection_method?.name }}
         </span>
       </h3>
-      <div class="text-pretty text-xs">
+      <div class="text-xs text-pretty">
         @if (isPersistentSession(session)) {
           Persistent workspace session created
           <app-relative-time [date]="session.created_at" />
@@ -49,7 +49,7 @@
 
   <div class="mb-1 space-y-1.5">
     <h3
-      class="flex items-center justify-center gap-2 rounded py-1 text-center !text-white"
+      class="flex items-center justify-center gap-2 rounded-sm py-1 text-center text-white!"
       [ngClass]="sessionState.css"
       [matTooltip]="sessionState.info"
     >
@@ -80,7 +80,9 @@
     }
 
     @if (session.shared_with.length > 0 && !isSessionShared(session)) {
-      <div class="flex items-center gap-2 rounded border px-2 py-1 shadow">
+      <div
+        class="flex items-center gap-2 rounded-sm border px-2 py-1 shadow-sm"
+      >
         <mat-icon class="shrink-0">share</mat-icon>
         <div>
           You're sharing this session with
@@ -103,7 +105,9 @@
     }
 
     @if (isSessionShared(session)) {
-      <div class="flex items-center gap-2 rounded border px-2 py-1 shadow">
+      <div
+        class="flex items-center gap-2 rounded-sm border px-2 py-1 shadow-sm"
+      >
         <mat-icon class="shrink-0">share</mat-icon>
         <div>
           This session is shared with you and was created by

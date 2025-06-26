@@ -29,14 +29,14 @@
         <div class="collab-card max-w-full border">
           <h3 class="text-lg font-bold">TeamForCapella Repository</h3>
           <div
-            class="flex items-center gap-1 rounded border bg-yellow-300 p-1 text-sm shadow"
+            class="flex items-center gap-1 rounded-sm border bg-yellow-300 p-1 text-sm shadow-sm"
           >
             <mat-icon>warning</mat-icon>
             <span>The project name has to match exactly.</span>
           </div>
 
           <mat-selection-list
-            class="!flex flex-col gap-2"
+            class="flex! flex-col gap-2"
             formControlName="t4cmodel"
             [multiple]="false"
           >
@@ -44,12 +44,15 @@
               t4cModel of t4cModelService.t4cModels$ | async;
               track t4cModel.id
             ) {
-              <mat-list-option class="!h-auto !rounded" [value]="t4cModel.id">
+              <mat-list-option
+                class="h-auto! rounded-sm!"
+                [value]="t4cModel.id"
+              >
                 <div mat-line>
                   TeamForCapella Link (No. {{ t4cModel.id }}) <br />
                   <b>Project:</b> {{ t4cModel.name }}
                 </div>
-                <div mat-line class="whitespace-pre-wrap break-all">
+                <div mat-line class="break-all whitespace-pre-wrap">
                   <b>Repository:</b> {{ t4cModel.repository.name }} <br />
                   <b>Instance:</b> {{ t4cModel.repository.instance.name }}
                 </div>
@@ -61,7 +64,7 @@
         <div class="collab-card max-w-full border">
           <h3 class="text-lg font-bold">Git Repository</h3>
           <mat-selection-list
-            class="!flex flex-col gap-2"
+            class="flex! flex-col gap-2"
             formControlName="gitmodel"
             [multiple]="false"
           >
@@ -69,9 +72,12 @@
               gitModel of gitModelService.gitModels$ | async;
               track gitModel.id
             ) {
-              <mat-list-option class="!h-auto !rounded" [value]="gitModel.id">
+              <mat-list-option
+                class="h-auto! rounded-sm!"
+                [value]="gitModel.id"
+              >
                 <div mat-line>Git Repository Link (No. {{ gitModel.id }})</div>
-                <div mat-line class="whitespace-pre-wrap break-all">
+                <div mat-line class="break-all whitespace-pre-wrap">
                   <b>URL:</b> {{ gitModel.path }}<br />
                   <b>Revision:</b> {{ gitModel.revision }}
                 </div>
@@ -85,7 +91,7 @@
         ><br />
       </form>
     </form>
-    <div class="mt-2 flex justify-between gap-button">
+    <div class="mt-2 flex justify-between gap-0.5">
       <button mat-stroked-button [mat-dialog-close]="false">
         <mat-icon>cancel</mat-icon>
         Cancel

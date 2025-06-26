@@ -5,11 +5,11 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import { PathNode } from 'src/app/sessions/service/session.service';
 import { FileBrowserDialogComponent } from 'src/app/sessions/user-sessions-wrapper/active-sessions/file-browser-dialog/file-browser-dialog.component';
 import { dialogWrapper } from 'src/storybook/decorators';
 import { mockPersistentSession } from 'src/storybook/session';
+import { userEvent, within } from 'storybook/test';
 
 const meta: Meta<FileBrowserDialogComponent> = {
   title: 'Session Components/File Browser',

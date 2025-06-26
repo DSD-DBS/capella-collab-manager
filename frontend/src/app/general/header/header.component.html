@@ -5,7 +5,7 @@
 
 <div class="flex items-center gap-2 xl:hidden">
   <button
-    class="ml-1 mt-1"
+    class="mt-1 ml-1"
     mat-icon-button
     (click)="navBarService.toggle()"
     aria-label="Toggle navigation menu"
@@ -18,7 +18,7 @@
 
 <div class="hidden xl:block">
   <div
-    class="grid min-h-[65px] grid-cols-[1fr,auto,minmax(0,1fr)] items-center gap-2 px-5"
+    class="grid min-h-[65px] grid-cols-[1fr_auto_minmax(0,1fr)] items-center gap-2 px-5"
   >
     <app-logo></app-logo>
     @if (navBarService.navbarItems$ | async) {
