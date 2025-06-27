@@ -87,6 +87,8 @@ nav:
               - Upload Images to TeamForCapella: user/tools/capella/teamforcapella/upload-images/index.md
           - Git:
               - Working with Git: user/tools/capella/git/index.md
+          - Custom Plugins:
+              - ELK Diagram Layouts in Capella: user/tools/capella/custom-plugins/elk/index.md
           - Troubleshooting: user/tools/capella/troubleshooting/index.md
   - API documentation:
       - Introduction: api/index.md
