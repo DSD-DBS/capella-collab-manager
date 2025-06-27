@@ -53,7 +53,7 @@ def test_create_pipeline_run(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
 ):
     response = client.post(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
@@ -67,29 +67,11 @@ def test_create_pipeline_run(
     assert run.status == pipeline_runs_models.PipelineRunStatus.PENDING
 
 
-@pytest.mark.usefixtures("project_manager")
-def test_create_pipeline_run_with_custom_environment(
-    project: project_models.DatabaseProject,
-    capella_model: toolmodels_models.ToolModel,
-    client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
-):
-    response = client.post(
-        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}/runs",
-        json={
-            "include_commit_history": True,
-        },
-    )
-
-    assert response.status_code == 200
-    assert response.json()["environment"] == {"INCLUDE_COMMIT_HISTORY": "true"}
-
-
 def test_get_pipeline_runs(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
@@ -105,7 +87,7 @@ def test_get_pipeline_run(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
 ):
     response = client.get(
@@ -121,7 +103,7 @@ def test_get_events(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
     monkeypatch: pytest.MonkeyPatch,
 ):
@@ -139,7 +121,7 @@ def test_get_logs(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
     monkeypatch: pytest.MonkeyPatch,
 ):
@@ -153,14 +135,14 @@ def test_get_logs(
 
 
 @pytest.mark.parametrize(
-    ("include_commit_history", "run_nightly"),
-    [(False, False)],
+    "run_nightly",
+    [False],
 )
 def test_get_logs_with_loki_disabled(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
     client: testclient.TestClient,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     pipeline_run: pipeline_runs_models.DatabasePipelineRun,
     monkeypatch: pytest.MonkeyPatch,
 ):

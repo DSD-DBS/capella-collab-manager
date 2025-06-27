@@ -11,7 +11,9 @@
 
 
 
-export interface BackupPipelineRun { 
-    include_commit_history?: boolean | null;
+export interface PipelineEvent { 
+    timestamp: string;
+    reason: string | null;
+    message: string | null;
 }
 

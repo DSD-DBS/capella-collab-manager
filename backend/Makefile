@@ -58,6 +58,10 @@ app:
 	export OAUTHLIB_INSECURE_TRANSPORT=1;
 	uvicorn --host $(HOST) --reload --reload-dir $$(pwd) --reload-include "*.py" --reload-include "*.yaml" --reload-include "*.yml" --reload-include "*.jinja" capellacollab.__main__:app
 
+scheduler:
+	$(VENV)/bin/python \
+		-m capellacollab.cli scheduler run
+
 coverage:
 	pytest \
 		--cov-report term \

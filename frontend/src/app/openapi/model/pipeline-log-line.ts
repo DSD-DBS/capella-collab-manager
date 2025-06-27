@@ -11,14 +11,8 @@
 
 
 
-export interface CreateBackup { 
-    git_model_id: number;
-    t4c_model_id: number;
-    /**
-     * With included commit history, a run can take a long time. Use with caution. The TeamForCapella commit messages are exported by default.
-     * @deprecated
-     */
-    include_commit_history?: boolean;
-    run_nightly: boolean;
+export interface PipelineLogLine { 
+    timestamp: string;
+    text: string;
 }
 

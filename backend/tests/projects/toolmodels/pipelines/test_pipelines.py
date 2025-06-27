@@ -24,21 +24,8 @@ from capellacollab.core import credentials
 
 
 class MockOperator:
-    cronjob_counter = 0
-
-    def create_cronjob(
-        self,
-        *args,
-        **kwargs,
-    ) -> str:
-        self.cronjob_counter += 1
-        return self._generate_id()
-
     def _generate_id(self) -> str:
         return "".join(random.choices(string.ascii_lowercase, k=25))
-
-    def delete_cronjob(self, _id: str):
-        self.cronjob_counter -= 1
 
 
 @pytest.fixture(name="mockoperator")
@@ -79,7 +66,6 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
         json={
             "git_model_id": 0,
             "t4c_model_id": t4c_model.id,
-            "include_commit_history": False,
             "run_nightly": False,
         },
     )
@@ -101,14 +87,12 @@ def test_create_pipeline(
     git_model: git_models.GitModel,
     client: testclient.TestClient,
     run_nightly: bool,
-    include_commit_history: bool,
 ):
     response = client.post(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines",
         json={
             "git_model_id": git_model.id,
             "t4c_model_id": t4c_model.id,
-            "include_commit_history": include_commit_history,
             "run_nightly": run_nightly,
         },
     )
@@ -117,7 +101,6 @@ def test_create_pipeline(
     db_pipeline = pipelines_crud.get_pipeline_by_id(db, response.json()["id"])
     assert db_pipeline is not None
     assert db_pipeline.run_nightly == run_nightly
-    assert db_pipeline.include_commit_history == include_commit_history
 
 
 @pytest.mark.usefixtures(
@@ -152,7 +135,6 @@ def test_pipeline_creation_fails_if_t4c_server_not_available(
         json={
             "git_model_id": git_model.id,
             "t4c_model_id": t4c_model.id,
-            "include_commit_history": False,
             "run_nightly": False,
         },
     )
@@ -172,7 +154,7 @@ def test_delete_pipeline(
     db: orm.Session,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     client: testclient.TestClient,
     mockoperator: MockOperator,
     run_nightly: bool,
@@ -204,7 +186,7 @@ def test_delete_pipeline(
 def test_delete_pipeline_server_unreachable(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
@@ -233,7 +215,7 @@ def test_delete_pipeline_server_unreachable_force(
     db: orm.Session,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
