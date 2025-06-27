@@ -4,8 +4,8 @@
  */
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import { dialogWrapper } from 'src/storybook/decorators';
+import { userEvent, within } from 'storybook/test';
 import {
   mockFeedbackConfig,
   mockFeedbackWrapperServiceProvider,

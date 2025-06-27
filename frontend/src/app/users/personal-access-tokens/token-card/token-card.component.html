@@ -11,7 +11,7 @@
         <br />
         @if (global()) {
           <a
-            class="flex w-fit items-center gap-1 text-primary"
+            class="text-primary flex w-fit items-center gap-1"
             [routerLink]="['/user', token().user.id]"
           >
             <mat-icon inline class="align-bottom">account_circle</mat-icon>
@@ -35,7 +35,7 @@
       } @else {
         <span>.</span>
         <div
-          class="my-2 flex items-center justify-center gap-2 rounded-material border p-2 text-sm
+          class="rounded-material my-2 flex items-center justify-center gap-2 border p-2 text-sm
             text-red-600 shadow"
         >
           <mat-icon class="shrink-0">warning</mat-icon>
@@ -53,7 +53,7 @@
     </div>
   </div>
   <div>
-    <mat-expansion-panel class="!mt-2">
+    <mat-expansion-panel class="mt-2!">
       @let actualScopes = flattenScope(token().actual_scopes);
       @let requestedScopes = flattenScope(token().requested_scopes);
       @let count = countScopes(requestedScopes);

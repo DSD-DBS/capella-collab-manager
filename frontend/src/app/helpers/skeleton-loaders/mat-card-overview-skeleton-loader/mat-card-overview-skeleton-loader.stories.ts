@@ -20,8 +20,7 @@ export const General: Story = {
   },
   decorators: [
     componentWrapperDecorator(
-      (story) =>
-        `<div class="flex flex-wrap gap-5 [&>*]:contents">${story}</div>`,
+      (story) => `<div class="flex flex-wrap gap-5 *:contents">${story}</div>`,
     ),
   ],
 };

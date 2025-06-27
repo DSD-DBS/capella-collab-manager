@@ -21,6 +21,15 @@
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/capellacollab",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json"
+          }
+        },
         "storybook": {
           "builder": "@storybook/angular:start-storybook",
           "options": {
@@ -28,14 +37,13 @@
             "quiet": true,
             "compodoc": false,
             "port": 6006,
-            "styles": [".storybook/styles.css", "src/styles.scss"],
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public/",
-                "output": "/"
-              }
-            ]
+            "styles": [
+              ".storybook/styles.css",
+              "src/material.scss",
+              "src/styles.css",
+              "src/fonts.css"
+            ],
+            "browserTarget": "capellacollab:build"
           }
         },
         "build-storybook": {
@@ -44,14 +52,13 @@
             "configDir": ".storybook",
             "compodoc": false,
             "outputDir": "storybook-static",
-            "styles": [".storybook/styles.css", "src/styles.scss"],
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public/",
-                "output": "/"
-              }
-            ]
+            "styles": [
+              ".storybook/styles.css",
+              "src/material.scss",
+              "src/styles.css",
+              "src/fonts.css"
+            ],
+            "browserTarget": "capellacollab:build"
           }
         }
       }

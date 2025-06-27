@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
+import { userEvent, within } from 'storybook/test';
 import { EditProjectMetadataComponent } from './edit-project-metadata.component';
 
 const meta: Meta<EditProjectMetadataComponent> = {

@@ -5,31 +5,19 @@
 import type { StorybookConfig } from '@storybook/angular';
 
 const config: StorybookConfig = {
-  stories: [
-    '../src/storybook/index.mdx',
-    '../src/**/*.mdx',
-    '../src/**/*.stories.ts',
-  ],
-  addons: [
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@storybook/addon-interactions',
-    'storycap',
-  ],
+  stories: ['../src/storybook/index.mdx', '../src/**/*.stories.ts'],
+  addons: ['@storybook/addon-links', 'storycap', '@storybook/addon-docs'],
   framework: {
     name: '@storybook/angular',
     options: {},
   },
-  staticDirs: [{ from: './test-assets', to: '/test-assets' }],
+  staticDirs: [
+    { from: './test-assets', to: '/test-assets' },
+    { from: '../public', to: '/' },
+  ],
   core: {
     disableTelemetry: true,
     enableCrashReports: false,
-    builder: {
-      name: '@storybook/builder-webpack5',
-      options: {
-        lazyCompilation: false, // lazyCompilation breaks Storycap
-      },
-    },
   },
 };
 export default config;

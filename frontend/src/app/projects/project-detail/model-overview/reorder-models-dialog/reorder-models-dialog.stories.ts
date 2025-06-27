@@ -26,7 +26,15 @@ export const General: Story = {
           provide: MAT_DIALOG_DATA,
           useValue: {
             projectSlug: 'project-slug',
-            models: [mockModel, { ...mockModel, name: 'Coffee Machine' }],
+            models: [
+              mockModel,
+              { ...mockModel, name: 'Coffee Machine' },
+              {
+                ...mockModel,
+                name: 'Model without version',
+                version: undefined,
+              },
+            ],
           },
         },
       ],

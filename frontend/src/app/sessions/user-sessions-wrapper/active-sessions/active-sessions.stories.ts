@@ -8,7 +8,6 @@ import {
   componentWrapperDecorator,
   moduleMetadata,
 } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import MockDate from 'mockdate';
 import { Observable, of } from 'rxjs';
 import { Session, SessionState } from 'src/app/openapi';
@@ -22,6 +21,7 @@ import {
   mockOwnUserWrapperServiceProvider,
   mockUser,
 } from 'src/storybook/user';
+import { userEvent, within } from 'storybook/test';
 import { UserSessionService } from '../../service/user-session.service';
 import { ActiveSessionsComponent } from './active-sessions.component';
 

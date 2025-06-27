@@ -59,7 +59,7 @@
   (modelService.model$ | async)?.tool?.integrations?.t4c &&
   userService.user?.role === "administrator"
 ) {
-  <h2 class="mb-2 mt-5 text-xl font-medium">TeamForCapella repositories</h2>
+  <h2 class="mt-5 mb-2 text-xl font-medium">TeamForCapella repositories</h2>
   <div class="flex flex-wrap gap-5">
     <a [routerLink]="['t4c-model', 'create-existing']" class="w-full sm:w-fit">
       <div matRipple class="mat-card-overview new collab-card">
@@ -88,26 +88,24 @@
         [reservedCards]="2"
       ></app-mat-card-overview-skeleton-loader>
     } @else {
-      <a
-        *ngFor="let t4cModel of t4cModelService.t4cModels$ | async"
-        [routerLink]="['t4c-model', t4cModel.id]"
-        class="w-full sm:w-fit"
-      >
-        <div matRipple class="mat-card-overview collab-card">
-          <div class="header">T4C Repository Link No. {{ t4cModel.id }}</div>
-          <div class="content">
-            <span class="line-clamp-1 break-all"
-              ><b>Instance:</b> {{ t4cModel.repository.instance.name }}</span
-            >
-            <span class="line-clamp-1 break-all"
-              ><b>Repository:</b> {{ t4cModel.repository.name }}</span
-            >
-            <span class="line-clamp-1 break-all"
-              ><b>Project:</b> {{ t4cModel.name }}</span
-            >
+      @for (t4cModel of t4cModelService.t4cModels$ | async; track t4cModel.id) {
+        <a [routerLink]="['t4c-model', t4cModel.id]" class="w-full sm:w-fit">
+          <div matRipple class="mat-card-overview collab-card">
+            <div class="header">T4C Repository Link No. {{ t4cModel.id }}</div>
+            <div class="content">
+              <span class="line-clamp-1 break-all"
+                ><b>Instance:</b> {{ t4cModel.repository.instance.name }}</span
+              >
+              <span class="line-clamp-1 break-all"
+                ><b>Repository:</b> {{ t4cModel.repository.name }}</span
+              >
+              <span class="line-clamp-1 break-all"
+                ><b>Project:</b> {{ t4cModel.name }}</span
+              >
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
+      }
     }
   </div>
 }

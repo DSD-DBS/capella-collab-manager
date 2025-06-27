@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatRipple } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +26,6 @@ import { ProjectWrapperService } from '../../service/project.service';
     MatRipple,
     MatIconComponent,
     MatCardOverviewSkeletonLoaderComponent,
-    NgFor,
     AsyncPipe,
     MatIconModule,
   ],

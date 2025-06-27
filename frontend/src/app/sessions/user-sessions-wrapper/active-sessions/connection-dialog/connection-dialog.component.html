@@ -7,7 +7,7 @@
 @if (
   isPersistentSessionAlias(session) && session.version.tool.integrations.t4c
 ) {
-  <div class="m-m-card">
+  <div class="m-4">
     <div class="mb-1 text-base font-bold">TeamForCapella session token</div>
     @if (connectionInfo?.t4c_token) {
       If you'd like to connect to TeamForCapella while working with Capella,
@@ -33,7 +33,7 @@
   <hr />
 }
 
-<div class="m-m-card">
+<div class="m-4">
   <div class="mb-1 text-base font-bold">Connect to the session</div>
   Please click on this button to connect to the server: <br />
   <div class="mt-2">
@@ -49,7 +49,7 @@
   </div>
 </div>
 <hr />
-<div class="m-m-card">
+<div class="m-4">
   <div class="mb-1 text-base font-bold">
     Wait for {{ session.version.tool.name }}
   </div>

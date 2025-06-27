@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgFor, NgIf } from '@angular/common';
 import { Component, Input, OnInit, inject } from '@angular/core';
 import {
   Validators,
@@ -46,7 +45,6 @@ export interface ModelOptions {
     FormsModule,
     ReactiveFormsModule,
     MatCheckbox,
-    NgIf,
     MatFormField,
     MatLabel,
     MatInput,
@@ -54,7 +52,6 @@ export interface ModelOptions {
     MatError,
     MatAutocomplete,
     MatOptgroup,
-    NgFor,
     MatOption,
     MatSlideToggle,
   ],

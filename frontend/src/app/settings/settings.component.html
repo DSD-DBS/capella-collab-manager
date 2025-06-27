@@ -4,81 +4,58 @@
  -->
 
 <div class="mb-1 text-center text-2xl sm:text-left">Core functionality</div>
-<div class="flex flex-wrap gap-4">
-  <a class="option-card collab-card" [routerLink]="['/users']" matRipple>
-    <div>Manage Users</div>
-    <app-mat-icon size="50px">supervised_user_circle</app-mat-icon>
-  </a>
-  <a
-    class="option-card collab-card"
+<div class="flex flex-col flex-wrap gap-4 sm:flex-row">
+  <app-option-card
+    name="Manage Users"
+    icon="supervised_user_circle"
+    [routerLink]="['/settings/core/users']"
+  ></app-option-card>
+  <app-option-card
+    name="Token Overview"
+    icon="key"
     [routerLink]="['/settings/core/tokens']"
-    matRipple
-  >
-    <div>Token Overview</div>
-    <app-mat-icon size="50px">key</app-mat-icon>
-  </a>
-  <a
-    class="option-card collab-card"
+  ></app-option-card>
+  <app-option-card
+    name="Announcements"
+    icon="add_alert"
     [routerLink]="['/settings/core/announcements']"
-    matRipple
-  >
-    <div>Announcements</div>
-    <app-mat-icon size="50px">add_alert</app-mat-icon>
-  </a>
-  <a
-    class="option-card collab-card"
-    matRipple
+  ></app-option-card>
+  <app-option-card
+    name="Tools"
+    icon="build"
     [routerLink]="['/settings/core/tools']"
-  >
-    <div>Tools</div>
-    <app-mat-icon size="50px">build</app-mat-icon>
-  </a>
-  <a
-    class="option-card collab-card"
-    matRipple
+  ></app-option-card>
+  <app-option-card
+    name="Configuration"
+    icon="settings"
     [routerLink]="['/settings/core/configuration']"
-  >
-    <div>Configuration</div>
-    <app-mat-icon size="50px">settings</app-mat-icon>
-  </a>
-  <a
-    class="option-card collab-card"
-    matRipple
+  ></app-option-card>
+  <app-option-card
+    name="Tags"
+    icon="bookmarks"
     [routerLink]="['/settings/core/tags']"
-  >
-    <div>Tags</div>
-    <app-mat-icon size="50px">bookmarks</app-mat-icon>
-  </a>
+  ></app-option-card>
 </div>
 
-<div class="mb-1 mt-4 text-center text-2xl sm:text-left">Model sources</div>
-<div class="flex flex-wrap gap-4">
-  <a
-    class="option-card collab-card"
-    matRipple
+<div class="mt-4 mb-1 text-center text-2xl sm:text-left">Model sources</div>
+<div class="flex flex-col flex-wrap gap-4 sm:flex-row">
+  <app-option-card
+    name="Git Server Instances"
+    icon="code"
     [routerLink]="['/settings/modelsources/git-instances']"
-  >
-    <div>Git Server Instances</div>
-    <app-mat-icon size="50px">code</app-mat-icon>
-  </a>
-  <a
-    class="option-card collab-card"
-    matRipple
+  ></app-option-card>
+  <app-option-card
+    name="Team For Capella"
+    icon="people"
     [routerLink]="['/settings/modelsources/t4c']"
-  >
-    <div>Team For Capella</div>
-    <app-mat-icon size="50px">people</app-mat-icon>
-  </a>
+  ></app-option-card>
 </div>
 
-<div class="mb-1 mt-4 text-center text-2xl sm:text-left">Integrations</div>
-<div class="flex flex-wrap gap-4">
-  <a
-    class="option-card collab-card"
-    matRipple
+<div class="mt-4 mb-1 text-center text-2xl sm:text-left">Integrations</div>
+<div class="flex flex-col flex-wrap gap-4 sm:flex-row">
+  <app-option-card
+    name="pure::variants"
+    icon="people"
     [routerLink]="['/settings/integrations/pure-variants']"
-  >
-    <div>pure::variants</div>
-    <app-mat-icon size="50px">people</app-mat-icon>
-  </a>
+  ></app-option-card>
 </div>

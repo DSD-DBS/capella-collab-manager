@@ -2,7 +2,6 @@
  * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  * SPDX-License-Identifier: Apache-2.0
  */
-import { NgIf } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import {
   FormControl,
@@ -29,7 +28,6 @@ import { FormFieldSkeletonLoaderComponent } from '../../../helpers/skeleton-load
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    NgIf,
     FormFieldSkeletonLoaderComponent,
     MatFormField,
     MatLabel,

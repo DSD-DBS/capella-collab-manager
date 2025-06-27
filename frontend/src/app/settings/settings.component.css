@@ -1,8 +1,0 @@
-/*
- * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
- * SPDX-License-Identifier: Apache-2.0
- */
-
-.option-card {
-  @apply flex w-full flex-col items-center text-center text-2xl hover:cursor-pointer hover:bg-[--hover-color] sm:w-[200px];
-}

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import {
   mockGitInstance,
   mockGitInstancesServiceProvider,
@@ -19,6 +18,7 @@ import {
   mockProjectWrapperServiceProvider,
 } from 'src/storybook/project';
 import { mockActivatedRouteProvider } from 'src/storybook/routes';
+import { userEvent, within } from 'storybook/test';
 import { ManageGitModelComponent } from './manage-git-model.component';
 
 const meta: Meta<ManageGitModelComponent> = {

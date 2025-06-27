@@ -20,10 +20,10 @@
           mat-icon-button
           type="button"
           [ngClass]="[
-            '!flex',
+            'flex!',
             getColorForRating(rating),
             this.feedbackForm.get('rating')?.value === rating
-              ? '!bg-gray-200'
+              ? 'bg-gray-200!'
               : '',
           ]"
         >

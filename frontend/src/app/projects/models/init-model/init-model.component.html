@@ -18,29 +18,27 @@
         <mat-form-field class="w-full" appearance="fill">
           <mat-label>Version</mat-label>
           <mat-select formControlName="version" id="version-selector">
-            <mat-option
-              *ngFor="let version of this.toolVersions"
-              [value]="version.id"
-            >
-              {{ version.name }}
-              @if (version.config.is_recommended) {
-                <span> (recommended)</span>
-              }
-              @if (version.config.is_deprecated) {
-                <span> (deprecated)</span>
-              }
-            </mat-option>
+            @for (version of this.toolVersions; track version.id) {
+              <mat-option [value]="version.id">
+                {{ version.name }}
+                @if (version.config.is_recommended) {
+                  <span> (recommended)</span>
+                }
+                @if (version.config.is_deprecated) {
+                  <span> (deprecated)</span>
+                }
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
         <mat-form-field class="w-full" appearance="fill">
           <mat-label>Model nature</mat-label>
           <mat-select formControlName="nature">
-            <mat-option
-              *ngFor="let nature of this.toolNatures"
-              [value]="nature.id"
-            >
-              {{ nature.name }}
-            </mat-option>
+            @for (nature of this.modelNatures; track nature.id) {
+              <mat-option [value]="nature.id">
+                {{ nature.name }}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
       </form>

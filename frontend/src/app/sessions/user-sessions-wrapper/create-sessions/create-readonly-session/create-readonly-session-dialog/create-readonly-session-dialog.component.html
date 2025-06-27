@@ -30,7 +30,7 @@
         getSelectedConnectionMethod().description;
         as selectedConnectionMethodDescription
       ) {
-        <div class="mb-2 border p-2 text-sm shadow">
+        <div class="mb-2 border p-2 text-sm shadow-sm">
           {{ selectedConnectionMethodDescription }}
         </div>
       }
@@ -49,16 +49,16 @@
       </create-readonly-model-options>
       <hr class="m-2" />
     } @empty {
-      <div class="my-1 border p-2 text-sm shadow">
+      <div class="my-1 border p-2 text-sm shadow-sm">
         No models have read-only session support. Please contact your global
         administrator or project administrator.
       </div>
     }
 
     @if (maxNumberOfModelsExceeded()) {
-      <div class="my-1 rounded border bg-error p-2 text-sm shadow">
+      <div class="bg-error my-1 rounded-sm border p-2 text-sm shadow-sm">
         <div class="flex items-center gap-2 text-white">
-          <mat-icon class="!hidden sm:!block">warning</mat-icon>
+          <mat-icon class="hidden! sm:block!">warning</mat-icon>
           <span>
             The selected tool only supports up to
             {{ maxNumberOfModels }} provisioned model(s) at a time.

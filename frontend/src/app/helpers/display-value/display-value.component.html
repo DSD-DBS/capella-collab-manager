@@ -4,8 +4,8 @@
  -->
 
 <div class="mt-2 flex items-center gap-2">
-  <span class="break-all rounded border p-2 font-mono">
-    <span [ngClass]="{ blur: !valueRevealed && blurValue }">{{
+  <span class="rounded-sm border p-2 font-mono break-all">
+    <span [ngClass]="{ 'blur-sm': !valueRevealed && blurValue }">{{
       value
     }}</span></span
   >

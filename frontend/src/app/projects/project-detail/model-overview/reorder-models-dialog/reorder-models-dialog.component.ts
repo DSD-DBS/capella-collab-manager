@@ -8,7 +8,6 @@ import {
   CdkDropList,
   CdkDrag,
 } from '@angular/cdk/drag-drop';
-import { NgIf } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -20,11 +19,18 @@ import { ModelWrapperService } from 'src/app/projects/models/service/model.servi
 @Component({
   selector: 'app-reorder-models',
   templateUrl: './reorder-models-dialog.component.html',
-  styles: [
-    '.cdk-drag-placeholder { opacity: 0; }',
-    '.cdk-drag-animating { transition: transform 250ms cubic-bezier(0, 0, 0.2, 1); }',
-  ],
-  imports: [CdkDropList, CdkDrag, MatIcon, NgIf, MatButton],
+  styles: `
+    .cdk-drag-placeholder {
+      opacity: 0;
+    }
+    .cdk-drag-animating {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+    .cdk-drop-list-dragging .cdk-drag {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+  `,
+  imports: [CdkDropList, CdkDrag, MatIcon, MatButton],
 })
 export class ReorderModelsDialogComponent {
   modelService = inject(ModelWrapperService);

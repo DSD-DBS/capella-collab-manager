@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, moduleMetadata, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import {
   mockModel,
   mockModelWrapperServiceProvider,
@@ -19,6 +18,7 @@ import {
   mockT4CModelServiceProvider,
   mockT4CRepositoryWrapperServiceProvider,
 } from 'src/storybook/t4c';
+import { userEvent, within } from 'storybook/test';
 import { ManageT4CModelComponent } from './manage-t4c-model.component';
 
 const meta: Meta<ManageT4CModelComponent> = {

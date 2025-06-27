@@ -1,0 +1,14 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+
+<a
+  class="collab-card flex w-full flex-col items-center text-center text-2xl
+    hover:cursor-pointer hover:bg-[#deecf9]! sm:w-[200px]"
+  matRipple
+  [routerLink]="routerLink()"
+>
+  <div>{{ name() }}</div>
+  <app-mat-icon size="50px">{{ icon() }}</app-mat-icon>
+</a>

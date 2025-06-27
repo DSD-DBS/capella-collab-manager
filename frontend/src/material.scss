@@ -1,0 +1,39 @@
+/*
+ * SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+@use '@angular/material' as mat;
+
+$theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$magenta-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+html {
+  @include mat.all-component-themes($theme);
+
+  .primary-button {
+    @include mat.button-color($theme: $theme, $color-variant: 'primary');
+  }
+
+  .secondary-button {
+    @include mat.button-color($theme: $theme, $color-variant: 'secondary');
+  }
+
+  .tertiary-button {
+    @include mat.button-color($theme: $theme, $color-variant: 'tertiary');
+  }
+
+  .error-button {
+    @include mat.button-color($theme: $theme, $color-variant: 'error');
+  }
+}

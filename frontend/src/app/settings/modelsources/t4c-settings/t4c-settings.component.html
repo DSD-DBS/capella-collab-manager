@@ -42,7 +42,7 @@
           </div>
 
           @if (instance.is_archived) {
-            <div class="fixed bottom-2 right-2 text-right text-stone-500">
+            <div class="fixed right-2 bottom-2 text-right text-stone-500">
               Archived
             </div>
           }
@@ -52,7 +52,7 @@
   }
 </article>
 
-<h2 class="mb-2 mt-5 text-xl font-medium">TeamForCapella license servers</h2>
+<h2 class="mt-5 mb-2 text-xl font-medium">TeamForCapella license servers</h2>
 <article class="flex flex-wrap gap-5">
   <a [routerLink]="['create-license-server']" class="w-full sm:w-fit">
     <div matRipple class="mat-card-overview new collab-card m-0">

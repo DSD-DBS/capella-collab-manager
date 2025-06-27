@@ -4,7 +4,7 @@
  -->
 
 <div>
-  <h2 class="!mb-2 text-xl font-medium">Personal Access Tokens</h2>
+  <h2 class="mb-2! text-xl font-medium">Personal Access Tokens</h2>
   Personal Access Tokens can be used to authenticate against the API.
   <form [formGroup]="tokenForm" (ngSubmit)="createToken()" class="mt-2">
     <div class="flex flex-col gap-2 sm:max-w-[886px]">
@@ -53,7 +53,7 @@
     </div>
 
     <div class="mt-2">
-      <h2 class="!mb-2 text-lg font-medium">Token Scopes</h2>
+      <h2 class="mb-2! text-lg font-medium">Token Scopes</h2>
 
       @if (permissionsSchema) {
         @for (
@@ -83,7 +83,7 @@
             </span>
           </div>
           <div
-            class="w-fit rounded border p-2 sm:ml-12"
+            class="w-fit rounded-sm border p-2 sm:ml-12"
             [hidden]="expandedTokenScopes[scope.key]"
           >
             <app-token-permission-selection
@@ -129,7 +129,7 @@
               </button>
             </div>
             <div
-              class="w-fit rounded border p-2 sm:ml-12"
+              class="w-fit rounded-sm border p-2 sm:ml-12"
               [hidden]="expandedTokenScopes[scope]"
             >
               <app-token-permission-selection
@@ -155,7 +155,7 @@
       }
     </div>
     <button
-      class="!my-2 text-white"
+      class="my-2! text-white"
       mat-raised-button
       [disabled]="!tokenForm.valid"
     >
@@ -164,7 +164,7 @@
   </form>
 
   @if (generatedToken) {
-    <div class="collab-card !ml-0">
+    <div class="collab-card ml-0!">
       <div class="flex justify-between">
         <span>Generated Token:</span>
         <div (click)="generatedToken = undefined" class="cursor-pointer">

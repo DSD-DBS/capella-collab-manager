@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { Meta, StoryObj } from '@storybook/angular';
-import { userEvent, within } from '@storybook/test';
 import MockDate from 'mockdate';
 import { of } from 'rxjs';
 import { FineGrainedResourceOutput, UserToken } from 'src/app/openapi';
+import { userEvent, within } from 'storybook/test';
 import { mockUser } from '../../../storybook/user';
 import {
   PersonalAccessTokensComponent,

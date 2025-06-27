@@ -49,7 +49,7 @@
             @if (session.index !== 0) {
               <button class="m-0" (click)="onLeftArrowClick(session)">
                 <mat-icon
-                  class="!flex items-center"
+                  class="flex! items-center"
                   matTooltip="Move the session to the left"
                   >arrow_back</mat-icon
                 >
@@ -60,7 +60,7 @@
                 (click)="onRightArrowClick(session)"
                 matTooltip="Move the session to the right"
               >
-                <mat-icon class="!flex items-center">arrow_forward</mat-icon>
+                <mat-icon class="flex! items-center">arrow_forward</mat-icon>
               </button>
             }
           </div>
@@ -74,7 +74,7 @@
               (click)="openInNewTab(session)"
               matTooltip="Open in new tab"
             >
-              <mat-icon class="!flex items-center">open_in_new</mat-icon>
+              <mat-icon class="flex! items-center">open_in_new</mat-icon>
             </button>
           }
 
@@ -107,7 +107,7 @@
 
     @if (session.index < sessions.length - 1) {
       <div
-        class="w-2 cursor-col-resize rounded bg-gray-300"
+        class="w-2 cursor-col-resize rounded-sm bg-gray-300"
         (mousedown)="onMouseDown($event, session.index)"
       ></div>
     }

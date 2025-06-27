@@ -2,12 +2,12 @@
  ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
  ~ SPDX-License-Identifier: Apache-2.0
  -->
-<div class="max-w-[100vw] overflow-y-auto shadow-lg">
+<div class="max-w-screen overflow-y-auto shadow-lg">
   <table mat-table [dataSource]="sessions ?? []">
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef class="w-[212px]">ID</th>
       <td mat-cell *matCellDef="let element">
-        <span class="select-all font-mono">
+        <span class="font-mono select-all">
           {{ element.id }}
         </span>
       </td>
@@ -112,7 +112,7 @@
             mat-icon-button
             matTooltip="Terminate Session"
           >
-            <mat-icon class="text-error">close</mat-icon>
+            <mat-icon class="text-error!">close</mat-icon>
           </button>
         </div>
       </td>
