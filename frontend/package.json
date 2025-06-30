@@ -22,7 +22,7 @@
     "@angular/platform-browser": "~20.0.4",
     "@angular/platform-browser-dynamic": "~20.0.4",
     "@angular/router": "~20.0.4",
-    "@fontsource/material-symbols-outlined": "~5.2.14",
+    "@fontsource/material-symbols-outlined": "~5.2.15",
     "@fontsource/roboto": "~5.2.6",
     "@ngneat/until-destroy": "^10.0.0",
     "@panzoom/panzoom": "^4.6.0",
