@@ -61,7 +61,7 @@
     "@storybook/addon-links": "^9.0.13",
     "@storybook/angular": "^9.0.13",
     "@storybook/builder-webpack5": "^9.0.13",
-    "@tailwindcss/postcss": "^4.1.10",
+    "@tailwindcss/postcss": "^4.1.11",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^24.0.4",
