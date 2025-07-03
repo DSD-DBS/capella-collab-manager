@@ -49,7 +49,8 @@
 
   <div class="mb-1 space-y-1.5">
     <h3
-      class="flex items-center justify-center gap-2 rounded-sm py-1 text-center text-white!"
+      class="flex items-center justify-center gap-2 rounded-sm py-1 text-center
+        text-white!"
       [ngClass]="sessionState.css"
       [matTooltip]="sessionState.info"
     >
@@ -59,8 +60,7 @@
     @let remainingMinutes = minutesUntilSessionTermination(session);
     @if (remainingMinutes !== null && remainingMinutes < 30) {
       <div
-        class="flex items-center gap-2 rounded border border-yellow-400 bg-yellow-300 px-2 py-1
-          shadow"
+        class="flex items-center gap-2 rounded border border-yellow-400 bg-yellow-300 px-2 py-1 shadow"
       >
         <mat-icon class="shrink-0">warning</mat-icon>
         <div>

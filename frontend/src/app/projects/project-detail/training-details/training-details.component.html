@@ -67,9 +67,7 @@
               @if (readmes.get(model.slug); as readme) {
                 @if (readme.readme) {
                   <markdown
-                    class="[&_a]:text-blue-900 [&_a]:underline! [&_h1]:text-2xl [&_h2]:text-lg [&_ol]:ml-5
-                      [&_ol]:list-decimal [&_pre]:my-1 [&_pre]:rounded-sm [&_pre]:border
-                      [&_pre]:bg-white [&_pre]:p-2 [&_ul]:ml-5 [&_ul]:list-disc"
+                    class="[&_a]:text-blue-900 [&_a]:underline! [&_h1]:text-2xl [&_h2]:text-lg [&_ol]:ml-5 [&_ol]:list-decimal [&_pre]:my-1 [&_pre]:rounded-sm [&_pre]:border [&_pre]:bg-white [&_pre]:p-2 [&_ul]:ml-5 [&_ul]:list-disc"
                     [data]="readme.readme"
                   ></markdown>
                 } @else if (readme.errorCode) {
