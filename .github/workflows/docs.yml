@@ -46,7 +46,7 @@ jobs:
           mkdir -p docs/dist/api/swagger
           cp -r swagger/dist/* docs/dist/api/swagger
           ls -la docs/dist/api/swagger
-          sed -i 's#https://petstore.swagger.io/v2/swagger.json#/${{ github.event.repository.name }}/api/docs/openapi.json#' docs/dist/api/swagger/swagger-initializer.js
+          sed -i 's#https://petstore.swagger.io/v2/swagger.json#/${{ github.event.repository.name }}/api/openapi.json#' docs/dist/api/swagger/swagger-initializer.js
           sed -i '/SwaggerUIBundle({/a\    supportedSubmitMethods: [],' docs/dist/api/swagger/swagger-initializer.js
           sed -i '/layout: "StandaloneLayout"/d;/SwaggerUIStandalonePreset/d' docs/dist/api/swagger/swagger-initializer.js
       - name: Upload artifact

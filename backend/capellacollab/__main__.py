@@ -119,7 +119,7 @@ if config.logging.profiling:
 )
 def redirect_docs():
     """Redirect `/docs` to new SwaggerUI documentation location."""
-    return responses.RedirectResponse("/api/docs/swagger")
+    return responses.RedirectResponse("/docs/api/swagger")
 
 
 fastapi_pagination.add_pagination(app)
