@@ -22,8 +22,7 @@
 
         @if ((navBarService.badge$ | async)?.show) {
           <div
-            class="rounded-md px-2 py-1 text-sm font-semibold tracking-wide whitespace-nowrap
-              text-white uppercase"
+            class="rounded-md px-2 py-1 text-sm font-semibold tracking-wide whitespace-nowrap text-white uppercase"
             [class.bg-hazard]="
               (navBarService.badge$ | async)?.variant === 'warning'
             "
