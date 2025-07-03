@@ -1,0 +1,12 @@
+<!--
+ ~ SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+ ~ SPDX-License-Identifier: Apache-2.0
+ -->
+<button
+  mat-icon-button
+  (click)="toggleTheme()"
+  [attr.aria-label]="'Toggle ' + (isDarkMode() ? 'light' : 'dark') + ' mode'"
+  [title]="'Switch to ' + (isDarkMode() ? 'light' : 'dark') + ' mode'"
+>
+  <mat-icon>{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+</button>

@@ -12,6 +12,7 @@ import { LogoComponent } from 'src/app/general/logo/logo.component';
 import { NavBarService } from 'src/app/general/nav-bar/nav-bar.service';
 import { AuthenticationWrapperService } from 'src/app/services/auth/auth.service';
 import { OwnUserWrapperService } from 'src/app/services/user/user.service';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-nav-bar-menu',
@@ -24,6 +25,7 @@ import { OwnUserWrapperService } from 'src/app/services/user/user.service';
     MatDivider,
     AsyncPipe,
     LogoComponent,
+    ThemeToggleComponent,
   ],
 })
 export class NavBarMenuComponent {

@@ -5,7 +5,7 @@
 
 @use '@angular/material' as mat;
 
-$theme: mat.define-theme(
+$light-theme: mat.define-theme(
   (
     color: (
       theme-type: light,
@@ -18,22 +18,57 @@ $theme: mat.define-theme(
   )
 );
 
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: mat.$azure-palette,
+      tertiary: mat.$magenta-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
 html {
-  @include mat.all-component-themes($theme);
+  // Default to light theme
+  @include mat.all-component-themes($light-theme);
 
   .primary-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'primary');
+    @include mat.button-color($theme: $light-theme, $color-variant: 'primary');
   }
 
   .secondary-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'secondary');
+    @include mat.button-color($theme: $light-theme, $color-variant: 'secondary');
   }
 
   .tertiary-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'tertiary');
+    @include mat.button-color($theme: $light-theme, $color-variant: 'tertiary');
   }
 
   .error-button {
-    @include mat.button-color($theme: $theme, $color-variant: 'error');
+    @include mat.button-color($theme: $light-theme, $color-variant: 'error');
+  }
+}
+
+// Dark theme styles
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+
+  .primary-button {
+    @include mat.button-color($theme: $dark-theme, $color-variant: 'primary');
+  }
+
+  .secondary-button {
+    @include mat.button-color($theme: $dark-theme, $color-variant: 'secondary');
+  }
+
+  .tertiary-button {
+    @include mat.button-color($theme: $dark-theme, $color-variant: 'tertiary');
+  }
+
+  .error-button {
+    @include mat.button-color($theme: $dark-theme, $color-variant: 'error');
   }
 }

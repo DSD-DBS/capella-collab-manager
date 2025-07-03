@@ -13,6 +13,7 @@ import { AuthenticationWrapperService } from '../../services/auth/auth.service';
 import { OwnUserWrapperService } from '../../services/user/user.service';
 import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 import { LogoComponent } from '../logo/logo.component';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-header',
@@ -29,6 +30,7 @@ import { LogoComponent } from '../logo/logo.component';
     BreadcrumbsComponent,
     AsyncPipe,
     LogoComponent,
+    ThemeToggleComponent,
   ],
 })
 export class HeaderComponent {

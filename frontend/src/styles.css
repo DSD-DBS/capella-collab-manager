@@ -43,6 +43,32 @@
   --mdc-chip-with-trailing-icon-trailing-icon-color: "inherit";
 }
 
+/* Light theme (default) */
+.light-theme,
+:root {
+  --background-color: #faf9fd;
+  --card-background: #ffffff;
+  --text-color: #000000;
+  --border-color: #e0e0e0;
+  --radio-border-color: #000000;
+  --expansion-indicator-color: #000000;
+}
+
+/* Dark theme */
+.dark-theme {
+  --primary-color: #4db6ff;
+  --error-color: #ffb4ab;
+  --warning-color: #ffb764;
+  --success-color: #81c784;
+  --hover-color: #2d3748;
+  --background-color: #121212;
+  --card-background: #1e1e1e;
+  --text-color: #ffffff;
+  --border-color: #424242;
+  --radio-border-color: #ffffff;
+  --expansion-indicator-color: #ffffff;
+}
+
 @theme {
   --color-primary: var(--primary-color);
   --color-error: var(--error-color);
@@ -68,7 +94,9 @@
 }
 
 html {
-  @apply overflow-y-scroll bg-[#faf9fd];
+  @apply overflow-y-scroll;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .dialog {
@@ -103,7 +131,8 @@ fieldset {
 }
 
 .collab-card {
-  @apply bg-white p-4 shadow-md;
+  background-color: var(--card-background);
+  @apply p-4 shadow-md;
   border-radius: 28px;
 }
 
@@ -183,17 +212,17 @@ fieldset {
 
 .mdc-radio__inner-circle,
 .mdc-radio__outer-circle {
-  border-color: black !important;
+  border-color: var(--radio-border-color) !important;
 }
 
 .mdc-radio__background::after,
 .mdc-radio__background::before,
 .mat-mdc-radio-button.mat-mdc-radio-checked .mat-ripple-element {
-  background-color: black !important;
+  background-color: var(--radio-border-color) !important;
 }
 
 .mat-expansion-indicator::after {
-  border-color: black;
+  border-color: var(--expansion-indicator-color);
   margin-top: -6px;
 }
 
