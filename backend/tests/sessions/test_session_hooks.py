@@ -138,7 +138,7 @@ async def test_hook_calls_during_session_request(
         logger,
         token=None,
         global_scope=permissions_models.GlobalScopes(
-            user=users_models.USER_TOKEN_SCOPE,
+            user=permissions_models.USER_TOKEN_SCOPE,
         ),
     )
 

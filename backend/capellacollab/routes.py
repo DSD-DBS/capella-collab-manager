@@ -12,6 +12,7 @@ from capellacollab.core.authentication import routes as authentication_routes
 from capellacollab.events import routes as events_router
 from capellacollab.feedback import routes as feedback_routes
 from capellacollab.permissions import routes as permissions_routes
+from capellacollab.pipelines import routes as pipelines_routes
 from capellacollab.projects import routes as projects_routes
 from capellacollab.sessions import routes as sessions_routes
 from capellacollab.settings import routes as settings_routes
@@ -74,6 +75,9 @@ router.include_router(
 router.include_router(
     tags_routes.router,
     prefix="/tags",
+)
+router.include_router(
+    pipelines_routes.router, prefix="/pipelines", tags=["Pipelines"]
 )
 
 

@@ -118,10 +118,16 @@ class K8sPromtailConfig(BaseConfig):
         examples=[True],
     )
     loki_url: str | None = pydantic.Field(
-        default="http://dev-loki-gateway.collab-manager.svc.cluster.local/loki/api/v1",
+        default="http://localhost:30001/loki/api/v1",
         alias="lokiURL",
-        description="The URL of the Loki instance to which to push logs.",
-        examples=["http://localhost:30001/loki/api/v1/push"],
+        description=(
+            "The URL of the Loki instance to which to push logs."
+            " To access loki from the development environment, run `kubectl port-forward service/dev-loki-gateway 30001:80`."
+            " When running in a cluster, use `http://{release_name}-loki-gateway.collab-manager.svc.cluster.local/loki/api/v1`"
+        ),
+        examples=[
+            "http://dev-loki-gateway.collab-manager.svc.cluster.local/loki/api/v1"
+        ],
     )
     loki_username: str | None = pydantic.Field(
         default="localLokiUser",
@@ -309,6 +315,14 @@ class PipelineConfig(BaseConfig):
         default=60,
         description="The timeout (in minutes) for pipeline runs.",
         examples=[60, 90],
+    )
+    scheduler: bool = pydantic.Field(
+        default=True,
+        description=(
+            "Whether to enable the integrated pipeline scheduler."
+            " IMPORTANT: Only works with exactly one backend replica."
+            " When having more replicas, disable this option and run one replica of the scheduler via the CCM CLI."
+        ),
     )
 
 

@@ -2,13 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import asyncio
 import logging
 import os
 
 import requests
-from starlette import concurrency
 
+from capellacollab import scheduling
 from capellacollab.configuration.app import config
 from capellacollab.core import database
 from capellacollab.permissions import injectables as permissions_injectables
@@ -19,6 +18,11 @@ log = logging.getLogger(__name__)
 
 
 def terminate_idle_session():
+    if os.getenv("DISABLE_SESSION_TIMEOUT", "") in ("true", "1", "t"):
+        log.info(
+            "Session timeout is disabled, skipping idle session termination."
+        )
+        return
     log.debug("Starting to terminate idle sessions...")
     url = config.prometheus.url
     url += "/".join(("api", "v1", 'query?query=ALERTS{alertstate="firing"}'))
@@ -51,19 +55,14 @@ def terminate_idle_session():
     log.debug("Finished termination of idle sessions.")
 
 
-def terminate_idle_sessions_in_background(interval=60):
-    async def loop():
-        while True:
-            try:
-                await asyncio.sleep(interval)
-                await concurrency.run_in_threadpool(terminate_idle_session)
-            except asyncio.exceptions.CancelledError:
-                return
-            except BaseException:
-                log.exception("Could not handle idle sessions")
-
-    if os.getenv("DISABLE_SESSION_TIMEOUT", "") not in ("true", "1", "t"):
-        asyncio.ensure_future(loop())  # noqa: RUF006
+def terminate_idle_sessions_in_background():
+    scheduling.scheduler.add_job(
+        terminate_idle_session,
+        "interval",
+        minutes=1,
+        id="terminate_idle_sessions",
+        replace_existing=True,
+    )
 
 
 def run():

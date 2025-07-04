@@ -57,7 +57,7 @@ def get_scheduled_or_running_pipelines(
 
 
 def get_pipeline_runs_for_pipeline_id_paginated(
-    db: orm.Session, pipeline: pipeline_models.DatabaseBackup
+    db: orm.Session, pipeline: pipeline_models.DatabasePipeline
 ) -> fastapi_pagination.Page[models.PipelineRun]:
     return fastapi_pagination.ext.sqlalchemy.paginate(
         db,
@@ -76,7 +76,7 @@ def create_pipeline_run(
 
 
 def get_last_pipeline_run_of_pipeline(
-    db: orm.Session, pipeline: pipeline_models.DatabaseBackup
+    db: orm.Session, pipeline: pipeline_models.DatabasePipeline
 ) -> models.DatabasePipelineRun | None:
     return (
         db.execute(

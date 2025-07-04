@@ -11,7 +11,7 @@ import { PageNotFoundComponent } from 'src/app/general/404/404.component';
 import { authGuard } from 'src/app/general/auth/auth-guard/auth-guard.service';
 import { JobRunOverviewComponent } from 'src/app/projects/models/backup-settings/job-run-overview/job-run-overview.component';
 import { PipelineRunWrapperComponent } from 'src/app/projects/models/backup-settings/pipeline-runs/wrapper/pipeline-run-wrapper/pipeline-run-wrapper.component';
-import { ViewLogsDialogComponent } from 'src/app/projects/models/backup-settings/view-logs-dialog/view-logs-dialog.component';
+import { ViewLogsComponent } from 'src/app/projects/models/backup-settings/view-logs/view-logs.component';
 import { PipelineWrapperComponent } from 'src/app/projects/models/backup-settings/wrapper/pipeline-wrapper/pipeline-wrapper.component';
 import { ModelRestrictionsComponent } from 'src/app/projects/models/model-restrictions/model-restrictions.component';
 import { CreateProjectToolsComponent } from 'src/app/projects/project-detail/create-project-tools/create-project-tools.component';
@@ -217,7 +217,7 @@ export const routes: Routes = [
                               {
                                 path: 'create-new',
                                 data: {
-                                  breadcrumb: 'Create New Repository',
+                                  breadcrumb: 'Create',
                                   redirect: (data: Data) =>
                                     `/project/${data.project?.slug}/model/${data.model?.slug}/modelsources/t4c-model/create-new`,
                                 },
@@ -286,14 +286,14 @@ export const routes: Routes = [
                               {
                                 path: 'runs',
                                 data: {
-                                  breadcrumb: () => 'runs',
+                                  breadcrumb: 'Runs',
                                 },
                                 component: JobRunOverviewComponent,
                               },
                               {
                                 path: 'run',
                                 data: {
-                                  breadcrumb: 'runs',
+                                  breadcrumb: 'Runs',
                                   redirect: (data: Data) =>
                                     `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/runs`,
                                 },
@@ -305,13 +305,13 @@ export const routes: Routes = [
                                       breadcrumb: (data: Data) =>
                                         data.pipelineRun?.id,
                                       redirect: (data: Data) =>
-                                        `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/run/${data.pipelineRun?.id}/logs`,
+                                        `/project/${data.project?.slug}/model/${data.model?.slug}/pipeline/${data.pipeline?.id}/run/${data.pipelineRun?.id}`,
                                     },
                                     children: [
                                       {
-                                        path: 'logs',
-                                        data: { breadcrumb: 'logs' },
-                                        component: ViewLogsDialogComponent,
+                                        path: '',
+                                        data: { breadcrumb: undefined },
+                                        component: ViewLogsComponent,
                                       },
                                     ],
                                   },
@@ -434,7 +434,7 @@ export const routes: Routes = [
                   },
                   {
                     path: 'create',
-                    data: { breadcrumb: 'new' },
+                    data: { breadcrumb: 'Create' },
                     component: AddGitInstanceComponent,
                   },
                 ],
@@ -467,7 +467,7 @@ export const routes: Routes = [
                   },
                   {
                     path: 'create-instance',
-                    data: { breadcrumb: 'New Instance' },
+                    data: { breadcrumb: 'Create Instance' },
                     component: EditT4CInstanceComponent,
                   },
                   {
@@ -488,7 +488,7 @@ export const routes: Routes = [
                   },
                   {
                     path: 'create-license-server',
-                    data: { breadcrumb: 'New License Server' },
+                    data: { breadcrumb: 'Create License Server' },
                     component: EditT4cLicenseServerComponent,
                   },
                   {

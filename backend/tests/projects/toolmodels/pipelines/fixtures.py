@@ -26,13 +26,6 @@ def fixture_run_nightly(
     return request.param
 
 
-@pytest.fixture(name="include_commit_history", params=[True, False])
-def fixture_include_commit_history(
-    request: pytest.FixtureRequest,
-):
-    return request.param
-
-
 @pytest.fixture(name="pipeline")
 def fixture_pipeline(
     db: orm.Session,
@@ -41,17 +34,14 @@ def fixture_pipeline(
     t4c_model: t4c_models.DatabaseT4CModel,
     executor_name: str,
     run_nightly: bool,
-    include_commit_history: bool,
-) -> pipelines_models.DatabaseBackup:
-    pipeline = pipelines_models.DatabaseBackup(
-        k8s_cronjob_id="unavailable",
+) -> pipelines_models.DatabasePipeline:
+    pipeline = pipelines_models.DatabasePipeline(
         git_model=git_model,
         t4c_model=t4c_model,
         created_by=executor_name,
         model=capella_model,
         t4c_username="techuser-" + str(uuid.uuid4()),
         t4c_password="password",
-        include_commit_history=include_commit_history,
         run_nightly=run_nightly,
     )
     return pipelines_crud.create_pipeline(db, pipeline)

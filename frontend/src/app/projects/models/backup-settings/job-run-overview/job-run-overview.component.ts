@@ -70,7 +70,7 @@ export class JobRunOverviewComponent implements OnInit, AfterViewInit {
   }
 
   openLogs(id: number) {
-    this.router.navigate(['..', 'run', id, 'logs'], {
+    this.router.navigate(['..', 'run', id], {
       relativeTo: this.activatedRoute,
     });
   }

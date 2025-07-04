@@ -395,16 +395,14 @@ def test_update_project_name_already_taken(
     )
 
 
-@pytest.mark.parametrize(
-    ("run_nightly", "include_commit_history"), [(True, True)]
-)
+@pytest.mark.parametrize("run_nightly", [True])
 @pytest.mark.usefixtures("admin")
 def test_delete_pipeline_called_when_archiving_project(
     client: testclient.TestClient,
     db: orm.Session,
     project: projects_models.DatabaseProject,
     capella_model: toolmodels_models.DatabaseToolModel,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
 ):
     with (
         mock.patch(

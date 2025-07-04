@@ -65,6 +65,7 @@ def derive_project_permissions_from_role(
         pipelines={
             permissions_models.UserTokenVerb.GET,
             permissions_models.UserTokenVerb.CREATE,
+            permissions_models.UserTokenVerb.UPDATE,
             permissions_models.UserTokenVerb.DELETE,
         },
         pipeline_runs={

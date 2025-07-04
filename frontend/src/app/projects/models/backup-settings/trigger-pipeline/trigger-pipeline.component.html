@@ -33,6 +33,17 @@
                 Runs on manual trigger.
               }
             </span>
+            <div class="text-sm text-gray-700">
+              @if (pipeline.next_run) {
+                The next automatic run is planned
+                @if (isBeforeCurrentTime(pipeline.next_run)) {
+                  shortly.
+                } @else {
+                  <app-relative-time [date]="pipeline.next_run" />.
+                }
+              }
+            </div>
+
             <hr class="my-2" />
             <div class="flex flex-wrap items-center justify-between gap-y-1">
               <span style="flex-basis: 45%"

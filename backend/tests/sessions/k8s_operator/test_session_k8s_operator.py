@@ -122,24 +122,6 @@ def test_create_job(monkeypatch: pytest.MonkeyPatch):
     assert result
 
 
-def test_create_cronjob(monkeypatch: pytest.MonkeyPatch):
-    operator = k8s.KubernetesOperator()
-    monkeypatch.setattr(
-        operator.v1_batch,
-        "create_namespaced_cron_job",
-        lambda namespace, job: None,
-    )
-    result = operator.create_cronjob(
-        image="fakeimage",
-        command="fakecmd",
-        environment={"ENVVAR": "value"},
-        labels={},
-        tool_resources=tools_models.Resources(),
-    )
-
-    assert result
-
-
 def test_delete_disruption_budget_with_api_error(
     monkeypatch: pytest.MonkeyPatch,
 ):

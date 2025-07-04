@@ -4,9 +4,6 @@
  -->
 
 <div>
-  Please note: Automatically scheduled runs are currently not listed. Please ask
-  your administrator for the status of those runs. <br />
-
   <table class="w-full table-auto border-separate border-spacing-2">
     <thead>
       <tr>
@@ -17,13 +14,10 @@
           <h2>Status</h2>
         </td>
         <td>
-          <h2>Triggerer</h2>
+          <h2>Triggered by</h2>
         </td>
         <td>
           <h2>Start time</h2>
-        </td>
-        <td>
-          <h2>Custom environment / configuration</h2>
         </td>
       </tr>
     </thead>
@@ -58,15 +52,14 @@
                 {{ run.status }}
               </td>
               <td>
-                {{ run.triggerer.name }}
+                @if (run.triggerer) {
+                  {{ run.triggerer.name }}
+                } @else {
+                  Scheduler
+                }
               </td>
               <td>
                 {{ run.trigger_time | date: "EE, dd MMM y HH:mm:ss" }}
-              </td>
-              <td>
-                @for (env of run.environment | keyvalue; track env) {
-                  <span> {{ env.key }}='{{ env.value }}' </span>
-                }
               </td>
             </tr>
           }
