@@ -38,7 +38,7 @@
     "ngx-monaco-editor-v2": "^19.0.2",
     "ngx-skeleton-loader": "^11.2.1",
     "ngx-toastr": "^19.0.0",
-    "puppeteer": "^24.11.2",
+    "puppeteer": "^24.12.0",
     "rxjs": "~7.8.2",
     "slugify": "^1.6.6",
     "storycap": "^5.0.1",
