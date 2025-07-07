@@ -67,7 +67,7 @@
     "@types/node": "^24.0.10",
     "@types/uuid": "^10.0.0",
     "angular-eslint": "~20.1.1",
-    "chromatic": "^13.1.0",
+    "chromatic": "^13.1.2",
     "eslint": "^9.30.1",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-storybook": "^9.0.15",
