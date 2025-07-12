@@ -48,4 +48,6 @@ VOLUME [ "/etc/capellacollab" ]
 
 USER 1001
 
+ENV COLUMNS=120
+
 ENTRYPOINT ["/opt/.startup.sh"]

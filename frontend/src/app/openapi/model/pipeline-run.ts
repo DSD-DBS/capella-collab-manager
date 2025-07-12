@@ -16,7 +16,7 @@ import { PipelineRunStatus } from './pipeline-run-status';
 export interface PipelineRun { 
     id: number;
     reference_id: string | null;
-    triggerer: User;
+    triggerer: User | null;
     trigger_time: string;
     status: PipelineRunStatus;
     environment: { [key: string]: string; };

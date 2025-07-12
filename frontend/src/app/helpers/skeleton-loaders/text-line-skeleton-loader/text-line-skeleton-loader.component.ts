@@ -13,4 +13,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 export class TextLineSkeletonLoaderComponent {
   @Input()
   width = '20%';
+
+  @Input()
+  color?: string = undefined;
 }

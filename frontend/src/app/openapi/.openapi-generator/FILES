@@ -9,6 +9,7 @@ api/feedback.service.ts
 api/global-tokens.service.ts
 api/integrations-pure-variants.service.ts
 api/permissions.service.ts
+api/pipelines.service.ts
 api/projects-events.service.ts
 api/projects-models-backups.service.ts
 api/projects-models-diagrams.service.ts
@@ -43,8 +44,6 @@ model/announcement-level.ts
 model/announcement-response.ts
 model/anonymized-session.ts
 model/authorization-response.ts
-model/backup-pipeline-run.ts
-model/backup.ts
 model/badge-input.ts
 model/badge-output.ts
 model/badge-variant.ts
@@ -56,7 +55,7 @@ model/built-in-navbar-link.ts
 model/cpu-resources-input.ts
 model/cpu-resources-output.ts
 model/create-announcement-request.ts
-model/create-backup.ts
+model/create-pipeline.ts
 model/create-t4-c-instance.ts
 model/create-t4-c-repository.ts
 model/create-tag.ts
@@ -72,6 +71,7 @@ model/diagram-metadata.ts
 model/environment-value.ts
 model/environment-value1.ts
 model/event-type.ts
+model/extended-pipeline.ts
 model/feedback-configuration-input.ts
 model/feedback-configuration-output.ts
 model/feedback-interval-configuration-input.ts
@@ -136,8 +136,11 @@ model/persistent-workspace-session-configuration-input.ts
 model/persistent-workspace-session-configuration-output.ts
 model/pipeline-configuration-input.ts
 model/pipeline-configuration-output.ts
+model/pipeline-event.ts
+model/pipeline-log-line.ts
 model/pipeline-run-status.ts
 model/pipeline-run.ts
+model/pipeline.ts
 model/post-git-instance.ts
 model/post-git-model.ts
 model/post-project-request.ts
@@ -231,6 +234,7 @@ model/tool-version-with-tool.ts
 model/tool-version.ts
 model/tool.ts
 model/unified-config.ts
+model/update-pipeline.ts
 model/user-metadata.ts
 model/user-scopes-input.ts
 model/user-scopes-output.ts

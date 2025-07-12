@@ -273,6 +273,7 @@ grafana:
   adminPassword: null
 
 # https://github.com/grafana/loki/blob/main/production/helm/loki/values.yaml
+# https://grafana.com/docs/loki/latest/setup/install/helm/reference/
 loki:
   enabled: true
   global:

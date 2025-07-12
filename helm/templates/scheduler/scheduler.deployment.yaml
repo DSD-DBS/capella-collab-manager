@@ -1,0 +1,127 @@
+# SPDX-FileCopyrightText: Copyright DB InfraGO AG and contributors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-scheduler
+  labels:
+    id: {{ .Release.Name }}-deployment-scheduler
+  annotations:
+    checksum/config-backend: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
+    checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      id: {{ .Release.Name }}-deployment-scheduler
+  template:
+    metadata:
+      labels:
+        id: {{ .Release.Name }}-deployment-scheduler
+      annotations:
+        checksum/config-backend: {{ include (print $.Template.BasePath "/backend/backend.configmap.yaml") . | sha256sum }}
+        checksum/config-promtail: {{ include (print $.Template.BasePath "/promtail" "/promtail.configmap.yaml") . | sha256sum }}
+    spec:
+      serviceAccountName: {{ .Release.Name }}-backend
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Release.Name }}-backend
+        {{ if .Values.loki.enabled }}
+        - name: logs
+          emptyDir: {}
+        - name: prom-config
+          configMap:
+            name: {{ .Release.Name }}-promtail
+            items:
+              - key: scheduler-promtail.yaml
+                path: promtail.yaml
+        - name: prom-position
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-scheduler-promtail
+        {{ end }}
+      {{- include "capellacollab.pod.spec" . | indent 6 -}}
+      containers:
+        - name: scheduler
+          {{- include "capellacollab.container.spec" . | indent 10 -}}
+          {{ if .Values.docker.images.backend }}
+          image: {{ .Values.docker.images.backend }}
+          {{ else }}
+          image: {{ .Values.docker.registry.internal }}/backend:{{ .Values.docker.tag }}
+          {{ end }}
+          args: ["scheduler"]
+          # Jobs can take up to one hour to complete, do not interrupt them
+          terminationGracePeriodSeconds: 3600
+          env:
+            - name: no_proxy_additional
+              value: "{{ .Values.proxy.no_proxy }}"
+          resources:
+            {{ if .Values.development }}
+            requests:
+              cpu: "0.06"
+              memory: 20Mi
+              ephemeral-storage: '1Gi'
+            limits:
+              cpu: "0.25"
+              memory: 500Mi
+              ephemeral-storage: "2Gi"
+            {{ else }}
+            requests:
+              cpu: "0.15"
+              memory: 350Mi
+              ephemeral-storage: '1Gi'
+            limits:
+              cpu: "0.25"
+              memory: 500Mi
+              ephemeral-storage: "2Gi"
+            {{ end }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/capellacollab
+              readOnly: true
+            {{ if .Values.loki.enabled }}
+            - name: logs
+              mountPath: /var/log/backend
+            {{ end }}
+        {{ if .Values.loki.enabled }}
+        - name: promtail
+          {{ if .Values.docker.images.promtail }}
+          image: {{ .Values.docker.images.promtail }}
+          {{ else }}
+          image: {{ .Values.docker.registry.external -}}/grafana/promtail
+          {{ end }}
+          args:
+            - "--config.file=/etc/promtail/promtail.yaml"
+            - "-log-config-reverse-order"
+          resources:
+            {{ if .Values.development }}
+            requests:
+              cpu: "12m"
+              memory: 5Mi
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "50m"
+              memory: 50Mi
+              ephemeral-storage: "2Gi"
+            {{ else }}
+            requests:
+              cpu: "12m"
+              memory: 120Mi
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "50m"
+              memory: 200Mi
+              ephemeral-storage: "2Gi"
+            {{ end }}
+          volumeMounts:
+            - name: prom-config
+              mountPath: /etc/promtail
+            - name: prom-position
+              mountPath: /var/log/promtail
+            - name: logs
+              readOnly: true
+              mountPath: /var/log/scheduler
+        {{ end }}

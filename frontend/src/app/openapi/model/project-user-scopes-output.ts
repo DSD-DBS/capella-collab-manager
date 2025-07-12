@@ -79,6 +79,7 @@ export namespace ProjectUserScopesOutput {
     export const PipelinesEnum = {
         Get: 'GET',
         Create: 'CREATE',
+        Update: 'UPDATE',
         Delete: 'DELETE'
     } as const;
     export type PipelinesEnum = typeof PipelinesEnum[keyof typeof PipelinesEnum];

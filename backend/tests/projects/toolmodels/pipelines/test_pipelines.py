@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-import random
-import string
-
 import pytest
 import requests.exceptions
 import responses
@@ -17,40 +14,12 @@ import capellacollab.projects.toolmodels.backups.models as pipelines_models
 import capellacollab.projects.toolmodels.models as toolmodels_models
 import capellacollab.projects.toolmodels.modelsources.git.models as git_models
 import capellacollab.projects.toolmodels.modelsources.t4c.models as models_t4c_models
-import capellacollab.sessions.operators
 import capellacollab.settings.modelsources.t4c.instance.models as t4c_models
 import capellacollab.settings.modelsources.t4c.instance.repositories.interface as t4c_repositories_interface
 from capellacollab.core import credentials
 
 
-class MockOperator:
-    cronjob_counter = 0
-
-    def create_cronjob(
-        self,
-        *args,
-        **kwargs,
-    ) -> str:
-        self.cronjob_counter += 1
-        return self._generate_id()
-
-    def _generate_id(self) -> str:
-        return "".join(random.choices(string.ascii_lowercase, k=25))
-
-    def delete_cronjob(self, _id: str):
-        self.cronjob_counter -= 1
-
-
-@pytest.fixture(name="mockoperator")
-def fixture_mockoperator(monkeypatch: pytest.MonkeyPatch):
-    mockoperator = MockOperator()
-    monkeypatch.setattr(
-        capellacollab.sessions.operators, "get_operator", lambda: mockoperator
-    )
-    return mockoperator
-
-
-@pytest.mark.usefixtures("project_manager", "mockoperator", "pipeline")
+@pytest.mark.usefixtures("project_manager", "pipeline")
 def test_get_all_pipelines_of_capellamodel(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
@@ -64,9 +33,70 @@ def test_get_all_pipelines_of_capellamodel(
     assert len(response.json()) == 1
 
 
+@pytest.mark.usefixtures("project_manager")
+def test_get_pipeline_by_id(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    client: testclient.TestClient,
+    pipeline: pipelines_models.DatabasePipeline,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == pipeline.id
+    assert not response.json()["run_nightly"]
+    assert response.json()["next_run"] is None
+
+
+@pytest.mark.usefixtures("project_manager", "pipeline_scheduled", "scheduler")
+def test_get_scheduled_pipeline_by_id(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    client: testclient.TestClient,
+    pipeline: pipelines_models.DatabasePipeline,
+):
+    response = client.get(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == pipeline.id
+    assert response.json()["run_nightly"]
+    assert response.json()["next_run"] is not None
+
+
+@pytest.mark.usefixtures("project_manager", "scheduler")
+def test_update_pipeline(
+    project: project_models.DatabaseProject,
+    capella_model: toolmodels_models.ToolModel,
+    client: testclient.TestClient,
+    pipeline: pipelines_models.DatabasePipeline,
+):
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}",
+        json={"run_nightly": True},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == pipeline.id
+    assert response.json()["run_nightly"]
+    assert response.json()["next_run"] is not None
+
+    response = client.patch(
+        f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines/{pipeline.id}",
+        json={"run_nightly": False},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == pipeline.id
+    assert not response.json()["run_nightly"]
+    assert response.json()["next_run"] is None
+
+
 @pytest.mark.usefixtures(
     "project_manager",
-    "mockoperator",
 )
 def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     project: project_models.DatabaseProject,
@@ -79,7 +109,6 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
         json={
             "git_model_id": 0,
             "t4c_model_id": t4c_model.id,
-            "include_commit_history": False,
             "run_nightly": False,
         },
     )
@@ -90,9 +119,7 @@ def test_create_pipeline_of_capellamodel_git_model_does_not_exist(
     ].items()
 
 
-@pytest.mark.usefixtures(
-    "project_manager", "mockoperator", "mock_add_user_to_t4c_repository"
-)
+@pytest.mark.usefixtures("project_manager", "mock_add_user_to_t4c_repository")
 def test_create_pipeline(
     db: orm.Session,
     project: project_models.DatabaseProject,
@@ -101,14 +128,12 @@ def test_create_pipeline(
     git_model: git_models.GitModel,
     client: testclient.TestClient,
     run_nightly: bool,
-    include_commit_history: bool,
 ):
     response = client.post(
         f"/api/v1/projects/{project.slug}/models/{capella_model.slug}/backups/pipelines",
         json={
             "git_model_id": git_model.id,
             "t4c_model_id": t4c_model.id,
-            "include_commit_history": include_commit_history,
             "run_nightly": run_nightly,
         },
     )
@@ -117,12 +142,10 @@ def test_create_pipeline(
     db_pipeline = pipelines_crud.get_pipeline_by_id(db, response.json()["id"])
     assert db_pipeline is not None
     assert db_pipeline.run_nightly == run_nightly
-    assert db_pipeline.include_commit_history == include_commit_history
 
 
 @pytest.mark.usefixtures(
     "project_manager",
-    "mockoperator",
 )
 def test_pipeline_creation_fails_if_t4c_server_not_available(
     project: project_models.DatabaseProject,
@@ -152,7 +175,6 @@ def test_pipeline_creation_fails_if_t4c_server_not_available(
         json={
             "git_model_id": git_model.id,
             "t4c_model_id": t4c_model.id,
-            "include_commit_history": False,
             "run_nightly": False,
         },
     )
@@ -172,9 +194,8 @@ def test_delete_pipeline(
     db: orm.Session,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     client: testclient.TestClient,
-    mockoperator: MockOperator,
     run_nightly: bool,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
@@ -192,19 +213,15 @@ def test_delete_pipeline(
 
     assert not pipelines_crud.get_pipeline_by_id(db, pipeline.id)
 
-    if run_nightly:
-        assert mockoperator.cronjob_counter == -1
-
 
 @responses.activate
 @pytest.mark.usefixtures(
     "project_manager",
-    "mockoperator",
 )
 def test_delete_pipeline_server_unreachable(
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):
@@ -227,13 +244,12 @@ def test_delete_pipeline_server_unreachable(
 @responses.activate
 @pytest.mark.usefixtures(
     "admin",
-    "mockoperator",
 )
 def test_delete_pipeline_server_unreachable_force(
     db: orm.Session,
     project: project_models.DatabaseProject,
     capella_model: toolmodels_models.ToolModel,
-    pipeline: pipelines_models.DatabaseBackup,
+    pipeline: pipelines_models.DatabasePipeline,
     client: testclient.TestClient,
     t4c_instance: t4c_models.DatabaseT4CInstance,
 ):

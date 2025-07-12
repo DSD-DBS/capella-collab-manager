@@ -60,7 +60,7 @@ def generate(
     if skip_error_responses:
         os.environ["CAPELLACOLLAB_SKIP_OPENAPI_ERROR_RESPONSES"] = "1"
 
-    from capellacollab import __main__  # noqa: PLC0415
+    from capellacollab import __main__
 
     keys_to_remove = []
 

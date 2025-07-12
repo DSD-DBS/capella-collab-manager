@@ -241,16 +241,31 @@ class KubernetesOperator:
 
         return sessions_models.SessionState.UNKNOWN
 
-    def get_job_logs(self, name: str) -> str | None:
+    def get_job_logs(self, name: str, since: datetime.datetime) -> str | None:
         pod_name = self.get_pod_name_from_job_name(name)
+        if not pod_name:
+            return None
         try:
+            since_seconds = None
+            if since:
+                now = datetime.datetime.now(datetime.UTC)
+
+                since_seconds = int(
+                    (now - since.replace(tzinfo=datetime.UTC)).total_seconds()
+                )
+
             if pod_log := self.v1_core.read_namespaced_pod_log(
                 name=pod_name,
                 namespace=namespace,
                 pretty=True,
                 timestamps=True,
+                # Change since_seconds to since_time after this issue is fixed:
+                # https://github.com/kubernetes-client/python/issues/1351
+                # https://github.com/kubernetes/kubernetes/issues/108498
+                since_seconds=since_seconds,
             ):
                 return pod_log
+
         except Exception:
             log.exception("Failed fetching logs from Kubernetes")
         return None
@@ -262,47 +277,6 @@ class KubernetesOperator:
             namespace=namespace,
             field_selector=f"involvedObject.name={name}",
         ).items
-
-    def create_cronjob(
-        self,
-        image: str,
-        command: str,
-        labels: dict[str, str],
-        tool_resources: tools_models.Resources,
-        environment: dict[str, str | None],
-        schedule="* * * * *",
-        timezone="UTC",
-        timeout=18000,
-    ) -> str:
-        _id = self._generate_id()
-
-        cronjob: client.V1CronJob = client.V1CronJob(
-            kind="CronJob",
-            api_version="batch/v1",
-            metadata=client.V1ObjectMeta(name=_id, labels=labels),
-            spec=client.V1CronJobSpec(
-                schedule=schedule,
-                time_zone=timezone,
-                job_template=client.V1JobTemplateSpec(
-                    metadata=client.V1ObjectMeta(labels=labels),
-                    spec=self._create_job_spec(
-                        name=_id,
-                        image=image,
-                        job_labels=labels
-                        | {
-                            "capellacollab/workload": "cronjob",
-                            "capellacollab/parent": _id,
-                        },
-                        environment=environment,
-                        tool_resources=tool_resources,
-                        args=[command],
-                        timeout=timeout,
-                    ),
-                ),
-            ),
-        )
-        self.v1_batch.create_namespaced_cron_job(namespace, cronjob)
-        return _id
 
     def create_job(
         self,
@@ -332,18 +306,6 @@ class KubernetesOperator:
         self.v1_batch.create_namespaced_job(namespace, job)
         return _id
 
-    def delete_cronjob(self, _id: str):
-        try:
-            self.v1_batch.delete_namespaced_cron_job(
-                namespace=namespace, name=_id
-            )
-        except exceptions.ApiException as e:
-            # Cronjob doesn't exist or was already deleted
-            # Nothing to do
-            if e.status == http.HTTPStatus.NOT_FOUND:
-                return
-            raise
-
     def delete_job(self, name: str):
         log.info("Deleting job '%s' in cluster", name)
         try:
@@ -368,7 +330,7 @@ class KubernetesOperator:
             return pods.items[0]
         return None
 
-    def _get_pod_id(self, label_selector: str) -> str:
+    def _get_pod_id(self, label_selector: str) -> str | None:
         try:
             pods = self.v1_core.list_namespaced_pod(
                 namespace=namespace, label_selector=label_selector
@@ -377,7 +339,7 @@ class KubernetesOperator:
             return pods["items"][0]["metadata"]["name"]
         except Exception:
             log.exception("Error fetching the Pod ID")
-            return ""
+            return None
 
     def _generate_id(self) -> str:
         return "".join(random.choices(string.ascii_lowercase, k=25))

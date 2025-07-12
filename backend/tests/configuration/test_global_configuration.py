@@ -3,9 +3,13 @@
 
 
 import pytest
+from apscheduler import job as ap_job
+from apscheduler.triggers import cron as ap_cron_trigger
 from fastapi import testclient
 from sqlalchemy import orm
 
+from capellacollab import scheduling
+from capellacollab.cli import scheduler as scheduler_cli
 from capellacollab.configuration import crud as configuration_crud
 
 
@@ -179,3 +183,50 @@ def test_global_configuration_invalid_pipelines(
     assert detail[0]["loc"] == ["body", "pipelines", "cron"]
     assert detail[1]["type"] == "value_error"
     assert detail[1]["loc"] == ["body", "pipelines", "timezone"]
+
+
+@pytest.mark.usefixtures("admin", "scheduler")
+def test_reschedule_jobs(
+    client: testclient.TestClient,
+    pipeline_scheduled: ap_job.Job,
+) -> None:
+    independent_job = scheduling.scheduler.add_job(
+        scheduler_cli.scheduler_heartbeat,
+        id="test_job",
+        trigger=ap_cron_trigger.CronTrigger(hour=3),
+    )
+
+    response = client.put(
+        "/api/v1/configurations/global",
+        json={"pipelines": {"cron": "0 6 * * *"}},
+    )
+
+    response.raise_for_status()
+    assert response.status_code == 200
+
+    def get_trigger_hour_for_job(job: ap_job.Job) -> int:
+        # Reload the job to ensure we have the latest trigger configuration
+        job = scheduling.scheduler.get_job(job.id)
+        return int(
+            str(
+                next(
+                    field
+                    for field in job.trigger.fields
+                    if field.name == "hour"
+                )
+            )
+        )
+
+    assert get_trigger_hour_for_job(independent_job) == 3
+    assert get_trigger_hour_for_job(pipeline_scheduled) == 6
+
+    response = client.put(
+        "/api/v1/configurations/global",
+        json={"pipelines": {"cron": "0 8 * * *"}},
+    )
+
+    response.raise_for_status()
+    assert response.status_code == 200
+
+    assert get_trigger_hour_for_job(independent_job) == 3
+    assert get_trigger_hour_for_job(pipeline_scheduled) == 8

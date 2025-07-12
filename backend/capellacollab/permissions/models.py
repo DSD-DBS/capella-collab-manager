@@ -7,6 +7,7 @@ import typing as t
 import pydantic
 
 from capellacollab.core import pydantic as core_pydantic
+from capellacollab.users import models as users_models
 
 
 class UserTokenVerb(str, enum.Enum):
@@ -196,6 +197,11 @@ class AdminScopes(core_pydantic.BaseModelStrict):
         title="Tags",
         description="Manage the available tags globally",
     )
+    pipelines: set[t.Literal[UserTokenVerb.GET]] = pydantic.Field(
+        default_factory=set,
+        title="Pipelines",
+        description="See the pipelines of all projects",
+    )
 
 
 class GlobalScopes(core_pydantic.BaseModelStrict):
@@ -227,3 +233,99 @@ class GlobalScopes(core_pydantic.BaseModelStrict):
             for attribute, verbs in scope:
                 derived_scope[scope_name][attribute] |= verbs
         return self.model_validate(derived_scope)
+
+
+USER_TOKEN_SCOPE = UserScopes(
+    sessions={
+        UserTokenVerb.GET,
+        UserTokenVerb.CREATE,
+        UserTokenVerb.UPDATE,
+        UserTokenVerb.DELETE,
+    },
+    projects={UserTokenVerb.CREATE},
+    tokens={
+        UserTokenVerb.GET,
+        UserTokenVerb.CREATE,
+        UserTokenVerb.DELETE,
+    },
+    feedback={UserTokenVerb.CREATE},
+)
+
+
+ROLE_MAPPING = {
+    users_models.Role.USER: GlobalScopes(
+        user=USER_TOKEN_SCOPE,
+    ),
+    users_models.Role.ADMIN: GlobalScopes(
+        user=USER_TOKEN_SCOPE,
+        admin=AdminScopes(
+            users={
+                UserTokenVerb.GET,
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            projects={
+                UserTokenVerb.GET,
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            tools={
+                UserTokenVerb.GET,
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            announcements={
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            monitoring={
+                UserTokenVerb.GET,
+            },
+            configuration={
+                UserTokenVerb.GET,
+                UserTokenVerb.UPDATE,
+            },
+            git_servers={
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            t4c_servers={
+                UserTokenVerb.GET,
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            t4c_repositories={
+                UserTokenVerb.GET,
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            pv_configuration={
+                UserTokenVerb.GET,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            events={
+                UserTokenVerb.GET,
+            },
+            sessions={UserTokenVerb.GET},
+            workspaces={UserTokenVerb.GET, UserTokenVerb.DELETE},
+            personal_access_tokens={
+                UserTokenVerb.GET,
+                UserTokenVerb.DELETE,
+            },
+            tags={
+                UserTokenVerb.CREATE,
+                UserTokenVerb.UPDATE,
+                UserTokenVerb.DELETE,
+            },
+            pipelines={UserTokenVerb.GET},
+        ),
+    ),
+}

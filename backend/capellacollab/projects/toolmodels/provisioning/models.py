@@ -56,7 +56,7 @@ class DatabaseModelProvisioning(database.Base):
     commit_hash: orm.Mapped[str]
 
     provisioned_at: orm.Mapped[datetime.datetime] = orm.mapped_column(
-        default=datetime.datetime.now(datetime.UTC)
+        default_factory=lambda: datetime.datetime.now(datetime.UTC),
     )
 
     session: orm.Mapped[sessions_models.DatabaseSession | None] = (

@@ -82,5 +82,5 @@ class DatabaseUserHistoryEvent(database.Base):
     )
 
     execution_time: orm.Mapped[datetime.datetime] = orm.mapped_column(
-        default=datetime.datetime.now(datetime.UTC)
+        default_factory=lambda: datetime.datetime.now(datetime.UTC),
     )
