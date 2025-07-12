@@ -61,6 +61,7 @@ def create_job(db: orm.Session, pipeline_id: int):
         name=f"Pipeline {pipeline_id}",
         coalesce=True,
         misfire_grace_time=pipeline_config.misfire_grace_time,
+        replace_existing=True,
     )
 
 
