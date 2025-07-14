@@ -21,8 +21,14 @@ k8s:
   storageAccessMode: {{ .Values.backend.storageAccessMode }}
 
   cluster:
+    {{- with .Values.cluster.namespaces.sessions.podSecurityContext }}
     podSecurityContext:
-      {{- toYaml .Values.cluster.namespaces.sessions.podSecurityContext | nindent 6 }}
+      runAsUser: {{ .runAsUser | int }}
+      runAsGroup: {{ .runAsGroup | int }}
+      fsGroup: {{ if ne .fsGroup nil }}{{ .fsGroup | int }}{{ else }}null{{ end }}
+      fsGroupChangePolicy: "{{ .fsGroupChangePolicy }}"
+      runAsNonRoot: {{ .runAsNonRoot }}
+    {{- end }}
     imagePullPolicy: {{ .Values.cluster.namespaces.sessions.imagePullPolicy }}
     nodeSelector:
       {{- toYaml .Values.cluster.namespaces.sessions.nodeSelector | nindent 6 }}
