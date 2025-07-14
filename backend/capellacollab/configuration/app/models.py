@@ -82,14 +82,23 @@ class K8sPodSecurityContext(BaseConfig):
         ),
         examples=[1004370000],
     )
-    fs_group: int = pydantic.Field(
+    fs_group: int | None = pydantic.Field(
         default=1004370000,
         description=(
             "The GID for the volumes that support ownership management, "
             "used when setting the ownership of volume filesystems, "
             "when determining access for volume filesystems, and for other purposes."
         ),
-        examples=[1004370000],
+        examples=[1004370000, None],
+    )
+    fs_group_change_policy: t.Literal["OnRootMismatch", "Always"] = (
+        pydantic.Field(
+            default="OnRootMismatch",
+            description=(
+                "Determines when the fsGroup should be applied to the volume."
+                " https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#configure-volume-permission-and-ownership-change-policy-for-pods"
+            ),
+        )
     )
     run_as_non_root: bool = True
 
