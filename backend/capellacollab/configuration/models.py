@@ -193,6 +193,14 @@ class FeedbackConfiguration(core_pydantic.BaseModelStrict):
     )
 
 
+class AlertingConfiguration(core_pydantic.BaseModelStrict):
+    recipients: list[pydantic.EmailStr] = pydantic.Field(
+        default=["test@example.com"] if core.DEVELOPMENT_MODE else [],
+        description="Email addresses to send global alerts to.",
+        examples=[[], ["test@example.com"]],
+    )
+
+
 class BetaConfiguration(core_pydantic.BaseModelStrict):
     enabled: bool = pydantic.Field(
         default=core.DEVELOPMENT_MODE,
@@ -273,6 +281,10 @@ class GlobalConfiguration(ConfigurationBase):
 
     feedback: FeedbackConfiguration = pydantic.Field(
         default_factory=FeedbackConfiguration
+    )
+
+    alerting: AlertingConfiguration = pydantic.Field(
+        default_factory=AlertingConfiguration
     )
 
     beta: BetaConfiguration = pydantic.Field(default_factory=BetaConfiguration)

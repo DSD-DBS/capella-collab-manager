@@ -20,6 +20,7 @@ from capellacollab.configuration.app import config
 from capellacollab.core import logging as core_logging
 from capellacollab.core.database import engine, migration
 from capellacollab.routes import router
+from capellacollab.sessions import alerting as sessions_alerting
 from capellacollab.sessions import auth as sessions_auth
 from capellacollab.sessions import idletimeout, operators
 
@@ -45,6 +46,7 @@ async def lifespan(_app: fastapi.FastAPI):  # pragma: no cover
     operators.get_operator()
 
     idletimeout.terminate_idle_sessions_in_background()
+    sessions_alerting.schedule_alerts()
     sessions_auth.initialize_session_pre_authentication()
 
     metrics.register_metrics()

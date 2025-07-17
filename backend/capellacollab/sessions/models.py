@@ -254,6 +254,10 @@ class DatabaseSession(database.Base):
         cascade="all, delete-orphan",
     )
 
+    alerted: orm.Mapped[bool] = orm.mapped_column(
+        sa.Boolean, default=False, nullable=False, init=False
+    )
+
 
 class DatabaseSharedSession(database.Base):
     __tablename__ = "shared_sessions"

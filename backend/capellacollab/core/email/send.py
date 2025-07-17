@@ -15,10 +15,15 @@ from . import exceptions, models
 def send_email(
     recipients: list[pydantic.EmailStr],
     email: models.EMailContent,
-    logger: logging.LoggerAdapter,
+    logger: logging.LoggerAdapter | None = None,
 ):
+    if not logger:
+        logger = logging.LoggerAdapter(logging.getLogger(__name__))
     if not (config.smtp and config.smtp.enabled):
         raise exceptions.SMTPNotConfiguredError()
+    if not recipients:
+        logger.warning("No recipients provided, not sending email.")
+        return
 
     try:
         with smtplib.SMTP(
@@ -38,6 +43,7 @@ def send_email(
                 msg["From"] = config.smtp.sender
                 msg["To"] = recipient
                 msg["Subject"] = email.subject
+                msg["X-Priority"] = str(email.priority.value)
                 msg.attach(text.MIMEText(email.message, "html"))
 
                 logger.info(
