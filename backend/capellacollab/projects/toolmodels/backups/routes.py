@@ -48,7 +48,7 @@ def add_next_run_to_pipeline[T: models.Pipeline | models.ExtendedPipeline](
     if not pipeline.run_nightly:
         return pipeline
 
-    job = interface.get_scheduled_pipeline_job(pipeline)
+    job = interface.get_scheduled_pipeline_job(pipeline.id)
     if not job:
         return pipeline
 

@@ -40,6 +40,8 @@ encoder.ts
 index.ts
 model/admin-scopes-input.ts
 model/admin-scopes-output.ts
+model/alerting-configuration-input.ts
+model/alerting-configuration-output.ts
 model/announcement-level.ts
 model/announcement-response.ts
 model/anonymized-session.ts

@@ -44,12 +44,12 @@ def run_pipeline_in_kubernetes(pipeline_id: int) -> None:
         pipeline_runs_interface.run_job_in_kubernetes(run.id)
 
 
-def get_scheduled_pipeline_job(pipeline: models.Pipeline) -> ap_job.Job | None:
-    job = scheduling.scheduler.get_job(f"pipeline-{pipeline.id}")
+def get_scheduled_pipeline_job(pipeline_id: int) -> ap_job.Job | None:
+    job = scheduling.scheduler.get_job(f"pipeline-{pipeline_id}")
     if not job:
         logger.warning(
             "No scheduled job found for pipeline %d. If this error persists, recreate the pipeline.",
-            pipeline.id,
+            pipeline_id,
         )
     return job
 
