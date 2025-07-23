@@ -13,7 +13,6 @@ metadata:
     checksum/config: {{ include (print $.Template.BasePath "/grafana" "/grafana.configmap.yaml") . | sha256sum }}
     checksum/dashboards: {{ include (print $.Template.BasePath "/grafana" "/grafana-dashboards.configmap.yaml") . | sha256sum }}
     checksum/certs: {{ include (print $.Template.BasePath "/grafana" "/grafana-certs.configmap.yaml") . | sha256sum }}
-    checksum/alerts: {{ include (print $.Template.BasePath "/grafana" "/grafana-alerts.configmap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.replicaCount.grafana | default 1 }}
   selector:
@@ -29,7 +28,6 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/grafana" "/grafana.configmap.yaml") . | sha256sum }}
         checksum/dashboards: {{ include (print $.Template.BasePath "/grafana" "/grafana-dashboards.configmap.yaml") . | sha256sum }}
         checksum/certs: {{ include (print $.Template.BasePath "/grafana" "/grafana-certs.configmap.yaml") . | sha256sum }}
-        checksum/alerts: {{ include (print $.Template.BasePath "/grafana" "/grafana-alerts.configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ .Release.Name }}-grafana
       {{- include "capellacollab.pod.spec" . | indent 6 -}}
@@ -73,8 +71,6 @@ spec:
               mountPath: /etc/grafana/provisioning/datasources
             - name: dashboards-config
               mountPath: /etc/grafana/provisioning/dashboards
-            - name: alerting
-              mountPath: /etc/grafana/provisioning/alerting
             - name: dashboards
               mountPath: /etc/dashboards
             {{- range $key, $value := .Files.Glob "config/certs/*" }}
@@ -104,9 +100,6 @@ spec:
         - name: dashboards
           configMap:
             name: {{ .Release.Name }}-grafana-dashboards
-        - name: alerting
-          configMap:
-            name: {{ .Release.Name }}-grafana-alerting
         - name: certs
           configMap:
             name: {{ .Release.Name }}-grafana-certs

@@ -55,7 +55,7 @@ def terminate_idle_session():
     log.debug("Finished termination of idle sessions.")
 
 
-def terminate_idle_sessions_in_background():
+def terminate_idle_sessions_in_background():  # pragma: no cover
     scheduling.scheduler.add_job(
         terminate_idle_session,
         "interval",

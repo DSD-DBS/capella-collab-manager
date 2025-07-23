@@ -78,7 +78,11 @@ def format_email(
     else:
         subject = f"New General Feedback with rating {feedback.rating.value}"
 
-    return email_models.EMailContent(subject=subject, message=html_content)
+    return email_models.EMailContent(
+        subject=subject,
+        message=html_content,
+        priority=email_models.EMailPriority.LOW,
+    )
 
 
 def send_feedback_email(

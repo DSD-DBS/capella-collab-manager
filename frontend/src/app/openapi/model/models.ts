@@ -11,6 +11,8 @@
 
 export * from './admin-scopes-input';
 export * from './admin-scopes-output';
+export * from './alerting-configuration-input';
+export * from './alerting-configuration-output';
 export * from './announcement-level';
 export * from './announcement-response';
 export * from './anonymized-session';

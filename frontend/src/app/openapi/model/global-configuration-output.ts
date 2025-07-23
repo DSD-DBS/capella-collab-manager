@@ -9,6 +9,7 @@
  + To generate a new version, run `make openapi` in the root directory of this repository.
  */
 
+import { AlertingConfigurationOutput } from './alerting-configuration-output';
 import { NavbarConfigurationOutput } from './navbar-configuration-output';
 import { MetadataConfigurationOutput } from './metadata-configuration-output';
 import { PipelineConfigurationOutput } from './pipeline-configuration-output';
@@ -23,6 +24,7 @@ export interface GlobalConfigurationOutput {
     metadata: MetadataConfigurationOutput;
     navbar: NavbarConfigurationOutput;
     feedback: FeedbackConfigurationOutput;
+    alerting: AlertingConfigurationOutput;
     beta: BetaConfigurationOutput;
     pipelines: PipelineConfigurationOutput;
 }

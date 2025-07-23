@@ -162,7 +162,7 @@ class Session(core_pydantic.BaseModel):
         return self
 
     @pydantic.model_validator(mode="after")
-    def add_warnings_and_last_seen(self) -> t.Any:
+    def add_states_and_idletime(self) -> t.Any:
         self.idle_state = injection.get_idle_state(self.id)
         self.preparation_state, self.state = (
             operators.get_operator().get_session_state(self.id)
@@ -252,6 +252,10 @@ class DatabaseSession(database.Base):
         back_populates="session",
         init=False,
         cascade="all, delete-orphan",
+    )
+
+    alerted: orm.Mapped[bool] = orm.mapped_column(
+        sa.Boolean, default=False, nullable=False, init=False
     )
 
 

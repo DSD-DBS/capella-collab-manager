@@ -24,7 +24,7 @@ from capellacollab.sessions import operators
 from capellacollab.tools import crud as tools_crud
 
 from .. import core as pipelines_core
-from . import crud, models
+from . import alerting, crud, models
 
 log = logging.getLogger(__name__)
 
@@ -45,6 +45,7 @@ def run_job_in_kubernetes(run_id: int):  # pragma: no cover
             _fetch_logs_of_job_run(db, run)
             if _job_is_finished(run.status):
                 _terminate_job(run)
+                alerting.send_alert_on_failed_pipeline_run(db, run)
                 break
 
 
