@@ -169,10 +169,10 @@ repos:
           - 'eslint@^9.31.0'
           - '@eslint/js@^9.31.0'
           - 'angular-eslint@~20.1.1'
-          - 'eslint-config-prettier@^10.1.5'
-          - 'typescript-eslint@^8.35.1'
+          - 'eslint-config-prettier@^10.1.8'
+          - 'typescript-eslint@^8.38.0'
           - 'eslint-plugin-unused-imports@^4.1.4'
-          - 'eslint-plugin-storybook@^9.0.16'
+          - 'eslint-plugin-storybook@^9.0.18'
           - 'tailwindcss@^4.1.11'
         args:
           [
