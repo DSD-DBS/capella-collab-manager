@@ -68,7 +68,7 @@
     "@types/uuid": "^10.0.0",
     "angular-eslint": "~20.1.1",
     "chromatic": "^13.1.2",
-    "eslint": "^9.31.0",
+    "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-storybook": "^9.0.18",
     "eslint-plugin-unused-imports": "^4.1.4",
