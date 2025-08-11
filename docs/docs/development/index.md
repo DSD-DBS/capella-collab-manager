@@ -9,9 +9,9 @@ We are committed to fostering a welcoming, respectful, and harassment-free
 environment. Be kind!
 
 If you have questions, ideas or want to report a bug, feel free to
-[open an issue](https://github.com/DSD-DBS/capella-collab-manager/issues). Or
+[open an issue](https://github.com/dbinfrago/capella-collab-manager/issues). Or
 go ahead and
-[open a pull request](https://github.com/DSD-DBS/capella-collab-manager/pulls)
+[open a pull request](https://github.com/dbinfrago/capella-collab-manager/pulls)
 to contribute code. In order to reduce the burden on our maintainers, please
 make sure that your code respects the
 [acceptance criteria for pull requests](./pull_requests.md).
@@ -24,13 +24,13 @@ make sure that your code respects the
 ## Setup of a Local Development Environment
 
 In addition to the
-[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d),
+[local k3d deployment](https://github.com/dbinfrago/capella-collab-manager#running-locally-with-k3d),
 we have a local development environment. This environment includes automatic
 reloading of the frontend and backend, providing direct feedback instead of
 long build iterations.
 
 In any case, start with the
-[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d).
+[local k3d deployment](https://github.com/dbinfrago/capella-collab-manager#running-locally-with-k3d).
 The k3d cluster is required for the development environment.
 
 ### Requirements
@@ -48,7 +48,7 @@ The backend uses various configuration settings. You can find them in the
 generated the first time you run the application.
 
 _Hint_: If you already have the
-[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d)
+[local k3d deployment](https://github.com/dbinfrago/capella-collab-manager#running-locally-with-k3d)
 running, then no configuration values need to be adjusted.
 
 ### Getting Started
@@ -81,7 +81,7 @@ If everything went well, the frontend and backend should be running now:
 
 You can also spawn sessions in the development environment, but it requires a
 running
-[local k3d deployment](https://github.com/DSD-DBS/capella-collab-manager#running-locally-with-k3d).
+[local k3d deployment](https://github.com/dbinfrago/capella-collab-manager#running-locally-with-k3d).
 
 Sessions are secured with pre-authentication. If you use the same private key
 in the cluster and locally, the token issued in the development environment

@@ -55,8 +55,9 @@
     Start a pipeline run and verify that the changes are included in the Git
     repository. Verify also that the CI/CD pipelines in the linked Git
     repository are still working (if applicable).
-1.  Use the [capella-diff-tools](https://github.com/DSD-DBS/capella-diff-tools)
-    and compare the commit after the migration with the commit before the
+1.  Use the
+    [capella-diff-tools](https://github.com/dbinfrago/capella-diff-tools) and
+    compare the commit after the migration with the commit before the
     migration. Verify that the changes are correct.
 1.  Communicate to all users that the model has been migrated to a new version.
     Users have to reimport the repositories in their personal workspace. Share

@@ -19,7 +19,7 @@ In order to use the CLI tooling, you'll need to have a local copy of the
 collab-manager application and Python 3.12 installed.
 
 ```bash
-git clone https://github.com/DSD-DBS/capella-collab-manager.git
+git clone https://github.com/dbinfrago/capella-collab-manager.git
 cd capella-collab-manager/backend
 python -m venv .venv
 source .venv/bin/activate

@@ -307,7 +307,7 @@ def create_capella_model_explorer_tool(
             sessions=tools_models.SessionToolConfiguration(
                 persistent=tools_models.PersistentSessionToolConfiguration(
                     image=tools_models.PersistentSessionToolConfigurationImages(
-                        regular=f"{config.docker.github_registry}/dsd-dbs/capella-model-explorer/model-explorer:latest",
+                        regular=f"{config.docker.github_registry}/dbinfrago/capella-model-explorer/model-explorer:latest",
                     ),
                 ),
             ),
@@ -321,7 +321,7 @@ def create_capella_model_explorer_tool(
             sessions=tools_models.SessionToolConfiguration(
                 persistent=tools_models.PersistentSessionToolConfiguration(
                     image=tools_models.PersistentSessionToolConfigurationImages(
-                        regular=f"{config.docker.github_registry}/dsd-dbs/capella-model-explorer/model-explorer:master",
+                        regular=f"{config.docker.github_registry}/dbinfrago/capella-model-explorer/model-explorer:master",
                     ),
                 ),
             ),
@@ -582,7 +582,7 @@ def create_capellambse_test_models(
             db=db,
             capella_model=capella_model,
             post_git_model=git_models.PostGitModel(
-                path="https://github.com/DSD-DBS/py-capellambse",
+                path="https://github.com/dbinfrago/py-capellambse",
                 entrypoint=f"/tests/data/melodymodel/{version[:3].replace('.', '_')}/Melody Model Test.aird",
                 revision="master",
                 username="",
@@ -675,7 +675,7 @@ def create_ife_model(db: orm.Session, project: project_models.DatabaseProject):
         db=db,
         capella_model=capella_model,
         post_git_model=git_models.PostGitModel(
-            path="https://github.com/DSD-DBS/Capella-IFE-sample",
+            path="https://github.com/dbinfrago/Capella-IFE-sample",
             entrypoint="In-Flight Entertainment System.aird",
             revision="master",
             username="",

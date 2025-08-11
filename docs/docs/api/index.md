@@ -13,7 +13,7 @@ to automate tasks such as creating and managing projects, sessions, and users.
 
     We try to keep the API as stable as possible, but we cannot guarantee that
     it will not change in the future. If you are using the API, make sure to
-    check our [release notes](https://github.com/DSD-DBS/capella-collab-manager/releases)
+    check our [release notes](https://github.com/dbinfrago/capella-collab-manager/releases)
     for any breaking changes.
 
 ## API Documentation
@@ -101,8 +101,8 @@ curl -u ${USERNAME}:${TOKEN} https://${BASE_URL}/api/v1/projects
 Another example is working with the diagram cache of py-capellambse. The
 implementation of the Capella modelling tool `capellambse` uses Python and lets
 you read and write models. For more information have a look at the
-[documentation](https://dsd-dbs.github.io/py-capellambse/) or the
-[GitHub repository](https://github.com/DSD-DBS/py-capellambse).
+[documentation](https://dbinfrago.github.io/py-capellambse/) or the
+[GitHub repository](https://github.com/dbinfrago/py-capellambse).
 
 ```python
 import capellambse

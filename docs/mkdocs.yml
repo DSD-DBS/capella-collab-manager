@@ -154,7 +154,7 @@ nav:
       - Pull Request Acceptance Criteria: development/pull_requests.md
       - Troubleshooting: development/troubleshooting.md
 
-repo_url: https://github.com/DSD-DBS/capella-collab-manager
+repo_url: https://github.com/dbinfrago/capella-collab-manager
 edit_uri: edit/master/docs/docs
 
 plugins:

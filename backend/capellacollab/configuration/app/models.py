@@ -28,7 +28,7 @@ class DockerConfig(BaseConfig):
             "i.e. the session-preparation image."
         ),
         examples=[
-            "ghcr.io/dsd-dbs/capella-collab-manager",
+            "ghcr.io/dbinfrago/capella-collab-manager",
             "k3d-myregistry.localhost:12345/capella/collab",
         ],
     )
@@ -39,7 +39,7 @@ class DockerConfig(BaseConfig):
             "It is only used during initial tool creation. "
             "After the initial creation, you can change the registry for each tool individually in the UI."
         ),
-        examples=["ghcr.io/dsd-dbs/capella-dockerimages"],
+        examples=["ghcr.io/dbinfrago/capella-dockerimages"],
     )
     external_registry: str = pydantic.Field(
         default="docker.io",

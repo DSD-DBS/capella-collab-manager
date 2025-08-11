@@ -34,7 +34,7 @@
 1. Enter any tool name, e.g., `Capella + pure::variants`
 1. Specify the image for the persistent workspace. More information in the
    Capella Docker images documentation:
-   [`Capella + pure::variants`](https://dsd-dbs.github.io/capella-dockerimages/capella/pure-variants/)
+   [`Capella + pure::variants`](https://dbinfrago.github.io/capella-dockerimages/capella/pure-variants/)
 1. Read-only workspaces and backup images are not supported. Leave the fields
    empty.
 1. Click on `Create`

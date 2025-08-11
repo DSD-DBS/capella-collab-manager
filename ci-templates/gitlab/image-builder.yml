@@ -47,7 +47,7 @@ default:
   - DOCKER_REGISTRY=$(sops -d ${TARGET}/secret.docker.json | jq -r ".registry")
 
 .github: &github
-  - git clone https://github.com/DSD-DBS/capella-collab-manager.git
+  - git clone https://github.com/dbinfrago/capella-collab-manager.git
   - cd capella-collab-manager
   - git checkout ${REVISION}
 

@@ -31,13 +31,14 @@ Methods for Modeling System of Systems with Capella:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/WCC_iHyChKQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 If you'd like to learn how Capella works you may want to read through our
-[guide for meta-model exploration](https://dsd-dbs.github.io/py-capellambse/development/how-to-explore-capella-mm.html)
+[guide for meta-model exploration](https://dbinfrago.github.io/py-capellambse/development/how-to-explore-capella-mm.html)
 
 ## Deriving Model-based Products
 
 You may prototype-derived products using Python (Jupyter) and
-[py-capellambse](https://github.com/DSD-DBS/py-capellambse). It contains a few
-[practical examples](https://github.com/DSD-DBS/py-capellambse/tree/master/examples).
+[py-capellambse](https://github.com/dbinfrago/py-capellambse). It contains a
+few
+[practical examples](https://github.com/dbinfrago/py-capellambse/tree/master/examples).
 
 Eventually you may automate production of model-derived documents and other
 things via CI/CD pipelines that work on your model git repositories. Get in

@@ -60,7 +60,7 @@ This is a example text with a [link to an external page](https://example.com).
 You can also use code blocks:
 
 ${'```'}zsh
-git clone --recurse-submodules https://github.com/DSD-DBS/capella-collab-manager.git
+git clone --recurse-submodules https://github.com/dbinfrago/capella-collab-manager.git
 cd capella-collab-manager
 ${'```'}
 `;

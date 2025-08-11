@@ -18,19 +18,19 @@ jobs:
       matrix:
         include:
           - name: backend
-            image: ghcr.io/dsd-dbs/capella-collab-manager/backend
+            image: ghcr.io/dbinfrago/capella-collab-manager/backend
             context: ./backend
           - name: frontend
-            image: ghcr.io/dsd-dbs/capella-collab-manager/frontend
+            image: ghcr.io/dbinfrago/capella-collab-manager/frontend
             context: ./frontend
           - name: guacamole
-            image: ghcr.io/dsd-dbs/capella-collab-manager/guacamole
+            image: ghcr.io/dbinfrago/capella-collab-manager/guacamole
             context: ./images/guacamole
           - name: session-preparation
-            image: ghcr.io/dsd-dbs/capella-collab-manager/session-preparation
+            image: ghcr.io/dbinfrago/capella-collab-manager/session-preparation
             context: ./images/session-preparation
           - name: docs
-            image: ghcr.io/dsd-dbs/capella-collab-manager/docs
+            image: ghcr.io/dbinfrago/capella-collab-manager/docs
             context: ./docs
     steps:
       - name: Checkout repository

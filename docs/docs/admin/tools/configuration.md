@@ -212,7 +212,7 @@ In addition, the following variables are mounted if the TeamForCapella
 integration is enabled for the tool and the session type is `persistent`.
 
 For an explanation of those variables, refer to the
-[Capella Docker images documentation](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#run-the-container).
+[Capella Docker images documentation](https://dbinfrago.github.io/capella-dockerimages/capella/t4c/base/#run-the-container).
 
 <table markdown="span" style=width:100%>
     <tr>
@@ -389,7 +389,7 @@ makes them available in Grafana for monitoring.
 ## Configuration examples
 
 To help you configure your tools, we provide some examples as part of our
-[Capella Docker images repository](https://github.com/DSD-DBS/capella-dockerimages)
+[Capella Docker images repository](https://github.com/dbinfrago/capella-dockerimages)
 
 === "Capella/Papyrus/Eclipse"
 

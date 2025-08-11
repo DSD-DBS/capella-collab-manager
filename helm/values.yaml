@@ -30,12 +30,12 @@ docker:
     github: ghcr.io
 
     # Capella Collaboration Manager Docker Registry
-    internal: ghcr.io/dsd-dbs/capella-collab-manager
+    internal: ghcr.io/dbinfrago/capella-collab-manager
 
     # Default registry for session containers
     # Only used for the initial deployment
     # Can be customized in the UI after initial deployment
-    sessions: ghcr.io/dsd-dbs/capella-dockerimages
+    sessions: ghcr.io/dbinfrago/capella-dockerimages
 
   # Docker tag for the internal images (e.g. main)
   tag: main
