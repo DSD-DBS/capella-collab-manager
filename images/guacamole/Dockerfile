@@ -11,7 +11,7 @@ COPY ext /tmp/ext
 WORKDIR /tmp/ext
 RUN zip -r /tmp/guacamole-capellacollab.jar .
 
-FROM guacamole/guacamole:1.5.5
+FROM guacamole/guacamole:1.6.0
 
 USER root
 
