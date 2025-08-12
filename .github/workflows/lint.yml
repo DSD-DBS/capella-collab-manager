@@ -15,7 +15,7 @@ jobs:
     name: Validate helm chart with linter and kubernetes yaml schemas
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Install helm
         uses: azure/setup-helm@v4
       - name: Install go
@@ -36,7 +36,7 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
         with:
           package_json_file: 'frontend/package.json'

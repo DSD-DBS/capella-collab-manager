@@ -10,7 +10,7 @@ jobs:
   attach-chart:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install Helm
         uses: azure/setup-helm@v4
       - name: Install yq
@@ -37,7 +37,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check out CCM Helm Charts repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: dbinfrago/ccm-helm-charts
           path: ccm_helm_charts
