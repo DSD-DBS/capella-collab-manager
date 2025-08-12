@@ -6,3 +6,12 @@ CVE-2024-52046 exp:2025-09-01
 
 # Wait for 1.6.0
 CVE-2024-52316 exp:2025-09-01
+
+# Write is not enabled in default tomcat servlet
+CVE-2025-24813
+CVE-2024-50379
+
+# DoS attacks (ignored due to low risk; the application usually runs in isolated environments)
+CVE-2025-48988
+CVE-2024-34750
+CVE-2024-38286
