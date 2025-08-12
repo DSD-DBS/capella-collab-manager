@@ -8,3 +8,7 @@ CVE-2025-22869
 # https://avd.aquasec.com/nvd/2025/cve-2025-22874/
 # We don't use certificate validation in Caddy
 CVE-2025-22874
+
+# https://github.com/golang/go/issues/74831
+# Caddy doesn't use any database
+CVE-2025-47907
