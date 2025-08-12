@@ -4,7 +4,7 @@
 apiVersion: v2
 name: collab-manager
 description: Capella Collaboration Manager
-home: https://github.com/DSD-DBS/capella-collab-manager
+home: https://github.com/dbinfrago/capella-collab-manager
 type: application
 version: 0.0.0 # The version is automatically updated by the release process.
 appVersion: 0.0.0 # The appVersion is automatically updated by the release process.

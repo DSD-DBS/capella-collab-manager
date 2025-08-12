@@ -165,13 +165,13 @@ Navigate to a persistent location on your server, e.g. `/opt`. Then clone the
 GitHub repository by running:
 
 ```zsh
-git clone https://github.com/DSD-DBS/capella-collab-manager.git
+git clone https://github.com/dbinfrago/capella-collab-manager.git
 ```
 
 ## Step 6: Configure the Environment / Create the `values.yaml`
 
 Copy the
-[`values.yaml`](https://github.com/DSD-DBS/capella-collab-manager/blob/main/helm/values.yaml)
+[`values.yaml`](https://github.com/dbinfrago/capella-collab-manager/blob/main/helm/values.yaml)
 to a persistent and secure location on your server or deployment environment.
 The `local` directory in the Collaboration Manager is gitignored. We recommend
 to put the custom `values.yaml` in this directory.
@@ -262,13 +262,13 @@ If a value is false, check the backend logs for more information.
 1.  Navigate to the root of the capella-collab-manager repository.
 1.  Clone the capella-dockerimages repository:
     ```zsh
-    git clone https://github.com/DSD-DBS/capella-dockerimages
+    git clone https://github.com/dbinfrago/capella-dockerimages
     ```
 1.  Prepare the `capella/base` and `t4c/client/base` images according to the
     Capella Docker images documentation (Only the preparation section is
     needed):
-    - [`capella/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/base/#preparation)
-    - [`t4c/client/base`](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation)
+    - [`capella/base`](https://dbinfrago.github.io/capella-dockerimages/capella/base/#preparation)
+    - [`t4c/client/base`](https://dbinfrago.github.io/capella-dockerimages/capella/t4c/base/#preparation)
 
 1.  Set the following environment variables:
 

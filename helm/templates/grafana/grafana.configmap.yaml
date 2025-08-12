@@ -82,7 +82,7 @@ data:
           cacheLevel: Medium
     prune: true
     deleteDatasources:
-      # Removed in https://github.com/DSD-DBS/capella-collab-manager/commit/9db351feb659a9cace46791a2a4954ddc727a895
+      # Removed in https://github.com/dbinfrago/capella-collab-manager/commit/9db351feb659a9cace46791a2a4954ddc727a895
       - name: 'Loki (Capella Collaboration Manager)'
   dashboards.yaml: |
     apiVersion: 1

@@ -39,7 +39,7 @@ jobs:
       - name: Check out CCM Helm Charts repository
         uses: actions/checkout@v4
         with:
-          repository: DSD-DBS/ccm-helm-charts
+          repository: dbinfrago/ccm-helm-charts
           path: ccm_helm_charts
           token: ${{ secrets.CCM_HELM_CHARTS_TOKEN }}
       - uses: azure/setup-helm@v4.2.0
@@ -59,6 +59,6 @@ jobs:
           echo -e "$(sed 's/^/# /' ../LICENSES/.license_header_apache.txt)\n\n$(cat index.yaml)" > index.yaml
           git add .
           git config user.email 'set@deutschebahn.com'
-          git config user.name 'DSD-DBS Chart releaser'
+          git config user.name 'dbinfrago Chart releaser'
           git commit -m "Add collab-manager-${{ github.event.release.tag_name }}.tgz"
           git push

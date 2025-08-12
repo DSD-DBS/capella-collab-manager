@@ -12,7 +12,7 @@ Please add the following section to your `.gitlab-ci.yml`:
 
 ```yaml
 include:
-    - remote: https://raw.githubusercontent.com/DSD-DBS/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/image-builder.yml
+    - remote: https://raw.githubusercontent.com/dbinfrago/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/image-builder.yml
 ```
 
 The build images are tagged with the revision they were build with (e.g., when
@@ -32,7 +32,7 @@ sure to enable the "Expand variable reference" flag.
 
 This is the (minimal) configuration. For more advanced configuration options,
 please refer to the
-[image-builder](https://github.com/DSD-DBS/capella-collab-manager/blob/main/ci-templates/gitlab/image-builder.yml)
+[image-builder](https://github.com/dbinfrago/capella-collab-manager/blob/main/ci-templates/gitlab/image-builder.yml)
 GitLab template.
 
 ### Docker SOPS File

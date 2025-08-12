@@ -5,12 +5,12 @@
 
 # Capella Collaboration Manager
 
-[![REUSE status](https://api.reuse.software/badge/github.com/DSD-DBS/capella-collab-manager)](https://api.reuse.software/info/github.com/DSD-DBS/capella-collab-manager)
+[![REUSE status](https://api.reuse.software/badge/github.com/dbinfrago/capella-collab-manager)](https://api.reuse.software/info/github.com/dbinfrago/capella-collab-manager)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![lint](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/lint.yml/badge.svg)
-![tests](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/tests.yml/badge.svg)
-![push](https://github.com/DSD-DBS/capella-collab-manager/actions/workflows/push.yml/badge.svg)
-[![codecov](https://codecov.io/github/DSD-DBS/capella-collab-manager/branch/main/graph/badge.svg?token=1UZHL2H54F)](https://codecov.io/github/DSD-DBS/capella-collab-manager)
+![lint](https://github.com/dbinfrago/capella-collab-manager/actions/workflows/lint.yml/badge.svg)
+![tests](https://github.com/dbinfrago/capella-collab-manager/actions/workflows/tests.yml/badge.svg)
+![push](https://github.com/dbinfrago/capella-collab-manager/actions/workflows/push.yml/badge.svg)
+[![codecov](https://codecov.io/github/dbinfrago/capella-collab-manager/branch/main/graph/badge.svg?token=1UZHL2H54F)](https://codecov.io/github/dbinfrago/capella-collab-manager)
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/capella-collab-manager)](https://artifacthub.io/packages/search?repo=capella-collab-manager)
 
 A web platform for collaboration on MBSE and
@@ -62,7 +62,7 @@ In addition, we have integrated commercial products:
 We've prepared a small video, where we showcase the diagram cache feature and
 show how you can use Capella and Jupyter in split view in the browser:
 
-https://github.com/DSD-DBS/capella-collab-manager/assets/23395732/01c5dc34-7792-4858-a87a-3205927b3d00
+https://github.com/dbinfrago/capella-collab-manager/assets/23395732/01c5dc34-7792-4858-a87a-3205927b3d00
 
 ## Getting Started
 
@@ -71,7 +71,7 @@ https://github.com/DSD-DBS/capella-collab-manager/assets/23395732/01c5dc34-7792-
 The following instructions are not suitable for a production deployment, but
 can be used to try out the features of the Collaboration Manager locally. You
 can find the installation guide for a production deployment in the
-[general documentation](https://dsd-dbs.github.io/capella-collab-manager/admin/installation/).
+[general documentation](https://dbinfrago.github.io/capella-collab-manager/admin/installation/).
 
 #### Prerequisites
 
@@ -92,7 +92,7 @@ If you'd like to run it locally, these tools are additionally required:
 When you have all that installed you can do the following:
 
 ```zsh
-git clone --recurse-submodules https://github.com/DSD-DBS/capella-collab-manager.git
+git clone --recurse-submodules https://github.com/dbinfrago/capella-collab-manager.git
 cd capella-collab-manager
 
 # Create a local k3d cluster and test the registry reachability
@@ -117,8 +117,8 @@ options can be changed at any time later:
    deployment.
 
    ```zsh
-   export DOCKER_REGISTRY=ghcr.io/dsd-dbs/capella-collab-manager
-   export CAPELLACOLLAB_SESSIONS_REGISTRY=ghcr.io/dsd-dbs/capella-dockerimages
+   export DOCKER_REGISTRY=ghcr.io/dbinfrago/capella-collab-manager
+   export CAPELLACOLLAB_SESSIONS_REGISTRY=ghcr.io/dbinfrago/capella-dockerimages
    DEVELOPMENT_MODE=1 make helm-deploy open
    ```
 
@@ -126,7 +126,7 @@ options can be changed at any time later:
    initial TeamForCapella support)
 
    ```zsh
-   export CAPELLACOLLAB_SESSIONS_REGISTRY=ghcr.io/dsd-dbs/capella-dockerimages
+   export CAPELLACOLLAB_SESSIONS_REGISTRY=ghcr.io/dbinfrago/capella-dockerimages
    DEVELOPMENT_MODE=1 make build helm-deploy open rollout
    ```
 
@@ -152,7 +152,7 @@ options can be changed at any time later:
    support)
 
    Read and execute the preparation in the Capella Docker images documentation:
-   [TeamForCapella client base](https://dsd-dbs.github.io/capella-dockerimages/capella/t4c/base/#preparation).
+   [TeamForCapella client base](https://dbinfrago.github.io/capella-dockerimages/capella/t4c/base/#preparation).
 
    Then, run the following command:
 
@@ -186,7 +186,7 @@ k3d registry delete k3d-myregistry.localhost
 
 Once the cluster is installed and all services are running
 (`kubectl get pods`), you can get started. Follow our
-[Getting started guide](https://dsd-dbs.github.io/capella-collab-manager/admin/getting_started/getting_started/)
+[Getting started guide](https://dbinfrago.github.io/capella-collab-manager/admin/getting_started/getting_started/)
 and be up and running in a few minutes.
 
 ## How it Works
@@ -211,5 +211,5 @@ External software can also be linked. These parts can be installed separately:
 
 We'd love to see your bug reports and improvement suggestions! Please take a
 look at our
-[developer documentation](https://dsd-dbs.github.io/capella-collab-manager/development/).
+[developer documentation](https://dbinfrago.github.io/capella-collab-manager/development/).
 You'll also find instructions on how to set up a local development environment.

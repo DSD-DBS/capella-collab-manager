@@ -31,8 +31,8 @@
         - GitHub: If you are using a fine-grained personal access token, add the repository permission for the scope "content" with access `Read-only`.
 
 1.  Follow the CI template instructions
-    - [GitLab](https://github.com/DSD-DBS/py-capellambse/tree/master/ci-templates/gitlab#model-badge)
-    - [GitHub](https://github.com/DSD-DBS/py-capellambse/tree/master/ci-templates/github#model-badge)
+    - [GitLab](https://github.com/dbinfrago/py-capellambse/tree/master/ci-templates/gitlab#model-badge)
+    - [GitHub](https://github.com/dbinfrago/py-capellambse/tree/master/ci-templates/github#model-badge)
 
     to add the complexity badge pipeline to the linked repository.
 

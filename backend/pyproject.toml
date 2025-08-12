@@ -56,7 +56,7 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/DSD-DBS/capella-collab-manager"
+Homepage = "https://github.com/dbinfrago/capella-collab-manager"
 
 [project.optional-dependencies]
 dev = [

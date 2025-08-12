@@ -16,5 +16,5 @@ available dashboards:
 
 You can add additional dashboards depending on your needs. If you think the
 dashboard could be helpful for others, please add the dashboard to the
-[list of pre-defined dashboards](https://github.com/DSD-DBS/capella-collab-manager/tree/main/helm/config/grafana)
-and [open a PR](https://github.com/DSD-DBS/capella-collab-manager/pulls).
+[list of pre-defined dashboards](https://github.com/dbinfrago/capella-collab-manager/tree/main/helm/config/grafana)
+and [open a PR](https://github.com/dbinfrago/capella-collab-manager/pulls).

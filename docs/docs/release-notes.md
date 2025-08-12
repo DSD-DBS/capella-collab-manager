@@ -4,15 +4,15 @@
  -->
 
 - Release notes of the **Capella Collaboration Manager** are available
-  [here](https://github.com/DSD-DBS/capella-collab-manager/releases).
+  [here](https://github.com/dbinfrago/capella-collab-manager/releases).
 - **Session related** release notes are available
-  [here](https://github.com/DSD-DBS/capella-dockerimages/releases).
+  [here](https://github.com/dbinfrago/capella-dockerimages/releases).
     - **JupyterLab** release notes are available
       [here](https://jupyterlab.readthedocs.io/en/stable/getting_started/changelog.html).
     - **capellambse** release notes are available
-      [here](https://github.com/DSD-DBS/py-capellambse/releases). <br>
+      [here](https://github.com/dbinfrago/py-capellambse/releases). <br>
       **capellambse context diagrams** release notes are available
-      [here](https://github.com/DSD-DBS/capellambse-context-diagrams/releases).
+      [here](https://github.com/dbinfrago/capellambse-context-diagrams/releases).
     - **Capella** release notes are available
       [here](https://github.com/eclipse/capella/releases). <br>
       **TeamForCapella** release notes are available

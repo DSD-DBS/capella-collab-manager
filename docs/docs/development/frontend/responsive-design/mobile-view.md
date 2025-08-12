@@ -45,7 +45,7 @@ uses flexbox on devices larger than `768px`.
 
 If you want to see a code example of responsive design in the application, you
 can check the `HeaderComponent` HTML template:
-[frontend/src/app/general/header/header.component.html](https://github.com/DSD-DBS/capella-collab-manager/blob/main/frontend/src/app/general/header/header.component.html).
+[frontend/src/app/general/header/header.component.html](https://github.com/dbinfrago/capella-collab-manager/blob/main/frontend/src/app/general/header/header.component.html).
 You can search for `xl:` and play around with it.
 
 ## Debugging & Testing with Chrome DevTools

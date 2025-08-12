@@ -238,7 +238,7 @@ reach-registry:
 	curl http://k3d-myregistry.localhost:12345/v2/ || r=$$?
 	if [ $$r -ne 0 ]; then
 		echo "The registry is not reachable. Possible solutions are described in our documentation: "
-		echo "https://dsd-dbs.github.io/capella-collab-manager/development/troubleshooting/"
+		echo "https://dbinfrago.github.io/capella-collab-manager/development/troubleshooting/"
 		exit 1
 	fi
 

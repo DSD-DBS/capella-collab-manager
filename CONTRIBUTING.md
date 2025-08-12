@@ -18,4 +18,4 @@ guidelines.
 
 We provide a developer documentation. There you will also find information on
 how to set up a local environment:
-[Developer Documentation](https://dsd-dbs.github.io/capella-collab-manager/development/)
+[Developer Documentation](https://dbinfrago.github.io/capella-collab-manager/development/)

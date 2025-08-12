@@ -12,7 +12,7 @@
 1. [Create a backup of the backend database](./backup-recovery.md#create-backup)
    before updating.
 1. Check the
-   [Release Notes](https://github.com/DSD-DBS/capella-collab-manager/releases){:target="\_blank"}
+   [Release Notes](https://github.com/dbinfrago/capella-collab-manager/releases){:target="\_blank"}
    for any breaking changes or special instructions.
 1. Either download the helm chart from the GitHub Releases or check-out the
    revision of the version you'd like to update to:
@@ -51,7 +51,7 @@
     and the version you'd like to roll-back to.
 
     You can do so with the
-    [GitHub Compare](https://github.com/DSD-DBS/capella-collab-manager/compare)
+    [GitHub Compare](https://github.com/dbinfrago/capella-collab-manager/compare)
     feature. Select the current version and the version you'd like to roll-back
     and check for any changes in the `backend/capellacollab/alembic` directory.
 

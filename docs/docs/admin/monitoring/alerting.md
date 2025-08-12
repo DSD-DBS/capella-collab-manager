@@ -10,7 +10,7 @@ administrators will receive a notification.
 
 We use the Grafana Alertmanager to send alerts for some pre-defined error
 cases. If you're missing an alert rule, let us know via
-[GitHub issues](https://github.com/DSD-DBS/capella-collab-manager/issues) or
+[GitHub issues](https://github.com/dbinfrago/capella-collab-manager/issues) or
 open a PR and add it to the list of pre-defined rules.
 
 ## Configure alerting

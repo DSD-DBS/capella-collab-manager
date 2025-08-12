@@ -11,7 +11,7 @@ co-work on architectures using tools like
 [Papyrus](https://www.eclipse.org/papyrus/),
 [pure::variants](https://www.pure-systems.com/purevariants) and
 [Jupyter](https://jupyter.org/) in combination with
-[py-capellambse](https://github.com/DSD-DBS/py-capellambse).
+[py-capellambse](https://github.com/dbinfrago/py-capellambse).
 
 This platform wraps the modeling tools to create an environment where users can
 can work directly in the project context without having to install or configure
@@ -51,7 +51,7 @@ we can look into how you can actually work in this environment.
 
 Capella is not a web native tool, however it runs on Linux - so we can use
 open-source technologies to deliver it to you via browser. We constructed a
-[Docker container with Capella](https://github.com/DSD-DBS/capella-dockerimages)
+[Docker container with Capella](https://github.com/dbinfrago/capella-dockerimages)
 and all the plugins you may need, added [Xrdp](http://xrdp.org/) to allow
 remote connection and [Apache Guacamole](https://guacamole.apache.org/) to
 stream that connection to your browser. We call instances of those containers
@@ -128,6 +128,6 @@ sections:
 
 If you don't find answer to your question on this documentation site please
 consider opening an
-[issue on GitHub](https://github.com/DSD-DBS/capella-collab-manager/issues) or
-extending the documentation with your own contribution via a
-[pull request](https://github.com/DSD-DBS/capella-collab-manager/pulls).
+[issue on GitHub](https://github.com/dbinfrago/capella-collab-manager/issues)
+or extending the documentation with your own contribution via a
+[pull request](https://github.com/dbinfrago/capella-collab-manager/pulls).

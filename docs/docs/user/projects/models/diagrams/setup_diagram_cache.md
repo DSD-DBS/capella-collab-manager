@@ -36,8 +36,8 @@
          scope `read_api` (GitLab) and `read-only` for the "actions" scope of the repository permissions (GitHub, Personal Access Token) is required.
 
 1.  Follow the CI template instructions
-    - [GitLab](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/gitlab/diagram-cache/)
-    - [GitHub](https://dsd-dbs.github.io/capella-dockerimages/ci-templates/github/diagram-cache/)
+    - [GitLab](https://dbinfrago.github.io/capella-dockerimages/ci-templates/gitlab/diagram-cache/)
+    - [GitHub](https://dbinfrago.github.io/capella-dockerimages/ci-templates/github/diagram-cache/)
 
     to add the diagram cache pipeline to the linked repository.
 

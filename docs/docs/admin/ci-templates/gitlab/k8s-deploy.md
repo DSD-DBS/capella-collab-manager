@@ -12,7 +12,7 @@ Please add the following section to your `.gitlab-ci.yml`:
 
 ```yaml
 include:
-    - remote: https://raw.githubusercontent.com/DSD-DBS/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/k8s-deploy.yml
+    - remote: https://raw.githubusercontent.com/dbinfrago/capella-collab-manager/${CAPELLA_COLLABORATION_MANAGER_REVISION}/ci-templates/gitlab/k8s-deploy.yml
 ```
 
 You have to add the following environment variables on repository level. Make
@@ -68,7 +68,7 @@ The file has to contain the following content:
 
 Another configuration file is the encrypted `values.yaml`. In this file you can
 overwrite values from the
-[default `values.yaml`](https://github.com/DSD-DBS/capella-collab-manager/blob/main/helm/values.yaml).
+[default `values.yaml`](https://github.com/dbinfrago/capella-collab-manager/blob/main/helm/values.yaml).
 
 Create the file with:
 
@@ -96,5 +96,5 @@ The tree inside of your GitLab repository should look like:
 
 This is the (minimal) configuration. For more advanced configuration options,
 please refer to the
-[k8s-deploy](https://github.com/DSD-DBS/capella-collab-manager/blob/main/ci-templates/gitlab/k8s-deploy.yml)
+[k8s-deploy](https://github.com/dbinfrago/capella-collab-manager/blob/main/ci-templates/gitlab/k8s-deploy.yml)
 GitLab template.

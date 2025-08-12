@@ -429,7 +429,7 @@ class PersistentSessionToolConfigurationImages(core_pydantic.BaseModel):
         pattern=DOCKER_IMAGE_PATTERN,
         examples=[
             "docker.io/hello-world:latest",
-            "ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:{version}-main",
+            "ghcr.io/dbinfrago/capella-dockerimages/capella/remote:{version}-main",
         ],
         description=(
             "Docker image, which is used for persistent sessions. "
@@ -443,7 +443,7 @@ class PersistentSessionToolConfigurationImages(core_pydantic.BaseModel):
         pattern=DOCKER_IMAGE_PATTERN,
         examples=[
             "docker.io/hello-world:latest",
-            "ghcr.io/dsd-dbs/capella-dockerimages/capella/remote:{version}-main",
+            "ghcr.io/dbinfrago/capella-dockerimages/capella/remote:{version}-main",
         ],
         description=(
             "Docker image, which is used for persistent sessions of beta users."
@@ -465,7 +465,7 @@ class ToolBackupConfiguration(core_pydantic.BaseModel):
         pattern=DOCKER_IMAGE_PATTERN,
         examples=[
             "docker.io/hello-world:latest",
-            "ghcr.io/dsd-dbs/capella-dockerimages/capella/base:{version}-main",
+            "ghcr.io/dbinfrago/capella-dockerimages/capella/base:{version}-main",
         ],
         description=(
             "Docker image, which is used for backup pipelines. "
