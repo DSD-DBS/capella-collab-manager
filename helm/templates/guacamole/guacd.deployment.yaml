@@ -44,7 +44,7 @@ spec:
           {{ if .Values.docker.images.guacamole.guacd }}
           image: {{ .Values.docker.images.guacamole.guacd }}
           {{ else }}
-          image: {{ .Values.docker.registry.external }}/guacamole/guacd:1.5.5
+          image: {{ .Values.docker.registry.external }}/guacamole/guacd:1.6.0
           {{ end }}
           command: ["/bin/sh", "-c", "mkdir -p /home/guacd/logs; /opt/guacamole/sbin/guacd -b 0.0.0.0 -L $GUACD_LOG_LEVEL -f > >(tee -a /home/guacd/logs/stdout.log) 2> >(tee -a /home/guacd/logs/stderr.log >&2)"]
           ports:
