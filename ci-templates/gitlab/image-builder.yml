@@ -53,6 +53,7 @@ default:
 
 .docker: &docker
   - docker info
+  - unset DOCKER_AUTH_CONFIG
   - >
     sops -d ../${TARGET}/secret.docker.json | \
       jq -r ".password" | \
