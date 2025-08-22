@@ -50,7 +50,7 @@ jobs:
           sed -i '/SwaggerUIBundle({/a\    supportedSubmitMethods: [],' docs/dist/api/swagger/swagger-initializer.js
           sed -i '/layout: "StandaloneLayout"/d;/SwaggerUIStandalonePreset/d' docs/dist/api/swagger/swagger-initializer.js
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./docs/dist
   deploy:
