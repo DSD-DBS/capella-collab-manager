@@ -1,0 +1,6 @@
+[compliance]
+[compliance.scans]
+[compliance.scans.secrets]
+[[compliance.scans.secrets.ignores]]
+comment = "Outdated PAT for non-existing user"
+value = "yourUsername:yourPassword"
